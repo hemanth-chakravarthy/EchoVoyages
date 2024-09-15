@@ -48,5 +48,18 @@ router.put('/:id',async (req,res) => {
     }
     
 })
+// view a single customer
+router.get('/:id',async (req,res) => {
+    try {
+        let {id} = req.params
+        id = id.toString()
+        const custs = await customers.findOne({ _id: id });
+        return res.status(200).json(custs)
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({message: error.message})
+    }
+    
+})
 
 export default router
