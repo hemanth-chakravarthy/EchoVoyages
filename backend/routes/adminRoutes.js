@@ -1,6 +1,7 @@
 import express from 'express'
 import { customers } from '../models/customerModel.js';
 import { packages } from '../models/packageModel.js';
+import { reviews } from '../models/customerReviewModel.js';
 const router = express.Router()
 // get all coustomers
 router.get('/customers',async (req,res) => {
@@ -123,6 +124,19 @@ router.delete('/packages/:id', async (req,res) => {
         res.status(500).send({message: error.message})
     }
     
+})
+// get all reviews
+router.get('/reviews',async (req,res) => {
+    try {
+        const revs = await reviews.find({});
+        return res.status(200).json({
+            count: revs.length,
+            data: revs
+        })
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({message: error.message})
+    }
 })
 
 export default router

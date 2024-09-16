@@ -4,6 +4,7 @@ const mongoURL = 'mongodb+srv://saiananyakatakam:NLnqR9ifdN8qbVft@cluster0.lbvmb
 import adminRoute from './routes/adminRoutes.js'
 import customerRoute from './routes/customerRoutes.js'
 import packageRoute from './routes/packageRoutes.js'
+import reviewRoute from './routes/reviewRoutes.js'
 import cors from 'cors'
 
 mongoose.connect(mongoURL)
@@ -25,6 +26,7 @@ app.get('/',(req,res)=>{
 app.use('/admin',adminRoute)
 app.use('/customers',customerRoute)
 app.use('/packages',packageRoute)
+app.use('/reviews',reviewRoute)
 const port = 5000
 app.listen(port, ()=>{
     console.log(`listening on port ${port}`)
