@@ -1,62 +1,44 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import UsersTable from '../components/UserTable'; // Import UsersTable
+import PackagesTable from '../components/PackagesTable'; // Import PackagesTable
 
 const Admin = () => {
-    const [users, setusers] = useState([]);
-    useEffect(() => {
-        axios
-          .get('http://localhost:5000/admin/customers')
-          .then((res) => {
-            setusers(res.data.data);
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      }, []);
-    
-  return (
-    <div>
-      <div className='head1'>users List:
-        <Link to='/users/create'>
-        </Link>
-      </div>
-      
-        <table>
-          <thead>
-            <tr>
-              <th>No</th>
-              <th>Name</th>
-              <th>UserName</th>
-              <th>Phone Number</th>
-              <th>Gmail</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user, index) => (
-              <tr key={user._id}>
-                <td>{index + 1}</td>
-                <td>{user.Name}</td>
-                <td>{user.username}</td>
-                <td>{user.phno}</td>
-                <td>{user.gmail}</td>
-                <td>
-                  <div>
-                    <Link to={`/admin/customers/${user._id}`}> Show
-                    </Link>
-                    <Link to={`/admin/customers/edit/${user._id}`}> Update
-                    </Link>
-                    <Link to={`/admin/customers/delete/${user._id}`}> Delete
-                    </Link>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-    </div>
-  )
-}
+    const [entity, setEntity] = useState('customers'); // Default entity
+    const [data, setData] = useState([]);
 
-export default Admin
+    useEffect(() => {
+        fetchData();
+    }, [entity]);
+
+    const fetchData = async () => {
+        try {
+            const response = await axios.get(`http://localhost:5000/admin/${entity}`);
+            setData(response.data.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handleEntityChange = (entity) => {
+        setEntity(entity);
+    };
+
+    return (
+        <div>
+            <h1>Admin Dashboard</h1>
+            <div className="entity-selector">
+                <button onClick={() => handleEntityChange('customers')}>Users</button>
+                <button onClick={() => handleEntityChange('packages')}>Packages</button>
+            </div>
+
+            {entity === 'customers' ? (
+                <UsersTable users={data} />
+            ) : (
+                <PackagesTable packages={data} />
+            )}
+        </div>
+    );
+};
+
+export default Admin;

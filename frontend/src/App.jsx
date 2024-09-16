@@ -2,19 +2,18 @@ import React from "react"
 import {Routes, Route} from 'react-router-dom'
 import Home from "./pages/Home"
 import Admin from "./pages/Admin"
-import DeleteUser from "./pages/DeleteUser"
-import ShowUser from "./pages/ShowUser"
-import UpdateUser from './pages/UpdateUser'
-
+import DeleteEntity from './pages/DeleteEntity';
+import ShowEntity from './pages/ShowEntity'
+import UpdateEntity from "./pages/UpdateEntity";
 
 const App = () =>{
   return(
     <Routes>
       <Route path="/" element={<Home />}/>
-      <Route path="/admin/customers" element={<Admin />}/>
-      <Route path="/admin/customers/delete/:id" element={<DeleteUser />}/>
-      <Route path="/admin/customers/:id" element={<ShowUser />}/>
-      <Route path="/admin/customers/edit/:id" element={<UpdateUser/>}/>
+      <Route path="/admin" element={<Admin />}/>
+      <Route path="/admin/:entity/delete/:id" element={<DeleteEntity />} />
+      <Route path="/admin/:entityType/:id" element={<ShowEntity/>}/>
+      <Route path="/admin/:entityType/edit/:id" element={<UpdateEntity/>}/>
     </Routes>
   )
 }
