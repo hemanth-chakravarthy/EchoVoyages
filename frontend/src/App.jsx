@@ -4,6 +4,7 @@ import Home from "./pages/Home"
 import Admin from "./pages/Admin"
 import DeleteUser from "./pages/DeleteUser"
 import ShowUser from "./pages/ShowUser"
+import UpdateUser from './pages/UpdateUser'
 
 
 const App = () =>{
@@ -13,6 +14,7 @@ const App = () =>{
       <Route path="/admin" element={<Admin />}/>
       <Route path="/admin/delete/:id" element={<DeleteUser />}/>
       <Route path="/admin/:id" element={<ShowUser />}/>
+      <Route path="/admin/edit/:id" element={<UpdateUser/>}/>
     </Routes>
   )
 }
