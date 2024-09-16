@@ -6,7 +6,7 @@ const Admin = () => {
     const [users, setusers] = useState([]);
     useEffect(() => {
         axios
-          .get('http://localhost:5000/admin')
+          .get('http://localhost:5000/admin/customers')
           .then((res) => {
             setusers(res.data.data);
           })
@@ -43,11 +43,11 @@ const Admin = () => {
                 <td>{user.gmail}</td>
                 <td>
                   <div>
-                    <Link to={`/admin/${user._id}`}> Show
+                    <Link to={`/admin/customers/${user._id}`}> Show
                     </Link>
-                    <Link to={`/admin/edit/${user._id}`}> Update
+                    <Link to={`/admin/customers/edit/${user._id}`}> Update
                     </Link>
-                    <Link to={`/admin/delete/${user._id}`}> Delete
+                    <Link to={`/admin/customers/delete/${user._id}`}> Delete
                     </Link>
                   </div>
                 </td>

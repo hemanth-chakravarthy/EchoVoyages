@@ -8,7 +8,7 @@ const DeleteUser = () => {
   const {id} = useParams();
   const handleDeleteUser = () => {
     axios
-      .delete(`http://localhost:5000/admin/${id}`)
+      .delete(`http://localhost:5000/admin/customers/${id}`)
       .then(()=>{
         navigate('/admin');
       })

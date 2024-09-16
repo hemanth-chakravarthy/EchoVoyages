@@ -30,7 +30,7 @@ const UpdateUser = () => {
     };
     setPassword(true);
     axios
-      .put(`http://localhost:5000/admin/${id}`, data)
+      .put(`http://localhost:5000/admin/customers/${id}`, data)
       .then(()=>{
         navigate('/admin');
       })

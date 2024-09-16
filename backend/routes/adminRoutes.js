@@ -1,8 +1,9 @@
 import express from 'express'
 import { customers } from '../models/customerModel.js';
+import { packages } from '../models/packageModel.js';
 const router = express.Router()
 // get all coustomers
-router.get('/',async (req,res) => {
+router.get('/customers',async (req,res) => {
     try {
         const custs = await customers.find({});
         return res.status(200).json({
@@ -16,7 +17,7 @@ router.get('/',async (req,res) => {
 })
 
 // delete a customer
-router.delete('/:id', async (req,res) => {
+router.delete('/customers/:id', async (req,res) => {
     try {
         const {id} = req.params;
         const result = await customers.findByIdAndDelete(id)
@@ -32,7 +33,8 @@ router.delete('/:id', async (req,res) => {
     }
     
 })
-router.put('/:id',async (req,res) => {
+// update customers
+router.put('/customers/:id',async (req,res) => {
     try {
         const {id} = req.params;
         const result = await customers.findByIdAndUpdate(id, req.body);
@@ -49,7 +51,7 @@ router.put('/:id',async (req,res) => {
     
 })
 // view a single customer
-router.get('/:id',async (req,res) => {
+router.get('/customers/:id',async (req,res) => {
     try {
         let {id} = req.params
         id = id.toString()
@@ -62,4 +64,64 @@ router.get('/:id',async (req,res) => {
     
 })
 
+// view all packages
+router.get('/packages',async (req,res) => {
+    try {
+        const packs = await packages.find({});
+        return res.status(200).json({
+            count: packs.length,
+            data: packs
+        })
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({message: error.message})
+    }
+})
+// view a single package
+router.get('/packages/:id',async (req,res) => {
+    try {
+        let {id} = req.params
+        id = id.toString()
+        const packs = await packages.findOne({ _id: id });
+        return res.status(200).json(packs)
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({message: error.message})
+    }
+    
+})
+// update package
+router.put('/packages/:id',async (req,res) => {
+    try {
+        const {id} = req.params;
+        const result = await packages.findByIdAndUpdate(id, req.body);
+
+        if(!result){
+            return res.status(404).json({message:" Package not found"})
+        }
+        return res.status(200).json({message:" package updated"})
+
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({message: error.message})
+    }
+    
+})
+// delete a package
+router.delete('/packages/:id', async (req,res) => {
+    try {
+        const {id} = req.params;
+        const result = await packages.findByIdAndDelete(id)
+        if(!result){
+            return res.status(404).json({message:" package not found"})
+        }
+        return res.status(200).json({message:" package deleted"})
+
+
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({message: error.message})
+    }
+    
+})
 export default router
