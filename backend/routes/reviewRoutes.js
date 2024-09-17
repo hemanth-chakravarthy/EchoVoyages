@@ -89,5 +89,16 @@ router.delete('/:id', async (req, res) => {
         res.status(500).send({ message: "Internal Server Error" });
     }
 });
+router.get('/', (req, res) => {
+    reviews.find()
+      .populate('userId', 'username')
+      .populate('packageId', 'name')
+      .exec((err, reviewData) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+        res.status(200).json(reviewData);
+      });
+  });
 
 export default router;

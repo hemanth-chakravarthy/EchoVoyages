@@ -138,5 +138,47 @@ router.get('/reviews',async (req,res) => {
         res.status(500).send({message: error.message})
     }
 })
+router.get('/reviews/:id', async (req, res) => {
+    try {
+        const review = await reviews.findById(req.params.id)
+        if (!review) {
+            return res.status(404).send({ message: "Review not found" });
+        }
+        return res.status(200).send(review);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ message: "Internal Server Error" });
+    }
+});
+router.put('/reviews/:id', async (req, res) => {
+    try {
+        const { rating, comment, status } = req.body;
 
+        // Update review fields
+        const review = await reviews.findByIdAndUpdate(
+            req.params.id,
+            { rating, comment, status },
+            { new: true }
+        );
+        if (!review) {
+            return res.status(404).send({ message: "Review not found" });
+        }
+        return res.status(200).send(review);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ message: "Internal Server Error" });
+    }
+});
+router.delete('/reviews/:id', async (req, res) => {
+    try {
+        const review = await reviews.findByIdAndDelete(req.params.id);
+        if (!review) {
+            return res.status(404).send({ message: "Review not found" });
+        }
+        return res.status(200).send({ message: "Review deleted successfully" });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ message: "Internal Server Error" });
+    }
+});
 export default router

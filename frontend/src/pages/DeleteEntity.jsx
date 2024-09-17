@@ -12,7 +12,7 @@ const DeleteEntity = () => {
         axios
             .delete(`http://localhost:5000/admin/${entityType}/${id}`)
             .then(() => {
-                navigate(`/admin/${entityType}`);
+                navigate(`/admin`);
             })
             .catch((error) => {
                 alert('An error occurred while deleting the entity');

@@ -42,7 +42,7 @@ const UpdateEntity = () => {
 
   return (
     <div>
-      <h1>Edit {entityType === 'customers' ? 'User' : 'Package'}</h1>
+      <h1>Edit {entityType === 'customers' ? 'Customers' : entityType === 'packages' ? 'Packages' : 'Reviews'}</h1>
       <div>
         {/* Conditionally render form fields based on entityType */}
         {entityType === 'customers' ? (
@@ -76,7 +76,7 @@ const UpdateEntity = () => {
               onChange={handleChange}
             />
           </>
-        ) : (
+        ) : entityType === 'packages' ? (
           <>
             <label>Package Name</label>
             <input
@@ -98,6 +98,34 @@ const UpdateEntity = () => {
               value={entity.price || ''}
               onChange={handleChange}
             />
+          </>
+        ) : (
+          <>
+            <label>Rating</label>
+            <input
+              type="number"
+              name="rating"
+              value={entity.rating || ''}
+              onChange={handleChange}
+              min={1}
+              max={5}
+            />
+            <label>Comment</label>
+            <textarea
+              name="comment"
+              value={entity.comment || ''}
+              onChange={handleChange}
+            />
+            <label>Status</label>
+            <select
+              name="status"
+              value={entity.status || 'pending'}
+              onChange={handleChange}
+            >
+              <option value="pending">Pending</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+            </select>
           </>
         )}
         <button onClick={handleEditEntity}>
