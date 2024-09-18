@@ -88,6 +88,15 @@ const ShowEntity = () => {
                             <span>{entity._id}</span>
                         </div>
                         <div>
+                            <span>Customer Name: </span>
+                            <span>{entity.customerName}</span>
+                        </div>
+                        <div>
+                            <span>Package Name: </span>
+                            <span>{entity.packageName}</span>
+                        </div>
+
+                        <div>
                             <span>Date: </span>
                             <span>{entity.bookingDate}</span>
                         </div>

@@ -22,8 +22,8 @@ const ReviewsTable = ({ reviews }) => {
                     {reviews.map((review, index) => (
                         <tr key={review._id}>
                             <td>{index + 1}</td>
-                            <td>{review.userId}</td>
-                            <td>{review.packageId}</td>
+                            <td>{review.customerName}</td>
+                            <td>{review.packageName}</td>
                             <td>{review.rating}</td>
                             <td>{review.comment}</td>
                             <td>{new Date(review.date).toLocaleDateString()}</td>

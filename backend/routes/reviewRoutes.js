@@ -1,5 +1,7 @@
 import express from 'express';
 import { reviews } from '../models/customerReviewModel.js';
+import { packages } from '../models/packageModel.js';
+import { customers } from '../models/customerModel.js';
 const router = express.Router();
 
 // Save a review
@@ -13,11 +15,21 @@ router.post('/', async (req, res) => {
                 message: "Send all required fields"
             });
         }
+        const packageData = await packages.findById(packageId);
+        if (!packageData) {
+            return res.status(404).send({ message: 'Package not found' });
+        }
+        const customerData = await customers.findById(userId)
+        if(!customerData){
+            return res.status(404).send({ message: 'Customer not found' });
+        }
+        const packageName = packageData.name;
+        const customerName = customerData.username;
 
         // Create new review
         const newReview = {
-            userId,
-            packageId,
+            customerName,
+            packageName,
             rating,
             comment
         };

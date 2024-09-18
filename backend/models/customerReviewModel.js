@@ -1,19 +1,12 @@
 import mongoose from 'mongoose';
 
 const reviewSchema = new mongoose.Schema({
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'customers',
+    customerName: {
+        type: String,  // Store the name of the customer
         required: true
     },
-    // userName:{
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'User',
-    //     required: true
-    // },
-    packageId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'packages',
+    packageName: {
+        type: String,  // Store the name of the package
         required: true
     },
     rating: {
