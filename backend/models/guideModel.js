@@ -46,8 +46,14 @@ const guideSchema = new mongoose.Schema({
         default: true  // Whether the guide is available or not
     },
     assignedPackages: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Package'  // References the 'Package' model
+        packageId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'packages'  // References the 'Package' model
+        },
+        price: {
+            type: Number,  // Price for the specific package
+            required: true
+        }
     }]
 }, {
     timestamps: true

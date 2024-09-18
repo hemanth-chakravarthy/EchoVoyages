@@ -3,6 +3,7 @@ import axios from 'axios';
 import UsersTable from '../components/UserTable'; // Import UsersTable
 import PackagesTable from '../components/PackagesTable'; // Import PackagesTable
 import ReviewsTable from '../components/ReviewsTable'
+import GuidesTable from '../components/GuideTable';
 
 const Admin = () => {
     const [entity, setEntity] = useState('customers'); // Default entity
@@ -32,15 +33,18 @@ const Admin = () => {
                 <button onClick={() => handleEntityChange('customers')}>Users</button>
                 <button onClick={() => handleEntityChange('packages')}>Packages</button>
                 <button onClick={() => handleEntityChange('reviews')}>Reviews</button>
-                <button onClick={() => handleEntityChange('bookings')}>Bookings</button>
+                <button onClick={() => handleEntityChange('guides')}>Guides</button>
             </div>
-
             {entity === 'customers' ? (
                 <UsersTable users={data} />
             ) : entity === 'packages' ? (
                 <PackagesTable packages={data} />
-            ) : (
+            ) : entity === 'reviews' ? (
                 <ReviewsTable reviews={data} />
+            ) : entity === 'guides' ? (
+                <GuidesTable guides={data} />
+            ) : (
+                <div>No Data Available</div>
             )}
         </div>
     );

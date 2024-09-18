@@ -32,4 +32,17 @@ router.post('/', async (req, res) => {
     }
 });
 
+router.get('/',async (req,res) => {
+    try {
+        const guides = await Guide.find({});
+        return res.status(200).json({
+            count: guides.length,
+            data: guides
+        })
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({message: error.message})
+    }
+})
+
 export default router;

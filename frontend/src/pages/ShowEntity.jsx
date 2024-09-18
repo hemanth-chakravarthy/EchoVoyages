@@ -61,6 +61,26 @@ const ShowEntity = () => {
                         </div>
                     </>
                 )}
+                {entityType === 'guides' && (
+                    <>
+                        <div>
+                            <span>ID: </span>
+                            <span>{entity._id}</span>
+                        </div>
+                        <div>
+                            <span>Name: </span>
+                            <span>{entity.name}</span>
+                        </div>
+                        <div>
+                            <span>Availability: </span>
+                            <span>{entity.availability}</span>
+                        </div>
+                        <div>
+                            <span>Location: </span>
+                            <span>{entity.location}</span>
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     );
