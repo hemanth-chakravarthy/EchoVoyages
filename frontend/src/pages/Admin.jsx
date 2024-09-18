@@ -4,6 +4,7 @@ import UsersTable from '../components/UserTable'; // Import UsersTable
 import PackagesTable from '../components/PackagesTable'; // Import PackagesTable
 import ReviewsTable from '../components/ReviewsTable'
 import GuidesTable from '../components/GuideTable';
+import BookingsTable from '../components/BookingsTable';
 
 const Admin = () => {
     const [entity, setEntity] = useState('customers'); // Default entity
@@ -34,6 +35,7 @@ const Admin = () => {
                 <button onClick={() => handleEntityChange('packages')}>Packages</button>
                 <button onClick={() => handleEntityChange('reviews')}>Reviews</button>
                 <button onClick={() => handleEntityChange('guides')}>Guides</button>
+                <button onClick={() => handleEntityChange('bookings')}>Bookings</button>
             </div>
             {entity === 'customers' ? (
                 <UsersTable users={data} />
@@ -43,6 +45,8 @@ const Admin = () => {
                 <ReviewsTable reviews={data} />
             ) : entity === 'guides' ? (
                 <GuidesTable guides={data} />
+            ) : entity === 'bookings' ? (
+                <BookingsTable bookings={data}/>
             ) : (
                 <div>No Data Available</div>
             )}

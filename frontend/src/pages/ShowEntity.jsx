@@ -81,6 +81,22 @@ const ShowEntity = () => {
                         </div>
                     </>
                 )}
+                {entityType === 'bookings' && (
+                    <>
+                        <div>
+                            <span>ID: </span>
+                            <span>{entity._id}</span>
+                        </div>
+                        <div>
+                            <span>Date: </span>
+                            <span>{entity.bookingDate}</span>
+                        </div>
+                        <div>
+                            <span>Price: </span>
+                            <span>{entity.totalPrice}</span>
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     );

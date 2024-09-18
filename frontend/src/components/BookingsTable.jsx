@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const bookingsTable = ({ bookings }) => {
+const BookingsTable = ({ bookings }) => {
     return (
         <div>
             <div className='head1'>bookings List:</div>
@@ -37,4 +37,4 @@ const bookingsTable = ({ bookings }) => {
     );
 };
 
-export default bookingsTable;
+export default BookingsTable;

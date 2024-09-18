@@ -42,7 +42,7 @@ const UpdateEntity = () => {
 
   return (
     <div>
-      <h1>Edit {entityType === 'customers' ? 'Customers' : entityType === 'packages' ? 'Packages' : entityType === 'guides' ? 'Guides' : 'Reviews'}</h1>
+      <h1>Edit {entityType === 'customers' ? 'Customers' : entityType === 'packages' ? 'Packages' : entityType === 'guides' ? 'Guides' : entityType === 'bookings' ? 'Bookings' : 'Reviews'}</h1>
       <div>
         {/* Conditionally render form fields based on entityType */}
         {entityType === 'customers' ? (
@@ -127,6 +127,16 @@ const UpdateEntity = () => {
               type="text"
               name="languages"
               value={entity.languages || ''}
+              onChange={handleChange}
+            />
+          </>
+        ) : entityType === 'bookings' ? (
+          <>
+            <label>Total Price</label>
+            <input
+              type="number"
+              name="totalPrice"
+              value={entity.totalPrice || ''}
               onChange={handleChange}
             />
           </>
