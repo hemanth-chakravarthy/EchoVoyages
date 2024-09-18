@@ -5,6 +5,8 @@ import adminRoute from './routes/adminRoutes.js'
 import customerRoute from './routes/customerRoutes.js'
 import packageRoute from './routes/packageRoutes.js'
 import reviewRoute from './routes/reviewRoutes.js'
+import bookingRoute from './routes/bookingRoute.js'
+import guideRoute from './routes/guideRoutes.js'
 import cors from 'cors'
 
 mongoose.connect(mongoURL)
@@ -27,6 +29,9 @@ app.use('/admin',adminRoute)
 app.use('/customers',customerRoute)
 app.use('/packages',packageRoute)
 app.use('/reviews',reviewRoute)
+app.use('/bookings',bookingRoute)
+app.use('/guides',guideRoute)
+
 const port = 5000
 app.listen(port, ()=>{
     console.log(`listening on port ${port}`)

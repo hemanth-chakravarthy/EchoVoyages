@@ -32,6 +32,7 @@ const Admin = () => {
                 <button onClick={() => handleEntityChange('customers')}>Users</button>
                 <button onClick={() => handleEntityChange('packages')}>Packages</button>
                 <button onClick={() => handleEntityChange('reviews')}>Reviews</button>
+                <button onClick={() => handleEntityChange('bookings')}>Bookings</button>
             </div>
 
             {entity === 'customers' ? (

@@ -2,6 +2,7 @@ import express from 'express'
 import { customers } from '../models/customerModel.js';
 import { packages } from '../models/packageModel.js';
 import { reviews } from '../models/customerReviewModel.js';
+import { Guide} from '../models/guideModel.js'
 const router = express.Router()
 // get all coustomers
 router.get('/customers',async (req,res) => {
@@ -176,6 +177,74 @@ router.delete('/reviews/:id', async (req, res) => {
             return res.status(404).send({ message: "Review not found" });
         }
         return res.status(200).send({ message: "Review deleted successfully" });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ message: "Internal Server Error" });
+    }
+});
+// get all guides
+router.get('/guides',async (req,res) => {
+    try {
+        const guides = await Guide.find({});
+        return res.status(200).json({
+            count: guides.length,
+            data: guides
+        })
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({message: error.message})
+    }
+})
+router.put('/guides/:id', async (req, res) => {
+    try {
+        const { name, experience, languages, location, contact, availability, specializations, pricing, bio } = req.body;
+
+        // Update guide fields
+        const guide = await Guide.findByIdAndUpdate(
+            req.params.id,
+            {
+                name,
+                experience,
+                languages,
+                location,
+                contact,
+                availability,
+                specializations,
+                pricing,
+                bio
+            },
+            { new: true }
+        );
+        if (!guide) {
+            return res.status(404).send({ message: "Guide not found" });
+        }
+        return res.status(200).send(guide);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ message: "Internal Server Error" });
+    }
+});
+
+router.get('/guides/:id', async (req, res) => {
+    try {
+        const guide = await Guide.findById(req.params.id)
+        if (!guide) {
+            return res.status(404).send({ message: "Guide not found" });
+        }
+        return res.status(200).send(guide);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ message: "Internal Server Error" });
+    }
+});
+
+router.delete('/guides/:id', async (req, res) => {
+    try {
+        const guide = await Guide.findByIdAndDelete(req.params.id);
+        if (!guide) {
+            return res.status(404).send({ message: "Guide not found" });
+        }
+        return res.status(200).send({ message: "Guide deleted successfully" });
     } catch (error) {
         console.log(error);
         res.status(500).send({ message: "Internal Server Error" });
