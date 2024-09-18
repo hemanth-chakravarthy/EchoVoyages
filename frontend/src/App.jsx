@@ -3,8 +3,8 @@ import {Routes, Route} from 'react-router-dom'
 import Home from "./pages/Home"
 import Admin from "./pages/Admin"
 import DeleteEntity from './pages/DeleteEntity';
-import ShowEntity from './pages/ShowEntity'
-import UpdateEntity from "./pages/UpdateEntity";
+import ShowEntity from './components/ShowEntity'
+import UpdateEntity from "./components/UpdateEntity";
 
 const App = () =>{
   return(

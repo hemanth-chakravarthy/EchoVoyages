@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
+import BackButton from './BackButton.jsx'
 
 const UpdateEntity = () => {
   const [entity, setEntity] = useState({});
@@ -42,6 +43,7 @@ const UpdateEntity = () => {
 
   return (
     <div>
+      <BackButton/>
       <h1>Edit {entityType === 'customers' ? 'Customers' : entityType === 'packages' ? 'Packages' : entityType === 'guides' ? 'Guides' : entityType === 'bookings' ? 'Bookings' : 'Reviews'}</h1>
       <div>
         {/* Conditionally render form fields based on entityType */}

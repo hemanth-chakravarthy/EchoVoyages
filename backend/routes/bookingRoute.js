@@ -47,6 +47,67 @@ router.post('/', async (req, res) => {
         res.status(500).send({ message: 'Error creating booking' });
     }
 });
+// get all bookings
+router.get('/',async (req,res) => {
+    try {
+        const book = await bookings.find({});
+        return res.status(200).json({
+            count: book.length,
+            data: book
+        })
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({message: error.message})
+    }
+})
+
+// delete a booking
+router.delete('/:id', async (req,res) => {
+    try {
+        const {id} = req.params;
+        const result = await bookings.findByIdAndDelete(id)
+        if(!result){
+            return res.status(404).json({message:" Bokking not found"})
+        }
+        return res.status(200).json({message:" Booking deleted"})
+
+
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({message: error.message})
+    }
+    
+})
+// update booking
+router.put('/:id',async (req,res) => {
+    try {
+        const {id} = req.params;
+        const result = await bookings.findByIdAndUpdate(id, req.body);
+
+        if(!result){
+            return res.status(404).json({message:" Booking not found"})
+        }
+        return res.status(200).json({message:" Booking updated"})
+
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({message: error.message})
+    }
+    
+})
+// view a single booking
+router.get('/:id',async (req,res) => {
+    try {
+        let {id} = req.params
+        id = id.toString()
+        const book = await bookings.findOne({ _id: id });
+        return res.status(200).json(book)
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({message: error.message})
+    }
+    
+})
 
 export default router
 

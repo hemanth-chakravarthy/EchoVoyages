@@ -51,5 +51,65 @@ router.post('/', async (req, res) => {
         });
     }
 });
+// view all packages
+router.get('/',async (req,res) => {
+    try {
+        const packs = await packages.find({});
+        return res.status(200).json({
+            count: packs.length,
+            data: packs
+        })
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({message: error.message})
+    }
+})
+// view a single package
+router.get('/:id',async (req,res) => {
+    try {
+        let {id} = req.params
+        id = id.toString()
+        const packs = await packages.findOne({ _id: id });
+        return res.status(200).json(packs)
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({message: error.message})
+    }
+    
+})
+// update package
+router.put('/:id',async (req,res) => {
+    try {
+        const {id} = req.params;
+        const result = await packages.findByIdAndUpdate(id, req.body);
+
+        if(!result){
+            return res.status(404).json({message:" Package not found"})
+        }
+        return res.status(200).json({message:" package updated"})
+
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({message: error.message})
+    }
+    
+})
+// delete a package
+router.delete('/:id', async (req,res) => {
+    try {
+        const {id} = req.params;
+        const result = await packages.findByIdAndDelete(id)
+        if(!result){
+            return res.status(404).json({message:" package not found"})
+        }
+        return res.status(200).json({message:" package deleted"})
+
+
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({message: error.message})
+    }
+    
+})
 
 export default router;

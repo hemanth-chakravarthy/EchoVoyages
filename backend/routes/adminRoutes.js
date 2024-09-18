@@ -265,7 +265,7 @@ router.get('/bookings',async (req,res) => {
     }
 })
 
-// delete a customer
+// delete a booking
 router.delete('/bookings/:id', async (req,res) => {
     try {
         const {id} = req.params;
@@ -282,7 +282,7 @@ router.delete('/bookings/:id', async (req,res) => {
     }
     
 })
-// update customers
+// update booking
 router.put('/bookings/:id',async (req,res) => {
     try {
         const {id} = req.params;
@@ -299,7 +299,7 @@ router.put('/bookings/:id',async (req,res) => {
     }
     
 })
-// view a single customer
+// view a singlebooking
 router.get('/bookings/:id',async (req,res) => {
     try {
         let {id} = req.params

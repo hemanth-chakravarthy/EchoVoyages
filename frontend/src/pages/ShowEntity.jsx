@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import BackButton from './BackButton'
 
 const ShowEntity = () => {
     const [entity, setEntity] = useState({});
@@ -19,6 +20,7 @@ const ShowEntity = () => {
 
     return (
         <div>
+            <BackButton/>
             <h1>Show</h1>
             <div>
                 {entityType === 'customers' && (
