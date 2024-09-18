@@ -3,6 +3,7 @@ import { customers } from '../models/customerModel.js';
 import { packages } from '../models/packageModel.js';
 import { reviews } from '../models/customerReviewModel.js';
 import { Guide} from '../models/guideModel.js'
+import { bookings } from '../models/bookingModel.js';
 const router = express.Router()
 // get all coustomers
 router.get('/customers',async (req,res) => {
@@ -250,4 +251,66 @@ router.delete('/guides/:id', async (req, res) => {
         res.status(500).send({ message: "Internal Server Error" });
     }
 });
+// get all bookings
+router.get('/bookings',async (req,res) => {
+    try {
+        const book = await bookings.find({});
+        return res.status(200).json({
+            count: book.length,
+            data: book
+        })
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({message: error.message})
+    }
+})
+
+// delete a customer
+router.delete('/bookings/:id', async (req,res) => {
+    try {
+        const {id} = req.params;
+        const result = await bookings.findByIdAndDelete(id)
+        if(!result){
+            return res.status(404).json({message:" Bokking not found"})
+        }
+        return res.status(200).json({message:" Booking deleted"})
+
+
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({message: error.message})
+    }
+    
+})
+// update customers
+router.put('/bookings/:id',async (req,res) => {
+    try {
+        const {id} = req.params;
+        const result = await bookings.findByIdAndUpdate(id, req.body);
+
+        if(!result){
+            return res.status(404).json({message:" Booking not found"})
+        }
+        return res.status(200).json({message:" Booking updated"})
+
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({message: error.message})
+    }
+    
+})
+// view a single customer
+router.get('/bookings/:id',async (req,res) => {
+    try {
+        let {id} = req.params
+        id = id.toString()
+        const book = await bookings.findOne({ _id: id });
+        return res.status(200).json(book)
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({message: error.message})
+    }
+    
+})
+
 export default router
