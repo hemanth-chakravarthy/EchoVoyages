@@ -1,5 +1,6 @@
 import express from 'express';
 import { packages } from '../models/packageModel.js'; // Importing the Package model
+import multer from 'multer';
 const router = express.Router();
 
 // Save a new package
@@ -33,6 +34,7 @@ router.post('/', async (req, res) => {
             highlights: req.body.highlights,
             availableDates: req.body.availableDates,
             maxGroupSize: req.body.maxGroupSize,
+            guideID: req.body.guide,
             reviews: req.body.reviews || [],
             images: req.body.images || [],
             totalBookings: req.body.totalBookings || 0,
@@ -111,5 +113,17 @@ router.delete('/:id', async (req,res) => {
     }
     
 })
-
+// upload an image
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, path.join("public/packageImage", "uploads"));
+    },
+    filename: function (req, file, cb) {
+      cb(null, Date.now() + "-" + file.originalname);
+    },
+  });
+const upload = multer({ storage: storage });
+router.post('/api/uploadpackageImage',upload.single('file'),async(req,res)=>{ 
+    res.json(req.file)
+})
 export default router;

@@ -8,6 +8,8 @@ import reviewRoute from './routes/reviewRoutes.js'
 import bookingRoute from './routes/bookingRoute.js'
 import guideRoute from './routes/guideRoutes.js'
 import cors from 'cors'
+import multer from 'multer';
+import path from 'path';
 
 mongoose.connect(mongoURL)
 .then(()=>{
@@ -31,6 +33,19 @@ app.use('/packages',packageRoute)
 app.use('/reviews',reviewRoute)
 app.use('/bookings',bookingRoute)
 app.use('/guides',guideRoute)
+
+
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, path.join("public", "uploads"))
+    },
+    filename: function (req, file, cb) {
+      cb(null, Date.now() + "-" + file.originalname)
+    }
+  })
+  const upload = multer({ storage: storage })
+  
 
 const port = 5000
 app.listen(port, ()=>{

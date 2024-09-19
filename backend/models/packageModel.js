@@ -26,7 +26,7 @@ const packageSchema = mongoose.Schema(
         },
         itinerary: [
             {
-            day: Number,
+            
             details: String
             }
         ],
@@ -44,15 +44,11 @@ const packageSchema = mongoose.Schema(
             required: true,
             min: 1
         },
-        // guide: {
-        //     type: mongoose.Schema.Types.ObjectId,  // Reference to the guide associated with the package
-        //     ref: 'Guides'
-        // },
-        // agent: {
-        //     type: mongoose.Schema.Types.ObjectId,  // Reference to the agent creating or managing the package
-        //     ref: 'Agents',
-        //     required: true
-        // },
+        guide: {
+            type: mongoose.Schema.Types.ObjectId,  // Reference to the guide associated with the package
+            ref: 'guides',
+            required: false
+        },
         reviews: [
             {
             customer: { type: mongoose.Schema.Types.ObjectId, ref: 'customers' },
@@ -61,16 +57,14 @@ const packageSchema = mongoose.Schema(
             date: { type: Date, default: Date.now }
             }
         ],
+        image: {
+            type: Array,
+            required: true
+        },
         totalBookings: {
             type: Number,
             default: 0
         },
-        images: [
-            {
-            url: String,
-            description: String
-            }
-        ],
         isActive: {
             type: Boolean,
             default: true
