@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
-import BackButton from './BackButton.jsx'
+import BackButton from '../components/BackButton'
 
 const UpdateEntity = () => {
   const [entity, setEntity] = useState({});
