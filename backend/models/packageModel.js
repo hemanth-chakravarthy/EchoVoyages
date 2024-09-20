@@ -24,19 +24,16 @@ const packageSchema = mongoose.Schema(
             type: String,
             required: true
         },
-        itinerary: [
-            {
-            
-            details: String
-            }
-        ],
+        itinerary: {
+            type: String
+        },
         highlights: {
-            type: [String],  // Array of highlights or key features of the package
+            type: String,  // Array of highlights or key features of the package
             required: true
         },
         availableDates: [
             {
-            type: Date
+                type: Date
             }
         ],
         maxGroupSize: {

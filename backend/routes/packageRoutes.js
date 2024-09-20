@@ -1,42 +1,53 @@
 import express from 'express';
 import { packages } from '../models/packageModel.js'; // Importing the Package model
 import multer from 'multer';
+import path from 'path';
 const router = express.Router();
 
 // Save a new package
-router.post('/', async (req, res) => {
+// Multer setup for handling file uploads
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, path.join('public', 'packageImage'));
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + '-' + file.originalname);
+    }
+});
+
+const upload = multer({ storage: storage });
+
+// Save a new package with image upload handling
+router.post('/', upload.array('images'), async (req, res) => {
     try {
         // Check if all required fields are provided
-        if (
-            !req.body.name ||
-            !req.body.description ||
-            !req.body.price ||
-            !req.body.duration ||
-            !req.body.location ||
-            !req.body.itinerary ||
-            !req.body.highlights ||
-            !req.body.availableDates ||
-            !req.body.maxGroupSize
-        ) {
+        const {
+            name, description, price, duration, location, itinerary, highlights, availableDates, maxGroupSize, guide
+        } = req.body;
+
+        if (!name || !description || !price || !duration || !location || !itinerary || !highlights || !availableDates || !maxGroupSize) {
             return res.status(400).send({
                 message: "Please provide all required fields"
             });
         }
 
+        // Map over the uploaded files to extract file paths
+        const imagePaths = req.files ? req.files.map(file => `/public/packageImage/${file.filename}`) : [];
+
         // Create a new package object with the data from the request
         const newPackage = {
-            name: req.body.name,
-            description: req.body.description,
-            price: req.body.price,
-            duration: req.body.duration,
-            location: req.body.location,
-            itinerary: req.body.itinerary,
-            highlights: req.body.highlights,
-            availableDates: req.body.availableDates,
-            maxGroupSize: req.body.maxGroupSize,
-            guideID: req.body.guide,
+            name,
+            description,
+            price,
+            duration,
+            location,
+            itinerary,
+            highlights,
+            availableDates: availableDates.split(','),  // Assuming dates are passed as a comma-separated string
+            maxGroupSize,
+            guideID: guide,
             reviews: req.body.reviews || [],
-            images: req.body.images || [],
+            image: imagePaths,  // Save the image paths to the database
             totalBookings: req.body.totalBookings || 0,
             isActive: req.body.isActive !== undefined ? req.body.isActive : true
         };
@@ -47,7 +58,7 @@ router.post('/', async (req, res) => {
         // Send the response with the saved package
         return res.status(201).send(savedPackage);
     } catch (error) {
-        console.log(error);
+        console.error(error);
         return res.status(500).send({
             message: "Internal Server Error"
         });
@@ -113,17 +124,5 @@ router.delete('/:id', async (req,res) => {
     }
     
 })
-// upload an image
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, path.join("public/packageImage", "uploads"));
-    },
-    filename: function (req, file, cb) {
-      cb(null, Date.now() + "-" + file.originalname);
-    },
-  });
-const upload = multer({ storage: storage });
-router.post('/api/uploadpackageImage',upload.single('file'),async(req,res)=>{ 
-    res.json(req.file)
-})
+
 export default router;

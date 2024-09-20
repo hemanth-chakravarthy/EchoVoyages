@@ -1,8 +1,11 @@
 import React from 'react'
+import CreatePackage from '../components/createPackage'
 
 const Home = () => {
   return (
-    <div>Home</div>
+    <div>
+      <CreatePackage/>
+    </div>
   )
 }
 
