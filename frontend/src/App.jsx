@@ -9,7 +9,7 @@ import UpdateEntity from "./pages/UpdateEntity";
 const App = () =>{
   return(
     <Routes>
-      <Route path="/" element={<Home />}/>
+      <Route path="/home" element={<Home />}/>
       <Route path="/admin" element={<Admin />}/>
       <Route path="/admin/:entity/delete/:id" element={<DeleteEntity />} />
       <Route path="/admin/:entityType/:id" element={<ShowEntity/>}/>
