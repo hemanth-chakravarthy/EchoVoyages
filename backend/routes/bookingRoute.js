@@ -28,7 +28,11 @@ router.post('/', async (req, res) => {
         const totalPrice = packageData.price;
         const packageName = packageData.name;
         const customerName = customerData.username;
+        const customerID = customerData.customerId;
         const guideName = guideData.name
+        const guideID = guideData.guideId;
+        const packageID = packageData.packageId;
+
 
         // Create the booking
         const newBooking = new bookings({
