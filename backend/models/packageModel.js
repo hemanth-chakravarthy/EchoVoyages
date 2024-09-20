@@ -46,6 +46,15 @@ const packageSchema = mongoose.Schema(
             ref: 'guides',
             required: false
         },
+        AgentID:{
+            type: mongoose.Schema.Types.ObjectId,  // Reference to the guide associated with the package
+            ref: 'agency',
+            required: true
+        },
+        AgentName:{
+            type: String,
+            required: true
+        },
         reviews: [
             {
             customer: { type: mongoose.Schema.Types.ObjectId, ref: 'customers' },
