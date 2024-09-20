@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
-import BackButton from '../components/BackButton'
+import BackButton from '../components/BackButton';
 
 const UpdateEntity = () => {
   const [entity, setEntity] = useState({});
@@ -43,8 +43,8 @@ const UpdateEntity = () => {
 
   return (
     <div>
-      <BackButton/>
-      <h1>Edit {entityType === 'customers' ? 'Customers' : entityType === 'packages' ? 'Packages' : entityType === 'guides' ? 'Guides' : entityType === 'bookings' ? 'Bookings' : 'Reviews'}</h1>
+      <BackButton />
+      <h1>Edit {entityType === 'customers' ? 'Customers' : entityType === 'packages' ? 'Packages' : entityType === 'guides' ? 'Guides' : entityType === 'bookings' ? 'Bookings' : entityType === 'agency' ? 'Agency' : 'Reviews'}</h1>
       <div>
         {/* Conditionally render form fields based on entityType */}
         {entityType === 'customers' ? (
@@ -141,6 +141,35 @@ const UpdateEntity = () => {
               value={entity.totalPrice || ''}
               onChange={handleChange}
             />
+          </>
+        ) : entityType === 'agency' ? (
+          <>
+            <label>Email</label>
+            <input
+              type="text"
+              name="contactInfo.email"
+              value={entity.contactInfo?.email || ''}
+              onChange={handleChange}
+            />
+            <label>Phone</label>
+            <input
+              type="text"
+              name="contactInfo.phone"
+              value={entity.contactInfo?.phone || ''}
+              onChange={handleChange}
+            />
+            <label>Specialization</label>
+            <select
+              name="specialization"
+              value={entity.specialization || ''}
+              onChange={handleChange}
+            >
+              <option value="luxury">Luxury</option>
+              <option value="adventure">Adventure</option>
+              <option value="business">Business</option>
+              <option value="family">Family</option>
+              <option value="other">Other</option>
+            </select>
           </>
         ) : (
           <>

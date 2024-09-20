@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import BackButton from '../components/BackButton'
+import BackButton from '../components/BackButton';
+
 const ShowEntity = () => {
     const [entity, setEntity] = useState({});
     const { id, entityType } = useParams();
@@ -19,7 +20,7 @@ const ShowEntity = () => {
 
     return (
         <div>
-            <BackButton/>
+            <BackButton />
             <h1>Show</h1>
             <div>
                 {entityType === 'customers' && (
@@ -96,7 +97,6 @@ const ShowEntity = () => {
                             <span>Package Name: </span>
                             <span>{entity.packageName}</span>
                         </div>
-
                         <div>
                             <span>Date: </span>
                             <span>{entity.bookingDate}</span>
@@ -104,6 +104,34 @@ const ShowEntity = () => {
                         <div>
                             <span>Price: </span>
                             <span>{entity.totalPrice}</span>
+                        </div>
+                    </>
+                )}
+                {entityType === 'agency' && (
+                    <>
+                        <div>
+                            <span>ID: </span>
+                            <span>{entity._id}</span>
+                        </div>
+                        <div>
+                            <span>Name: </span>
+                            <span>{entity.name}</span>
+                        </div>
+                        <div>
+                            <span>Email: </span>
+                            <span>{entity.contactInfo?.email}</span>
+                        </div>
+                        <div>
+                            <span>Phone: </span>
+                            <span>{entity.contactInfo?.phone}</span>
+                        </div>
+                        <div>
+                            <span>Bio: </span>
+                            <span>{entity.bio}</span>
+                        </div>
+                        <div>
+                            <span>Specialization: </span>
+                            <span>{entity.specialization}</span>
                         </div>
                     </>
                 )}
