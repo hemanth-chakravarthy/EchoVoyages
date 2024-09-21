@@ -35,6 +35,8 @@ app.use('/reviews',reviewRoute)
 app.use('/bookings',bookingRoute)
 app.use('/guides',guideRoute)
 app.use('/agency',agencyRoutes)
+app.use('/public', express.static('public'));
+
 
 
 
