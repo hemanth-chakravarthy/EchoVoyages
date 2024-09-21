@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 const ViewPost = () => {
     const { id } = useParams(); // Get the package ID from the URL
     const [packageDetails, setPackageDetails] = useState(null);
-    
+    const customerId = localStorage.getItem('token.id')
 
     useEffect(() => {
         const fetchPackageDetails = async () => {
@@ -20,16 +20,22 @@ const ViewPost = () => {
         fetchPackageDetails();
     }, [id]);
     const handleBooking = async () => {
+        if (!customerId) {
+            alert("Please log in to book the package.");
+            return;
+        }
+
         try {
-            const response = await fetch('http://localhost:5000/bookings', {
+            const response = await fetch('http://localhost:5000/packages/book', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`  // Include token for authentication
                 },
                 body: JSON.stringify({
-                    customerId: "",   // Logged-in user's customerId
-                    packageId: id,        // Current package ID from URL params
-                    guideId: ''      // Optional guideId (replace or remove as necessary)
+                    customerId,    // Logged-in user's customerId
+                    packageId: id, // Current package ID from URL params
+                    guideId: guideId // Optional guideId (replace or remove as necessary)
                 }),
             });
 
@@ -38,8 +44,9 @@ const ViewPost = () => {
                 alert('Booking successful!');
                 console.log('Booking details:', result);
             } else {
-                console.error('Failed to book the package.');
-                alert('Failed to book the package.');
+                const errorData = await response.json();
+                console.error('Failed to book the package:', errorData.message);
+                alert(`Failed to book the package: ${errorData.message}`);
             }
         } catch (error) {
             console.error('Error booking package:', error);
