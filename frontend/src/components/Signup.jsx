@@ -8,7 +8,7 @@ const Signup = () => {
         gmail: '',
         password: '',
         
-        
+
     });
 
     // Handle input changes
@@ -43,6 +43,7 @@ const Signup = () => {
                 });
                 console.log("Signup successful!");
             } else {
+                console.log(response.formData.error);
                 console.log("Signup failed.");
             }
         } catch (err) {

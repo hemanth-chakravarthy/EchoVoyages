@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 
 const ViewPost = () => {
     const { id } = useParams(); // Get the package ID from the URL
     const [packageDetails, setPackageDetails] = useState(null);
-    const customerId = localStorage.getItem('token.id')
+    const customerId = jwtDecode(localStorage.getItem('token')).id;
 
     useEffect(() => {
         const fetchPackageDetails = async () => {
@@ -20,12 +21,14 @@ const ViewPost = () => {
         fetchPackageDetails();
     }, [id]);
     const handleBooking = async () => {
+        console.log(customerId);
         if (!customerId) {
             alert("Please log in to book the package.");
             return;
         }
 
         try {
+            const token = localStorage.getItem('token');
             const response = await fetch('http://localhost:5000/bookings', {
                 method: 'POST',
                 headers: {

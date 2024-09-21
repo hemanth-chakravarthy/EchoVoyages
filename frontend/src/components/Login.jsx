@@ -32,13 +32,14 @@ const Login = () => {
             if (response.ok) {
                 
                 console.log("Login successful!");
-                navigate('/home');
                 
                 setFormData({
                     username: '',
                     password: ''
                 });
-                localStorage.setItem('token', response.formData.token);
+                const data = await response.json();
+                
+                localStorage.setItem('token', data.token);
                 window.location.href = '/home';
             } else {
                 console.log("Login failed.");

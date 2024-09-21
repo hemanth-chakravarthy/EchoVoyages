@@ -19,6 +19,7 @@ router.post('/signup',async(req,res)=>{
                 message: "Send all required feilds"
             });
         }
+        console.log("Inside try if")
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
         const newCust = {
             username: req.body.username, 
@@ -55,7 +56,7 @@ router.post('/login', async (req, res) => {
         });
         
 
-        res.status(200).json({ message: 'Login successful', token });
+        res.status(200).json({ token: token, message: 'Login successful' });
     } catch (error) {
         res.status(500).json({ message: 'Internal server error' });
     }
