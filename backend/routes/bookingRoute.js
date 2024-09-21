@@ -37,6 +37,9 @@ router.post('/', async (req, res) => {
         // Create the booking
         const newBooking = new bookings({
             customerName,
+            customerId,
+            guideId,
+            packageId,
             packageName,
             guideName,
             totalPrice

@@ -112,7 +112,7 @@ const CreatePackage = () => {
             </div>
             <div>
                 <label>Images</label>
-                <input type="file" name="images" onChange={handleImageChange} multiple required />
+                <input type="file" name="image" onChange={handleImageChange} multiple required />
             </div>
             <button type="submit">Create Package</button>
         </form>
