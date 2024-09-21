@@ -1,10 +1,10 @@
 import express from 'express';
 import { packages } from '../models/packageModel.js'; // Importing the Package model
 import multer from 'multer';
+import {Agency} from '../models/agencyModel.js'
 import path from 'path';
 const router = express.Router();
 
-// Save a new package
 // Multer setup for handling file uploads
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -22,15 +22,19 @@ router.post('/', upload.array('images'), async (req, res) => {
     try {
         // Check if all required fields are provided
         const {
-            name, description, price, duration, location, itinerary, highlights, availableDates, maxGroupSize, guide
+            name, description, price, duration, location, itinerary, highlights, availableDates, maxGroupSize, guide, AgentID
         } = req.body;
 
-        if (!name || !description || !price || !duration || !location || !itinerary || !highlights || !availableDates || !maxGroupSize) {
+        if (!name || !description || !price || !duration || !location || !itinerary || !highlights || !availableDates || !maxGroupSize || !AgentID) {
             return res.status(400).send({
                 message: "Please provide all required fields"
             });
         }
-
+        const AgentData = await Agency.findByID(AgentID);
+        if(!AgentData){
+            return res.status(404).send({messgae: 'Agent Not Found'})
+        }
+        const AgentName = AgentData.name;
         // Map over the uploaded files to extract file paths
         const imagePaths = req.files ? req.files.map(file => `/public/packageImage/${file.filename}`) : [];
 
@@ -46,6 +50,8 @@ router.post('/', upload.array('images'), async (req, res) => {
             availableDates: availableDates.split(','),  // Assuming dates are passed as a comma-separated string
             maxGroupSize,
             guideID: guide,
+            AgentID, 
+            AgentName: AgentName, // Store the agentID in the package
             reviews: req.body.reviews || [],
             image: imagePaths,  // Save the image paths to the database
             totalBookings: req.body.totalBookings || 0,
@@ -64,6 +70,7 @@ router.post('/', upload.array('images'), async (req, res) => {
         });
     }
 });
+
 // view all packages
 router.get('/',async (req,res) => {
     try {

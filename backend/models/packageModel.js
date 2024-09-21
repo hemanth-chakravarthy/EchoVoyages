@@ -48,7 +48,7 @@ const packageSchema = mongoose.Schema(
         },
         AgentID:{
             type: mongoose.Schema.Types.ObjectId,  // Reference to the guide associated with the package
-            ref: 'agency',
+            ref: 'agencies',
             required: true
         },
         AgentName:{
