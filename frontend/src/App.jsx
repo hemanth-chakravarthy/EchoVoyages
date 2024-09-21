@@ -14,13 +14,40 @@ const App = () =>{
   return(
     <Routes>
       <Route path="/" element={<LandingPage/>}/>
-      <PrivateRoute path="/packages/:id" element={<ViewPost/>}/>
-      <Route path="/home" element={<Home />}/>
-      <PrivateRoute path="/admin" element={<Admin />}/>
-      <PrivateRoute path="/createPackage" element={<DummyPage/>}/>
-      <PrivateRoute path="/admin/:entity/delete/:id" element={<DeleteEntity />} />
-      <PrivateRoute path="/admin/:entityType/:id" element={<ShowEntity/>}/>
-      <PrivateRoute path="/admin/:entityType/edit/:id" element={<UpdateEntity/>}/>
+      {/* For the /packages/:id route */}
+  <Route path="/packages/:id" element={<PrivateRoute />}>
+    <Route path="/packages/:id" element={<ViewPost />} />
+  </Route>
+
+  {/* For the /home route */}
+  <Route path="/home" element={<PrivateRoute />}>
+    <Route path="/home" element={<Home />} />
+  </Route>
+
+  {/* For the /admin route */}
+  <Route path="/admin" element={<PrivateRoute />}>
+    <Route path="/admin" element={<Admin />} />
+  </Route>
+
+  {/* For the /createPackage route */}
+  <Route path="/createPackage" element={<PrivateRoute />}>
+    <Route path="/createPackage" element={<DummyPage />} />
+  </Route>
+
+  {/* For the /admin/:entity/delete/:id route */}
+  <Route path="/admin/:entity/delete/:id" element={<PrivateRoute />}>
+    <Route path="/admin/:entity/delete/:id" element={<DeleteEntity />} />
+  </Route>
+
+  {/* For the /admin/:entityType/:id route */}
+  <Route path="/admin/:entityType/:id" element={<PrivateRoute />}>
+    <Route path="/admin/:entityType/:id" element={<ShowEntity />} />
+  </Route>
+
+  {/* For the /admin/:entityType/edit/:id route */}
+  <Route path="/admin/:entityType/edit/:id" element={<PrivateRoute />}>
+    <Route path="/admin/:entityType/edit/:id" element={<UpdateEntity />} />
+  </Route>
     </Routes>
   )
 }
