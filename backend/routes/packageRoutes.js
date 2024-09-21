@@ -50,7 +50,7 @@ router.post('/', upload.array('images'), async (req, res) => {
             availableDates: availableDates.split(','),  // Assuming dates are passed as a comma-separated string
             maxGroupSize,
             guideID: guide,
-            AgentID, 
+            AgentID: req.body._id, 
             AgentName: AgentName, // Store the agentID in the package
             reviews: req.body.reviews || [],
             image: imagePaths,  // Save the image paths to the database
