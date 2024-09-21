@@ -11,6 +11,7 @@ import agencyRoutes from './routes/agencyRoutes.js'
 import cors from 'cors'
 import multer from 'multer';
 import path from 'path';
+import jwt from 'jsonwebtoken';
 
 mongoose.connect(mongoURL)
 .then(()=>{

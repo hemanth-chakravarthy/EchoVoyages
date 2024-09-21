@@ -1,7 +1,9 @@
 import express from 'express'
 import { customers } from '../models/customerModel.js';
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 const router = express.Router()
+
 
 //save a customer
 router.post('/signup',async(req,res)=>{
@@ -47,7 +49,13 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
-        res.status(200).json({ message: 'Login successful' });
+        // Generate JWT token
+        const token = jwt.sign({ id: user._id }, 'Voyage_secret',{
+            expiresIn: '1h',
+        });
+        
+
+        res.status(200).json({ message: 'Login successful', token });
     } catch (error) {
         res.status(500).json({ message: 'Internal server error' });
     }

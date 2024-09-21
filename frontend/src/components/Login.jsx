@@ -34,6 +34,7 @@ const Login = () => {
                     username: '',
                     password: ''
                 });
+                localStorage.setItem('token', response.formData.token);
             } else {
                 console.log("Login failed.");
             }

@@ -6,7 +6,9 @@ const Signup = () => {
         Name: '',
         phno: '',
         gmail: '',
-        password: ''
+        password: '',
+        
+        
     });
 
     // Handle input changes
