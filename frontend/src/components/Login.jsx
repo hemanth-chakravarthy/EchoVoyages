@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const [formData, setFormData] = useState({
         username: '',
         password: ''
     });
-
+    const navigate = useNavigate();
     // Handle input changes
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -29,7 +30,10 @@ const Login = () => {
             });
 
             if (response.ok) {
+                
                 console.log("Login successful!");
+                navigate('/home');
+                
                 setFormData({
                     username: '',
                     password: ''

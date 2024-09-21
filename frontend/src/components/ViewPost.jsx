@@ -4,11 +4,9 @@ import { useParams } from 'react-router-dom';
 const ViewPost = () => {
     const { id } = useParams(); // Get the package ID from the URL
     const [packageDetails, setPackageDetails] = useState(null);
-    const [userId] = useState('');  // Replace with actual logged-in user ID
-    const [guideId] = useState(''); // Replace with actual guide ID if needed
+    const customerId = localStorage.getItem('token.id')
 
     useEffect(() => {
-        // Fetch the package details
         const fetchPackageDetails = async () => {
             try {
                 const response = await fetch(`http://localhost:5000/packages/${id}`);
@@ -21,19 +19,23 @@ const ViewPost = () => {
 
         fetchPackageDetails();
     }, [id]);
-
-    // Handle booking submission
     const handleBooking = async () => {
+        if (!customerId) {
+            alert("Please log in to book the package.");
+            return;
+        }
+
         try {
             const response = await fetch('http://localhost:5000/bookings', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`  // Include token for authentication
                 },
                 body: JSON.stringify({
-                    customerId: userId,   // Logged-in user's customerId
-                    packageId: id,        // Current package ID from URL params
-                    guideId: guideId      // Optional guideId (replace or remove as necessary)
+                    customerId,    // Logged-in user's customerId
+                    packageId: id, // Current package ID from URL params
+                    guideId: guideId // Optional guideId (replace or remove as necessary)
                 }),
             });
 
@@ -42,8 +44,9 @@ const ViewPost = () => {
                 alert('Booking successful!');
                 console.log('Booking details:', result);
             } else {
-                console.error('Failed to book the package.');
-                alert('Failed to book the package.');
+                const errorData = await response.json();
+                console.error('Failed to book the package:', errorData.message);
+                alert(`Failed to book the package: ${errorData.message}`);
             }
         } catch (error) {
             console.error('Error booking package:', error);
@@ -64,10 +67,10 @@ const ViewPost = () => {
             <p>Location: {packageDetails.location}</p>
             <p>Highlights: {packageDetails.highlights}</p>
 
-            {/* Display package images */}
-            {packageDetails.images && packageDetails.images.length > 0 ? (
+            {/* Display images */}
+            {packageDetails.image && packageDetails.image.length > 0 ? (
                 <div>
-                    {packageDetails.images.map((img, index) => (
+                    {packageDetails.image.map((img, index) => (
                         <img
                             key={index}
                             src={`http://localhost:5000${img}`}
@@ -79,8 +82,6 @@ const ViewPost = () => {
             ) : (
                 <p>No images available for this package</p>
             )}
-
-            {/* Book Package Button */}
             <button onClick={handleBooking}>Book</button>
         </div>
     );
