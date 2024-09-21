@@ -26,7 +26,7 @@ const ViewPost = () => {
         }
 
         try {
-            const response = await fetch('http://localhost:5000/packages/book', {
+            const response = await fetch('http://localhost:5000/bookings', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
