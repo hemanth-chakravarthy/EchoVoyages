@@ -1,9 +1,10 @@
 import express from 'express'
 import { customers } from '../models/customerModel.js';
+import bcrypt from 'bcrypt'
 const router = express.Router()
 
 //save a customer
-router.post('/',async(req,res)=>{
+router.post('/signup',async(req,res)=>{
     try {
         if(
             !req.body.username ||
@@ -14,14 +15,15 @@ router.post('/',async(req,res)=>{
         ){
             return res.status(400).send({
                 message: "Send all required feilds"
-            })
+            });
         }
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
         const newCust = {
             username: req.body.username, 
             Name: req.body.Name, 
             phno: req.body.phno, 
             gmail: req.body.gmail, 
-            password: req.body.password
+            password: hashedPassword
         }
         const customer = await customers.create(newCust)
         return res.status(201).send(customer)
@@ -29,6 +31,27 @@ router.post('/',async(req,res)=>{
         console.log(error)
     }
 })
+router.post('/login', async (req, res) => {
+    try {
+        const { username, password } = req.body;
+
+        // Find user by username
+        const user = await customers.findOne({ username });
+        if (!user) {
+            return res.status(400).json({ message: 'Invalid credentials' });
+        }
+
+        // Compare passwords
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Invalid credentials' });
+        }
+
+        res.status(200).json({ message: 'Login successful' });
+    } catch (error) {
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
 // get all coustomers
 router.get('/customers',async (req,res) => {
     try {
