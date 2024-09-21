@@ -8,18 +8,19 @@ import ShowEntity from './pages/ShowEntity'
 import UpdateEntity from "./pages/UpdateEntity";
 import ViewPost from "./components/ViewPost"
 import DummyPage from "./pages/DummyPage"
+import PrivateRoute from "./components/PrivateRoute"
 
 const App = () =>{
   return(
     <Routes>
       <Route path="/" element={<LandingPage/>}/>
-      <Route path="/packages/:id" element={<ViewPost/>}/>
+      <PrivateRoute path="/packages/:id" element={<ViewPost/>}/>
       <Route path="/home" element={<Home />}/>
-      <Route path="/admin" element={<Admin />}/>
-      <Route path="/createPackage" element={<DummyPage/>}/>
-      <Route path="/admin/:entity/delete/:id" element={<DeleteEntity />} />
-      <Route path="/admin/:entityType/:id" element={<ShowEntity/>}/>
-      <Route path="/admin/:entityType/edit/:id" element={<UpdateEntity/>}/>
+      <PrivateRoute path="/admin" element={<Admin />}/>
+      <PrivateRoute path="/createPackage" element={<DummyPage/>}/>
+      <PrivateRoute path="/admin/:entity/delete/:id" element={<DeleteEntity />} />
+      <PrivateRoute path="/admin/:entityType/:id" element={<ShowEntity/>}/>
+      <PrivateRoute path="/admin/:entityType/edit/:id" element={<UpdateEntity/>}/>
     </Routes>
   )
 }

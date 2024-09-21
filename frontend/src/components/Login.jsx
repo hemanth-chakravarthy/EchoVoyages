@@ -35,6 +35,7 @@ const Login = () => {
                     password: ''
                 });
                 localStorage.setItem('token', response.formData.token);
+                window.location.href = '/home';
             } else {
                 console.log("Login failed.");
             }
