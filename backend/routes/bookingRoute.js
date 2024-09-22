@@ -2,6 +2,7 @@ import express from 'express'
 import { bookings } from '../models/bookingModel.js';
 import { packages } from '../models/packageModel.js';
 import { customers } from '../models/customerModel.js';
+
 import {Guide} from '../models/guideModel.js'
 const router = express.Router();
 

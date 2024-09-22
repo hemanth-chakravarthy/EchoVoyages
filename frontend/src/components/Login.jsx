@@ -44,7 +44,7 @@ const Login = () => {
                 localStorage.setItem('token', data.token);
 
                 // Redirect after successful login
-                window.location.href = '/home';
+                navigate('/home')
             } else {
                 console.log("Login failed.");
             }
