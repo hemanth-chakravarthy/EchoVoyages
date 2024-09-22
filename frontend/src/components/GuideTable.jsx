@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import '../assets/css/tables.css'
 
 const GuidesTable = ({ guides }) => {
     return (
@@ -25,10 +26,10 @@ const GuidesTable = ({ guides }) => {
                             <td>{user.contact?.email || 'N/A'}</td>
                             <td>{user.languages}</td>
                             <td>
-                                <div>
-                                    <Link to={`/admin/guides/${user._id}`}>Show</Link>
-                                    <Link to={`/admin/guides/edit/${user._id}`}>Update</Link>
-                                    <Link to={`/admin/guides/delete/${user._id}`}>Delete</Link>
+                                <div className='linksPacks'>
+                                    <Link className='links' to={`/admin/guides/${user._id}`}>Show</Link>
+                                    <Link className='links' to={`/admin/guides/edit/${user._id}`}>Update</Link>
+                                    <Link className='links' to={`/admin/guides/delete/${user._id}`}>Delete</Link>
                                 </div>
                             </td>
                         </tr>

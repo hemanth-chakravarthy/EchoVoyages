@@ -1,0 +1,84 @@
+/* General container styling */
+div {
+    margin: 20px;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Card layout for entity details */
+.entity-card {
+    background-color: #f5f5f5; /* Light beige card background */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+    border-radius: 10px;
+    padding: 30px;
+    max-width: 600px;
+    margin: 0 auto;
+    border: 1px solid #eaeaea; /* Subtle border */
+}
+
+/* Title styling */
+h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #333333; /* Lightish black */
+    text-align: center;
+    margin-bottom: 20px;
+    letter-spacing: 0.5px;
+}
+
+/* Entity detail rows */
+.entity-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.entity-row:last-child {
+    border-bottom: none; /* Remove border on last row */
+}
+
+/* Labels for entity data */
+.entity-row span:first-child {
+    font-weight: 600;
+    color: #333333; /* Lightish black for labels */
+}
+
+.entity-row span:last-child {
+    color: #666666; /* Softer gray for values */
+}
+
+/* Back button styling */
+.back-button {
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 10px 20px;
+    background-color: #333333; /* Dark button */
+    color: #f5f5dc; /* Beige text */
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    font-weight: 600;
+}
+
+.back-button:hover {
+    background-color: #555555; /* Lighter on hover */
+}
+
+@media (max-width: 768px) {
+    .entity-card {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 22px;
+    }
+
+    .entity-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .entity-row span {
+        padding: 5px 0;
+    }
+}

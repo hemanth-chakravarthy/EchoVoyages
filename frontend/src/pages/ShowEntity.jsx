@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import BackButton from '../components/BackButton';
+import '../assets/css/ShowEntity.css'; // Importing the CSS file
 
 const ShowEntity = () => {
     const [entity, setEntity] = useState({});
@@ -19,25 +20,25 @@ const ShowEntity = () => {
     }, [id, entityType]);
 
     return (
-        <div>
-            <BackButton />
-            <h1>Show</h1>
-            <div>
+        <div className="entity-container">
+            <BackButton className="back-button" />
+            <h1>{entityType === 'customers' ? 'Customer Details' : entityType === 'packages' ? 'Package Details' : entityType === 'guides' ? 'Guide Details' : 'Details'}</h1>
+            <div className="entity-card">
                 {entityType === 'customers' && (
                     <>
-                        <div>
+                        <div className="entity-row">
                             <span>ID: </span>
                             <span>{entity._id}</span>
                         </div>
-                        <div>
+                        <div className="entity-row">
                             <span>Name: </span>
                             <span>{entity.Name}</span>
                         </div>
-                        <div>
+                        <div className="entity-row">
                             <span>Username: </span>
                             <span>{entity.username}</span>
                         </div>
-                        <div>
+                        <div className="entity-row">
                             <span>Gmail: </span>
                             <span>{entity.gmail}</span>
                         </div>
@@ -45,19 +46,19 @@ const ShowEntity = () => {
                 )}
                 {entityType === 'packages' && (
                     <>
-                        <div>
+                        <div className="entity-row">
                             <span>ID: </span>
                             <span>{entity._id}</span>
                         </div>
-                        <div>
+                        <div className="entity-row">
                             <span>Package Name: </span>
                             <span>{entity.name}</span>
                         </div>
-                        <div>
+                        <div className="entity-row">
                             <span>Description: </span>
                             <span>{entity.description}</span>
                         </div>
-                        <div>
+                        <div className="entity-row">
                             <span>Price: </span>
                             <span>{entity.price}</span>
                         </div>
@@ -65,19 +66,19 @@ const ShowEntity = () => {
                 )}
                 {entityType === 'guides' && (
                     <>
-                        <div>
+                        <div className="entity-row">
                             <span>ID: </span>
                             <span>{entity._id}</span>
                         </div>
-                        <div>
+                        <div className="entity-row">
                             <span>Name: </span>
                             <span>{entity.name}</span>
                         </div>
-                        <div>
+                        <div className="entity-row">
                             <span>Availability: </span>
                             <span>{entity.availability}</span>
                         </div>
-                        <div>
+                        <div className="entity-row">
                             <span>Location: </span>
                             <span>{entity.location}</span>
                         </div>
@@ -85,23 +86,23 @@ const ShowEntity = () => {
                 )}
                 {entityType === 'bookings' && (
                     <>
-                        <div>
+                        <div className="entity-row">
                             <span>ID: </span>
                             <span>{entity._id}</span>
                         </div>
-                        <div>
+                        <div className="entity-row">
                             <span>Customer Name: </span>
                             <span>{entity.customerName}</span>
                         </div>
-                        <div>
+                        <div className="entity-row">
                             <span>Package Name: </span>
                             <span>{entity.packageName}</span>
                         </div>
-                        <div>
+                        <div className="entity-row">
                             <span>Date: </span>
                             <span>{entity.bookingDate}</span>
                         </div>
-                        <div>
+                        <div className="entity-row">
                             <span>Price: </span>
                             <span>{entity.totalPrice}</span>
                         </div>
@@ -109,27 +110,27 @@ const ShowEntity = () => {
                 )}
                 {entityType === 'agency' && (
                     <>
-                        <div>
+                        <div className="entity-row">
                             <span>ID: </span>
                             <span>{entity._id}</span>
                         </div>
-                        <div>
+                        <div className="entity-row">
                             <span>Name: </span>
                             <span>{entity.name}</span>
                         </div>
-                        <div>
+                        <div className="entity-row">
                             <span>Email: </span>
                             <span>{entity.contactInfo?.email}</span>
                         </div>
-                        <div>
+                        <div className="entity-row">
                             <span>Phone: </span>
                             <span>{entity.contactInfo?.phone}</span>
                         </div>
-                        <div>
+                        <div className="entity-row">
                             <span>Bio: </span>
                             <span>{entity.bio}</span>
                         </div>
-                        <div>
+                        <div className="entity-row">
                             <span>Specialization: </span>
                             <span>{entity.specialization}</span>
                         </div>
