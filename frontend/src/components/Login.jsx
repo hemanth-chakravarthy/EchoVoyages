@@ -44,7 +44,14 @@ const Login = () => {
                 localStorage.setItem('token', data.token);
 
                 // Redirect after successful login
-                navigate('/home')
+                const { role } = formData
+                if(role === 'customer'){
+                    navigate('/home')
+                }else if(role === 'travel agency'){
+                    navigate('/AgentHome')
+                }else{
+                    navigate('/guideHome')
+                }
             } else {
                 console.log("Login failed.");
             }

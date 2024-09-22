@@ -56,6 +56,7 @@ router.post('/signup',async(req,res)=>{
             }
             const agency = await Agency.create(newAgency)
             return res.status(201).send(agency)
+            
         }
         else if(req.body.role == 'guide')
         {

@@ -8,6 +8,7 @@ import ShowEntity from './pages/ShowEntity'
 import UpdateEntity from "./pages/UpdateEntity";
 import ViewPost from "./components/ViewPost"
 import DummyPage from "./pages/DummyPage"
+import AgentHomePage from "./pages/AgentHomePage"
 import PrivateRoute from "./components/PrivateRoute"
 
 const App = () =>{
@@ -35,6 +36,9 @@ const App = () =>{
   {/* For the /home route */}
   <Route path="/home" element={<PrivateRoute />}>
     <Route path="/home" element={<Home />} />
+  </Route>
+  <Route path="/AgentHome" element={<PrivateRoute />}>
+    <Route path="/AgentHome" element={<AgentHomePage />} />
   </Route>
 
   {/* For the /admin route */}

@@ -31,7 +31,7 @@ router.post('/', upload.array('images'), async (req, res) => {
                 message: "Please provide all required fields"
             });
         }
-        const AgentData = await customers.findById(AgentID)
+        const AgentData = await Agency.findById(AgentID)
         if(!AgentData){
             return res.status(404).send({ message: 'Agent not found' });
         }
