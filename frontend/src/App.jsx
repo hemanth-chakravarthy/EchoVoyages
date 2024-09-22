@@ -10,7 +10,6 @@ import ViewPost from "./components/ViewPost"
 import DummyPage from "./pages/DummyPage"
 import AgentHomePage from "./pages/AgentHomePage"
 import PrivateRoute from "./components/PrivateRoute"
-import ViewPost from "./components/ViewPost";
 import ProfilePage from "./pages/CustomerProfile"
 
 const App = () =>{
