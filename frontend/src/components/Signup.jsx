@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './Signup.css'; // Importing the CSS
 
 const Signup = () => {
     const [formData, setFormData] = useState({
@@ -34,8 +35,6 @@ const Signup = () => {
         if (formData.password.length < 6) {
             newErrors.password = 'Password must be at least 6 characters long';
         }
-
-       
 
         return newErrors;
     };
@@ -82,31 +81,32 @@ const Signup = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <div>
+        <form onSubmit={handleSubmit} className="signup-form">
+            <h2>Sign Up</h2>
+            <div className="form-group">
                 <label>Username</label>
                 <input type="text" name="username" value={formData.username} onChange={handleInputChange} required />
-                {errors.username && <p style={{ color: 'red' }}>{errors.username}</p>}
+                {errors.username && <p className="error-message">{errors.username}</p>}
             </div>
-            <div>
+            <div className="form-group">
                 <label>Name</label>
                 <input type="text" name="Name" value={formData.Name} onChange={handleInputChange} required />
             </div>
-            <div>
+            <div className="form-group">
                 <label>Phone Number</label>
                 <input type="text" name="phno" value={formData.phno} onChange={handleInputChange} required />
             </div>
-            <div>
+            <div className="form-group">
                 <label>Email</label>
                 <input type="email" name="gmail" value={formData.gmail} onChange={handleInputChange} required />
-                {errors.gmail && <p style={{ color: 'red' }}>{errors.gmail}</p>}
+                {errors.gmail && <p className="error-message">{errors.gmail}</p>}
             </div>
-            <div>
+            <div className="form-group">
                 <label>Password</label>
                 <input type="password" name="password" value={formData.password} onChange={handleInputChange} required />
-                {errors.password && <p style={{ color: 'red' }}>{errors.password}</p>}
+                {errors.password && <p className="error-message">{errors.password}</p>}
             </div>
-            <div>
+            <div className="form-group">
                 <label>Role</label>
                 <select name="role" value={formData.role} onChange={handleInputChange} required>
                     <option value="customer">Customer</option>
@@ -114,7 +114,7 @@ const Signup = () => {
                     <option value="guide">Guide</option>
                 </select>
             </div>
-            <button type="submit">Sign Up</button>
+            <button type="submit" className="submit-btn">Sign Up</button>
         </form>
     );
 };

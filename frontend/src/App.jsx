@@ -1,4 +1,4 @@
-import React from "react"
+import React, {useEffect} from "react"
 import {Routes, Route} from 'react-router-dom'
 import Home from "./pages/HomePage"
 import LandingPage from "./pages/LandingPage"
@@ -11,6 +11,19 @@ import DummyPage from "./pages/DummyPage"
 import PrivateRoute from "./components/PrivateRoute"
 
 const App = () =>{
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+        localStorage.removeItem('token');
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+        window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+}, []);
+
   return(
     <Routes>
       <Route path="/" element={<LandingPage/>}/>
