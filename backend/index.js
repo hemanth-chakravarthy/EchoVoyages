@@ -11,6 +11,7 @@ import agencyRoutes from './routes/agencyRoutes.js'
 import cors from 'cors'
 import multer from 'multer';
 import path from 'path';
+import jwt from 'jsonwebtoken';
 
 mongoose.connect(mongoURL)
 .then(()=>{
@@ -28,13 +29,13 @@ app.get('/',(req,res)=>{
     res.render('')
 });
 
-app.use('/admin',adminRoute)
-app.use('/customers',customerRoute)
-app.use('/packages',packageRoute)
-app.use('/reviews',reviewRoute)
-app.use('/bookings',bookingRoute)
-app.use('/guides',guideRoute)
-app.use('/agency',agencyRoutes)
+app.use('/admin', adminRoute)
+app.use('/customers', customerRoute)
+app.use('/packages', packageRoute)
+app.use('/reviews', reviewRoute)
+app.use('/bookings', bookingRoute)
+app.use('/guides', guideRoute)
+app.use('/agency', agencyRoutes)
 app.use('/public', express.static('public'));
 
 
@@ -49,8 +50,21 @@ const storage = multer.diskStorage({
       cb(null, Date.now() + "-" + file.originalname)
     }
   })
-  const upload = multer({ storage: storage })
+  const upload = multer({ storage: storage })                  
+
+function verifyToken(req, res, next) {
+  const token = req.headers['authorization'];
   
+  if(!token) res.status(401).json({message: 'Token Not Found'});
+
+  try {
+    const data = jwt.verify(token, 'Voyage_secret');
+    req.id = data.id
+    next();
+  } catch (error) {
+    return res.status(401).json({message: 'Invalid Token'})
+  }
+};
 
 const port = 5000
 app.listen(port, ()=>{

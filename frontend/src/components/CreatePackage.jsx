@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
+import { jwtDecode } from 'jwt-decode';
+import { useNavigate } from 'react-router-dom';
 
 const CreatePackage = () => {
+    const navigate = useNavigate();
+    const AgentId = jwtDecode(localStorage.getItem('token')).id;
+    const AgentName = jwtDecode(localStorage.getItem('token')).name
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -10,7 +15,10 @@ const CreatePackage = () => {
         itinerary: '',
         highlights: '',
         availableDates: '',
-        maxGroupSize: ''
+        maxGroupSize: '',
+        AgentID:AgentId,
+        AgentName: AgentName
+
     });
 
     const [images, setImages] = useState([]);
@@ -60,10 +68,14 @@ const CreatePackage = () => {
                     itinerary: '',
                     highlights: '',
                     availableDates: '',
-                    maxGroupSize: ''
+                    maxGroupSize: '',
+                    AgentID: AgentId,
+                    AgentName: AgentName
                 });
                 setImages([]);
+                navigate('/home')
                 console.log("Package created successfully!");
+
             } else {
                 console.log("Failed to create package.");
             }
@@ -112,7 +124,7 @@ const CreatePackage = () => {
             </div>
             <div>
                 <label>Images</label>
-                <input type="file" name="images" onChange={handleImageChange} multiple required />
+                <input type="file" name="image" onChange={handleImageChange} multiple required />
             </div>
             <button type="submit">Create Package</button>
         </form>
