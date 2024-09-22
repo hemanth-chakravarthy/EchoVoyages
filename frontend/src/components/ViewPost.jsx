@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
+import '../assets/css/viewPost.css'
 
 const ViewPost = () => {
   const { id } = useParams(); // Get the package ID from the URL
@@ -126,7 +127,7 @@ const ViewPost = () => {
   }
 
   return (
-    <div>
+    <div className='packagedets'>
       <h1>{packageDetails.name}</h1>
       <p>{packageDetails.description}</p>
       <p>Price: {packageDetails.price}</p>
