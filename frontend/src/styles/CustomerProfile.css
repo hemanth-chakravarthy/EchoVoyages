@@ -1,0 +1,299 @@
+/* Customer Info takes full width in the first row */
+/* Reset default margins and paddings */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Ensure the body takes full width and height */
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden; /* Prevent horizontal scroll if content overflows */
+}
+
+.profile-page{
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+    /* background-color: #eceaea; */
+    height: 100%;
+    /* background-color: #eceaea; */
+    background: url('./images/hope.png') no-repeat center center fixed; /* Centered and fixed */
+    background-size: cover; /* Cover the entire background */
+    /* background-size: cover;
+    background-position: center;
+    opacity: 0.1; Make it subtle */
+    
+}
+
+.customer-profile{
+    display: flex;
+    flex-direction: row;
+}
+.customer-image-logout{
+    display: flex;
+    flex-direction: column;
+    width: 20%;
+    background-color: rgb(255, 255, 255);
+    color: black;
+    align-items: center;
+    padding: 20px 20px;
+    box-shadow: 0 10px 20px rgba(0, 0 , 0, 0.1);
+    margin: 50px 30px 5px 200px;
+    max-width: 100%;
+    height: 335px;
+    border-radius: 1rem;
+    /* border: 1px solid #f43737; */
+}
+
+.image-edit-div img {
+    border-radius: 50%; /* Rounded profile image */
+    align-self: center;
+    width: 100%;       /* Adjust width to fill the container */
+    max-width: 150px;  /* Maximum width to maintain size */
+    height: auto;      /* Maintain aspect ratio */
+}
+
+.image-edit-div{
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+    align-items: center;
+}
+
+.image-edit-div label{
+    margin-top: 30px;
+    
+}
+
+.logout-btn {
+    color: #fff;
+    background-color: #ff4c4c;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 20px; /* Added margin-top */
+}
+
+.logout-btn:hover {
+    background-color: #ff1c1c;
+}
+
+/* Input fields */
+.customer-info input.profile-input {
+    width: 100%;
+    padding: 10px;
+    border: none; /* Remove the border */
+    border-radius: 5px; /* Rounded corners */
+    background-color: transparent; /* Transparent background */
+    transition: box-shadow 0.3s; /* Smooth transition */
+    cursor: text; /* Change cursor to indicate text input */
+}
+
+/* Input focus styles */
+.customer-info input.profile-input:focus {
+    outline: none; /* Remove default outline */
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5); /* Add glow effect on focus */
+}
+
+.save-profile-btn {
+    background-color: #111126; /* Green background */
+    color: white; /* White text */
+    border: none; /* No border */
+    margin-top: 10px;
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px 20px; /* Top-bottom and left-right padding */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s, transform 0.2s; /* Smooth transitions */
+}
+
+.save-profile-btn:hover {
+    background-color: #1d183a; /* Darker green on hover */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+.save-profile-btn:focus {
+    outline: none; /* Remove default outline */
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5); /* Glow effect on focus */
+}
+
+
+/* Logout Popup */
+.logout-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 30px; /* Increased padding for larger popup */
+    margin: 20px; /* Reduced margin to allow for a larger size */
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Slightly darker shadow */
+    z-index: 1000;
+    width: 400px; /* Set a fixed width for the popup */
+    max-width: 90%; /* Ensure responsiveness */
+}
+
+/* Backdrop */
+.backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Darkened backdrop */
+    z-index: 999;
+}
+
+
+/* Button container in the popup */
+.button-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Yes and No buttons */
+.yes-button, .no-button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.yes-button {
+    background-color: #4caf50;
+    color: white;
+}
+
+.no-button {
+    background-color: #f44336;
+    color: white;
+}
+
+.yes-button:hover {
+    background-color: #45a049;
+}
+
+.no-button:hover {
+    background-color: #e53935;
+}
+
+.customer-info {
+    width: 50%;
+    background-color: rgb(255, 255, 255);
+    color: black;
+    padding: 20px 20px;
+    box-shadow: 0 10px 20px rgba(0, 0 , 0, 0.1);
+    margin: 50px 50px 5px 20px;
+    max-width: 100%;
+    height: auto;
+    border-radius: 1rem;
+    /* border: 1px solid #d41e1e; */
+}
+ 
+.customer-info h2{
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: left;
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+
+.profile-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 0;
+    border-bottom: 1px solid #dcdada;
+}
+
+.label {
+    color: #333;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 20px;
+    padding: 0px 10px;
+}
+
+.value {
+    color: rgb(0, 0, 0);
+    font-weight: bold;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.value a {
+    text-decoration: none;
+    color: #8a827a;
+    font-weight: bold;
+}
+
+.value a:hover {
+    text-decoration: underline;
+}
+.heading-profile{
+    display: flex;
+    justify-content: space-between;
+}
+
+.edit-profile-btn {
+    background-color: #8c8f94;
+    color: white;
+    padding: 12px;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 5px;
+}
+
+.edit-profile-btn:hover {
+    background-color: #4a4c4d;
+}
+
+.booking-list{
+    width: auto;
+    background-color: rgb(255, 255, 255);
+    color: black;
+    padding: 5px 20px 10px 20px;
+    box-shadow: 0 10px 20px rgba(0, 0 , 0, 0.1);
+    margin: 30px 150px 50px 150px;
+    max-width: 100%;
+    height: auto;
+    border-radius: 1em;
+    /* border: 1px solid #000; */
+}
+
+
+/* Grid container for bookings */
+.bookings-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);  /* 3 columns */
+    gap: 20px;                              /* Gap between cards */
+    padding: 20px;
+}
+
+/* Styles for each booking card */
+.booking {
+    background-color: white;
+    border: 1px solid #ddd;
+    font-size: 2.5ch;
+    border-radius: 10px;
+    padding: 30px;
+    margin:10px;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+    /* border: 0.5px solid #343232; */
+}
+
+.booking-list h2{
+    padding-top: 20px;
+    padding-left: 28px;
+    font-weight: 2.5ch;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+.booking:hover {
+    transform: scale(1.05); /* Slight zoom effect on hover */
+}

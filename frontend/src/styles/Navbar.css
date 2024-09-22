@@ -1,0 +1,44 @@
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.2); /* Translucent white */
+    backdrop-filter: blur(20px); /* Blur effect to simulate glass */
+    -webkit-backdrop-filter: blur(10px); /* For Safari */
+    height: 64px;
+    padding: 0 20px;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Optional border to define edges */
+    border-radius: 10px; /* Smooth corners */
+}
+
+.nav--icon {
+    height: 60px;
+    padding-left: 20px;
+}
+
+.nav-elements {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.nav--element--1 {
+    margin-right: 50px;
+    margin-left: 20px;
+    color: #48494b;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.nav--element--2 {
+    margin-left: 20px;
+    color: #48494b;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.nav--element--1:hover, .nav--element--2:hover {
+    color: #050404; /* Change color on hover */
+}
