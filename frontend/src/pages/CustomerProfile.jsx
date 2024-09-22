@@ -1,33 +1,47 @@
-import React, { useEffect, useState } from 'react';
-import BookingHistory from '../components/BookingHistory';
-import Wishlist from '../components/Wishlist';
-import Reviews from './Reviews';
-import ProfileInfo from './ProfileInfo';
+import React, { useState, useEffect } from 'react';
+import CustomerInfo from '../components/CustomerInfo';
+import BookingList from '../components/BookingList';
+import Navbar from '../components/Navbar';
+import "../styles/CustomerProfile.css";
+import "../styles/Navbar.css";
 import axios from 'axios';
 
-const CustomerProfile = () => {
-  const [customer, setCustomer] = useState(null);
+const ProfilePage = () => {
+    const [customer, setCustomer] = useState(null); // Initially set to null
+    const [bookings, setBookings] = useState([]);
 
-  useEffect(() => {
-    // Fetch customer data from the server (replace with your API)
-    axios.get(`http://localhost:5000/customer/${id}`) // Replace '123' with dynamic customer ID
-      .then(response => setCustomer(response.data))
-      .catch(error => console.error('Error fetching customer data:', error));
-  }, []);
+    useEffect(() => {
+        // Fetch customer data from API
+        const fetchCustomerData = async () => {
+            try {
+                const customerResponse = await axios.get('/api/customer/123'); // Replace 123 with actual customer ID or auth token
+                setCustomer(customerResponse.data);
+            } catch (error) {
+                console.error("Error fetching customer data:", error);
+            }
+        };
 
-  if (!customer) {
-    return <div>Loading...</div>;
-  }
+        // Fetch bookings data from API
+        const fetchBookingsData = async () => {
+            try {
+                const bookingsResponse = await axios.get('/api/bookings/123'); // Replace 123 with actual customer ID
+                setBookings(bookingsResponse.data);
+            } catch (error) {
+                console.error("Error fetching bookings:", error);
+            }
+        };
 
-  return (
-    <div>
-      <h2>Customer Profile</h2>
-      <ProfileInfo customer={customer} />
-      <BookingHistory bookings={customer.bookingHistory} />
-      <Wishlist wishlist={customer.wishlist} />
-      <Reviews reviews={customer.reviews} />
-    </div>
-  );
+        fetchCustomerData();
+        fetchBookingsData();
+    }, []);
+
+    return (
+        <div className="profile-page">
+            <Navbar />
+            {customer ? <CustomerInfo customer={customer} /> : <p>Loading customer info...</p>}
+            {bookings.length > 0 ? <BookingList bookings={bookings} /> : <p>Loading bookings...</p>}
+        </div>
+    );
 };
 
-export default CustomerProfile;
+export default ProfilePage;
