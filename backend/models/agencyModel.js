@@ -2,6 +2,11 @@ import mongoose from "mongoose";
 
 const agencySchema = mongoose.Schema(
     {
+        username: {
+            type: String,
+            required: true,
+            trim: true
+        },
         name: {
             type: String,
             required: true,
@@ -20,14 +25,18 @@ const agencySchema = mongoose.Schema(
                 trim: true
             }
         },
-        bio: {
+        password : {
             type: String,
             required: true,
+        },
+        bio: {
+            type: String,
+            required: false,
             trim: true
         },
         specialization: {
             type: String, // e.g., luxury, adventure
-            required: true,
+            required: false,
             enum: ['luxury', 'adventure', 'business', 'family', 'other']
         },
         travelPackages: [
@@ -47,12 +56,12 @@ const agencySchema = mongoose.Schema(
                 customerId: {
                     type: mongoose.Schema.Types.ObjectId,
                     ref: 'customers', // Reference to the customer making the inquiry
-                    required: true
+                    required: false
                 },
                 packageId: {
                     type: mongoose.Schema.Types.ObjectId,
                     ref: 'packages', // Reference to the package being requested
-                    required: true
+                    required: false
                 },
                 status: {
                     type: String,
