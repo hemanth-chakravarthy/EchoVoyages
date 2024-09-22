@@ -35,7 +35,7 @@ router.post('/', upload.array('images'), async (req, res) => {
         if(!AgentData){
             return res.status(404).send({ message: 'Agent not found' });
         }
-        const AgentName = customerData.name;
+        const AgentName = AgentData.username;
         // Map over the uploaded files to extract file paths
         const imagePaths = req.files ? req.files.map(file => `/public/packageImage/${file.filename}`) : [];
 
@@ -52,7 +52,7 @@ router.post('/', upload.array('images'), async (req, res) => {
             maxGroupSize,
             guideID: guide,
             AgentID, 
-            AgentName: AgentName, // Store the agentID in the package
+            AgentName, // Store the agentID in the package
             reviews: req.body.reviews || [],
             image: imagePaths,  // Save the image paths to the database
             totalBookings: req.body.totalBookings || 0,

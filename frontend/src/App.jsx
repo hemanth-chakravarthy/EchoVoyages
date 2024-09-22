@@ -42,9 +42,9 @@ const App = () =>{
   </Route>
 
   {/* For the /admin route */}
-  <Route path="/admin" element={<PrivateRoute />}>
+  {/* <Route path="/admin" element={<PrivateRoute />}> */}
     <Route path="/admin" element={<Admin />} />
-  </Route>
+  {/* </Route> */}
 
   {/* For the /createPackage route */}
   <Route path="/createPackage" element={<PrivateRoute />}>

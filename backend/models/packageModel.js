@@ -55,14 +55,14 @@ const packageSchema = mongoose.Schema(
             type: String,
             required: false
         },
-        // reviews: [
-        //     {
-        //     customer: { type: mongoose.Schema.Types.ObjectId, ref: 'customers' },
-        //     rating: { type: Number, min: 1, max: 5 },
-        //     comment: String,
-        //     date: { type: Date, default: Date.now }
-        //     }
-        // ],
+        reviews: [
+            {
+            customer: { type: mongoose.Schema.Types.ObjectId, ref: 'customers' },
+            rating: { type: Number, min: 1, max: 5 },
+            comment: String,
+            date: { type: Date, default: Date.now }
+            }
+        ],
         image: {
             type: Array,
             required: true

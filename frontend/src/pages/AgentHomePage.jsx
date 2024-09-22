@@ -1,32 +1,31 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 
 const AgentHomePage = () => {
-  const [bookedPackages, setBookedPackages] = useState([]);
+  const [bookedPackages, setPackages] = useState([]);
   const token = localStorage.getItem('token');
+  const agentid = jwtDecode(localStorage.getItem('token')).id;
+    useEffect(() => {
+      const fetchPackages = async () => {
+          try {
+              const response = await fetch('http://localhost:5000/packages');
+              const data = await response.json();
+              if (data && data.data) {
+                const agentPackages = data.data.filter(pkg => pkg.AgentID === agentid);
+                console.log(agentid)
+                console.log(agentPackages)
+                  setPackages(agentPackages);
+              } else {
+                  console.error('No packages found in the response.');
+              }
+          } catch (error) {
+              console.error('Failed to fetch packages:', error);
+          }
+      };
 
-  useEffect(() => {
-    const fetchBookedPackages = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/agent/booked-packages', {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setBookedPackages(data);
-        } else {
-          console.error('Failed to fetch booked packages');
-        }
-      } catch (error) {
-        console.error('Error fetching booked packages:', error);
-      }
-    };
-
-    fetchBookedPackages();
-  }, [token]);
+      fetchPackages();
+  }, []);
 
   return (
     <div>
@@ -58,6 +57,7 @@ const AgentHomePage = () => {
       ) : (
         <p>No packages booked.</p>
       )}
+      <Link to={`/createPackage`}>Create package</Link>
     </div>
   );
 };
