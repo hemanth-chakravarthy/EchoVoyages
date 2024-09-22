@@ -19,30 +19,23 @@ router.post('/', async (req, res) => {
         if(!customerData){
             return res.status(404).send({ message: 'Customer not found' });
         }
-        const guideData = await Guide.findById(guideId)
-        if(!guideData){
-            return res.status(404).send({ message: 'Guide not found' });
-        }
+        
 
         // Get the total price from the package
         const totalPrice = packageData.price;
         const packageName = packageData.name;
         const customerName = customerData.username;
-        const customerID = customerData.customerId;
-        const guideName = guideData.name
-        const guideID = guideData.guideId;
-        const packageID = packageData.packageId;
+        
 
 
         // Create the booking
         const newBooking = new bookings({
             customerName,
             customerId,
-            guideId,
             packageId,
             packageName,
-            guideName,
-            totalPrice
+            totalPrice,
+            status: 'confirmed'
         });
 
         // Save the booking to the database

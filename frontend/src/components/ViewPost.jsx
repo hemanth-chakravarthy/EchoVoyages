@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
+import { useNavigate } from 'react-router-dom';
 
 const ViewPost = () => {
     const { id } = useParams(); // Get the package ID from the URL
     const [packageDetails, setPackageDetails] = useState(null);
     const customerId = jwtDecode(localStorage.getItem('token')).id;
-
+    const navigate = useNavigate();
     useEffect(() => {
         const fetchPackageDetails = async () => {
             try {
@@ -28,7 +29,6 @@ const ViewPost = () => {
         }
 
         try {
-            const token = localStorage.getItem('token');
             const response = await fetch('http://localhost:5000/bookings', {
                 method: 'POST',
                 headers: {
@@ -38,14 +38,13 @@ const ViewPost = () => {
                 body: JSON.stringify({
                     customerId,    // Logged-in user's customerId
                     packageId: id, // Current package ID from URL params
-                    guideId: guideId // Optional guideId (replace or remove as necessary)
                 }),
             });
 
             if (response.ok) {
                 const result = await response.json();
-                alert('Booking successful!');
                 console.log('Booking details:', result);
+                navigate('/home')
             } else {
                 const errorData = await response.json();
                 console.error('Failed to book the package:', errorData.message);
@@ -56,6 +55,14 @@ const ViewPost = () => {
             alert('An error occurred while booking the package.');
         }
     };
+    const confirmBooking = () => {
+        // Show a confirmation dialog to the user
+        const isConfirmed = window.confirm('Do you want to confirm the booking?');
+        if (isConfirmed) {
+            handleBooking();  // Proceed with booking if the user confirms
+        }
+    };
+
 
     if (!packageDetails) {
         return <p>Loading...</p>;
@@ -85,7 +92,7 @@ const ViewPost = () => {
             ) : (
                 <p>No images available for this package</p>
             )}
-            <button onClick={handleBooking}>Book</button>
+            <button onClick={confirmBooking}>Book</button>
         </div>
     );
 };

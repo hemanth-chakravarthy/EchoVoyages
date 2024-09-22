@@ -2,6 +2,7 @@ import express from 'express';
 import { packages } from '../models/packageModel.js'; // Importing the Package model
 import multer from 'multer';
 import {Agency} from '../models/agencyModel.js'
+import { customers } from '../models/customerModel.js';
 import path from 'path';
 const router = express.Router();
 
@@ -30,11 +31,11 @@ router.post('/', upload.array('images'), async (req, res) => {
                 message: "Please provide all required fields"
             });
         }
-        const AgentData = await Agency.findByID(AgentID);
+        const AgentData = await customers.findById(AgentID)
         if(!AgentData){
-            return res.status(404).send({messgae: 'Agent Not Found'})
+            return res.status(404).send({ message: 'Agent not found' });
         }
-        const AgentName = AgentData.name;
+        const AgentName = customerData.name;
         // Map over the uploaded files to extract file paths
         const imagePaths = req.files ? req.files.map(file => `/public/packageImage/${file.filename}`) : [];
 
@@ -50,7 +51,7 @@ router.post('/', upload.array('images'), async (req, res) => {
             availableDates: availableDates.split(','),  // Assuming dates are passed as a comma-separated string
             maxGroupSize,
             guideID: guide,
-            AgentID: req.body._id, 
+            AgentID, 
             AgentName: AgentName, // Store the agentID in the package
             reviews: req.body.reviews || [],
             image: imagePaths,  // Save the image paths to the database
