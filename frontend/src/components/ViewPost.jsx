@@ -93,6 +93,7 @@ const ViewPost = () => {
                 <p>No images available for this package</p>
             )}
             <button onClick={confirmBooking}>Book</button>
+            <button>Add review </button>
         </div>
     );
 };
