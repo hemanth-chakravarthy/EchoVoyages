@@ -13,21 +13,28 @@ router.post('/signup',async(req,res)=>{
             !req.body.Name ||
             !req.body.phno ||
             !req.body.gmail ||
-            !req.body.password
+            !req.body.password ||
+            !req.body.role
         ){
             return res.status(400).send({
                 message: "Send all required feilds"
             });
         }
-        console.log("Inside try if")
+        console.log("Inside");
+        const user = await customers.findOne({username: req.body.username});
+        if(user){
+            return res.status(404).send({error: 'User already Exists'})
+        }
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
         const newCust = {
             username: req.body.username, 
             Name: req.body.Name, 
             phno: req.body.phno, 
             gmail: req.body.gmail, 
-            password: hashedPassword
+            password: hashedPassword,
+            role: req.body.role
         }
+        console.log("DON'T KNOW WHWRE I AM");
         const customer = await customers.create(newCust)
         return res.status(201).send(customer)
     } catch (error) {
@@ -36,7 +43,7 @@ router.post('/signup',async(req,res)=>{
 })
 router.post('/login', async (req, res) => {
     try {
-        const { username, password } = req.body;
+        const { username, password, role } = req.body;
 
         // Find user by username
         const user = await customers.findOne({ username });
@@ -47,6 +54,10 @@ router.post('/login', async (req, res) => {
         // Compare passwords
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
+            return res.status(400).json({ message: 'Invalid credentials' });
+        }
+
+        if(role != user.role){
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 

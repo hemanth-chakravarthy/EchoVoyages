@@ -4,9 +4,11 @@ import { useNavigate } from 'react-router-dom';
 const Login = () => {
     const [formData, setFormData] = useState({
         username: '',
-        password: ''
+        password: '',
+        role: 'customer', // Default role
     });
     const navigate = useNavigate();
+
     // Handle input changes
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -30,16 +32,18 @@ const Login = () => {
             });
 
             if (response.ok) {
-                
                 console.log("Login successful!");
                 
                 setFormData({
                     username: '',
-                    password: ''
+                    password: '',
+                    role: 'customer'
                 });
-                const data = await response.json();
                 
+                const data = await response.json();
                 localStorage.setItem('token', data.token);
+
+                // Redirect after successful login
                 window.location.href = '/home';
             } else {
                 console.log("Login failed.");
@@ -58,6 +62,14 @@ const Login = () => {
             <div>
                 <label>Password</label>
                 <input type="password" name="password" value={formData.password} onChange={handleInputChange} required />
+            </div>
+            <div>
+                <label>Role</label>
+                <select name="role" value={formData.role} onChange={handleInputChange} required>
+                    <option value="customer">Customer</option>
+                    <option value="travel agency">Travel Agency</option>
+                    <option value="guide">Guide</option>
+                </select>
             </div>
             <button type="submit">Log In</button>
         </form>
