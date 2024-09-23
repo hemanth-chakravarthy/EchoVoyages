@@ -6,6 +6,8 @@ import { jwtDecode } from 'jwt-decode';
 import '../assets/css/updateEntity.css'; // Importing the CSS file
 
 const CustomerInfo = () => {
+    const [bookings, setBookings] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [editing, setEditing] = useState(false);
     const [customer, setCustomer] = useState({});
     const id = jwtDecode(localStorage.getItem('token')).id;
@@ -31,7 +33,15 @@ const CustomerInfo = () => {
                 console.log(error);
             }
         };
-
+        const fetchBookingsData = async () => {
+            try {
+                const bookingsResponse = await axios.get(`http://localhost:5000/bookings/${id}`); // Replace 123 with actual customer ID
+                setBookings(bookingsResponse.data);
+            } catch (error) {
+                console.error("Error fetching bookings:", error);
+            }
+        };
+        fetchBookingsData();
         fetchCustomer();
     }, [id]);
 
@@ -59,6 +69,7 @@ const CustomerInfo = () => {
             console.log(error);
         }
     };
+    
 
     return (
         <div className="update-container">
@@ -139,6 +150,24 @@ const CustomerInfo = () => {
                     )}
                 </div>
             </div>
+            <div className="booking-list">
+            <h2>Previous Bookings</h2>
+            <div className="bookings-grid">
+                {bookings.length > 0 ? (
+                    bookings.map((booking) => (
+                        <div key={booking._id} className="booking">
+                            <h3>Package: {booking.packageName || 'N/A'}</h3>
+                            <p><strong>Guide Name:</strong> {booking.guideName || 'N/A'}</p>
+                            <p><strong>Total Price:</strong> ${booking.totalPrice}</p>
+                            <p><strong>Status:</strong> {booking.status}</p>
+                            <p><strong>Booking Date:</strong> {new Date(booking.bookingDate).toLocaleDateString()}</p>
+                        </div>
+                    ))
+                ) : (
+                    <p>No previous bookings available.</p>
+                )}
+            </div>
+        </div>
         </div>
     );
 };

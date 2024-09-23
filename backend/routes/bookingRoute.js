@@ -61,6 +61,30 @@ router.get('/',async (req,res) => {
         res.status(500).send({message: error.message})
     }
 })
+router.get('/:customerId', async (req, res) => {
+    const { customerId } = req.params; // Extract customerId from the URL
+
+    if (!customerId) {
+        return res.status(400).json({ message: 'Customer ID is required' });
+    }
+
+    try {
+        // Find bookings associated with the specific customerId
+        const booking = await bookings.find({ customerId });
+
+        // If no bookings are found
+        if (booking.length === 0) {
+            return res.status(404).json({ message: 'No bookings found for this customer' });
+        }
+
+        // Send the found bookings as a response
+        res.status(200).json(booking);
+    } catch (error) {
+        console.error('Error fetching bookings:', error);
+        res.status(500).json({ message: 'Error fetching bookings' });
+    }
+});
+
 
 // delete a booking
 router.delete('/:id', async (req,res) => {

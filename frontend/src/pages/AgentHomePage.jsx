@@ -78,6 +78,7 @@ const AgentHomePage = () => {
         <p>No packages booked.</p>
       )}
       <Link to={`/createPackage`}>Create package</Link>
+      <Link to={`/AgentProfilePage`}>Profile Page</Link>
     </div>
   );
 };
