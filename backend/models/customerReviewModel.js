@@ -9,6 +9,16 @@ const reviewSchema = new mongoose.Schema({
         type: String,  // Store the name of the package
         required: true
     },
+    packageId:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'packages',  // Reference to the package model
+        required: false
+    },
+    customerId:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'customers',  // Reference to the customer model
+        required:true
+    },
     rating: {
         type: Number,
         required: true,

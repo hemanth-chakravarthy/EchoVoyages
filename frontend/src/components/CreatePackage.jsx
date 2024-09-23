@@ -70,7 +70,6 @@ const CreatePackage = () => {
                     availableDates: '',
                     maxGroupSize: '',
                     AgentID: AgentId,
-                    AgentName: AgentName
                 });
                 setImages([]);
                 navigate('/home')

@@ -56,6 +56,7 @@ router.post('/signup',async(req,res)=>{
             }
             const agency = await Agency.create(newAgency)
             return res.status(201).send(agency)
+            
         }
         else if(req.body.role == 'guide')
         {
@@ -153,7 +154,7 @@ router.post('/login', async (req, res) => {
     }
 });
 // get all coustomers
-router.get('/customers',async (req,res) => {
+router.get('/',async (req,res) => {
     try {
         const custs = await customers.find({});
         return res.status(200).json({
@@ -167,7 +168,7 @@ router.get('/customers',async (req,res) => {
 })
 
 // delete a customer
-router.delete('/customers/:id', async (req,res) => {
+router.delete('/:id', async (req,res) => {
     try {
         const {id} = req.params;
         const result = await customers.findByIdAndDelete(id)
@@ -184,7 +185,7 @@ router.delete('/customers/:id', async (req,res) => {
     
 })
 // update customers
-router.put('/customers/:id',async (req,res) => {
+router.put('/:id',async (req,res) => {
     try {
         const {id} = req.params;
         const result = await customers.findByIdAndUpdate(id, req.body);
@@ -201,7 +202,7 @@ router.put('/customers/:id',async (req,res) => {
     
 })
 // view a single customer
-router.get('/customers/:id',async (req,res) => {
+router.get('/:id',async (req,res) => {
     try {
         let {id} = req.params
         id = id.toString()

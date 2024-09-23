@@ -7,10 +7,10 @@ const router = express.Router();
 // Save a review
 router.post('/', async (req, res) => {
     try {
-        const { userId, packageId, rating, comment } = req.body;
+        const { customerId, packageId, rating, comment } = req.body;
         
         // Validate required fields
-        if (!userId || !packageId || !rating || !comment) {
+        if (!customerId || !packageId || !rating || !comment) {
             return res.status(400).send({
                 message: "Send all required fields"
             });
@@ -19,7 +19,7 @@ router.post('/', async (req, res) => {
         if (!packageData) {
             return res.status(404).send({ message: 'Package not found' });
         }
-        const customerData = await customers.findById(userId)
+        const customerData = await customers.findById(customerId)
         if(!customerData){
             return res.status(404).send({ message: 'Customer not found' });
         }
@@ -29,9 +29,12 @@ router.post('/', async (req, res) => {
         // Create new review
         const newReview = {
             customerName,
+            customerId,
+            packageId,
             packageName,
             rating,
-            comment
+            comment,
+            status: "approved"
         };
 
         const review = await reviews.create(newReview);
@@ -45,18 +48,42 @@ router.post('/', async (req, res) => {
 // Get all reviews (for admin panel or other purposes)
 router.get('/', async (req, res) => {
     try {
-        const reviews = await reviews.find().populate('userId').populate('packageId');
-        return res.status(200).send(reviews);
+        const revs = await reviews.find().populate('customerId').populate('packageId');
+        return res.status(200).send(revs);
     } catch (error) {
         console.log(error);
         res.status(500).send({ message: "Internal Server Error" });
     }
 });
+router.get('/:packageId', async (req, res) => {
+    const { packageId } = req.params;  // Extract the packageId properly
+
+    if (!packageId) {
+        return res.status(400).json({ message: 'Package ID is required' });
+    }
+
+    try {
+        // Find reviews associated with the specific packageId
+        const revs = await reviews.find({ packageId });
+
+        // If no reviews are found
+        if (revs.length === 0) {
+            return res.status(404).json({ message: 'No reviews found for this package' });
+        }
+
+        // Send the found reviews as a response
+        res.status(200).json(revs);
+    } catch (error) {
+        console.error('Error fetching reviews:', error);
+        res.status(500).json({ message: 'Error fetching reviews' });
+    }
+});
+
 
 // Get a specific review by ID
 router.get('/:id', async (req, res) => {
     try {
-        const review = await reviews.findById(req.params.id).populate('userId').populate('packageId');
+        const review = await reviews.findById(req.params.id).populate('customerId').populate('packageId');
         if (!review) {
             return res.status(404).send({ message: "Review not found" });
         }
@@ -103,7 +130,7 @@ router.delete('/:id', async (req, res) => {
 });
 router.get('/', (req, res) => {
     reviews.find()
-      .populate('userId', 'username')
+      .populate('customerId', 'username')
       .populate('packageId', 'name')
       .exec((err, reviewData) => {
         if (err) {

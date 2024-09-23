@@ -8,6 +8,7 @@ import reviewRoute from './routes/reviewRoutes.js'
 import bookingRoute from './routes/bookingRoute.js'
 import guideRoute from './routes/guideRoutes.js'
 import agencyRoutes from './routes/agencyRoutes.js'
+import wishlistRoutes from './routes/wishlistRoutes.js'
 import cors from 'cors'
 import multer from 'multer';
 import path from 'path';
@@ -23,7 +24,10 @@ mongoose.connect(mongoURL)
 
 const app = express()
 app.use(express.json());
-app.use(cors())
+app.use(cors({
+    origin: 'http://localhost:5173', // Replace with your frontend's URL
+}));
+
 
 app.get('/',(req,res)=>{
     res.render('')
@@ -36,6 +40,7 @@ app.use('/reviews', reviewRoute)
 app.use('/bookings', bookingRoute)
 app.use('/guides', guideRoute)
 app.use('/agency', agencyRoutes)
+app.use('/wishlist', wishlistRoutes);
 app.use('/public', express.static('public'));
 
 
