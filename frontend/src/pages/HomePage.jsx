@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import Navbar from '../components/Navbar';
 import '../assets/css/homePage.css'
 const HomePage = () => {
     const [packages, setPackages] = useState([]);
@@ -26,11 +27,8 @@ const HomePage = () => {
 
     return (
         <div>
+            <Navbar/>
             <h1>Available Packages</h1> 
-            <div className='links'>
-                <Link to={`/custProfilePage`}>Profile Page</Link>
-                <Link to={`/customerWishlist`}>Wishlist</Link>
-            </div>
             {packages.length > 0 ? (
                 <ul>
                     {packages.map((pack) => (

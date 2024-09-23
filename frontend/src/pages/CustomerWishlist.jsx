@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
+import Navbar from '../components/Navbar';
 
 const CustomerWishlist = () => {
     const [wishlist, setWishlist] = useState([]);
@@ -31,6 +32,7 @@ const CustomerWishlist = () => {
 
     return (
         <div>
+            <Navbar/>
             <h1>Your Wishlist</h1>
             {wishlist.length > 0 ? (
                 <ul>
