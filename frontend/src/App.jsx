@@ -9,8 +9,9 @@ import UpdateEntity from "./pages/UpdateEntity";
 import ViewPost from "./components/ViewPost"
 import DummyPage from "./pages/DummyPage"
 import AgentHomePage from "./pages/AgentHomePage"
+import AgentProfilePage from "./pages/AgentProfilePage"
 import PrivateRoute from "./components/PrivateRoute"
-import ProfilePage from "./pages/CustomerProfile"
+import CustomerProfile from "./pages/CustomerProfile"
 import CustomerWishlist from "./pages/CustomerWishlist"
 
 const App = () =>{
@@ -42,6 +43,9 @@ const App = () =>{
   <Route path="/AgentHome" element={<PrivateRoute />}>
     <Route path="/AgentHome" element={<AgentHomePage />} />
   </Route>
+  <Route path="/AgentProfilePage" element={<PrivateRoute />}>
+    <Route path="/AgentProfilePage" element={<AgentProfilePage />} />
+  </Route>
 
   {/* For the /admin route */}
   {/* <Route path="/admin" element={<PrivateRoute />}> */}
@@ -55,7 +59,7 @@ const App = () =>{
     <Route path="/createPackage" element={<DummyPage />} />
   </Route>
  <Route path="/custProfilePage" element={<PrivateRoute />}>
-  <Route path="/custProfilePage" element={<ProfilePage/>}/>
+  <Route path="/custProfilePage" element={<CustomerProfile/>}/>
  </Route>
   {/* For the /admin/:entity/delete/:id route */}
   <Route path="/admin/:entity/delete/:id" element={<PrivateRoute />}>

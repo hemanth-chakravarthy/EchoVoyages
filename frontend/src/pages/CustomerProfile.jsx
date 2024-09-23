@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import CustomerInfo from '../components/CustomerInfo';
 import { jwtDecode } from 'jwt-decode';
 import Navbar from '../components/Navbar';
@@ -7,7 +6,7 @@ import "../styles/CustomerProfile.css";
 import "../styles/Navbar.css";
 import axios from 'axios';
 
-const ProfilePage = () => {
+const CustomerProfile = () => {
     const id =  jwtDecode(localStorage.getItem('token')).id;
     const [customer, setCustomer] = useState(null); // Initially set to null
     const [bookings, setBookings] = useState([]);
@@ -45,4 +44,4 @@ const ProfilePage = () => {
     );
 };
 
-export default ProfilePage;
+export default CustomerProfile;

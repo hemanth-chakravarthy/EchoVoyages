@@ -77,6 +77,7 @@ const AgentHomePage = () => {
       ) : (
         <p>No packages booked.</p>
       )}
+      <Link to={'/AgentHome'}>Home Page</Link>
       <Link to={`/createPackage`}>Create package</Link>
       <Link to={`/AgentProfilePage`}>Profile Page</Link>
     </div>
