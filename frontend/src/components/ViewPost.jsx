@@ -7,6 +7,7 @@ import '../assets/css/viewPost.css'
 const ViewPost = () => {
   const { id } = useParams(); // Get the package ID from the URL
   const [packageDetails, setPackageDetails] = useState(null);
+  const [revvs, setRevDetails] = useState(null)
   const [showReviewModal, setShowReviewModal] = useState(false); // Modal visibility state
   const [rating, setRating] = useState(1); // Default rating value
   const [comment, setComment] = useState(''); // Comment value
@@ -25,9 +26,20 @@ const ViewPost = () => {
         console.error('Error fetching package details:', error);
       }
     };
-
+    const fetchReviews = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/reviews/${id}`);
+        const data = await res.json()
+        setRevDetails(data)
+      } catch (error) {
+        
+        console.error('Error fetching reviews:', error);
+      }
+    }
+    fetchReviews();
     fetchPackageDetails();
   }, [id]);
+  
 
   const handleBooking = async () => {
     if (!customerId) {
@@ -200,6 +212,23 @@ const ViewPost = () => {
       ) : (
         <p>No images available for this package</p>
       )}
+
+      {/* Display reviews */}
+      <div className="reviews-section">
+        <h2>Reviews:</h2>
+        {revvs && revvs.length > 0 ? (
+          revvs.map((review) => (
+            <div key={review._id} className="review-item">
+              <p><strong>Rating:</strong> {review.rating} / 5</p>
+              <p><strong>Comment:</strong> {review.comment}</p>
+              <p><strong>Reviewed by:</strong> {review.customerName || 'Anonymous'}</p>
+            </div>
+          ))
+        ) : (
+          <p>No reviews for this package yet.</p>
+        )}
+      </div>
+
       <button onClick={confirmBooking}>Book</button>
       <button onClick={handleOpenReviewModal}>Add Review</button>
       <button onClick={addToWishlist}>Add to Wishlist</button>
@@ -233,5 +262,6 @@ const ViewPost = () => {
     </div>
   );
 };
+
 
 export default ViewPost;

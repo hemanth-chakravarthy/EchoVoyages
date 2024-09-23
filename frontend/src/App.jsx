@@ -47,7 +47,7 @@ const App = () =>{
   {/* <Route path="/admin" element={<PrivateRoute />}> */}
     <Route path="/admin" element={<Admin />} />
   {/* </Route> */}
-    <Route>
+    <Route path="/customerWishlist" element={<PrivateRoute/>}>
       <Route path="/customerWishlist" element={<CustomerWishlist/>}/>
     </Route>
   {/* For the /createPackage route */}

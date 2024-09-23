@@ -28,11 +28,31 @@ const CustomerWishlist = () => {
     
         fetchWishlist();
     }, [customerId]);
-    
+
+    const handleRemoveItem = async (itemId) => {
+        try {
+            const response = await fetch(`http://localhost:5000/wishlist/${itemId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            const data = await response.json();
+            if (response.ok) {
+                setWishlist((prevWishlist) => prevWishlist.filter(item => item._id !== itemId));
+                alert(data.message);
+            } else {
+                alert(data.message || 'Failed to remove item from wishlist');
+            }
+        } catch (error) {
+            console.error('Error removing item from wishlist:', error);
+        }
+    };
 
     return (
         <div>
-            <Navbar/>
+            <Navbar />
             <h1>Your Wishlist</h1>
             {wishlist.length > 0 ? (
                 <ul>
@@ -47,7 +67,7 @@ const CustomerWishlist = () => {
                                 alt={`Image of ${item.packageId.name}`}
                                 style={{ width: '200px', height: '150px', marginRight: '10px' }}
                             />
-                            {/* You can add a button to remove from wishlist here */}
+                            <button onClick={() => handleRemoveItem(item._id)}>Remove</button>
                         </li>
                     ))}
                 </ul>
