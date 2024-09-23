@@ -128,7 +128,7 @@ router.post('/login', async (req, res) => {
         else if(role == 'guide')
         {
             // Find user by username
-            const user = await Agency.findOne({ username });
+            const user = await Guide.findOne({ username });
             if (!user) {
                 return res.status(400).json({ message: 'Invalid credentials' });
             }
