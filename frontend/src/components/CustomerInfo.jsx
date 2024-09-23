@@ -14,7 +14,10 @@ const CustomerInfo = () => {
         username: 'Username',
         Name: 'Name',
         phno: 'Phone Number',
-        gmail: 'Email'
+        gmail: 'Email',
+        gender: 'Gender',
+        state: 'State',
+        address: 'Address',
     };
 
     useEffect(() => {
@@ -112,16 +115,24 @@ const CustomerInfo = () => {
                                 onChange={handleChange}
                                 className="input-field"
                             />
+                            {/* <label>Password</label>
+                            <input
+                                type="password"
+                                name="password"
+                                value={customer.password || ''}
+                                onChange={handleChange}
+                                className="input-field"
+                            /> */}
                             <button onClick={handleUpdateCustomer} className="save-button">
                                 Save Changes
                             </button>
                         </div>
                     ) : (
                         <div>
-                        {Object.keys(fieldLabels).map((field) => (
+                        {['Name', 'username', 'phno', 'gmail'].map((field) => (
                             <div className="profile-item" key={field}>
-                                <span className="label">{fieldLabels[field]}</span>
-                                
+                                <span className="label">{field.charAt(0).toUpperCase() + field.slice(1)}:</span>
+                                <span>{customer[field] || 'N/A'}</span>
                             </div>
                         ))}
                     </div>
