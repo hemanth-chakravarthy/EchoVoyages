@@ -119,7 +119,7 @@ li div {
 }
 
 /* Ensure proper scrolling when content exceeds page height */
-html, body {
+html {
   height: auto;
 }
 
@@ -132,4 +132,4 @@ html, body {
   img {
     margin-bottom: 10px;
   }
-} */
+} 

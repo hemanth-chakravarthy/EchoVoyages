@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';  // Fix the import here
 import { useNavigate } from 'react-router-dom';
 import '../assets/css/viewPost.css'
 
@@ -28,17 +28,13 @@ const ViewPost = () => {
 
     fetchPackageDetails();
   }, [id]);
-  
 
   const handleBooking = async () => {
-    console.log(customerId);
-    const token = localStorage.getItem('token');
-    console.log (jwtDecode(token))
     if (!customerId) {
       alert("Please log in to book the package.");
       return;
     }
-    console.log(token)
+
     try {
       const response = await fetch('http://localhost:5000/bookings', {
         method: 'POST',
@@ -88,7 +84,6 @@ const ViewPost = () => {
 
   // Submit the review
   const handleSubmitReview = async () => {
-    const token = localStorage.getItem('token');
     try {
       const response = await fetch('http://localhost:5000/reviews', {
         method: 'POST',
@@ -97,14 +92,13 @@ const ViewPost = () => {
           'Authorization': `Bearer ${token}`, // Include token for authentication
         },
         body: JSON.stringify({
-            customerId,    // Logged-in user's customerId
-            packageId: id,  // Use the package name from the package details
-            rating,  // Rating value from the form
-            comment,  // Comment from the form
-          // You don't need to send the date or status as they have defaults in the schema
+          customerId,    // Logged-in user's customerId
+          packageId: id,  // Use the package name from the package details
+          rating,  // Rating value from the form
+          comment,  // Comment from the form
         }),
       });
-  
+
       if (response.ok) {
         const result = await response.json();
         console.log('Review submitted:', result);
@@ -120,7 +114,63 @@ const ViewPost = () => {
       alert('An error occurred while submitting the review.');
     }
   };
-  
+
+  // Handle adding to wishlist
+  const handleAddToWishlist = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/wishlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, // Include token for authentication
+        },
+        body: JSON.stringify({
+          customerId,    // Logged-in user's customerId
+          packageId: id, // Current package ID from URL params
+        }),
+      });
+
+      if (response.ok) {
+        alert('Package added to wishlist!');
+      } else {
+        const errorData = await response.json();
+        console.error('Failed to add to wishlist:', errorData.message);
+        alert(`Failed to add to wishlist: ${errorData.message}`);
+      }
+    } catch (error) {
+      console.error('Error adding to wishlist:', error);
+      alert('An error occurred while adding to wishlist.');
+    }
+  };
+  const addToWishlist = async () => {
+    const token = localStorage.getItem('token');
+    try {
+        const response = await fetch('http://localhost:5000/wishlist', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+                customerId, // Logged-in user's customerId
+                packageId: id, // Current package ID from URL params
+            }),
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            alert('Package added to wishlist successfully!');
+        } else {
+            const errorData = await response.json();
+            alert(`Failed to add to wishlist: ${errorData.message}`);
+        }
+    } catch (error) {
+        console.error('Error adding to wishlist:', error);
+        alert('An error occurred while adding to the wishlist.');
+    }
+};
+
+
 
   if (!packageDetails) {
     return <p>Loading...</p>;
@@ -152,6 +202,7 @@ const ViewPost = () => {
       )}
       <button onClick={confirmBooking}>Book</button>
       <button onClick={handleOpenReviewModal}>Add Review</button>
+      <button onClick={addToWishlist}>Add to Wishlist</button>
 
       {/* Modal for adding a review */}
       {showReviewModal && (

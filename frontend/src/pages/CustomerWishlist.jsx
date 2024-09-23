@@ -1,67 +1,56 @@
-// CustomerWishlist.jsx
 import React, { useEffect, useState } from 'react';
+import { jwtDecode } from 'jwt-decode';
 
 const CustomerWishlist = () => {
     const [wishlist, setWishlist] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
-
-    // Assume customer ID is retrieved from some user context or token
-    const customerId = localStorage.getItem('customerId');  // Replace with actual logic to fetch logged-in user's ID
+    const token = localStorage.getItem('token');
+    const customerId = token ? jwtDecode(token).id : null;
 
     useEffect(() => {
         const fetchWishlist = async () => {
-            try {
-                const response = await fetch(`http://localhost:5000/wishlist/${customerId}`);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch wishlist.');
+            if (customerId) {
+                try {
+                    const response = await fetch(`http://localhost:5000/wishlist/${customerId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                        },
+                    });
+                    const data = await response.json();
+                    setWishlist(data);
+                } catch (error) {
+                    console.error('Error fetching wishlist:', error);
                 }
-                const data = await response.json();
-                setWishlist(data.packages || []); // Set packages in wishlist if available
-                setLoading(false);
-            } catch (error) {
-                setError(error.message);
-                setLoading(false);
+            } else {
+                console.error('Customer ID is null');
             }
         };
-
+    
         fetchWishlist();
     }, [customerId]);
-
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
+    
 
     return (
         <div>
-            <h1>My Wishlist</h1>
+            <h1>Your Wishlist</h1>
             {wishlist.length > 0 ? (
                 <ul>
-                    {wishlist.map((pkg) => (
-                        <li key={pkg._id}>
-                            <h2>{pkg.name}</h2>
-                            <p>{pkg.description}</p>
-                            <p>Price: {pkg.price}</p>
-                            <p>Duration: {pkg.duration} days</p>
-                            {/* If you want to show package images */}
-                            {pkg.image && pkg.image.length > 0 ? (
-                                <img 
-                                    src={`http://localhost:5000${pkg.image[0]}`}  // Assuming image paths are correct
-                                    alt={pkg.name}
-                                    style={{ width: '200px', height: '150px' }}
-                                />
-                            ) : (
-                                <p>No image available</p>
-                            )}
+                    {wishlist.map(item => (
+                        <li key={item._id}>
+                            <h2>{item.packageId.name}</h2>
+                            <p>{item.packageId.description}</p>
+                            <p>Price: {item.packageId.price}</p>
+                            <p>Duration: {item.packageId.duration} days</p>
+                            <img
+                                src={`http://localhost:5000${item.packageId.image[0]}`} // Assuming there's at least one image
+                                alt={`Image of ${item.packageId.name}`}
+                                style={{ width: '200px', height: '150px', marginRight: '10px' }}
+                            />
+                            {/* You can add a button to remove from wishlist here */}
                         </li>
                     ))}
                 </ul>
             ) : (
-                <p>No items in your wishlist.</p>
+                <p>No packages in your wishlist.</p>
             )}
         </div>
     );

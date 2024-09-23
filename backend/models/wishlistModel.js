@@ -4,22 +4,16 @@ import mongoose from 'mongoose';
 const wishlistSchema = new mongoose.Schema({
     customerId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Customer',
         required: true,
+        ref: 'Customer' // Adjust this if your customer model is named differently
     },
-    packages: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Package',
-            required: true,
-        },
-    ],
-    createdAt: {
-        type: Date,
-        default: Date.now,
-    },
-});
+    packageId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'packages' // Adjust this if your package model is named differently
+    }
+}, { timestamps: true });
 
 const Wishlist = mongoose.model('Wishlist', wishlistSchema);
 
-export { Wishlist };
+export default Wishlist;
