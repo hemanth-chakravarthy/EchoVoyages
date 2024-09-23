@@ -26,7 +26,6 @@ router.post('/', async (req, res) => {
         const totalPrice = packageData.price;
         const packageName = packageData.name;
         const customerName = customerData.username;
-        
 
 
         // Create the booking
@@ -36,9 +35,10 @@ router.post('/', async (req, res) => {
             packageId,
             packageName,
             totalPrice,
-            status: 'confirmed'
+            status: 'confirmed',
         });
-
+        packageData.isActive = false;
+        await packageData.save();
         // Save the booking to the database
         const savedBooking = await newBooking.save();
         res.status(201).send(savedBooking);

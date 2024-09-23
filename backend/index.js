@@ -8,6 +8,7 @@ import reviewRoute from './routes/reviewRoutes.js'
 import bookingRoute from './routes/bookingRoute.js'
 import guideRoute from './routes/guideRoutes.js'
 import agencyRoutes from './routes/agencyRoutes.js'
+import wishlistRoutes from './routes/wishlistRoutes.js'
 import cors from 'cors'
 import multer from 'multer';
 import path from 'path';
@@ -36,6 +37,7 @@ app.use('/reviews', reviewRoute)
 app.use('/bookings', bookingRoute)
 app.use('/guides', guideRoute)
 app.use('/agency', agencyRoutes)
+app.use('/wishlist', wishlistRoutes);
 app.use('/public', express.static('public'));
 
 

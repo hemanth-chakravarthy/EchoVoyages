@@ -1,0 +1,101 @@
+/* General body and container styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 2.5rem;
+    color: #333;
+}
+
+/* Links section for profile and wishlist */
+.links {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.links a {
+    margin: 0 10px;
+    text-decoration: none;
+    font-size: 1.2rem;
+    color: #007BFF;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.links a:hover {
+    background-color: #007BFF;
+    color: white;
+}
+
+/* Package list styling */
+ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* Individual package card styling */
+li {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 15px;
+    width: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+li:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+h2 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+p {
+    font-size: 1rem;
+    color: #666;
+    margin: 5px 0;
+}
+
+/* Button to view package */
+button {
+    background-color: #007BFF;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Images */
+img {
+    width: 200px;
+    height: 150px;
+    border-radius: 8px;
+    object-fit: cover;
+    margin-top: 10px;
+}
+
+p.no-image {
+    font-style: italic;
+    color: #999;
+}

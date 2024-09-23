@@ -1,31 +1,48 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode'; // Fixed the import statement
 
 const AgentHomePage = () => {
   const [bookedPackages, setPackages] = useState([]);
+  const [allRevs, setReviews] = useState([]);
   const token = localStorage.getItem('token');
-  const agentid = jwtDecode(localStorage.getItem('token')).id;
-    useEffect(() => {
-      const fetchPackages = async () => {
-          try {
-              const response = await fetch('http://localhost:5000/packages');
-              const data = await response.json();
-              if (data && data.data) {
-                const agentPackages = data.data.filter(pkg => pkg.AgentID === agentid);
-                console.log(agentid)
-                console.log(agentPackages)
-                  setPackages(agentPackages);
-              } else {
-                  console.error('No packages found in the response.');
-              }
-          } catch (error) {
-              console.error('Failed to fetch packages:', error);
-          }
-      };
+  const agentid = jwtDecode(token).id; // Decode the token to get the agent ID
 
-      fetchPackages();
-  }, []);
+  // Fetch packages
+  useEffect(() => {
+    const fetchPackages = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/packages');
+        const data = await response.json();
+        if (data && data.data) {
+          const agentPackages = data.data.filter(pkg => pkg.AgentID === agentid);
+          setPackages(agentPackages); // Store the packages for this agent
+        } else {
+          console.error('No packages found in the response.');
+        }
+      } catch (error) {
+        console.error('Failed to fetch packages:', error);
+      }
+    };
+
+    // Fetch reviews
+    const fetchReviews = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/reviews');
+        const data = await response.json(); // Parse the response as JSON
+        if (data) {
+          setReviews(data); // Set the reviews in state
+        } else {
+          console.error('No reviews found.');
+        }
+      } catch (error) {
+        console.error('Failed to fetch reviews:', error);
+      }
+    };
+
+    fetchPackages();
+    fetchReviews();
+  }, [agentid]);
 
   return (
     <div>
@@ -38,19 +55,22 @@ const AgentHomePage = () => {
               <p>Description: {pkg.description}</p>
               <p>Price: {pkg.price}</p>
               <p>Duration: {pkg.duration} days</p>
-              <h3>Reviews:</h3>
-              {pkg.reviews && pkg.reviews.length > 0 ? (
+              {/* <h3>Reviews:</h3> */}
+              {/* Filter reviews by packageId */}
+              {/* {allRevs.length > 0 ? (
                 <ul>
-                  {pkg.reviews.map((review) => (
-                    <li key={review._id}>
-                      <p>Rating: {review.rating}</p>
-                      <p>Comment: {review.comment}</p>
-                    </li>
-                  ))}
+                  {allRevs
+                    .filter((review) => review.packageId === pkg._id) // Match reviews to package
+                    .map((review) => (
+                      <li key={review._id}>
+                        <p>Rating: {review.rating}</p>
+                        <p>Comment: {review.comment}</p>
+                      </li>
+                    ))}
                 </ul>
               ) : (
                 <p>No reviews available for this package.</p>
-              )}
+              )} */}
             </li>
           ))}
         </ul>
