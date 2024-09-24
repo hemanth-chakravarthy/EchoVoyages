@@ -47,6 +47,14 @@ const CustomerInfo = () => {
     const handleEditToggle = () => {
         setEditing(!editing);
     };
+    const handleLogout = () => {
+        // Clear the token from localStorage
+        localStorage.removeItem('token');
+
+        // Redirect to login page
+        navigate('/');
+    };
+
 
     // Handle changes in form inputs
     const handleChange = (e) => {
@@ -82,7 +90,7 @@ const CustomerInfo = () => {
                             style={{ width: '150px', height: '150px', borderRadius: '50%' }} 
                         />
                     </div>
-                    <p className="logout-btn">Logout</p>
+                    <p className="logout-btn" onClick={handleLogout}>Logout</p>
                 </div>
                 <div className="customer-info">
                     <div className="heading-profile">

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import CustomerInfo from '../components/CustomerInfo';
 import { jwtDecode } from 'jwt-decode';
+import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom'; // For navigation after logout
 import axios from 'axios';
 import "../styles/CustomerProfile.css";
@@ -38,23 +39,11 @@ const CustomerProfile = () => {
     }, []);
 
     // Logout function
-    const handleLogout = () => {
-        // Clear the token from localStorage
-        localStorage.removeItem('token');
-
-        // Redirect to login page
-        navigate('/LandingPage');
-    };
-
+    
     return (
         <div className="profile-page">
             {/* Navbar Component */}
-            <div className="navbar">
-                <h1>Customer Profile</h1>
-                <button className="logout-button" onClick={handleLogout}>
-                    Logout
-                </button>
-            </div>
+            <Navbar/>
 
             {/* Customer Info */}
             {customer ? <CustomerInfo customer={customer} /> : <p>Loading customer info...</p>}

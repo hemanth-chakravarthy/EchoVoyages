@@ -1,8 +1,9 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React from 'react'
+import { Link } from 'react-router-dom';
 
-export default function Navbar() {
-    return (
+const Navbar = () => {
+  return (
+    <div>
         <nav>
             <img src="../images/logo_ev-removebg-preview.png" className="nav--icon" />
             <div className="nav-elements">
@@ -11,5 +12,8 @@ export default function Navbar() {
             <Link to={`/customerWishlist`} className="nav--element--1">Wishlist</Link>
             </div>
         </nav>
-    )
+    </div>
+  )
 }
+
+export default Navbar
