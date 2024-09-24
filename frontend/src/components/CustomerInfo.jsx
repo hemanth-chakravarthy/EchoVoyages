@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { FaPen } from 'react-icons/fa';
 import { jwtDecode } from 'jwt-decode';
 import '../assets/css/updateEntity.css'; // Importing the CSS file
 

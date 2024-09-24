@@ -14,6 +14,7 @@ import PrivateRoute from "./components/PrivateRoute"
 import CustomerProfile from "./pages/CustomerProfile"
 import CustomerWishlist from "./pages/CustomerWishlist"
 import GuideHome from "./pages/GuideHome"
+import GuideProfile from "./pages/GuideProfile"
 
 const App = () =>{
 
@@ -49,6 +50,9 @@ const App = () =>{
   </Route>
   <Route path="/AgentProfilePage" element={<PrivateRoute />}>
     <Route path="/AgentProfilePage" element={<AgentProfilePage />} />
+  </Route>
+  <Route path="/GuideProfilePage" element={<PrivateRoute />}>
+    <Route path="/GuideProfilePage" element={<GuideProfile />} />
   </Route>
 
   {/* For the /admin route */}
