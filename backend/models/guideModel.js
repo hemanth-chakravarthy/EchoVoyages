@@ -54,6 +54,16 @@ const guideSchema = new mongoose.Schema({
         type: Boolean,
         default: false  // Whether the guide is available or not
     },
+    availableDates: [{
+        startDate: {
+            type: Date,
+            required: false
+        },
+        endDate: {
+            type: Date,
+            required: false
+        }
+    }],
     assignedPackages: [{
         packageId: {
             type: mongoose.Schema.Types.ObjectId,

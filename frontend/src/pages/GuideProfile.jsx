@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {  useNavigate, Link } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
+import { useNavigate, Link } from 'react-router-dom';
+import {jwtDecode} from 'jwt-decode'; // corrected import
 
 const GuideProfilePage = () => {
-    const guideId  = jwtDecode(localStorage.getItem('token')).id; // Get guideId from the URL parameters
+    const guideId = jwtDecode(localStorage.getItem('token')).id; // Get guideId from the token
     const [guide, setGuide] = useState(null);
     const [loading, setLoading] = useState(true);
     const [editing, setEditing] = useState(false); // Track whether we are in "edit" mode
@@ -39,6 +39,33 @@ const GuideProfilePage = () => {
         });
     };
 
+    const handleNestedChange = (e, parentKey) => {
+        const { name, value } = e.target;
+        setUpdatedGuide({
+            ...updatedGuide,
+            [parentKey]: {
+                ...updatedGuide[parentKey],
+                [name]: value,
+            },
+        });
+    };
+
+    const handleAvailabilityDateChange = (index, field, value) => {
+        const updatedDates = [...updatedGuide.availableDates];
+        updatedDates[index] = { ...updatedDates[index], [field]: value };
+        setUpdatedGuide({
+            ...updatedGuide,
+            availableDates: updatedDates,
+        });
+    };
+
+    const handleAddDateRange = () => {
+        setUpdatedGuide({
+            ...updatedGuide,
+            availableDates: [...updatedGuide.availableDates, { startDate: '', endDate: '' }],
+        });
+    };
+
     const handleSaveChanges = async () => {
         try {
             await axios.put(`http://localhost:5000/guides/${guideId}`, updatedGuide);
@@ -66,7 +93,6 @@ const GuideProfilePage = () => {
     }
 
     return (
-        
         <div className="guide-profile-container">
             <div>
                 <Link to={'/guideHome'}>Home Page</Link>
@@ -137,14 +163,60 @@ const GuideProfilePage = () => {
             {/* Guide Availability Section */}
             <div className="guide-availability">
                 <h3>Availability & Packages</h3>
-                <p>{guide.availability ? 'Available for booking' : 'Not available for booking'}</p>
-                
+                {editing ? (
+                    <>
+                        {updatedGuide.availableDates.map((dateRange, index) => (
+                            <div key={index} className="date-range">
+                                <label>Start Date:</label>
+                                <input
+                                    type="date"
+                                    value={dateRange.startDate}
+                                    onChange={(e) =>
+                                        handleAvailabilityDateChange(index, 'startDate', e.target.value)
+                                    }
+                                />
+                                <label>End Date:</label>
+                                <input
+                                    type="date"
+                                    value={dateRange.endDate}
+                                    onChange={(e) =>
+                                        handleAvailabilityDateChange(index, 'endDate', e.target.value)
+                                    }
+                                />
+                            </div>
+                        ))}
+                        <button onClick={handleAddDateRange}>Add Date Range</button>
+                    </>
+                ) : (
+                    guide.availableDates && guide.availableDates.length > 0 ? (
+                        <ul>
+                            {guide.availableDates.map((dateRange, index) => (
+                                <li key={index}>
+                                    <strong>From:</strong> {new Date(dateRange.startDate).toLocaleDateString()}
+                                    <strong> To:</strong> {new Date(dateRange.endDate).toLocaleDateString()}
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p>No available dates provided</p>
+                    )
+                )}
+
                 {guide.assignedPackages && guide.assignedPackages.length > 0 ? (
                     <div className="assigned-packages">
                         {guide.assignedPackages.map((pkg) => (
                             <div key={pkg.packageId} className="package">
                                 <p><strong>Package ID:</strong> {pkg.packageId}</p>
-                                <p><strong>Price:</strong> ${pkg.price}</p>
+                                <p><strong>Price:</strong> {editing ? (
+                                    <input
+                                        type="number"
+                                        name={`price_${pkg.packageId}`}
+                                        value={pkg.price}
+                                        onChange={(e) => handleNestedChange(e, 'assignedPackages')}
+                                    />
+                                ) : (
+                                    `$${pkg.price}`
+                                )}</p>
                             </div>
                         ))}
                     </div>
@@ -166,9 +238,9 @@ const GuideProfilePage = () => {
                 <p><strong>Phone:</strong> {editing ? (
                     <input
                         type="text"
-                        name="contact.phone"
+                        name="phone"
                         value={updatedGuide.contact.phone}
-                        onChange={handleChange}
+                        onChange={(e) => handleNestedChange(e, 'contact')}
                     />
                 ) : (
                     guide.contact.phone
@@ -176,9 +248,9 @@ const GuideProfilePage = () => {
                 <p><strong>Email:</strong> {editing ? (
                     <input
                         type="email"
-                        name="contact.email"
+                        name="email"
                         value={updatedGuide.contact.email}
-                        onChange={handleChange}
+                        onChange={(e) => handleNestedChange(e, 'contact')}
                     />
                 ) : (
                     guide.contact.email
@@ -202,9 +274,9 @@ const GuideProfilePage = () => {
                     </button>
                 )}
             </div>
-            
         </div>
     );
 };
 
 export default GuideProfilePage;
+
