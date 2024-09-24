@@ -26,7 +26,8 @@ router.post('/', async (req, res) => {
 });
 
 // Get wishlist for a specific customer
-router.get('/:customerId', async (req, res) => {
+// In your wishlist route (assuming you're using Express and Mongoose)
+router.get('/cust/:customerId', async (req, res) => {
     const { customerId } = req.params;
 
     if (!customerId) {
@@ -41,6 +42,8 @@ router.get('/:customerId', async (req, res) => {
         res.status(500).json({ message: 'Error fetching wishlist' });
     }
 });
+
+
 
 // Remove from wishlist
 router.delete('/:id', async (req, res) => {

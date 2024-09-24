@@ -20,7 +20,7 @@ const ViewPackage = () => {
     };
     const fetchReviews = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/reviews/${id}`);
+        const res = await fetch(`http://localhost:5000/reviews/package/${id}`);
         const data = await res.json();
         setRevDetails(data);
       } catch (error) {

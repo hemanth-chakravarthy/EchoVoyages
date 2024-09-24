@@ -94,7 +94,7 @@ router.get('/', async (req, res) => {
         res.status(500).send({ message: "Internal Server Error" });
     }
 });
-router.get('/:packageId', async (req, res) => {
+router.get('/package/:packageId', async (req, res) => {
     const { packageId } = req.params;  // Extract the packageId properly
 
     if (!packageId) {
