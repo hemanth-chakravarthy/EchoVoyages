@@ -151,7 +151,7 @@ const CustomerInfo = () => {
                 </div>
             </div>
             <div className="booking-list">
-            <h2>Previous Bookings</h2>
+            <h2>Bookings and Status</h2>
             <div className="bookings-grid">
                 {bookings.length > 0 ? (
                     bookings.map((booking) => (

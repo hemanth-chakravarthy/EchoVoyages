@@ -56,7 +56,7 @@ router.post('/', upload.array('images'), async (req, res) => {
             reviews: req.body.reviews || [],
             image: imagePaths,  // Save the image paths to the database
             totalBookings: req.body.totalBookings || 0,
-            isActive: req.body.isActive !== undefined ? req.body.isActive : true
+            isActive: 'pending'
         };
 
         // Save the new package in the database

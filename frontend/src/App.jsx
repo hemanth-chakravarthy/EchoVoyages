@@ -13,6 +13,7 @@ import AgentProfilePage from "./pages/AgentProfilePage"
 import PrivateRoute from "./components/PrivateRoute"
 import CustomerProfile from "./pages/CustomerProfile"
 import CustomerWishlist from "./pages/CustomerWishlist"
+import GuideHome from "./pages/GuideHome"
 
 const App = () =>{
 
@@ -42,6 +43,9 @@ const App = () =>{
   </Route>
   <Route path="/AgentHome" element={<PrivateRoute />}>
     <Route path="/AgentHome" element={<AgentHomePage />} />
+  </Route>
+  <Route path="/GuideHome" element={<PrivateRoute />}>
+    <Route path="/GuideHome" element={<GuideHome/>} />
   </Route>
   <Route path="/AgentProfilePage" element={<PrivateRoute />}>
     <Route path="/AgentProfilePage" element={<AgentProfilePage />} />
