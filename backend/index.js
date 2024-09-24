@@ -13,6 +13,7 @@ import cors from 'cors'
 import multer from 'multer';
 import path from 'path';
 import jwt from 'jsonwebtoken';
+import searchRoutes from './routes/searchRoutes.js';
 
 mongoose.connect(mongoURL)
 .then(()=>{
@@ -41,6 +42,7 @@ app.use('/bookings', bookingRoute)
 app.use('/guides', guideRoute)
 app.use('/agency', agencyRoutes)
 app.use('/wishlist', wishlistRoutes);
+app.use('/search', searchRoutes);
 app.use('/public', express.static('public'));
 
 
