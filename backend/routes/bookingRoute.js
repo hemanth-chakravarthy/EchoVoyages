@@ -8,46 +8,68 @@ const router = express.Router();
 
 
 router.post('/', async (req, res) => {
+    console.log('Booking request received:', req.body); 
     try {
         const { customerId, packageId, guideId } = req.body;
 
-        // Fetch the package details including price
-        const packageData = await packages.findById(packageId);
-        if (!packageData) {
-            return res.status(404).send({ message: 'Package not found' });
+        // Validate required fields
+        if (!customerId || !guideId) {
+            return res.status(400).send({ message: 'Customer ID and Guide ID are required' });
         }
-        const customerData = await customers.findById(customerId)
-        if(!customerData){
+
+        let totalPrice = 0;
+        let packageName = null;
+        let customerName = null;
+        let guideData = null;
+
+        // Fetch customer details
+        const customerData = await customers.findById(customerId);
+        if (!customerData) {
             return res.status(404).send({ message: 'Customer not found' });
         }
-        
+        customerName = customerData.username;
 
-        // Get the total price from the package
-        const totalPrice = packageData.price;
-        const packageName = packageData.name;
-        const customerName = customerData.username;
+        // Fetch package details if packageId is provided
+        console.log(packageId);
+        if (packageId) {
+            const packageData = await packages.findById(packageId);
+            if (!packageData) {
+                return res.status(404).send({ message: 'Package not found' });
+            }
+            packageName = packageData.name; // Set the packageName if found
+        }
+
+        // Fetch guide details if guideId is provided
+        if (guideId) {
+            guideData = await Guide.findById(guideId);
+            if (!guideData) {
+                return res.status(404).send({ message: 'Guide not found' });
+            }
+        }
 
 
         // Create the booking
         const newBooking = new bookings({
             customerName,
             customerId,
-            packageId,
+            packageId: packageId || null, // Only include package if provided
             packageName,
+            guideId,
+            guideName: guideData ? guideData.name : undefined,  // Store guide's name
             totalPrice,
             status: 'pending',
         });
-        packageData.isActive = false;
-        await packageData.save();
+
         // Save the booking to the database
         const savedBooking = await newBooking.save();
-        res.status(201).send(savedBooking);
+        return res.status(201).send(savedBooking);
 
     } catch (error) {
         console.log(error);
-        res.status(500).send({ message: 'Error creating booking' });
+        return res.status(500).send({ message: 'Error creating booking' });
     }
 });
+
 // get all bookings
 router.get('/',async (req,res) => {
     try {
