@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import axios from 'axios';
+import { FaFlag } from 'react-icons/fa'; // Import report flag icon
 
 const ViewPackage = () => {
   const { id } = useParams(); // Get the package ID from the URL
@@ -28,6 +30,20 @@ const ViewPackage = () => {
     fetchReviews();
     fetchPackageDetails();
   }, [id]);
+
+  const handleReportReview = async (reviewId) => {
+    try {
+      const response = await axios.post(`http://localhost:5000/reviews/${reviewId}`);
+      if (response.status === 200) {
+        alert('Review has been reported successfully!');
+      } else {
+        alert('Failed to report the review.');
+      }
+    } catch (error) {
+      console.error('Error reporting review:', error);
+      alert('An error occurred while reporting the review.');
+    }
+  };
 
   if (!packageDetails) {
     return <p>Loading...</p>;
@@ -67,6 +83,14 @@ const ViewPackage = () => {
               <p><strong>Rating:</strong> {review.rating} / 5</p>
               <p><strong>Comment:</strong> {review.comment}</p>
               <p><strong>Reviewed by:</strong> {review.customerName || 'Anonymous'}</p>
+              {/* Report button */}
+              <button
+                className="report-button"
+                onClick={() => handleReportReview(review._id)}
+                title="Report this review"
+              >
+                <FaFlag style={{ color: 'red' }} /> {/* Report icon */}
+              </button>
             </div>
           ))
         ) : (
