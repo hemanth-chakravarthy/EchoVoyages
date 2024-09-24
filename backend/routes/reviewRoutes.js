@@ -2,36 +2,53 @@ import express from 'express';
 import { reviews } from '../models/customerReviewModel.js';
 import { packages } from '../models/packageModel.js';
 import { customers } from '../models/customerModel.js';
+import { Guide } from '../models/guideModel.js';
 const router = express.Router();
 
 // Save a review
 router.post('/', async (req, res) => {
     try {
-        const { customerId, packageId, rating, comment } = req.body;
-        
+        const { customerId, packageId, guideId, rating, comment } = req.body;
+
         // Validate required fields
-        if (!customerId || !packageId || !rating || !comment) {
+        if (!customerId || !rating || !comment) {
             return res.status(400).send({
                 message: "Send all required fields"
             });
         }
-        const packageData = await packages.findById(packageId);
-        if (!packageData) {
-            return res.status(404).send({ message: 'Package not found' });
+
+        // Check for the package if packageId is provided
+        let packageData;
+        if (packageId) {
+            packageData = await packages.findById(packageId);
+            if (!packageData) {
+                return res.status(404).send({ message: 'Package not found' });
+            }
         }
-        const customerData = await customers.findById(customerId)
-        if(!customerData){
+
+        // Check for the customer
+        const customerData = await customers.findById(customerId);
+        if (!customerData) {
             return res.status(404).send({ message: 'Customer not found' });
         }
-        const packageName = packageData.name;
-        const customerName = customerData.username;
 
-        // Create new review
+        // Check for the guide if guideId is provided
+        let guideData;
+        if (guideId) {
+            guideData = await Guide.findById(guideId);
+            if (!guideData) {
+                return res.status(404).send({ message: 'Guide not found' });
+            }
+        }
+
+        // Create new review data
         const newReview = {
-            customerName,
+            customerName: customerData.username,
             customerId,
             packageId,
-            packageName,
+            packageName: packageData ? packageData.name : undefined,  // Optional if package is not provided
+            guideId,
+            guideName: guideData ? guideData.name : undefined,  // Optional if guide is not provided
             rating,
             comment,
             status: "approved"
@@ -45,6 +62,28 @@ router.post('/', async (req, res) => {
     }
 });
 
+router.post('/:reviewId', async (req, res) => {
+    const { reviewId } = req.params;
+  
+    try {
+      // Find the review by its ID and increment the reports field by 1
+      const review = await reviews.findByIdAndUpdate(
+        reviewId,
+        { $inc: { reports: 1 } },  // Increment the "reports" field by 1
+        { new: true } // Return the updated document
+      );
+  
+      if (!review) {
+        return res.status(404).json({ message: 'Review not found' });
+      }
+  
+      res.status(200).json({ message: 'Review has been reported', review });
+    } catch (error) {
+      console.error('Error reporting review:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
 // Get all reviews (for admin panel or other purposes)
 router.get('/', async (req, res) => {
     try {
@@ -55,7 +94,7 @@ router.get('/', async (req, res) => {
         res.status(500).send({ message: "Internal Server Error" });
     }
 });
-router.get('/:packageId', async (req, res) => {
+router.get('/package/:packageId', async (req, res) => {
     const { packageId } = req.params;  // Extract the packageId properly
 
     if (!packageId) {
@@ -128,16 +167,28 @@ router.delete('/:id', async (req, res) => {
         res.status(500).send({ message: "Internal Server Error" });
     }
 });
-router.get('/', (req, res) => {
-    reviews.find()
-      .populate('customerId', 'username')
-      .populate('packageId', 'name')
-      .exec((err, reviewData) => {
-        if (err) {
-          return res.status(500).json({ error: err.message });
+router.get('/guides/:guideID', async (req, res) => {
+    const { guideID } = req.params;
+
+    try {
+        // Find the guide by ID
+        const guide = await Guide.findById(guideID);
+
+        if (!guide) {
+            return res.status(404).json({ message: 'Guide not found' });
         }
-        res.status(200).json(reviewData);
-      });
-  });
+
+        // Fetch reviews for the guide separately based on guideId
+        const review = await reviews.find({ guideId: guideID });
+
+        // Return the guide and its reviews
+        return res.status(200).json({ guide, review });
+    } catch (error) {
+        console.error('Error fetching guide details:', error);
+        return res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
+
+
 
 export default router;

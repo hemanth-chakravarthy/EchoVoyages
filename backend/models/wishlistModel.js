@@ -5,7 +5,7 @@ const wishlistSchema = new mongoose.Schema({
     customerId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref: 'Customer' // Adjust this if your customer model is named differently
+        ref: 'customers' // Adjust this if your customer model is named differently
     },
     packageId: {
         type: mongoose.Schema.Types.ObjectId,

@@ -72,7 +72,7 @@ const CreatePackage = () => {
                     AgentID: AgentId,
                 });
                 setImages([]);
-                navigate('/home')
+                navigate('/AgentHome')
                 console.log("Package created successfully!");
 
             } else {

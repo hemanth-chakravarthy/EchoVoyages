@@ -35,7 +35,7 @@ router.post('/', async (req, res) => {
             packageId,
             packageName,
             totalPrice,
-            status: 'confirmed',
+            status: 'pending',
         });
         packageData.isActive = false;
         await packageData.save();
@@ -75,6 +75,29 @@ router.get('/:customerId', async (req, res) => {
         // If no bookings are found
         if (booking.length === 0) {
             return res.status(404).json({ message: 'No bookings found for this customer' });
+        }
+
+        // Send the found bookings as a response
+        res.status(200).json(booking);
+    } catch (error) {
+        console.error('Error fetching bookings:', error);
+        res.status(500).json({ message: 'Error fetching bookings' });
+    }
+});
+router.get('/pack/:packageId', async (req, res) => {
+    const { packageId } = req.params; // Extract customerId from the URL
+
+    if (!packageId) {
+        return res.status(400).json({ message: 'Customer ID is required' });
+    }
+
+    try {
+        // Find bookings associated with the specific customerId
+        const booking = await bookings.find({ packageId });
+
+        // If no bookings are found
+        if (booking.length === 0) {
+            return res.status(404).json({ message: 'No bookings found for this package' });
         }
 
         // Send the found bookings as a response

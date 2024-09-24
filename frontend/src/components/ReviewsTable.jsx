@@ -16,6 +16,7 @@ const ReviewsTable = ({ reviews }) => {
                         <th>Comment</th>
                         <th>Date</th>
                         <th>Status</th>
+                        <th>Reports</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -29,6 +30,7 @@ const ReviewsTable = ({ reviews }) => {
                             <td>{review.comment}</td>
                             <td>{new Date(review.date).toLocaleDateString()}</td>
                             <td>{review.status}</td>
+                            <td>{review.reports}</td>
                             <td>
                                 <div className='linksPacks'>
                                     <Link className='links' to={`/admin/reviews/edit/${review._id}`}>Edit</Link>

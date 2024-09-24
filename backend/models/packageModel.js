@@ -72,8 +72,9 @@ const packageSchema = mongoose.Schema(
             default: 0
         },
         isActive: {
-            type: Boolean,
-            default: true
+            type: String,
+            enum: ['pending', 'confirmed', 'canceled'],
+            default: 'pending'
         }
     },
     {

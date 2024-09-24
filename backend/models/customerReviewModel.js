@@ -3,11 +3,11 @@ import mongoose from 'mongoose';
 const reviewSchema = new mongoose.Schema({
     customerName: {
         type: String,  // Store the name of the customer
-        required: true
+        required: false
     },
     packageName: {
         type: String,  // Store the name of the package
-        required: true
+        required: false
     },
     packageId:{
         type: mongoose.Schema.Types.ObjectId,
@@ -18,6 +18,15 @@ const reviewSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'customers',  // Reference to the customer model
         required:true
+    },
+    guideId:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'guides',
+        required: false
+    },
+    guideName:{
+        type: String,
+        reqired: false
     },
     rating: {
         type: Number,
@@ -37,6 +46,10 @@ const reviewSchema = new mongoose.Schema({
         type: String,
         enum: ['pending', 'approved', 'rejected'],
         default: 'pending'
+    },
+    reports:{
+        type: Number,
+        default: 0
     }
 });
 

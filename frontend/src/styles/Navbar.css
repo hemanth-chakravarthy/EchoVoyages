@@ -42,3 +42,18 @@ nav {
 .nav--element--1:hover, .nav--element--2:hover {
     color: #050404; /* Change color on hover */
 }
+.logout-button {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: auto;
+}
+
+.logout-button:hover {
+    background-color: #ff1a1a;
+}
+
