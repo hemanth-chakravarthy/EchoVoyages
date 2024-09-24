@@ -27,15 +27,15 @@ router.post('/', async (req, res) => {
 
 // Get wishlist for a specific customer
 // In your wishlist route (assuming you're using Express and Mongoose)
-router.get('/cust/:customerId', async (req, res) => {
-    const { customerId } = req.params;
-
-    if (!customerId) {
-        return res.status(400).json({ message: 'Customer ID is required' });
-    }
-
+router.get('/customer/:customerId', async (req, res) => {
     try {
-        const wishlist = await Wishlist.find({ customerId }).populate('packageId');
+        const { customerId } = req.params;
+        const wishlist = await Wishlist.findOne({ customerId }).populate('packageId');
+
+        if (!wishlist) {
+            return res.status(404).json({ message: 'No wishlist found' });
+        }
+
         res.status(200).json(wishlist);
     } catch (error) {
         console.error(error);
@@ -59,5 +59,18 @@ router.delete('/:id', async (req, res) => {
         res.status(500).json({ message: 'Error removing from wishlist' });
     }
 });
+
+router.get('/',async (req,res) => {
+    try {
+        const guides = await Wishlist.find({});
+        return res.status(200).json({
+            count: guides.length,
+            data: guides
+        })
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({message: error.message})
+    }
+})
 
 export default router;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import {jwtDecode} from 'jwt-decode';
-import Navbar from '../components/Navbar' // You need to import jwt-decode correctly
+import { jwtDecode } from 'jwt-decode';
+import Navbar from '../components/Navbar';
 
 const CustomerWishlist = () => {
     const [wishlist, setWishlist] = useState([]);
@@ -14,12 +14,30 @@ const CustomerWishlist = () => {
     useEffect(() => {
         const fetchWishlist = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/wishlist/cust/${customerId}`);
+                const response = await fetch(`http://localhost:5000/wishlist/customer/${customerId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                
+                console.log('Response:', response); // Log the full response
+
                 if (!response.ok) {
                     throw new Error('Failed to fetch wishlist.');
                 }
+
                 const data = await response.json();
-                setWishlist(data); // Set the entire wishlist data
+                console.log('Fetched data:', data); // Log fetched data
+
+                // Check if the data is an object and set wishlist accordingly
+                if (data && typeof data === 'object') {
+                    setWishlist([data]); // Wrap the object in an array
+                } else {
+                    setError('Received data is not valid.');
+                }
+
                 setLoading(false);
             } catch (error) {
                 setError(error.message);
@@ -30,7 +48,13 @@ const CustomerWishlist = () => {
         if (customerId) {
             fetchWishlist();
         }
-    }, [customerId]);
+    }, [customerId, token]); // Adding token to dependencies
+
+    // Log the wishlist whenever it updates
+    useEffect(() => {
+        console.log('Wishlist updated:', wishlist); // Log updated wishlist
+    }, [wishlist]);
+
     const handleRemoveItem = async (itemId) => {
         try {
             const response = await fetch(`http://localhost:5000/wishlist/${itemId}`, {
@@ -52,7 +76,6 @@ const CustomerWishlist = () => {
         }
     };
 
-
     if (loading) {
         return <div>Loading...</div>;
     }
@@ -63,7 +86,7 @@ const CustomerWishlist = () => {
 
     return (
         <div>
-            <Navbar/>
+            <Navbar />
             <h1>My Wishlist</h1>
             {wishlist.length > 0 ? (
                 <ul>
@@ -81,24 +104,20 @@ const CustomerWishlist = () => {
                                             alt={item.packageId.name}
                                             style={{ width: '200px', height: '150px' }}
                                         />
-                                        
                                     ) : (
                                         <p>No image available</p>
                                     )}
                                 </>
-                                
                             ) : (
                                 <p>Package details unavailable.</p>
                             )}
                             <button onClick={() => handleRemoveItem(item._id)}>Remove</button>
                         </li>
                     ))}
-                    
                 </ul>
             ) : (
                 <p>No items in your wishlist.</p>
             )}
-            
         </div>
     );
 };
