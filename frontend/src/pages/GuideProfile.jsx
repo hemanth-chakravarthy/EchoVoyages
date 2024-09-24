@@ -17,6 +17,7 @@ const GuideProfilePage = () => {
             try {
                 const response = await axios.get(`http://localhost:5000/guides/${guideId}`);
                 setGuide(response.data);
+                console.log(response.data)
                 setUpdatedGuide(response.data); // Initialize updatedGuide with fetched data
                 setLoading(false);
             } catch (error) {
