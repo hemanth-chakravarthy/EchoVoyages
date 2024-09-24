@@ -6,7 +6,7 @@ const AgentHomePage = () => {
   const [bookedPackages, setPackages] = useState([]);
   const [allRevs, setReviews] = useState([]);
   const token = localStorage.getItem('token');
-  const agentid = jwtDecode(token).id; // Decode the token to get the agent ID
+  const agentid = jwtDecode(token).id; 
 
   // Fetch packages
   useEffect(() => {
@@ -46,7 +46,7 @@ const AgentHomePage = () => {
 
   return (
     <div>
-      <h1>Booked Packages</h1>
+      <h1>Listed Packages</h1>
       {bookedPackages.length > 0 ? (
         <ul>
           {bookedPackages.map((pkg) => (
@@ -55,22 +55,7 @@ const AgentHomePage = () => {
               <p>Description: {pkg.description}</p>
               <p>Price: {pkg.price}</p>
               <p>Duration: {pkg.duration} days</p>
-              {/* <h3>Reviews:</h3> */}
-              {/* Filter reviews by packageId */}
-              {/* {allRevs.length > 0 ? (
-                <ul>
-                  {allRevs
-                    .filter((review) => review.packageId === pkg._id) // Match reviews to package
-                    .map((review) => (
-                      <li key={review._id}>
-                        <p>Rating: {review.rating}</p>
-                        <p>Comment: {review.comment}</p>
-                      </li>
-                    ))}
-                </ul>
-              ) : (
-                <p>No reviews available for this package.</p>
-              )} */}
+              <Link to={`/packages/${pkg._id}`}><button>View Package</button></Link>
             </li>
           ))}
         </ul>

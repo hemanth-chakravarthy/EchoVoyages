@@ -26,12 +26,13 @@ const AgentInfo = () => {
         };
         const fetchBookingsData = async () => {
             try {
-                const bookingsResponse = await axios.get(`http://localhost:5000/packages/${AgentID}`); 
-                console.log(bookingsResponse.data)
+                const bookingsResponse = await axios.get(`http://localhost:5000/packages/${AgentID}`);
+                console.log("Bookings Response:", bookingsResponse.data); // Log the response for debugging
                 setBookings(bookingsResponse.data);
             } catch (error) {
-                console.error("Error fetching bookings:", error);
+                console.error("Error fetching bookings:", error.response ? error.response.data : error);
             }
+            
         };
         fetchAgent();
         fetchBookingsData();

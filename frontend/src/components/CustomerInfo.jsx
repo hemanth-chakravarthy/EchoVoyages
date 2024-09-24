@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { FaPen } from 'react-icons/fa';
 import { jwtDecode } from 'jwt-decode';
 import '../assets/css/updateEntity.css'; // Importing the CSS file
 
@@ -151,7 +150,7 @@ const CustomerInfo = () => {
                 </div>
             </div>
             <div className="booking-list">
-            <h2>Previous Bookings</h2>
+            <h2>Bookings and Status</h2>
             <div className="bookings-grid">
                 {bookings.length > 0 ? (
                     bookings.map((booking) => (

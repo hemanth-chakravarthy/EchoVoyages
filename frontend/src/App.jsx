@@ -6,13 +6,15 @@ import Admin from "./pages/Admin"
 import DeleteEntity from './pages/DeleteEntity';
 import ShowEntity from './pages/ShowEntity'
 import UpdateEntity from "./pages/UpdateEntity";
-import ViewPost from "./components/ViewPost"
+import ViewPage from "./pages/ViewPage"
 import DummyPage from "./pages/DummyPage"
 import AgentHomePage from "./pages/AgentHomePage"
 import AgentProfilePage from "./pages/AgentProfilePage"
 import PrivateRoute from "./components/PrivateRoute"
 import CustomerProfile from "./pages/CustomerProfile"
 import CustomerWishlist from "./pages/CustomerWishlist"
+import GuideHome from "./pages/GuideHome"
+import GuideProfile from "./pages/GuideProfile"
 
 const App = () =>{
 
@@ -33,7 +35,7 @@ const App = () =>{
       <Route path="/" element={<LandingPage/>}/>
       {/* For the /packages/:id route */}
   <Route path="/packages/:id" element={<PrivateRoute />}>
-    <Route path="/packages/:id" element={<ViewPost />} />
+    <Route path="/packages/:id" element={<ViewPage />} />
   </Route>
 
   {/* For the /home route */}
@@ -43,8 +45,14 @@ const App = () =>{
   <Route path="/AgentHome" element={<PrivateRoute />}>
     <Route path="/AgentHome" element={<AgentHomePage />} />
   </Route>
+  <Route path="/GuideHome" element={<PrivateRoute />}>
+    <Route path="/GuideHome" element={<GuideHome/>} />
+  </Route>
   <Route path="/AgentProfilePage" element={<PrivateRoute />}>
     <Route path="/AgentProfilePage" element={<AgentProfilePage />} />
+  </Route>
+  <Route path="/GuideProfilePage" element={<PrivateRoute />}>
+    <Route path="/GuideProfilePage" element={<GuideProfile />} />
   </Route>
 
   {/* For the /admin route */}

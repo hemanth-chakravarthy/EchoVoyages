@@ -44,6 +44,27 @@ router.post('/', async (req, res) => {
         res.status(500).send({ message: "Internal Server Error" });
     }
 });
+router.post('/:reviewId', async (req, res) => {
+    const { reviewId } = req.params;
+  
+    try {
+      // Find the review by its ID and increment the reports field by 1
+      const review = await reviews.findByIdAndUpdate(
+        reviewId,
+        { $inc: { reports: 1 } },  // Increment the "reports" field by 1
+        { new: true } // Return the updated document
+      );
+  
+      if (!review) {
+        return res.status(404).json({ message: 'Review not found' });
+      }
+  
+      res.status(200).json({ message: 'Review has been reported', review });
+    } catch (error) {
+      console.error('Error reporting review:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
 
 // Get all reviews (for admin panel or other purposes)
 router.get('/', async (req, res) => {
