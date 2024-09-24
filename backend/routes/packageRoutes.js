@@ -134,7 +134,6 @@ router.delete('/:id', async (req,res) => {
 })
 router.get('/:AgentID', async (req, res) => {
     const { AgentID } = req.params;
-
     // This check might not be needed since AgentID is expected in the route
     if (!AgentID) {
         return res.status(400).json({ message: 'Agent ID is required' });
@@ -145,7 +144,7 @@ router.get('/:AgentID', async (req, res) => {
         const agentPackages = await packages.find({ AgentID });
 
         // Check if no packages were found for the agent
-        if (!agentPackages.length) {
+        if (agentPackages.length === 0) {
             return res.status(404).json({ message: 'No packages found for this agent' });
         }
 

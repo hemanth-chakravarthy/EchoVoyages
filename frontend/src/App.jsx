@@ -6,7 +6,7 @@ import Admin from "./pages/Admin"
 import DeleteEntity from './pages/DeleteEntity';
 import ShowEntity from './pages/ShowEntity'
 import UpdateEntity from "./pages/UpdateEntity";
-import ViewPost from "./components/ViewPost"
+import ViewPage from "./pages/ViewPage"
 import DummyPage from "./pages/DummyPage"
 import AgentHomePage from "./pages/AgentHomePage"
 import AgentProfilePage from "./pages/AgentProfilePage"
@@ -33,7 +33,7 @@ const App = () =>{
       <Route path="/" element={<LandingPage/>}/>
       {/* For the /packages/:id route */}
   <Route path="/packages/:id" element={<PrivateRoute />}>
-    <Route path="/packages/:id" element={<ViewPost />} />
+    <Route path="/packages/:id" element={<ViewPage />} />
   </Route>
 
   {/* For the /home route */}

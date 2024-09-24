@@ -6,7 +6,7 @@ const AgentHomePage = () => {
   const [bookedPackages, setPackages] = useState([]);
   const [allRevs, setReviews] = useState([]);
   const token = localStorage.getItem('token');
-  const agentid = jwtDecode(token).id; // Decode the token to get the agent ID
+  const agentid = jwtDecode(token).id; 
 
   // Fetch packages
   useEffect(() => {
@@ -55,6 +55,7 @@ const AgentHomePage = () => {
               <p>Description: {pkg.description}</p>
               <p>Price: {pkg.price}</p>
               <p>Duration: {pkg.duration} days</p>
+              <Link to={`/packages/${pkg._id}`}><button>View Package</button></Link>
               {/* <h3>Reviews:</h3> */}
               {/* Filter reviews by packageId */}
               {/* {allRevs.length > 0 ? (

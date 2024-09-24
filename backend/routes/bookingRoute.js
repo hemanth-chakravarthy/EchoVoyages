@@ -35,7 +35,7 @@ router.post('/', async (req, res) => {
             packageId,
             packageName,
             totalPrice,
-            status: 'confirmed',
+            status: 'pending',
         });
         packageData.isActive = false;
         await packageData.save();
