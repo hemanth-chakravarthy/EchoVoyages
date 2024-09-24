@@ -30,7 +30,7 @@ router.post('/', async (req, res) => {
 router.get('/customer/:customerId', async (req, res) => {
     try {
         const { customerId } = req.params;
-        const wishlist = await Wishlist.findOne({ customerId }).populate('packageId');
+        const wishlist = await Wishlist.find({ customerId }).populate('packageId');
 
         if (!wishlist) {
             return res.status(404).json({ message: 'No wishlist found' });

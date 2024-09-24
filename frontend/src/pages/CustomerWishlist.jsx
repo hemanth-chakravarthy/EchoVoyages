@@ -7,9 +7,8 @@ const CustomerWishlist = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
-    // Decode the token and retrieve the customer ID
     const token = localStorage.getItem('token');
-    const customerId = token ? jwtDecode(token).id : null; // Ensure the token exists
+    const customerId = token ? jwtDecode(token).id : null;
 
     useEffect(() => {
         const fetchWishlist = async () => {
@@ -21,18 +20,18 @@ const CustomerWishlist = () => {
                         'Content-Type': 'application/json',
                     },
                 });
-                
-                console.log('Response:', response); // Log the full response
 
                 if (!response.ok) {
                     throw new Error('Failed to fetch wishlist.');
                 }
 
                 const data = await response.json();
-                console.log('Fetched data:', data); // Log fetched data
+                console.log('Fetched data:', data);
 
-                // Check if the data is an object and set wishlist accordingly
-                if (data && typeof data === 'object') {
+                // Ensure data is an array, if not wrap it in an array
+                if (Array.isArray(data)) {
+                    setWishlist(data);
+                } else if (data && typeof data === 'object') {
                     setWishlist([data]); // Wrap the object in an array
                 } else {
                     setError('Received data is not valid.');
@@ -48,11 +47,10 @@ const CustomerWishlist = () => {
         if (customerId) {
             fetchWishlist();
         }
-    }, [customerId, token]); // Adding token to dependencies
+    }, [customerId, token]);
 
-    // Log the wishlist whenever it updates
     useEffect(() => {
-        console.log('Wishlist updated:', wishlist); // Log updated wishlist
+        console.log('Wishlist updated:', wishlist);
     }, [wishlist]);
 
     const handleRemoveItem = async (itemId) => {
@@ -100,7 +98,7 @@ const CustomerWishlist = () => {
                                     <p>Duration: {item.packageId.duration} days</p>
                                     {item.packageId.image && item.packageId.image.length > 0 ? (
                                         <img
-                                            src={`http://localhost:5000${item.packageId.image[0]}`}  // Assuming image paths are correct
+                                            src={`http://localhost:5000${item.packageId.image[0]}`} 
                                             alt={item.packageId.name}
                                             style={{ width: '200px', height: '150px' }}
                                         />
