@@ -6,10 +6,10 @@ const router = express.Router();
 // Save a guide
 router.post('/', async (req, res) => {
     try {
-        const { name, experience, languages, location, contact, availability } = req.body;
+        const { name, experience, languages, location, contact, availability, availableDates } = req.body;
 
         // Validate required fields
-        if (!name || !experience || !languages || !location || !contact || !contact.phone || !contact.email) {
+        if (!name || !experience || !languages || !location || !contact || !contact.phone || !contact.email || !availableDates) {
             return res.status(400).json({ message: 'All fields are required' });
         }
 
@@ -20,7 +20,8 @@ router.post('/', async (req, res) => {
             languages,
             location,
             contact,
-            availability
+            availability,
+            availableDates
         });
 
         // Save the guide to the database
@@ -46,7 +47,7 @@ router.get('/',async (req,res) => {
 })
 router.put('/:id', async (req, res) => {
     try {
-        const { name, experience, languages, location, contact, availability, specializations, pricing, bio } = req.body;
+        const { name, experience, languages, location, contact, availability, specializations, pricing, bio, availableDates } = req.body;
 
         // Update guide fields
         const guide = await Guide.findByIdAndUpdate(
@@ -57,8 +58,9 @@ router.put('/:id', async (req, res) => {
                 languages,
                 location,
                 contact,
-                availability,
+                availability: true,
                 specializations,
+                availableDates,
                 pricing,
                 bio
             },

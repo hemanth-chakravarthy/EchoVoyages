@@ -59,7 +59,7 @@ router.post('/', async (req, res) => {
             totalPrice,
             status: 'pending',
         });
-
+        await packageData.save();
         // Save the booking to the database
         const savedBooking = await newBooking.save();
         return res.status(201).send(savedBooking);
