@@ -6,7 +6,7 @@ import axios from 'axios';
 
 const GuideHome = () => {
   const [guide, setGuide] = useState(null);
-  const [reviews, setReviews] = useState([]);
+  const [reviews, setRevDetails] = useState(null);
   const guideId = jwtDecode(localStorage.getItem('token')).id;
 
   useEffect(() => {
@@ -19,9 +19,20 @@ const GuideHome = () => {
         console.error('Error fetching guide data:', error);
       }
     };
+    const fetchReviews = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/reviews/guides/${guideId}`);
+        const data = await res.json();
+        setRevDetails(data);
+      } catch (error) {
+        console.error('Error fetching reviews:', error);
+      }
+    };
+    
+  fetchReviews();
 
     fetchGuideData();
-  }, []);
+  }, [guideId]);
 
   return (
     <div>
