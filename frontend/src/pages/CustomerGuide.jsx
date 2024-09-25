@@ -34,19 +34,10 @@ const CustomerGuide = () => {
                 <ul>
                     {guides.map((guide) => (
                         <li key={guide._id}>
-                            <h2>{guide.name}</h2>
+                            <h2>{guide.username}</h2>
                             <p>{guide.description}</p>
                             <p>Experience: {guide.experience} years</p>
                             <p>Languages: {guide.languages.join(', ')}</p>
-                            {guide.image ? (
-                                <img
-                                    src={`http://localhost:5000${guide.image}`} // Replace with your actual image path
-                                    alt={`Guide ${guide.name}`}
-                                    style={{ width: '200px', height: '150px', marginRight: '10px' }}
-                                />
-                            ) : (
-                                <p>No image available for this guide</p>
-                            )}
                             {/* Add View Guide button */}
                             <Link to={`/guides/${guide._id}`}>
                                 <button>View Guide</button>

@@ -47,9 +47,21 @@ router.get('/',async (req,res) => {
 })
 router.put('/:id', async (req, res) => {
     try {
-        const { name, experience, languages, location, contact, availability, specializations, pricing, bio, availableDates } = req.body;
+        const { 
+            name, 
+            experience, 
+            languages, 
+            location, 
+            contact, 
+            availability, 
+            specializations, 
+            pricing, 
+            bio, 
+            availableDates, 
+            ratings // Add the ratings object here
+        } = req.body;
 
-        // Update guide fields
+        // Update guide fields, including ratings
         const guide = await Guide.findByIdAndUpdate(
             req.params.id,
             {
@@ -62,19 +74,24 @@ router.put('/:id', async (req, res) => {
                 specializations,
                 availableDates,
                 pricing,
-                bio
+                bio,
+                'ratings.averageRating': ratings.averageRating, // Update averageRating
+                'ratings.numberOfReviews': ratings.numberOfReviews // Update numberOfReviews
             },
             { new: true }
         );
+
         if (!guide) {
             return res.status(404).send({ message: "Guide not found" });
         }
+
         return res.status(200).send(guide);
     } catch (error) {
         console.log(error);
         res.status(500).send({ message: "Internal Server Error" });
     }
 });
+
 
 router.get('/:id', async (req, res) => {
     try {
