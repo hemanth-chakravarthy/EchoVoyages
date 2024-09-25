@@ -4,7 +4,8 @@ const customerSchema = mongoose.Schema(
     {
         username : {
             type: String,
-            required: true
+            required: true,
+            unique: true
         },
         Name : {
             type: String,
@@ -22,6 +23,10 @@ const customerSchema = mongoose.Schema(
             type: String,
             required: true,
         },
+        role :{
+            type: String,
+            required: true,
+        }
     },
     {
         timestamps: true

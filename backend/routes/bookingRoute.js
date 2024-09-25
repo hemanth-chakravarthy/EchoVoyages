@@ -2,51 +2,73 @@ import express from 'express'
 import { bookings } from '../models/bookingModel.js';
 import { packages } from '../models/packageModel.js';
 import { customers } from '../models/customerModel.js';
+
 import {Guide} from '../models/guideModel.js'
 const router = express.Router();
 
 
 router.post('/', async (req, res) => {
+    console.log('Booking request received:', req.body); 
     try {
         const { customerId, packageId, guideId } = req.body;
 
-        // Fetch the package details including price
-        const packageData = await packages.findById(packageId);
-        if (!packageData) {
-            return res.status(404).send({ message: 'Package not found' });
-        }
-        const customerData = await customers.findById(customerId)
-        if(!customerData){
-            return res.status(404).send({ message: 'Customer not found' });
-        }
-        const guideData = await Guide.findById(guideId)
-        if(!guideData){
-            return res.status(404).send({ message: 'Guide not found' });
+        // Validate required fields
+        if (!customerId || !guideId) {
+            return res.status(400).send({ message: 'Customer ID and Guide ID are required' });
         }
 
-        // Get the total price from the package
-        const totalPrice = packageData.price;
-        const packageName = packageData.name;
-        const customerName = customerData.username;
-        const guideName = guideData.name
+        let totalPrice = 0;
+        let packageName = null;
+        let customerName = null;
+        let guideData = null;
+
+        // Fetch customer details
+        const customerData = await customers.findById(customerId);
+        if (!customerData) {
+            return res.status(404).send({ message: 'Customer not found' });
+        }
+        customerName = customerData.username;
+
+        // Fetch package details if packageId is provided
+        console.log(packageId);
+        if (packageId) {
+            const packageData = await packages.findById(packageId);
+            if (!packageData) {
+                return res.status(404).send({ message: 'Package not found' });
+            }
+            packageName = packageData.name; // Set the packageName if found
+        }
+
+        // Fetch guide details if guideId is provided
+        if (guideId) {
+            guideData = await Guide.findById(guideId);
+            if (!guideData) {
+                return res.status(404).send({ message: 'Guide not found' });
+            }
+        }
+
 
         // Create the booking
         const newBooking = new bookings({
             customerName,
+            customerId,
+            packageId: packageId || null, // Only include package if provided
             packageName,
-            guideName,
-            totalPrice
+            guideId,
+            guideName: guideData ? guideData.name : undefined,  // Store guide's name
+            totalPrice,
+            status: 'pending',
         });
-
         // Save the booking to the database
         const savedBooking = await newBooking.save();
-        res.status(201).send(savedBooking);
+        return res.status(201).send(savedBooking);
 
     } catch (error) {
         console.log(error);
-        res.status(500).send({ message: 'Error creating booking' });
+        return res.status(500).send({ message: 'Error creating booking' });
     }
 });
+
 // get all bookings
 router.get('/',async (req,res) => {
     try {
@@ -59,6 +81,76 @@ router.get('/',async (req,res) => {
         console.log(error.message);
         res.status(500).send({message: error.message})
     }
+})
+router.get('/cust/:customerId', async (req, res) => {
+    const { customerId } = req.params; // Extract customerId from the URL
+
+    if (!customerId) {
+        return res.status(400).json({ message: 'Customer ID is required' });
+    }
+
+    try {
+        // Find bookings associated with the specific customerId
+        const booking = await bookings.find({ customerId });
+
+        // If no bookings are found
+        if (booking.length === 0) {
+            return res.status(404).json({ message: 'No bookings found for this customer' });
+        }
+
+        // Send the found bookings as a response
+        res.status(200).json(booking);
+    } catch (error) {
+        console.error('Error fetching bookings:', error);
+        res.status(500).json({ message: 'Error fetching bookings' });
+    }
+});
+router.get('/pack/:packageId', async (req, res) => {
+    const { packageId } = req.params; // Extract customerId from the URL
+
+    if (!packageId) {
+        return res.status(400).json({ message: 'Customer ID is required' });
+    }
+
+    try {
+        // Find bookings associated with the specific customerId
+        const booking = await bookings.find({ packageId });
+
+        // If no bookings are found
+        if (booking.length === 0) {
+            return res.status(404).json({ message: 'No bookings found for this package' });
+        }
+
+        // Send the found bookings as a response
+        res.status(200).json(booking);
+    } catch (error) {
+        console.error('Error fetching bookings:', error);
+        res.status(500).json({ message: 'Error fetching bookings' });
+    }
+});
+router.get('/guides/:guideId',async (req, res) => {
+    const { guideId } = req.params; // Extract customerId from the URL
+
+    if (!guideId) {
+        return res.status(400).json({ message: 'Customer ID is required' });
+    }
+
+    try {
+        // Find bookings associated with the specific customerId
+        const booking = await bookings.find({ guideId });
+
+        // If no bookings are found
+        if (booking.length === 0) {
+            return res.status(404).json({ message: 'No bookings found for this guide!' });
+        }
+
+        // Send the found bookings as a response
+        res.status(200).json(booking);
+    } catch (error) {
+        console.error('Error fetching bookings:', error);
+        res.status(500).json({ message: 'Error fetching bookings' });
+    }
+    
 })
 
 // delete a booking

@@ -4,6 +4,7 @@ import { packages } from '../models/packageModel.js';
 import { reviews } from '../models/customerReviewModel.js';
 import { Guide} from '../models/guideModel.js'
 import { bookings } from '../models/bookingModel.js';
+import {Agency} from '../models/agencyModel.js'
 const router = express.Router()
 // get all coustomers
 router.get('/customers',async (req,res) => {
@@ -312,5 +313,63 @@ router.get('/bookings/:id',async (req,res) => {
     }
     
 })
+// Get all agencies
+router.get('/agency', async (req, res) => {
+    try {
+        const agencies = await Agency.find({});
+        return res.status(200).json({
+            count: agencies.length,
+            data: agencies
+        });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({ message: error.message });
+    }
+});
+
+// Delete an agency
+router.delete('/agency/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const result = await Agency.findByIdAndDelete(id);
+        if (!result) {
+            return res.status(404).json({ message: "Agency not found" });
+        }
+        return res.status(200).json({ message: "Agency deleted" });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({ message: error.message });
+    }
+});
+
+// Update an agency
+router.put('/agency/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const result = await Agency.findByIdAndUpdate(id, req.body, { new: true });
+        if (!result) {
+            return res.status(404).json({ message: "Agency not found" });
+        }
+        return res.status(200).json(result);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({ message: error.message });
+    }
+});
+
+// View a single agency
+router.get('/agency/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const agency = await Agency.findById(id);
+        if (!agency) {
+            return res.status(404).json({ message: "Agency not found" });
+        }
+        return res.status(200).json(agency);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({ message: error.message });
+    }
+});
 
 export default router

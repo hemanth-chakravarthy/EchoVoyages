@@ -5,14 +5,32 @@ const bookingSchema = new mongoose.Schema({
         type: String,  // Store the name of the customer
         required: true
     },
+    customerId:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'customers',  // Reference to the customer model
+        required:true
+    },
     packageName: {
         type: String,  // Store the name of the package
-        required: true
-    },
-    guideName: {
-        type: String,  // Optional: Store the name of the guide
         required: false
     },
+    packageId:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'packages',  // Reference to the package model
+        required: false
+    },
+
+    guideName: {
+        type: String,  // Store the name of the guide
+        required: false
+    },
+    guideId:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'guides',  // Reference to the guide model
+        required: false
+    },
+
+    
     totalPrice: {
         type: Number,  // Store the total price of the booking
         required: true

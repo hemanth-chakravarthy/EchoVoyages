@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import '../assets/css/tables.css'
 
 const PackagesTable = ({ packages }) => {
     return (
@@ -23,10 +24,10 @@ const PackagesTable = ({ packages }) => {
                             <td>{pkg.description}</td>
                             <td>{pkg.price}</td>
                             <td>
-                                <div>
-                                    <Link to={`/admin/packages/${pkg._id}`}>Show</Link>
-                                    <Link to={`/admin/packages/edit/${pkg._id}`}>Update</Link>
-                                    <Link to={`/admin/packages/delete/${pkg._id}`}>Delete</Link>
+                                <div className='linksPacks'>
+                                    <Link className='links' to={`/admin/packages/${pkg._id}`}>Show</Link>
+                                    <Link className='links' to={`/admin/packages/edit/${pkg._id}`}>Update</Link>
+                                    <Link className='links' to={`/admin/packages/delete/${pkg._id}`}>Delete</Link>
                                 </div>
                             </td>
                         </tr>

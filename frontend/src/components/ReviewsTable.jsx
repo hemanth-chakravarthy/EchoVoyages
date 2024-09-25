@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import '../assets/css/tables.css'
 
 const ReviewsTable = ({ reviews }) => {
     return (
@@ -15,6 +16,7 @@ const ReviewsTable = ({ reviews }) => {
                         <th>Comment</th>
                         <th>Date</th>
                         <th>Status</th>
+                        <th>Reports</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -28,10 +30,11 @@ const ReviewsTable = ({ reviews }) => {
                             <td>{review.comment}</td>
                             <td>{new Date(review.date).toLocaleDateString()}</td>
                             <td>{review.status}</td>
+                            <td>{review.reports}</td>
                             <td>
-                                <div>
-                                    <Link to={`/admin/reviews/edit/${review._id}`}>Edit</Link>
-                                    <Link to={`/admin/reviews/delete/${review._id}`}>Delete</Link>
+                                <div className='linksPacks'>
+                                    <Link className='links' to={`/admin/reviews/edit/${review._id}`}>Edit</Link>
+                                    <Link className='links' to={`/admin/reviews/delete/${review._id}`}>Delete</Link>
                                 </div>
                             </td>
                         </tr>

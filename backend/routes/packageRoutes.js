@@ -1,42 +1,62 @@
 import express from 'express';
 import { packages } from '../models/packageModel.js'; // Importing the Package model
+import multer from 'multer';
+import {Agency} from '../models/agencyModel.js'
+import { customers } from '../models/customerModel.js';
+import path from 'path';
 const router = express.Router();
 
-// Save a new package
-router.post('/', async (req, res) => {
+// Multer setup for handling file uploads
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, path.join('public', 'packageImage'));
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + '-' + file.originalname);
+    }
+});
+
+const upload = multer({ storage: storage });
+
+// Save a new package with image upload handling
+router.post('/', upload.array('images'), async (req, res) => {
     try {
         // Check if all required fields are provided
-        if (
-            !req.body.name ||
-            !req.body.description ||
-            !req.body.price ||
-            !req.body.duration ||
-            !req.body.location ||
-            !req.body.itinerary ||
-            !req.body.highlights ||
-            !req.body.availableDates ||
-            !req.body.maxGroupSize
-        ) {
+        const {
+            name, description, price, duration, location, itinerary, highlights, availableDates, maxGroupSize, guide, AgentID
+        } = req.body;
+
+        if (!name || !description || !price || !duration || !location || !itinerary || !highlights || !availableDates || !maxGroupSize || !AgentID) {
             return res.status(400).send({
                 message: "Please provide all required fields"
             });
         }
+        const AgentData = await Agency.findById(AgentID)
+        if(!AgentData){
+            return res.status(404).send({ message: 'Agent not found' });
+        }
+        const AgentName = AgentData.username;
+        // Map over the uploaded files to extract file paths
+        const imagePaths = req.files ? req.files.map(file => `/public/packageImage/${file.filename}`) : [];
 
         // Create a new package object with the data from the request
         const newPackage = {
-            name: req.body.name,
-            description: req.body.description,
-            price: req.body.price,
-            duration: req.body.duration,
-            location: req.body.location,
-            itinerary: req.body.itinerary,
-            highlights: req.body.highlights,
-            availableDates: req.body.availableDates,
-            maxGroupSize: req.body.maxGroupSize,
+            name,
+            description,
+            price,
+            duration,
+            location,
+            itinerary,
+            highlights,
+            availableDates: availableDates.split(','),  // Assuming dates are passed as a comma-separated string
+            maxGroupSize,
+            guideID: guide,
+            AgentID, 
+            AgentName, // Store the agentID in the package
             reviews: req.body.reviews || [],
-            images: req.body.images || [],
+            image: imagePaths,  // Save the image paths to the database
             totalBookings: req.body.totalBookings || 0,
-            isActive: req.body.isActive !== undefined ? req.body.isActive : true
+            isActive: 'pending'
         };
 
         // Save the new package in the database
@@ -45,12 +65,13 @@ router.post('/', async (req, res) => {
         // Send the response with the saved package
         return res.status(201).send(savedPackage);
     } catch (error) {
-        console.log(error);
+        console.error(error);
         return res.status(500).send({
             message: "Internal Server Error"
         });
     }
 });
+
 // view all packages
 router.get('/',async (req,res) => {
     try {
@@ -111,5 +132,29 @@ router.delete('/:id', async (req,res) => {
     }
     
 })
+router.get('/:AgentID', async (req, res) => {
+    const { AgentID } = req.params;
+    // This check might not be needed since AgentID is expected in the route
+    if (!AgentID) {
+        return res.status(400).json({ message: 'Agent ID is required' });
+    }
+
+    try {
+        // Query the packages for the given AgentID
+        const agentPackages = await packages.find({ AgentID });
+
+        // Check if no packages were found for the agent
+        if (agentPackages.length === 0) {
+            return res.status(404).json({ message: 'No packages found for this agent' });
+        }
+
+        // Respond with the packages found
+        res.status(200).json(agentPackages);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 
 export default router;

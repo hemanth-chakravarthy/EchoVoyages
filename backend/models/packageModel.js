@@ -24,19 +24,16 @@ const packageSchema = mongoose.Schema(
             type: String,
             required: true
         },
-        itinerary: [
-            {
-            day: Number,
-            details: String
-            }
-        ],
+        itinerary: {
+            type: String
+        },
         highlights: {
-            type: [String],  // Array of highlights or key features of the package
+            type: String,  // Array of highlights or key features of the package
             required: true
         },
         availableDates: [
             {
-            type: Date
+                type: Date
             }
         ],
         maxGroupSize: {
@@ -44,15 +41,20 @@ const packageSchema = mongoose.Schema(
             required: true,
             min: 1
         },
-        // guide: {
-        //     type: mongoose.Schema.Types.ObjectId,  // Reference to the guide associated with the package
-        //     ref: 'Guides'
-        // },
-        // agent: {
-        //     type: mongoose.Schema.Types.ObjectId,  // Reference to the agent creating or managing the package
-        //     ref: 'Agents',
-        //     required: true
-        // },
+        guide: {
+            type: mongoose.Schema.Types.ObjectId,  // Reference to the guide associated with the package
+            ref: 'guides',
+            required: false
+        },
+        AgentID:{
+            type: mongoose.Schema.Types.ObjectId,  // Reference to the guide associated with the package
+            ref: 'agencies',
+            required: true
+        },
+        AgentName:{
+            type: String,
+            required: false
+        },
         reviews: [
             {
             customer: { type: mongoose.Schema.Types.ObjectId, ref: 'customers' },
@@ -61,19 +63,18 @@ const packageSchema = mongoose.Schema(
             date: { type: Date, default: Date.now }
             }
         ],
+        image: {
+            type: Array,
+            required: true
+        },
         totalBookings: {
             type: Number,
             default: 0
         },
-        images: [
-            {
-            url: String,
-            description: String
-            }
-        ],
         isActive: {
-            type: Boolean,
-            default: true
+            type: String,
+            enum: ['pending', 'confirmed', 'canceled'],
+            default: 'pending'
         }
     },
     {

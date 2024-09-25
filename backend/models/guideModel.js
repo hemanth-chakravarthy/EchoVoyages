@@ -1,6 +1,11 @@
 import mongoose from 'mongoose';
 
 const guideSchema = new mongoose.Schema({
+    username: {
+        type: String,
+        required: true,
+        trim: true
+    },
     name: {
         type: String,
         required: true,
@@ -8,16 +13,16 @@ const guideSchema = new mongoose.Schema({
     },
     experience: {
         type: Number,
-        required: true,  // Years of experience
+        required: false,  // Years of experience
         min: 0
     },
     languages: {
         type: [String],  // List of languages the guide speaks
-        required: true
+        required: false
     },
     location: {
         type: String,
-        required: true
+        required: false
     },
     contact: {
         phone: {
@@ -28,6 +33,10 @@ const guideSchema = new mongoose.Schema({
             type: String,
             required: true
         }
+    },
+    password : {
+        type: String,
+        required: true,
     },
     ratings: {
         averageRating: {
@@ -43,8 +52,18 @@ const guideSchema = new mongoose.Schema({
     },
     availability: {
         type: Boolean,
-        default: true  // Whether the guide is available or not
+        default: false  // Whether the guide is available or not
     },
+    availableDates: [{
+        startDate: {
+            type: Date,
+            required: false
+        },
+        endDate: {
+            type: Date,
+            required: false
+        }
+    }],
     assignedPackages: [{
         packageId: {
             type: mongoose.Schema.Types.ObjectId,
@@ -52,7 +71,7 @@ const guideSchema = new mongoose.Schema({
         },
         price: {
             type: Number,  // Price for the specific package
-            required: true
+            required: false
         }
     }]
 }, {

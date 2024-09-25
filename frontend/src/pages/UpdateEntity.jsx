@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
-import BackButton from '../components/BackButton'
+import BackButton from '../components/BackButton';
+import '../assets/css/updateEntity.css'; // Importing the CSS file
 
 const UpdateEntity = () => {
   const [entity, setEntity] = useState({});
@@ -42,10 +43,10 @@ const UpdateEntity = () => {
   };
 
   return (
-    <div>
-      <BackButton/>
-      <h1>Edit {entityType === 'customers' ? 'Customers' : entityType === 'packages' ? 'Packages' : entityType === 'guides' ? 'Guides' : entityType === 'bookings' ? 'Bookings' : 'Reviews'}</h1>
-      <div>
+    <div className="update-container">
+      <BackButton className="back-button" />
+      <h1 className="title">Edit {entityType.charAt(0).toUpperCase() + entityType.slice(1)}</h1>
+      <div className="update-card">
         {/* Conditionally render form fields based on entityType */}
         {entityType === 'customers' ? (
           <>
@@ -55,6 +56,7 @@ const UpdateEntity = () => {
               name="Name"
               value={entity.Name || ''}
               onChange={handleChange}
+              className="input-field"
             />
             <label>Username</label>
             <input
@@ -62,6 +64,7 @@ const UpdateEntity = () => {
               name="username"
               value={entity.username || ''}
               onChange={handleChange}
+              className="input-field"
             />
             <label>Gmail</label>
             <input
@@ -69,6 +72,7 @@ const UpdateEntity = () => {
               name="gmail"
               value={entity.gmail || ''}
               onChange={handleChange}
+              className="input-field"
             />
             <label>Password</label>
             <input
@@ -76,6 +80,7 @@ const UpdateEntity = () => {
               name="password"
               value={entity.password || ''}
               onChange={handleChange}
+              className="input-field"
             />
           </>
         ) : entityType === 'packages' ? (
@@ -86,12 +91,14 @@ const UpdateEntity = () => {
               name="name"
               value={entity.name || ''}
               onChange={handleChange}
+              className="input-field"
             />
             <label>Description</label>
             <textarea
               name="description"
               value={entity.description || ''}
               onChange={handleChange}
+              className="input-field"
             />
             <label>Price</label>
             <input
@@ -99,6 +106,7 @@ const UpdateEntity = () => {
               name="price"
               value={entity.price || ''}
               onChange={handleChange}
+              className="input-field"
             />
           </>
         ) : entityType === 'guides' ? (
@@ -109,6 +117,7 @@ const UpdateEntity = () => {
               name="name"
               value={entity.name || ''}
               onChange={handleChange}
+              className="input-field"
             />
             <label>Experience</label>
             <input
@@ -116,6 +125,7 @@ const UpdateEntity = () => {
               name="experience"
               value={entity.experience || ''}
               onChange={handleChange}
+              className="input-field"
             />
             <label>Email</label>
             <input
@@ -123,6 +133,7 @@ const UpdateEntity = () => {
               name="email"
               value={entity.contact?.email || ''}
               onChange={handleChange}
+              className="input-field"
             />
             <label>Languages</label>
             <input
@@ -130,6 +141,7 @@ const UpdateEntity = () => {
               name="languages"
               value={entity.languages || ''}
               onChange={handleChange}
+              className="input-field"
             />
           </>
         ) : entityType === 'bookings' ? (
@@ -140,7 +152,40 @@ const UpdateEntity = () => {
               name="totalPrice"
               value={entity.totalPrice || ''}
               onChange={handleChange}
+              className="input-field"
             />
+          </>
+        ) : entityType === 'agency' ? (
+          <>
+            <label>Email</label>
+            <input
+              type="text"
+              name="contactInfo.email"
+              value={entity.contactInfo?.email || ''}
+              onChange={handleChange}
+              className="input-field"
+            />
+            <label>Phone</label>
+            <input
+              type="text"
+              name="contactInfo.phone"
+              value={entity.contactInfo?.phone || ''}
+              onChange={handleChange}
+              className="input-field"
+            />
+            <label>Specialization</label>
+            <select
+              name="specialization"
+              value={entity.specialization || ''}
+              onChange={handleChange}
+              className="input-field"
+            >
+              <option value="luxury">Luxury</option>
+              <option value="adventure">Adventure</option>
+              <option value="business">Business</option>
+              <option value="family">Family</option>
+              <option value="other">Other</option>
+            </select>
           </>
         ) : (
           <>
@@ -152,18 +197,21 @@ const UpdateEntity = () => {
               onChange={handleChange}
               min={1}
               max={5}
+              className="input-field"
             />
             <label>Comment</label>
             <textarea
               name="comment"
               value={entity.comment || ''}
               onChange={handleChange}
+              className="input-field"
             />
             <label>Status</label>
             <select
               name="status"
               value={entity.status || 'pending'}
               onChange={handleChange}
+              className="input-field"
             >
               <option value="pending">Pending</option>
               <option value="approved">Approved</option>
@@ -171,7 +219,7 @@ const UpdateEntity = () => {
             </select>
           </>
         )}
-        <button onClick={handleEditEntity}>
+        <button onClick={handleEditEntity} className="save-button">
           Save
         </button>
       </div>
