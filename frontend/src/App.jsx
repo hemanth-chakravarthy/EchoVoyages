@@ -13,7 +13,7 @@ import AgentProfilePage from "./pages/AgentProfilePage"
 import PrivateRoute from "./components/PrivateRoute"
 import CustomerProfile from "./pages/CustomerProfile"
 import CustomerWishlist from "./pages/CustomerWishlist"
-import Search from './components/Search';
+import Search from './pages/Search';
 import GuideHome from "./pages/GuideHome"
 import GuideProfile from "./pages/GuideProfile"
 import CustomerGuide from "./pages/CustomerGuide"
