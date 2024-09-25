@@ -58,7 +58,7 @@ router.put('/:id', async (req, res) => {
                 languages,
                 location,
                 contact,
-                availability,
+                availability: true,
                 specializations,
                 availableDates,
                 pricing,

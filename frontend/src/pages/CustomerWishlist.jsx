@@ -26,7 +26,6 @@ const CustomerWishlist = () => {
                 }
 
                 const data = await response.json();
-                console.log('Fetched data:', data);
 
                 // Ensure data is an array, if not wrap it in an array
                 if (Array.isArray(data)) {
@@ -49,9 +48,9 @@ const CustomerWishlist = () => {
         }
     }, [customerId, token]);
 
-    useEffect(() => {
-        console.log('Wishlist updated:', wishlist);
-    }, [wishlist]);
+    // useEffect(() => {
+    //     console.log('Wishlist updated:', wishlist);
+    // }, [wishlist]);
 
     const handleRemoveItem = async (itemId) => {
         try {

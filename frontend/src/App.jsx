@@ -16,6 +16,8 @@ import CustomerWishlist from "./pages/CustomerWishlist"
 import Search from './components/Search';
 import GuideHome from "./pages/GuideHome"
 import GuideProfile from "./pages/GuideProfile"
+import CustomerGuide from "./pages/CustomerGuide"
+import ViewGuide from "./components/ViewGuide"
 
 const App = () =>{
 
@@ -42,6 +44,12 @@ const App = () =>{
   {/* For the /home route */}
   <Route path="/home" element={<PrivateRoute />}>
     <Route path="/home" element={<Home />} />
+  </Route>
+  <Route path="/CustomerGuide" element={<PrivateRoute />}>
+    <Route path="/CustomerGuide" element={<CustomerGuide />} />
+  </Route>
+  <Route path="/guides/:id" element={<PrivateRoute />}>
+    <Route path="/guides/:id" element={<ViewGuide />} />
   </Route>
   <Route path="/AgentHome" element={<PrivateRoute />}>
     <Route path="/AgentHome" element={<AgentHomePage />} />
