@@ -44,12 +44,44 @@ const Signup = () => {
         setErrors(newErrors);
     };
 
+    // Validate the entire form before submission
+    const validateForm = () => {
+        let validationErrors = {};
+
+        // Username validation
+        if (!formData.username) {
+            validationErrors.username = 'Username is required';
+        }
+
+        // Name validation
+        if (!formData.Name) {
+            validationErrors.Name = 'Name is required';
+        }
+
+        // Phone number validation
+        if (!formData.phno || !/^[0-9]+$/.test(formData.phno)) {
+            validationErrors.phno = 'Valid phone number is required';
+        }
+
+        // Email validation
+        if (!formData.gmail || !formData.gmail.includes('@')) {
+            validationErrors.gmail = 'Valid email is required';
+        }
+
+        // Password validation
+        if (!formData.password || formData.password.length < 6) {
+            validationErrors.password = 'Password must be at least 6 characters long';
+        }
+
+        return validationErrors;
+    };
+
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         // Validate form
-        const validationErrors = await validateForm();
+        const validationErrors = validateForm();
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
             return;
@@ -109,6 +141,7 @@ const Signup = () => {
                     onChange={handleInputChange}
                     required
                 />
+                {errors.Name && <p className="error-message">{errors.Name}</p>}
             </div>
             <div className="form-group">
                 <label>Phone Number</label>
