@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode'; // Import jwtDecode correctly
 import axios from 'axios';
+import { FaFlag } from 'react-icons/fa';
 
 const ViewGuide = () => {
     const { id } = useParams(); // Get the guide ID from the URL
     const [guideDetails, setGuideDetails] = useState(null);
     const [showReviewModal, setShowReviewModal] = useState(false);
+    const [revvs, setRevDetails] = useState(null);
     const [rating, setRating] = useState(1); // Default rating value
     const [comment, setComment] = useState(''); // Comment value
     const [bookingStatus, setBookingStatus] = useState(''); // For displaying booking status
@@ -24,7 +26,17 @@ const ViewGuide = () => {
                 console.error('Error fetching guide details:', error);
             }
         };
-
+        const fetchReviews = async () => {
+          try {
+            const res = await fetch(`http://localhost:5000/reviews/guides/${id}`);
+            const data = await res.json();
+            setRevDetails(data);
+          } catch (error) {
+            console.error('Error fetching reviews:', error);
+          }
+        };
+        
+      fetchReviews();
         fetchGuideDetails();
     }, [id]);
 
@@ -102,6 +114,34 @@ const ViewGuide = () => {
           alert('An error occurred while submitting the review.');
         }
       };
+      const handleAddToWishlist = async () => {
+        try {
+            if (!customerId) {
+                setBookingStatus('Customer is not authenticated. Please log in.');
+                return;
+            }
+    
+            const wishlistData = {
+                customerId, // Use decoded customer ID from token
+                guideId: guideDetails._id, // Use guide ID
+            };
+    
+            const response = await axios.post('http://localhost:5000/wishlistGuides', wishlistData, {
+                headers: {
+                    Authorization: `Bearer ${token}`, // Send token in headers if required
+                },
+            });
+    
+            if (response.status === 201) { // 201 for successful creation
+                alert('Guide added to wishlist successfully!');
+            } else {
+                alert('Failed to add guide to wishlist.');
+            }
+        } catch (error) {
+            console.error('Error adding to wishlist:', error);
+            alert('An error occurred while adding to wishlist.');
+        }
+    };
 
     if (!guideDetails) {
         return <p>Loading...</p>;
@@ -113,6 +153,29 @@ const ViewGuide = () => {
             <p>{guideDetails.description}</p>
             <p>Experience: {guideDetails.experience} years</p>
             <p>Languages: {guideDetails.languages.join(', ')}</p>
+            {/* Display reviews */}
+      <div className="reviews-section">
+        <h2>Reviews:</h2>
+        {revvs && revvs.length > 0 ? (
+          revvs.map((review) => (
+            <div key={review._id} className="review-item">
+              <p><strong>Rating:</strong> {review.rating} / 5</p>
+              <p><strong>Comment:</strong> {review.comment}</p>
+              <p><strong>Reviewed by:</strong> {review.customerName || 'Anonymous'}</p>
+              {/* Report button */}
+              <button
+                className="report-button"
+                onClick={() => handleReportReview(review._id)}
+                title="Report this review"
+              >
+                <FaFlag style={{ color: 'red' }} /> {/* Report icon */}
+              </button>
+            </div>
+          ))
+        ) : (
+          <p>No reviews for this Guide yet.</p>
+        )}
+      </div>
 
             {/* Display booking section */}
             <div className="booking-section">
@@ -121,6 +184,7 @@ const ViewGuide = () => {
                 {bookingStatus && <p>{bookingStatus}</p>}
             </div>
             <button onClick={handleOpenReviewModal}>Add Review</button>
+            <button onClick={handleAddToWishlist}>Add to wishlist</button>
             {/* Modal for adding a review */}
       {showReviewModal && (
         <div className="modal">

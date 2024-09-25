@@ -117,6 +117,29 @@ router.get('/package/:packageId', async (req, res) => {
         res.status(500).json({ message: 'Error fetching reviews' });
     }
 });
+router.get('/guides/:guideId', async (req, res) => {
+    const {guideId} = req.params;  // Extract the packageId properly
+
+    if (!guideId) {
+        return res.status(400).json({ message: 'Package ID is required' });
+    }
+
+    try {
+        // Find reviews associated with the specific packageId
+        const revs = await reviews.find({ guideId });
+
+        // If no reviews are found
+        if (revs.length === 0) {
+            return res.status(404).json({ message: 'No reviews found for this package' });
+        }
+
+        // Send the found reviews as a response
+        res.status(200).json(revs);
+    } catch (error) {
+        console.error('Error fetching reviews:', error);
+        res.status(500).json({ message: 'Error fetching reviews' });
+    }
+});
 
 
 // Get a specific review by ID
