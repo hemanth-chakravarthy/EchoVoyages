@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
-import {jwtDecode} from 'jwt-decode'; // corrected import
+import { jwtDecode } from 'jwt-decode'; // corrected import
 
 const GuideProfilePage = () => {
     const guideId = jwtDecode(localStorage.getItem('token')).id; // Get guideId from the token
@@ -17,7 +17,6 @@ const GuideProfilePage = () => {
             try {
                 const response = await axios.get(`http://localhost:5000/guides/${guideId}`);
                 setGuide(response.data);
-                console.log(response.data)
                 setUpdatedGuide(response.data); // Initialize updatedGuide with fetched data
                 setLoading(false);
             } catch (error) {
@@ -34,10 +33,20 @@ const GuideProfilePage = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setUpdatedGuide({
-            ...updatedGuide,
-            [name]: value,
-        });
+        
+        if (name === "languages") {
+            // Handle languages input as a comma-separated string and convert to array
+            const languagesArray = value.split(',').map(lang => lang.trim());
+            setUpdatedGuide({
+                ...updatedGuide,
+                languages: languagesArray,
+            });
+        } else {
+            setUpdatedGuide({
+                ...updatedGuide,
+                [name]: value,
+            });
+        }
     };
 
     const handleNestedChange = (e, parentKey) => {
@@ -133,18 +142,11 @@ const GuideProfilePage = () => {
                         <input
                             type="text"
                             name="languages"
-                            value={updatedGuide.languages.join(', ')}
-                            onChange={(e) =>
-                                handleChange({
-                                    target: {
-                                        name: 'languages',
-                                        value: e.target.value.split(', '),
-                                    },
-                                })
-                            }
+                            value={updatedGuide.languages.join(', ')} // Display as comma-separated string
+                            onChange={handleChange}
                         />
                     ) : (
-                        guide.languages.join(', ')
+                        guide.languages.join(', ') // Show languages as comma-separated string
                     )}
                 </p>
                 <p>
@@ -280,4 +282,3 @@ const GuideProfilePage = () => {
 };
 
 export default GuideProfilePage;
-
