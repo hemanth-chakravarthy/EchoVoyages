@@ -137,10 +137,10 @@ const Login = () => {
                         <h2>Admin Login</h2>
                         {adminError && <p className="error-message">{adminError}</p>}
                         <input
-                            type="email"
-                            placeholder="Admin Email"
-                            value={adminCredentials.email}
-                            onChange={(e) => setAdminCredentials({ ...adminCredentials, email: e.target.value })}
+                            type="text" // Change input type from email to text for username
+                            placeholder="Admin Username" // Update placeholder to reflect username
+                            value={adminCredentials.username} // Use adminCredentials.username instead of email
+                            onChange={(e) => setAdminCredentials({ ...adminCredentials, username: e.target.value })} // Update state with username
                         />
                         <input
                             type="password"
