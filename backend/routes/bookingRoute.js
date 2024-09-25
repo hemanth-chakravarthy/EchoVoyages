@@ -13,8 +13,8 @@ router.post('/', async (req, res) => {
         const { customerId, packageId, guideId } = req.body;
 
         // Validate required fields
-        if (!customerId || !guideId) {
-            return res.status(400).send({ message: 'Customer ID and Guide ID are required' });
+        if (!customerId) {
+            return res.status(400).send({ message: 'Customer ID is required' });
         }
 
         let totalPrice = 0;
@@ -30,13 +30,13 @@ router.post('/', async (req, res) => {
         customerName = customerData.username;
 
         // Fetch package details if packageId is provided
-        console.log(packageId);
         if (packageId) {
             const packageData = await packages.findById(packageId);
             if (!packageData) {
                 return res.status(404).send({ message: 'Package not found' });
             }
             packageName = packageData.name; // Set the packageName if found
+            totalPrice = packageData.price; // You may want to set totalPrice from packageData
         }
 
         // Fetch guide details if guideId is provided
@@ -47,18 +47,18 @@ router.post('/', async (req, res) => {
             }
         }
 
-
         // Create the booking
         const newBooking = new bookings({
             customerName,
             customerId,
             packageId: packageId || null, // Only include package if provided
             packageName,
-            guideId,
-            guideName: guideData ? guideData.name : undefined,  // Store guide's name
+            guideId: guideId || null, // Only include guideId if provided
+            guideName: guideData ? guideData.name : undefined,  // Store guide's name if available
             totalPrice,
             status: 'pending',
         });
+
         // Save the booking to the database
         const savedBooking = await newBooking.save();
         return res.status(201).send(savedBooking);
