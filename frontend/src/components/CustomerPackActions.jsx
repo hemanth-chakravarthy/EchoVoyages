@@ -10,42 +10,46 @@ const CustomerPackActions = () => {
   const [rating, setRating] = useState(1); // Default rating value
   const [comment, setComment] = useState(''); // Comment value
   const customerId = jwtDecode(localStorage.getItem('token')).id;
+  const guideId = ""
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
 
   const handleBooking = async () => {
     if (!customerId) {
-      alert("Please log in to book the package.");
-      return;
+        alert("Please log in to book the package.");
+        return;
     }
 
     try {
-      const response = await fetch('http://localhost:5000/bookings', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,  // Include token for authentication
-        },
-        body: JSON.stringify({
-          customerId,    // Logged-in user's customerId
-          packageId: id, // Current package ID from URL params
-        }),
-      });
+        const response = await fetch('http://localhost:5000/bookings', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,  // Include token for authentication
+            },
+            body: JSON.stringify({
+                customerId,    // Logged-in user's customerId
+                packageId: id, // Current package ID from URL params, or guideId if applicable
+                // guideId: someGuideId // Only include if booking a guide
+            }),
+        });
 
-      if (response.ok) {
-        const result = await response.json();
-        console.log('Booking details:', result);
-        navigate('/home');
-      } else {
-        const errorData = await response.json();
-        console.error('Failed to book the package:', errorData.message);
-        alert(`Failed to book the package: ${errorData.message}`);
-      }
+        if (response.ok) {
+            const result = await response.json();
+            console.log('Booking details:', result);
+            navigate('/home');
+        } else {
+            const errorData = await response.json();
+            console.error('Failed to book the package:', errorData.message);
+            alert(`Failed to book the package: ${errorData.message}`);
+        }
     } catch (error) {
-      console.error('Error booking package:', error);
-      alert('An error occurred while booking the package.');
+        console.error('Error booking package:', error);
+        alert('An error occurred while booking the package.');
     }
-  };
+};
+
+
 
   const confirmBooking = () => {
     const isConfirmed = window.confirm('Do you want to confirm the booking?');
