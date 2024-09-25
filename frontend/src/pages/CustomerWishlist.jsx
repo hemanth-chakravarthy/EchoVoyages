@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar';
 
 const CustomerWishlist = () => {
     const [wishlist, setWishlist] = useState([]);
+    const [guideWishlist, setGuideWishlist] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
@@ -43,14 +44,43 @@ const CustomerWishlist = () => {
             }
         };
 
+        const fetchGuideWishlist = async () => {
+            try {
+                const response = await fetch(`http://localhost:5000/wishlistGuides/cust/${customerId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch guide wishlist.');
+                }
+
+                const data = await response.json();
+
+                // Ensure data is an array, if not wrap it in an array
+                if (Array.isArray(data)) {
+                    setGuideWishlist(data);
+                } else if (data && typeof data === 'object') {
+                    setGuideWishlist([data]); // Wrap the object in an array
+                } else {
+                    setError('Received guide data is not valid.');
+                }
+
+                setLoading(false);
+            } catch (error) {
+                setError(error.message);
+                setLoading(false);
+            }
+        };
+
         if (customerId) {
             fetchWishlist();
+            fetchGuideWishlist();
         }
     }, [customerId, token]);
-
-    // useEffect(() => {
-    //     console.log('Wishlist updated:', wishlist);
-    // }, [wishlist]);
 
     const handleRemoveItem = async (itemId) => {
         try {
@@ -73,6 +103,27 @@ const CustomerWishlist = () => {
         }
     };
 
+    const handleRemoveGuide = async (itemId) => {
+        try {
+            const response = await fetch(`http://localhost:5000/wishlistGuides/${itemId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            const data = await response.json();
+            if (response.ok) {
+                setGuideWishlist((prevGuideWishlist) => prevGuideWishlist.filter(item => item._id !== itemId));
+                alert(data.message);
+            } else {
+                alert(data.message || 'Failed to remove guide from wishlist');
+            }
+        } catch (error) {
+            console.error('Error removing guide from wishlist:', error);
+        }
+    };
+
     if (loading) {
         return <div>Loading...</div>;
     }
@@ -85,6 +136,9 @@ const CustomerWishlist = () => {
         <div>
             <Navbar />
             <h1>My Wishlist</h1>
+
+            {/* Packages Section */}
+            <h2>Packages</h2>
             {wishlist.length > 0 ? (
                 <ul>
                     {wishlist.map((item) => (
@@ -113,7 +167,30 @@ const CustomerWishlist = () => {
                     ))}
                 </ul>
             ) : (
-                <p>No items in your wishlist.</p>
+                <p>No packages in your wishlist.</p>
+            )}
+
+            {/* Guides Section */}
+            <h2>Guides</h2>
+            {guideWishlist.length > 0 ? (
+                <ul>
+                    {guideWishlist.map((item) => (
+                        <li key={item._id}>
+                            {item.guideId ? (
+                                <>
+                                    <h2>{item.guideId.name}</h2>
+                                    <p>{item.guideId.description}</p>
+                                    <p>Experience: {item.guideId.experience} years</p>
+                                </>
+                            ) : (
+                                <p>Guide details unavailable.</p>
+                            )}
+                            <button onClick={() => handleRemoveGuide(item._id)}>Remove</button>
+                        </li>
+                    ))}
+                </ul>
+            ) : (
+                <p>No guides in your wishlist.</p>
             )}
         </div>
     );

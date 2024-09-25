@@ -14,7 +14,6 @@ const GuideHome = () => {
       try {
         const response = await axios.get(`http://localhost:5000/reviews/guides/${guideId}`); // Replace 'guideID' with the actual guide ID
         setGuide(response.data.guide);
-        setReviews(response.data.review);
       } catch (error) {
         console.error('Error fetching guide data:', error);
       }

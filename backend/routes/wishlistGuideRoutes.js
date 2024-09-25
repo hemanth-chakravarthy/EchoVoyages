@@ -22,14 +22,16 @@ router.post('/', async (req, res) => {
         res.status(500).json({ message: 'Error adding to wishlist' });
     }
 });
-router.get('/customer/:customerId', async (req, res) => {
+router.get('/cust/:customerId', async (req, res) => {
+    const { customerId } = req.params;
     try {
-        const { customerId } = req.params;
-        
-        // Fetch wishlist for the customer and populate the guide details
+
+
+        // Fetch wishlist for the customer and populate guide details
         const wishlist = await wishlistGuide.find({ customerId }).populate('guideId');
 
-        // Check if the wishlist is empty
+        console.log('Query result:', wishlist);
+
         if (!wishlist || wishlist.length === 0) {
             return res.status(404).json({ message: 'No wishlist found' });
         }
@@ -40,6 +42,7 @@ router.get('/customer/:customerId', async (req, res) => {
         res.status(500).json({ message: 'Error fetching wishlist' });
     }
 });
+
 
 
 

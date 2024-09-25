@@ -9,7 +9,7 @@ const wishListGuideSchema = new mongoose.Schema({
     guideId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref: 'guides' // Adjust this if your package model is named differently
+        ref: 'Guide' // Adjust this if your package model is named differently
     }
 }, {timestamps: true})
 
