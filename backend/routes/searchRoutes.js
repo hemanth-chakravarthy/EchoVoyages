@@ -8,7 +8,19 @@ const router = express.Router();
 // Update the main search route to handle filtering by availability and languages
 router.get('/', async (req, res) => {
     try {
-        const { location, entityType, availability, language, minDuration, maxDuration, minGroupSize, maxGroupSize, minPrice, maxPrice, availableDates } = req.query;
+        const {
+            location,
+            entityType,
+            availability,
+            language,
+            minDuration,
+            maxDuration,
+            minGroupSize,
+            maxGroupSize,
+            minPrice,
+            maxPrice,
+            availableDates,
+        } = req.query;
 
         if (!location || !entityType) {
             return res.status(400).json({ message: 'Location and entity type are required' });
@@ -20,14 +32,23 @@ router.get('/', async (req, res) => {
             const query = {
                 location: { $regex: location, $options: 'i' },
             };
-            if (availability) query.availability = availability === 'true';
-            if (language) query.languages = { $regex: language, $options: 'i' };
+
+            // Only add the availability filter when explicitly set to true or false.
+            if (availability === 'true') {
+                query.availability = true;
+             } 
+            
+            if (language) {
+                query.languages = { $regex: language, $options: 'i' };
+            }
+
             results = await Guide.find(query);
         } else if (entityType === 'Package') {
             const query = {
                 location: { $regex: location, $options: 'i' },
             };
-            // Apply filters for packages
+
+            // Apply filters for packages as per the existing code
             if (minDuration || maxDuration) {
                 query.duration = {};
                 if (minDuration) query.duration.$gte = parseInt(minDuration);
@@ -45,8 +66,9 @@ router.get('/', async (req, res) => {
             }
             if (availableDates) {
                 const dateArray = Array.isArray(availableDates) ? availableDates : [availableDates];
-                query.availableDates = { $in: dateArray.map(date => moment(date).toDate()) }; // Convert to Date objects
+                query.availableDates = { $in: dateArray.map(date => moment(date).toDate()) };
             }
+
             results = await packages.find(query);
         } else {
             return res.status(400).json({ message: 'Invalid entity type' });
@@ -57,6 +79,7 @@ router.get('/', async (req, res) => {
         res.status(500).json({ message: 'Error searching', error: error.message });
     }
 });
+
 // Endpoint to fetch all unique languages
 router.get('/guide-languages', async (req, res) => {
     try {

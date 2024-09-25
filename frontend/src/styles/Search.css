@@ -1,0 +1,158 @@
+/* Container Styles */
+.search-container {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    max-width: 100%;
+    margin: 0 auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+.total-container {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+/* Title Styles */
+.search-title {
+    text-align: center;
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Filters Section */
+.search-filters {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.filter-select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Guide Filters */
+.guide-filters {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.availability-label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Package Filters */
+.package-filters {
+    margin-top: 10px;
+}
+
+.filter-title {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #444;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.filter-label {
+    flex-shrink: 0;
+    min-width: 100px;
+    color: #333;
+}
+
+.filter-input {
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.clear-dates-btn {
+    padding: 5px 10px;
+    border: none;
+    background-color: #e74c3c;
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.clear-dates-btn:hover {
+    background-color: #c0392b;
+}
+
+/* Search Button */
+.search-btn {
+    padding: 10px 20px;
+    border: none;
+    background-color: #3498db;
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.search-btn:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+}
+
+.search-btn:hover:not(:disabled) {
+    background-color: #2980b9;
+}
+
+/* Search Results */
+.search-results {
+    margin-top: 20px;
+}
+
+.result-card {
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    background-color: #fff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.result-title {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.result-details {
+    font-size: 14px;
+    color: #555;
+}
+
+.view-btn {
+    padding: 5px 10px;
+    border: none;
+    background-color: #2ecc71;
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.view-btn:hover {
+    background-color: #27ae60;
+}
+
+.no-results {
+    text-align: center;
+    color: #888;
+    margin-top: 20px;
+}

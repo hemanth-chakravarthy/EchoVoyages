@@ -4,6 +4,7 @@ import { Agency } from '../models/agencyModel.js';
 import { Guide } from '../models/guideModel.js';
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import { Admin } from '../models/adminModel.js';
 const router = express.Router()
 
 
@@ -153,6 +154,31 @@ router.post('/login', async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
+
+router.post('/adminlogin', async (req, res) => {
+    const { username, password } = req.body;
+
+    try {
+        // Find admin by username
+        const admin = await Admin.findOne({ username });
+        if (!admin) {
+            return res.status(404).json({ error: 'Admin not found' });
+        }
+
+        // Compare the entered password with the stored hashed password
+        
+        if (password != admin.password) {
+            return res.status(400).json({ error: 'Invalid credentials' });
+        }
+
+        // If the credentials are valid, you can generate a token or proceed
+        res.json({ message: 'Admin login successful', token: 'someAuthToken' });
+    } catch (error) {
+        console.error('Admin login error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 // get all coustomers
 router.get('/',async (req,res) => {
     try {
