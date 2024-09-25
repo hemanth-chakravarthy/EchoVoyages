@@ -13,7 +13,7 @@ const Login = () => {
 
     // State for admin modal visibility and credentials
     const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
-    const [adminCredentials, setAdminCredentials] = useState({ email: '', password: '' });
+    const [adminCredentials, setAdminCredentials] = useState({ username: '', password: '' });
     const [adminError, setAdminError] = useState('');
 
     // Handle input changes
@@ -75,10 +75,10 @@ const Login = () => {
     // Handle admin login submission
     const handleAdminLogin = () => {
         // Hardcoded admin credentials
-        const correctEmail = "admin@example.com";
+        const correctUsername = "admin";  // Change email to username
         const correctPassword = "admin123";
         
-        if (adminCredentials.email === correctEmail && adminCredentials.password === correctPassword) {
+        if (adminCredentials.username === correctUsername && adminCredentials.password === correctPassword) {
             setIsAdminModalOpen(false);
             navigate('/admin'); // Navigate to admin dashboard
         } else {
