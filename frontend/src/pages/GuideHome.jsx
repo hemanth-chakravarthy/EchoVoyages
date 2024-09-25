@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
+import ViewPendingCustomers from '../components/ViewPedingCustomers';
 import axios from 'axios';
 
 const GuideHome = () => {
   const [guide, setGuide] = useState(null);
-  const [reviews, setReviews] = useState([]);
+  const [reviews, setRevDetails] = useState(null);
   const guideId = jwtDecode(localStorage.getItem('token')).id;
 
   useEffect(() => {
@@ -13,14 +14,24 @@ const GuideHome = () => {
       try {
         const response = await axios.get(`http://localhost:5000/reviews/guides/${guideId}`); // Replace 'guideID' with the actual guide ID
         setGuide(response.data.guide);
-        setReviews(response.data.review);
       } catch (error) {
         console.error('Error fetching guide data:', error);
       }
     };
+    const fetchReviews = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/reviews/guides/${guideId}`);
+        const data = await res.json();
+        setRevDetails(data);
+      } catch (error) {
+        console.error('Error fetching reviews:', error);
+      }
+    };
+    
+  fetchReviews();
 
     fetchGuideData();
-  }, []);
+  }, [guideId]);
 
   return (
     <div>
@@ -29,6 +40,7 @@ const GuideHome = () => {
         <Link to={'/guideHome'}>Home Page</Link>
         <Link to={`/GuideProfilePage`}>Profile Page</Link>
       </div>
+      <ViewPendingCustomers/>
 
       {/* Check if reviews are available */}
       <h2>Reviews</h2>

@@ -26,7 +26,7 @@ const AgentInfo = () => {
         };
         const fetchBookingsData = async () => {
             try {
-                const bookingsResponse = await axios.get(`http://localhost:5000/packages/${AgentID}`);
+                const bookingsResponse = await axios.get(`http://localhost:5000/packages/agents/${AgentID}`);
                 console.log("Bookings Response:", bookingsResponse.data); // Log the response for debugging
                 setBookings(bookingsResponse.data);
             } catch (error) {
@@ -172,11 +172,9 @@ const AgentInfo = () => {
                 {bookings ? (
                     bookings.map((booking) => (
                         <div key={booking._id} className="booking">
-                            <h3>Package: {booking.packageName || 'N/A'}</h3>
-                            <p><strong>Customer Name:</strong> {booking.customerName || 'N/A'}</p>
-                            <p><strong>Total Price:</strong> ${booking.totalPrice}</p>
-                            <p><strong>Status:</strong> {booking.status}</p>
-                            <p><strong>Booking Date:</strong> {new Date(booking.bookingDate).toLocaleDateString()}</p>
+                            <h3>Package: {booking.name || 'N/A'}</h3>
+                            <p><strong>Total Price:</strong> ${booking.price}</p>
+                            <p><strong>Booking Date:</strong> {new Date(booking.availableDates).toLocaleDateString()}</p>
                         </div>
                     ))
                 ) : (

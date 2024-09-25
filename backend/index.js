@@ -9,12 +9,12 @@ import bookingRoute from './routes/bookingRoute.js'
 import guideRoute from './routes/guideRoutes.js'
 import agencyRoutes from './routes/agencyRoutes.js'
 import wishlistRoutes from './routes/wishlistRoutes.js'
+import wishlistGuideRoutes from './routes/wishlistGuideRoutes.js'
 import cors from 'cors'
 import multer from 'multer';
 import path from 'path';
 import jwt from 'jsonwebtoken';
 import searchRoutes from './routes/searchRoutes.js';
-
 mongoose.connect(mongoURL)
 .then(()=>{
     console.log("MongoDB connected")
@@ -43,6 +43,7 @@ app.use('/guides', guideRoute)
 app.use('/agency', agencyRoutes)
 app.use('/wishlist', wishlistRoutes);
 app.use('/search', searchRoutes);
+app.use('/wishlistGuides',wishlistGuideRoutes)
 app.use('/public', express.static('public'));
 
 

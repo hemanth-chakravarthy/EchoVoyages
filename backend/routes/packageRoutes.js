@@ -132,7 +132,7 @@ router.delete('/:id', async (req,res) => {
     }
     
 })
-router.get('/:AgentID', async (req, res) => {
+router.get('/agents/:AgentID', async (req, res) => {
     const { AgentID } = req.params;
     // This check might not be needed since AgentID is expected in the route
     if (!AgentID) {

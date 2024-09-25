@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
-import {jwtDecode} from 'jwt-decode'; // corrected import
+import { jwtDecode } from 'jwt-decode'; // corrected import
 
 const GuideProfilePage = () => {
     const guideId = jwtDecode(localStorage.getItem('token')).id; // Get guideId from the token
     const [guide, setGuide] = useState(null);
+    const [reviews, setReviews] = useState([]); // Holds reviews for the guide
     const [loading, setLoading] = useState(true);
     const [editing, setEditing] = useState(false); // Track whether we are in "edit" mode
     const [updatedGuide, setUpdatedGuide] = useState(null); // Holds updated guide info
@@ -17,7 +18,6 @@ const GuideProfilePage = () => {
             try {
                 const response = await axios.get(`http://localhost:5000/guides/${guideId}`);
                 setGuide(response.data);
-                console.log(response.data)
                 setUpdatedGuide(response.data); // Initialize updatedGuide with fetched data
                 setLoading(false);
             } catch (error) {
@@ -25,7 +25,44 @@ const GuideProfilePage = () => {
                 setLoading(false);
             }
         };
+
+        // Fetch reviews and calculate average rating
+        const fetchReviewsAndCalculateRating = async () => {
+            try {
+                const response = await axios.get(`http://localhost:5000/reviews/guides/${guideId}`);
+                const reviewsData = response.data.review;
+                setReviews(reviewsData);
+
+                if (reviewsData.length > 0) {
+                    // Calculate average rating
+                    const totalRating = reviewsData.reduce((sum, review) => sum + review.rating, 0);
+                    const averageRating = totalRating / reviewsData.length;
+
+                    // Update guide with the new ratings
+                    await axios.put(`http://localhost:5000/guides/${guideId}`, {
+                        ...updatedGuide,
+                        ratings: {
+                            averageRating: averageRating.toFixed(1),
+                            numberOfReviews: reviewsData.length,
+                        },
+                    });
+
+                    // Update guide state with new ratings
+                    setGuide((prevGuide) => ({
+                        ...prevGuide,
+                        ratings: {
+                            averageRating: averageRating.toFixed(1),
+                            numberOfReviews: reviewsData.length,
+                        },
+                    }));
+                }
+            } catch (error) {
+                console.error("Error fetching reviews and calculating rating:", error);
+            }
+        };
+
         fetchGuideDetails();
+        fetchReviewsAndCalculateRating();
     }, [guideId]);
 
     const handleEditToggle = () => {
@@ -34,10 +71,20 @@ const GuideProfilePage = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setUpdatedGuide({
-            ...updatedGuide,
-            [name]: value,
-        });
+
+        if (name === "languages") {
+            // Handle languages input as a comma-separated string and convert to array
+            const languagesArray = value.split(',').map(lang => lang.trim());
+            setUpdatedGuide({
+                ...updatedGuide,
+                languages: languagesArray,
+            });
+        } else {
+            setUpdatedGuide({
+                ...updatedGuide,
+                [name]: value,
+            });
+        }
     };
 
     const handleNestedChange = (e, parentKey) => {
@@ -133,18 +180,11 @@ const GuideProfilePage = () => {
                         <input
                             type="text"
                             name="languages"
-                            value={updatedGuide.languages.join(', ')}
-                            onChange={(e) =>
-                                handleChange({
-                                    target: {
-                                        name: 'languages',
-                                        value: e.target.value.split(', '),
-                                    },
-                                })
-                            }
+                            value={updatedGuide.languages.join(', ')} // Display as comma-separated string
+                            onChange={handleChange}
                         />
                     ) : (
-                        guide.languages.join(', ')
+                        guide.languages.join(', ') // Show languages as comma-separated string
                     )}
                 </p>
                 <p>
@@ -202,34 +242,12 @@ const GuideProfilePage = () => {
                         <p>No available dates provided</p>
                     )
                 )}
-
-                {guide.assignedPackages && guide.assignedPackages.length > 0 ? (
-                    <div className="assigned-packages">
-                        {guide.assignedPackages.map((pkg) => (
-                            <div key={pkg.packageId} className="package">
-                                <p><strong>Package ID:</strong> {pkg.packageId}</p>
-                                <p><strong>Price:</strong> {editing ? (
-                                    <input
-                                        type="number"
-                                        name={`price_${pkg.packageId}`}
-                                        value={pkg.price}
-                                        onChange={(e) => handleNestedChange(e, 'assignedPackages')}
-                                    />
-                                ) : (
-                                    `$${pkg.price}`
-                                )}</p>
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <p>No assigned packages available.</p>
-                )}
             </div>
 
             {/* Ratings Section */}
             <div className="guide-ratings">
                 <h3>Ratings</h3>
-                <p><strong>Average Rating:</strong> {guide.ratings.averageRating.toFixed(1)} / 5</p>
+                <p><strong>Average Rating:</strong> {guide.ratings.averageRating} / 5</p>
                 <p><strong>Number of Reviews:</strong> {guide.ratings.numberOfReviews}</p>
             </div>
 
@@ -280,4 +298,3 @@ const GuideProfilePage = () => {
 };
 
 export default GuideProfilePage;
-
