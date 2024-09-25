@@ -34,7 +34,7 @@ const CustomerInfo = () => {
         };
         const fetchBookingsData = async () => {
             try {
-                const bookingsResponse = await axios.get(`http://localhost:5000/bookings/${id}`); 
+                const bookingsResponse = await axios.get(`http://localhost:5000/bookings/cust/${id}`); 
                 setBookings(bookingsResponse.data);
             } catch (error) {
                 console.error("Error fetching bookings:", error);

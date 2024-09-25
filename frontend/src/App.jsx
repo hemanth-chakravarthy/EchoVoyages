@@ -18,6 +18,7 @@ import GuideHome from "./pages/GuideHome"
 import GuideProfile from "./pages/GuideProfile"
 import CustomerGuide from "./pages/CustomerGuide"
 import ViewGuide from "./components/ViewGuide"
+import ViewBooking from "./pages/ViewBooking"
 
 const App = () =>{
 
@@ -39,6 +40,9 @@ const App = () =>{
       {/* For the /packages/:id route */}
   <Route path="/packages/:id" element={<PrivateRoute />}>
     <Route path="/packages/:id" element={<ViewPage />} />
+  </Route>
+  <Route path="/bookings/:bookingId" element={<PrivateRoute />}>
+    <Route path="/bookings/:bookingId" element={<ViewBooking />} />
   </Route>
 
   {/* For the /home route */}

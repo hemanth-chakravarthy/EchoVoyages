@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
+import ViewPendingCustomers from '../components/ViewPedingCustomers';
 import axios from 'axios';
 
 const GuideHome = () => {
@@ -29,6 +30,7 @@ const GuideHome = () => {
         <Link to={'/guideHome'}>Home Page</Link>
         <Link to={`/GuideProfilePage`}>Profile Page</Link>
       </div>
+      <ViewPendingCustomers/>
 
       {/* Check if reviews are available */}
       <h2>Reviews</h2>
