@@ -72,19 +72,35 @@ const Login = () => {
         }
     };
 
-    // Handle admin login submission
-    const handleAdminLogin = () => {
-        // Hardcoded admin credentials
-        const correctUsername = "admin";  // Change email to username
-        const correctPassword = "admin123";
-        
-        if (adminCredentials.username === correctUsername && adminCredentials.password === correctPassword) {
-            setIsAdminModalOpen(false);
-            navigate('/admin'); // Navigate to admin dashboard
-        } else {
-            setAdminError('Invalid admin credentials.');
+    const handleAdminLogin = async () => {
+        try {
+            const response = await fetch('http://localhost:5000/customers/adminlogin', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: adminCredentials.username,
+                    password: adminCredentials.password,
+                }),
+            });
+    
+            const data = await response.json();
+    
+            if (response.ok) {
+                setIsAdminModalOpen(false);
+                navigate('/admin'); // Navigate to the admin dashboard
+            } else {
+                setAdminError(data.error || 'Invalid admin credentials.');
+            }
+        } catch (err) {
+            console.error('Error during admin login:', err);
+            setAdminError('An error occurred. Please try again.');
         }
     };
+    
+
+   
 
     return (
         <div>
