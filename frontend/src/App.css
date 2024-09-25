@@ -1,42 +1,422 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'PT Sans', sans-serif;
+}
+
+.home,
+.services,
+.products,
+.sign-up {
+  display: flex;
+  height: 90vh;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+}
+
+.services {
+  background-image: url('../public/images/img-2.jpg');
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  color: #fff;
+  font-size: 100px;
+}
+
+/* 
+.sign-up {
+  background-image: url('../public/images/img-8.jpg');
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  color: #fff;
+  font-size: 100px;
+} */
+
+/* Destination page*/
+.destination {
+  background-image: url('../public/images/img-9.jpg');
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  color: #fff;
+  height: 350px;
+
+}
+
+.destination-container {
+  padding: 4rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 4rem;
+  flex-wrap: wrap;
+}
+
+.destination-container h2 {
+  font-size: 2.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.destination-container p {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  font-weight: 300;
+  max-width: 800px;
+}
+
+.info-wrapper {
+  max-width: 800px;
+}
+
+h3 {
+  margin: 3rem 0 1.3rem 0;
+  font-size: 2.4rem;
+}
+
+h4 {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  margin-top: 2rem;
+}
+
+.destination-container ul li {
+  margin-bottom: 1rem;
+  margin-left: 3rem;
+}
+
+.booking-container {
+  width: 350px;
+  height: fit-content;
+  padding: 1.4rem;
+  border: 2px solid #242424;
+  border-radius: 5px;
+}
+
+.booking-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.booking-info h5 {
+  font-size: 1.2rem;
+}
+
+.booking-info .price {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 0;
+}
+
+.btn-book {
+  padding: 12px 26px;
+  border-radius: 2px;
+  outline: none;
+  border: 1px solid #242424;
+  color: #fff;
+  background-color: #242424;
+}
+
+.btn-book:hover {
+  background-color: #fff;
+  color: #242424;
+}
+
+/* Sign up Page */
+.form-modal__container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding: 20px;
+}
+
+.form-modal__wrapper {
+  display: flex;
+  justify-content: space-between; /* Space between the image and the form */
+  align-items: center;
+  max-width: 900px;
+  height: 100%;
+  margin: 4rem auto;
+  border-radius: 20px; 
+  overflow: hidden;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  flex-direction: row; /* Ensure image and form are side by side */
+}
+
+.sign-up {
+  width: 350px;
+  height: inherit;
+  overflow: hidden;
+}
+
+.sign-up__container h2 {
+  font-size: 2.2rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  color: black;
+}
+
+.sign-up > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.1);
+  transition: transform 0.3s ease-in-out;
+}
+
+.sign-up > img:hover {
+  transform: scale(1.15);
+}
+
+.sign-up__container {
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 /* #root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
-  text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.sign-up__form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 300px; /* Set a fixed height for the form */
+  overflow-y: auto; /* Enable vertical scrolling */
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+.sign-up__form > label {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: black;
+}
+
+.sign-up__form > input {
+  margin-bottom: 1.2rem;
+  padding: 0.6rem;
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.btn-sign {
+  padding: 12px 26px;
+  width: fit-content;
+  margin: 1.5rem auto 0;
+  border-radius: 4px;
+  font-size: 1.2rem;
+  border: 1px solid #242424;
+  background-color: #242424;
+  color: #fff;
+}
+
+.btn-sign:hover {
+  color: #242424;
+  background-color: #fff;
+}
+
+.have-account {
+  font-size: 0.9rem;
+  color: #5a5a5a;
+}
+
+.error-message {
+  color: red;
+  font-size: 0.8rem;
+}
+
+.sign-up__form > select {
+  margin-bottom: 1.2rem;
+  padding: 0.6rem;
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+/* Media Queries */
+
+/* For tablets (768px and below) */
+@media (max-width: 768px) {
+  .form-modal__wrapper {
+    flex-direction: column;
+    max-width: 100%;
+    margin: 2rem auto;
+    padding: 1rem;
   }
-  to {
-    transform: rotate(360deg);
+
+  .sign-up {
+    width: 100%;
+    height: 250px; /* Adjust height for smaller screens */
+  }
+
+  .sign-up__container {
+    width: 100%;
+    padding: 1.5rem;
+  }
+
+  .sign-up__container h2 {
+    font-size: 1.8rem; /* Decrease font size for tablets */
+  }
+
+  .btn-sign {
+    padding: 10px 20px;
+    font-size: 1rem;
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+/* For mobile phones (480px and below) */
+@media (max-width: 480px) {
+  .form-modal__container {
+    padding: 10px;
+  }
+
+  .form-modal__wrapper {
+    margin: 1.5rem auto;
+    box-shadow: none; /* Remove shadow on mobile for a cleaner look */
+  }
+
+  .sign-up {
+    display: none; /* Hide the image on mobile to save space */
+  }
+
+  .sign-up__container {
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .sign-up__container h2 {
+    font-size: 1.6rem; /* Decrease font size for mobile */
+  }
+
+  .sign-up__form > label {
+    font-size: 1rem; /* Reduce label font size for mobile */
+  }
+
+  .sign-up__form > input {
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+  }
+
+  .btn-sign {
+    padding: 8px 16px;
+    font-size: 0.9rem;
   }
 }
 
-.card {
-  padding: 2em;
+
+/* Log In Page */
+.log-in {
+  width: 50%; /* Adjust to occupy half the parent container */
+  height: auto;
+  overflow: hidden;
 }
 
+.log-in > img {
+  width: 100%; /* Set image to take full width of the .log-in container */
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.1);
+  transition: transform 0.3s ease-in-out;
+}
+
+.log-in:hover > img {
+  transform: scale(1.15); /* Image zoom on hover */
+}
+
+.log-in__container {
+  display: flex;
+  width: 100%; /* Make sure the container stretches full width */
+  justify-content: space-between; /* Distribute space between elements */
+  align-items: center;
+}
+
+.log-in__form {
+  width: 50%; /* Set form to occupy the other half of the container */
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+}
+
+/* Media Queries */
+
+/* For tablets (768px and below) */
+@media (max-width: 768px) {
+  .form-modal__wrapper {
+    flex-direction: column;
+    max-width: 100%;
+    margin: 2rem auto;
+    padding: 1rem;
+  }
+
+  .log-in {
+    width: 100%;
+    height: 250px; /* Adjust height for smaller screens */
+  }
+
+  .log-in > img {
+    height: 250px; /* Adjust image height for smaller screens */
+  }
+
+  .log-in__container {
+    width: 100%;
+    padding: 1.5rem;
+  }
+
+  .login__container h2 {
+    font-size: 1.8rem; /* Decrease font size for tablets */
+  }
+
+  .log-in__form {
+    width: 100%; /* Adjust form to full width */
+    height: auto; /* Remove fixed height for better scrolling */
+  }
+
+  .btn-login {
+    padding: 10px 20px;
+    font-size: 1rem;
+  }
+}
+
+/* For mobile phones (480px and below) */
+@media (max-width: 480px) {
+  .form-modal__wrapper {
+    margin: 1.5rem auto;
+    box-shadow: none; /* Remove shadow on mobile for cleaner look */
+  }
+
+  .log-in {
+    display: none; /* Hide the image on mobile to save space */
+  }
+
+  .log-in__container {
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .login__container h2 {
+    font-size: 1.6rem; /* Decrease font size for mobile */
+  }
+
+  .log-in__form > label {
+    font-size: 1rem;
+  }
+
+  .log-in__form > input {
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+  }
+
+  .btn-login {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+}
 .read-the-docs {
   color: #888;
 } */
