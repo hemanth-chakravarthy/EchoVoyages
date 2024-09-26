@@ -4,6 +4,9 @@ import { Button } from './Button';
 import { Link } from 'react-router-dom';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
 
 function Footer() {
   return (
@@ -16,41 +19,41 @@ function Footer() {
         <div className='footer-link-wrapper'>
           <div className='footer-link-items'>
             <h2>About Us</h2>
-            <Link to='/sign-up'>How it works</Link>
-            <Link to='/'>Testimonials</Link>
-            <Link to='/'>Careers</Link>
-            <Link to='/'>Investors</Link>
-            <Link to='/'>Terms of Service</Link>
+            <Link to='/home'>How it works</Link>
+            <Link to='/home'>Testimonials</Link>
+            <Link to='/home'>Careers</Link>
+            <Link to='/home'>Investors</Link>
+            <Link to='/home'>Terms of Service</Link>
           </div>
           <div className='footer-link-items'>
             <h2>Contact Us</h2>
-            <Link to='/'>Contact</Link>
-            <Link to='/'>Support</Link>
-            <Link to='/'>Destinations</Link>
-            <Link to='/'>Sponsorships</Link>
+            <Link to='/home'>Contact</Link>
+            <Link to='/home'>Support</Link>
+            <Link to='/home'>Destinations</Link>
+            <Link to='/home'>Sponsorships</Link>
           </div>
         </div>
         <div className='footer-link-wrapper'>
           <div className='footer-link-items'>
             <h2>Videos</h2>
-            <Link to='/'>Submit Video</Link>
-            <Link to='/'>Ambassadors</Link>
-            <Link to='/'>Agency</Link>
-            <Link to='/'>Influencer</Link>
+            <Link to='/home'>Submit Video</Link>
+            <Link to='/home'>Ambassadors</Link>
+            <Link to='/home'>Agency</Link>
+            <Link to='/home'>Influencer</Link>
           </div>
           <div className='footer-link-items'>
             <h2>Social Media</h2>
-            <Link to='/'>Instagram</Link>
-            <Link to='/'>Facebook</Link>
-            <Link to='/'>Youtube</Link>
-            <Link to='/'>Twitter</Link>
+            <Link to='/home'>Instagram</Link>
+            <Link to='/home'>Facebook</Link>
+            <Link to='/home'>Youtube</Link>
+            <Link to='/home'>Twitter</Link>
           </div>
         </div>
       </div>
       <section className='social-media'>
         <div className='social-media-wrap'>
           <div className='footer-logo'>
-            <Link to='/' className='social-logo'>
+            <Link to='/home' className='social-logo' onClick={scrollToTop}>
               Echo Voyage <i class="fa-regular fa-wave"></i>
             </Link>
           </div>
@@ -58,7 +61,7 @@ function Footer() {
           <div className='social-icons'>
             <Link
               className='social-icon-link facebook'
-              to='/'
+              to='/home'
               target='_blank'
               aria-label='Facebook'
             >
@@ -66,7 +69,7 @@ function Footer() {
             </Link>
             <Link
               className='social-icon-link instagram'
-              to='/'
+              to='/home'
               target='_blank'
               aria-label='Instagram'
             >
@@ -74,7 +77,7 @@ function Footer() {
             </Link>
             <Link
               className='social-icon-link youtube'
-              to='/'
+              to='/home'
               target='_blank'
               aria-label='Youtube'
             >
@@ -82,7 +85,7 @@ function Footer() {
             </Link>
             <Link
               className='social-icon-link twitter'
-              to='/'
+              to='/home'
               target='_blank'
               aria-label='Twitter'
             >
@@ -90,7 +93,7 @@ function Footer() {
             </Link>
             <Link
               className='social-icon-link twitter'
-              to='/'
+              to='/home'
               target='_blank'
               aria-label='LinkedIn'
             >
