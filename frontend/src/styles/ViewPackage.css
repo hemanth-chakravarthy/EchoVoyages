@@ -1,0 +1,79 @@
+/* Package details container */
+.package-details {
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+/* Package name style */
+.package-name {
+    font-size: 2em;
+    margin-bottom: 15px;
+}
+
+/* Package description style */
+.package-description,
+.package-price,
+.package-duration,
+.package-location,
+.package-highlights {
+    margin: 10px 0;
+}
+
+/* Package images section */
+.package-images {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 10px 0;
+}
+
+/* Individual package image style */
+.package-image {
+    width: 300px;
+    height: 200px;
+    margin-right: 10px;
+    border-radius: 5px;
+}
+
+/* Reviews section */
+.reviews-section {
+    margin-top: 20px;
+    border-top: 1px solid #ccc;
+    padding-top: 10px;
+}
+
+/* Reviews title style */
+.reviews-title {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+}
+
+/* Review item style */
+.review-item {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 10px 0;
+    background-color: #ffffff;
+}
+
+/* Review rating and comment styles */
+.review-rating,
+.review-comment,
+.review-author {
+    margin: 5px 0;
+}
+
+/* Report button style */
+.report-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    color: red;
+}
+
+/* Report icon style */
+.report-icon {
+    font-size: 1.2em;
+}

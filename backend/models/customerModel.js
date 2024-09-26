@@ -18,6 +18,7 @@ const customerSchema = mongoose.Schema(
         gmail : {
             type: String,
             required: true,
+            unique: true
         },
         password : {
             type: String,
