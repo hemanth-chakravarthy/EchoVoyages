@@ -2,15 +2,14 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import BackButton from '../components/BackButton';
-import '../assets/css/updateEntity.css'; // Importing the CSS file
+import '../assets/css/updateEntity.css'; 
 
 const UpdateEntity = () => {
   const [entity, setEntity] = useState({});
-  const { id, entityType } = useParams(); // Extract 'id' and 'entityType' from the URL
+  const { id, entityType } = useParams(); 
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch the entity based on the entityType
     axios.get(`http://localhost:5000/admin/${entityType}/${id}`)
       .then((res) => {
         setEntity(res.data);
@@ -21,7 +20,6 @@ const UpdateEntity = () => {
       });
   }, [id, entityType]);
 
-  // Handle form submission
   const handleEditEntity = () => {
     axios.put(`http://localhost:5000/admin/${entityType}/${id}`, entity)
       .then(() => {
@@ -33,7 +31,6 @@ const UpdateEntity = () => {
       });
   };
 
-  // Handle changes in form inputs
   const handleChange = (e) => {
     const { name, value } = e.target;
     setEntity((prevEntity) => ({

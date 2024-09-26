@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom'; // Import Link for navigation
+import { Link } from 'react-router-dom'; 
 import Navbar from '../components/Navbar';
 
 
 const CustomerGuide = () => {
     const [guides, setGuides] = useState([]);
 
-    // Fetching guides from the server
     useEffect(() => {
         const fetchGuides = async () => {
             try {
-                const response = await fetch('http://localhost:5000/guides'); // Replace with your actual API endpoint
+                const response = await fetch('http://localhost:5000/guides');
                 const data = await response.json();
 
                 if (data && data.data) {

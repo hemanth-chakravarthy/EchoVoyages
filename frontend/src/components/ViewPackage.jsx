@@ -1,32 +1,30 @@
 import React, { useEffect, useState } from 'react'; 
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { FaFlag } from 'react-icons/fa'; // Import report flag icon
+import { FaFlag } from 'react-icons/fa'; 
 import "../styles/ViewPackage.css";
 
 const ViewPackage = () => {
-  const { id } = useParams(); // Get the package ID from the URL
+  const { id } = useParams(); 
   const [packageDetails, setPackageDetails] = useState(null);
   const [revvs, setRevDetails] = useState(null);
 
   useEffect(() => {
-    // Function to fetch package details
     const fetchPackageDetails = async () => {
       try {
         const response = await fetch(`http://localhost:5000/packages/${id}`);
         const data = await response.json();
         setPackageDetails(data);
 
-        // Check if the package has reviews before fetching them
-        if (data.reviewCount > 0) { // Assuming `reviewCount` is part of package details
-          await fetchReviews(); // Fetch reviews only if there are any
+
+        if (data.reviewCount > 0) { 
+          await fetchReviews(); 
         }
       } catch (error) {
         console.error('Error fetching package details:', error);
       }
     };
 
-    // Function to fetch reviews based on package ID
     const fetchReviews = async () => {
       try {
         const res = await fetch(`http://localhost:5000/reviews/package/${id}`);
@@ -40,7 +38,6 @@ const ViewPackage = () => {
     fetchPackageDetails();
   }, [id]);
 
-  // Function to handle reporting a review
   const handleReportReview = async (reviewId) => {
     try {
       const response = await axios.post(`http://localhost:5000/reviews/${reviewId}`);
@@ -99,7 +96,7 @@ const ViewPackage = () => {
                 onClick={() => handleReportReview(review._id)}
                 title="Report this review"
               >
-                <FaFlag className='report-icon' /> {/* Report icon */}
+                <FaFlag className='report-icon' /> 
               </button>
             </div>
           ))

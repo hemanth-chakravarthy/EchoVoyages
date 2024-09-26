@@ -9,7 +9,7 @@ const ViewPendingCustomers = () => {
     const [error, setError] = useState('');
 
     const token = localStorage.getItem('token');
-    const guideId = token ? jwtDecode(token).id : null; // Get the logged-in guide's ID
+    const guideId = token ? jwtDecode(token).id : null; 
 
     useEffect(() => {
         const fetchBookings = async () => {
@@ -27,7 +27,7 @@ const ViewPendingCustomers = () => {
                 }
 
                 const data = await response.json();
-                setBookings(data); // Set the bookings state
+                setBookings(data); 
                 setLoading(false);
             } catch (error) {
                 setError(error.message);

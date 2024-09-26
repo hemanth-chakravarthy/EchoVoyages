@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import UsersTable from '../components/UserTable'; // Import UsersTable
-import PackagesTable from '../components/PackagesTable'; // Import PackagesTable
+import UsersTable from '../components/UserTable'; 
+import PackagesTable from '../components/PackagesTable'; 
 import ReviewsTable from '../components/ReviewsTable'
 import GuidesTable from '../components/GuideTable';
 import BookingsTable from '../components/BookingsTable';
 import AgencyTable from '../components/AgenciesTable';
 
 const Admin = () => {
-    const [entity, setEntity] = useState('customers'); // Default entity
+    const [entity, setEntity] = useState('customers'); 
     const [data, setData] = useState([]);
 
     useEffect(() => {

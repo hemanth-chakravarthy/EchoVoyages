@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import moment from 'moment';
 import Navbar from '../components/Navbar';
-import '../styles/Search.css'; // Import the CSS file
+import '../styles/Search.css';
 
 const Search = () => {
     const [locations, setLocations] = useState([]);

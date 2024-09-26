@@ -8,7 +8,7 @@ import { useParams } from 'react-router-dom';
 
 const ViewPage = () => {
     const [role, setRole] = useState('agent');
-    const [loading, setLoading] = useState(true); // Loading state for both customer and agent
+    const [loading, setLoading] = useState(true); 
     const rolefinder = useParams();
 
     const token = localStorage.getItem('token');
@@ -17,13 +17,11 @@ const ViewPage = () => {
     useEffect(() => {
         const fetchUserRole = async () => {
             try {
-                // Try fetching customer data
                 const customerResponse = await axios.get(`http://localhost:5000/customers/${id}`);
                 if (customerResponse.data && customerResponse.data.role === 'customer') {
                     setRole('customer');
                 } 
                 // else {
-                //     // If not a customer, try fetching agent data
                 //     const agentResponse = await axios.get(`http://localhost:5000/agents/${id}`);
                 //     if (agentResponse.data && agentResponse.data.role === 'travel agency') {
                 //         setRole('travel agency');
@@ -40,7 +38,7 @@ const ViewPage = () => {
     }, [id]);
 
     if (loading) {
-        return <p>Loading...</p>; // Show a loading state while data is being fetched
+        return <p>Loading...</p>; 
     }
 
     return (

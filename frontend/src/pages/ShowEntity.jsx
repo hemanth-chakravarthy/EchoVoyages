@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import BackButton from '../components/BackButton';
-import '../assets/css/ShowEntity.css'; // Importing the CSS file
+import '../assets/css/ShowEntity.css'; 
 
 const ShowEntity = () => {
     const [entity, setEntity] = useState({});

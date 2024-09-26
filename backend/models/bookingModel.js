@@ -2,41 +2,38 @@ import mongoose from 'mongoose';
 
 const bookingSchema = new mongoose.Schema({
     customerName: {
-        type: String,  // Store the name of the customer
+        type: String,
         required: true
     },
-    customerId:{
+    customerId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'customers',  // Reference to the customer model
-        required:true
+        ref: 'customers',
+        required: true
     },
     packageName: {
-        type: String,  // Store the name of the package
+        type: String,
         required: false
     },
-    packageId:{
+    packageId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'packages',  // Reference to the package model
+        ref: 'packages',
         required: false
     },
-
     guideName: {
-        type: String,  // Store the name of the guide
+        type: String,
         required: false
     },
-    guideId:{
+    guideId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'guides',  // Reference to the guide model
+        ref: 'guides',
         required: false
     },
-
-    
     totalPrice: {
-        type: Number,  // Store the total price of the booking
+        type: Number,
         required: true
     },
     bookingDate: {
-        type: Date,  // Automatically set booking date
+        type: Date,
         default: Date.now,
         required: true
     },

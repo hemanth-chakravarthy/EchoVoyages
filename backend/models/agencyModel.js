@@ -42,7 +42,7 @@ const agencySchema = mongoose.Schema(
         travelPackages: [
             {
                 type: mongoose.Schema.Types.ObjectId,
-                ref: 'packages', // Reference to the travel packages posted by the agent
+                ref: 'packages', 
                 required: false
             }
         ],
@@ -55,12 +55,12 @@ const agencySchema = mongoose.Schema(
             {
                 customerId: {
                     type: mongoose.Schema.Types.ObjectId,
-                    ref: 'customers', // Reference to the customer making the inquiry
+                    ref: 'customers', 
                     required: false
                 },
                 packageId: {
                     type: mongoose.Schema.Types.ObjectId,
-                    ref: 'packages', // Reference to the package being requested
+                    ref: 'packages', 
                     required: false
                 },
                 status: {
@@ -74,29 +74,7 @@ const agencySchema = mongoose.Schema(
                 }
             }
         ],
-        // reviews: [
-        //     {
-        //         customerId: {
-        //             type: mongoose.Schema.Types.ObjectId,
-        //             ref: 'reviews', // Reference to the customer leaving the review
-        //             required: true
-        //         },
-        //         rating: {
-        //             type: Number,
-        //             min: 1,
-        //             max: 5,
-        //             required: true
-        //         },
-        //         comment: {
-        //             type: String,
-        //             required: false
-        //         },
-        //         createdAt: {
-        //             type: Date,
-        //             default: Date.now
-        //         }
-        //     }
-        // ]
+        
     },
     {
         timestamps: true

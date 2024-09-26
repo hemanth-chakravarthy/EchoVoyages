@@ -5,8 +5,8 @@ import BackButton from '../components/BackButton';
 
 const DeleteEntity = () => {
     const navigate = useNavigate();
-    const { id, entity } = useParams(); // Extract 'entity' from URL params
-    const [entityType, setEntityType] = useState(entity || 'customers'); // Default to 'customers'
+    const { id, entity } = useParams(); 
+    const [entityType, setEntityType] = useState(entity || 'customers');
 
     const handleDelete = () => {
         axios

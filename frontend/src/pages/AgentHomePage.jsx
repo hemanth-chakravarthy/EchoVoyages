@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import {jwtDecode} from 'jwt-decode'; // Fixed the import statement
+import {jwtDecode} from 'jwt-decode'; 
 
 const AgentHomePage = () => {
   const [bookedPackages, setPackages] = useState([]);
@@ -8,7 +8,7 @@ const AgentHomePage = () => {
   const token = localStorage.getItem('token');
   const agentid = jwtDecode(token).id; 
 
-  // Fetch packages
+ 
   useEffect(() => {
     const fetchPackages = async () => {
       try {
@@ -16,7 +16,7 @@ const AgentHomePage = () => {
         const data = await response.json();
         if (data && data.data) {
           const agentPackages = data.data.filter(pkg => pkg.AgentID === agentid);
-          setPackages(agentPackages); // Store the packages for this agent
+          setPackages(agentPackages); 
         } else {
           console.error('No packages found in the response.');
         }
@@ -25,13 +25,13 @@ const AgentHomePage = () => {
       }
     };
 
-    // Fetch reviews
+    
     const fetchReviews = async () => {
       try {
         const response = await fetch('http://localhost:5000/reviews');
-        const data = await response.json(); // Parse the response as JSON
+        const data = await response.json(); 
         if (data) {
-          setReviews(data); // Set the reviews in state
+          setReviews(data); 
         } else {
           console.error('No reviews found.');
         }
