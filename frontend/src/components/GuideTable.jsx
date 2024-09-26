@@ -3,9 +3,17 @@ import { Link } from 'react-router-dom';
 import '../assets/css/tables.css'
 
 const GuidesTable = ({ guides }) => {
+    const now = new Date();
+    const guidesLast24Hours = guides.filter(user => {
+        const agentCreatedAt = new Date(user.createdAt); // Assuming `createdAt` is the timestamp field
+        return (now - agentCreatedAt) < 24 * 60 * 60 * 1000; // Difference in milliseconds
+    });
     return (
         <div>
             <div className='head1'>guides List:</div>
+            <div className='head2'>
+                Guides added in the last 24 hours: {guidesLast24Hours.length}
+            </div>
             <table>
                 <thead>
                     <tr>
