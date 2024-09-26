@@ -5,8 +5,8 @@ import '../assets/css/tables.css'
 const ReviewsTable = ({ reviews }) => {
     const now = new Date();
     const revsLast24Hours = reviews.filter(user => {
-        const agentCreatedAt = new Date(user.createdAt); // Assuming `createdAt` is the timestamp field
-        return (now - agentCreatedAt) < 24 * 60 * 60 * 1000; // Difference in milliseconds
+        const revCreatedAt = new Date(user.createdAt); // Assuming `createdAt` is the timestamp field
+        return (now - revCreatedAt) < 24 * 60 * 60 * 1000; // Difference in milliseconds
     });
     return (
         <div>
@@ -24,7 +24,6 @@ const ReviewsTable = ({ reviews }) => {
                         <th>Rating</th>
                         <th>Comment</th>
                         <th>Date</th>
-                        <th>Status</th>
                         <th>Reports</th>
                         <th>Actions</th>
                     </tr>
@@ -39,11 +38,9 @@ const ReviewsTable = ({ reviews }) => {
                             <td>{review.rating}</td>
                             <td>{review.comment}</td>
                             <td>{new Date(review.date).toLocaleDateString()}</td>
-                            <td>{review.status}</td>
                             <td>{review.reports}</td>
                             <td>
                                 <div className='linksPacks'>
-                                    <Link className='links' to={`/admin/reviews/edit/${review._id}`}>Edit</Link>
                                     <Link className='links' to={`/admin/reviews/delete/${review._id}`}>Delete</Link>
                                 </div>
                             </td>

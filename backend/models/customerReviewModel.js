@@ -51,6 +51,6 @@ const reviewSchema = new mongoose.Schema({
         type: Number,
         default: 0
     }
-});
+}, {timestamps: true} );
 
 export const reviews = mongoose.model('Review', reviewSchema);

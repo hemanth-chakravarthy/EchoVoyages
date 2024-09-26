@@ -6,7 +6,7 @@ html, body {
     justify-content: center;
     align-items: center;
     font-family: 'Arial', sans-serif;
-    background-image: url('../assets/bg2.jpeg'); /* Set the background image */
+    background-image: url('../assets/bg2.jpeg'); 
     background-size: cover; /* Cover the entire background area */
     background-position: center; /* Center the image */
     background-repeat: no-repeat; /* Do not repeat the image */
