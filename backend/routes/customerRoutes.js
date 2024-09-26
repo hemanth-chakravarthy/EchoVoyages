@@ -82,7 +82,7 @@ router.post('/signup',async(req,res)=>{
 router.post('/login', async (req, res) => {
     try {
         const { username, password, role } = req.body;
-        console.log(username, password, role);
+        console.log(username, role);
         if(role == 'customer')
         {
             // Find user by username
