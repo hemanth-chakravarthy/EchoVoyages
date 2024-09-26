@@ -12,21 +12,22 @@ const AgentPackActions = () => {
     const [bookings, setBookings] = useState([]); // Store bookings for this package
     const { id } = useParams(); // Get package ID from URL
 
-    // Fetch package details and bookings when modal opens
+    // Fetch package details only
     const handleOpenModal = async () => {
+        setShowModal(true); // Show modal regardless of bookings
         try {
-            const [packageResponse, bookingResponse] = await Promise.all([
-                axios.get(`http://localhost:5000/packages/${id}`),
-                axios.get(`http://localhost:5000/bookings/pack/${id}`) // Fetch bookings with package ID
-            ]);
-
+            const packageResponse = await axios.get(`http://localhost:5000/packages/${id}`);
             const { name, price, description, isActive } = packageResponse.data;
             setName(name);
             setPrice(price);
             setDescription(description);
             setIsActive(isActive);
-            setBookings(bookingResponse.data); // Set the fetched bookings
-            setShowModal(true); // Show modal after fetching data
+
+            // Conditionally fetch bookings only if the package is active
+            if (isActive !== 'pending') {
+                const bookingResponse = await axios.get(`http://localhost:5000/bookings/pack/${id}`);
+                setBookings(bookingResponse.data); // Set the fetched bookings
+            }
         } catch (error) {
             console.error('Error fetching package details or bookings', error);
             setMessage('Error fetching package details or bookings');
@@ -62,14 +63,16 @@ const AgentPackActions = () => {
         }
     };
 
-    
-
     // Handle booking status update
     const handleBookingStatusChange = async (bookingId, newStatus) => {
         try {
             const response = await axios.put(`http://localhost:5000/bookings/${bookingId}`, { status: newStatus });
             // Update the specific booking's status in the local state
-            setBookings((response));
+            setBookings((prevBookings) =>
+                prevBookings.map((booking) =>
+                    booking._id === bookingId ? { ...booking, status: newStatus } : booking
+                )
+            );
             setMessage(`Booking status updated to ${newStatus}`);
         } catch (error) {
             console.error('Error updating booking status', error);
@@ -82,8 +85,6 @@ const AgentPackActions = () => {
             <button onClick={handleOpenModal}>Update Package</button>
             <button onClick={handleDelete}>Delete Package</button>
             {message && <p>{message}</p>}
-
-           
 
             {/* Modal for updating the package */}
             {showModal && (
@@ -121,28 +122,32 @@ const AgentPackActions = () => {
                             <button type="button" onClick={() => setShowModal(false)}>Cancel</button>
                         </form>
 
-                        {/* List of people who want to book this package */}
-                        <h3>People Who Want to Book:</h3>
+                        {/* Only render booking details if there are bookings */}
                         {bookings.length > 0 ? (
-                            <ul>
-                                {bookings.map((booking) => (
-                                    <li key={booking._id}>
-                                        <p>Customer: {booking.customerName}</p>
-                                        <p>Status: {booking.status}</p>
-                                        <label>
-                                            Change Status:
-                                            <select
-                                                value={booking.status}
-                                                onChange={(e) => handleBookingStatusChange(booking._id, e.target.value)}
-                                            >
-                                                <option value="pending">Pending</option>
-                                                <option value="confirmed">Confirmed</option>
-                                                <option value="canceled">Canceled</option>
-                                            </select>
-                                        </label>
-                                    </li>
-                                ))}
-                            </ul>
+                            <>
+                                <h3>People Who Want to Book:</h3>
+                                <ul>
+                                    {bookings.map((booking) => (
+                                        <li key={booking._id}>
+                                            <p>Customer: {booking.customerName}</p>
+                                            <p>Status: {booking.status}</p>
+                                            <label>
+                                                Change Status:
+                                                <select
+                                                    value={booking.status}
+                                                    onChange={(e) =>
+                                                        handleBookingStatusChange(booking._id, e.target.value)
+                                                    }
+                                                >
+                                                    <option value="pending">Pending</option>
+                                                    <option value="confirmed">Confirmed</option>
+                                                    <option value="canceled">Canceled</option>
+                                                </select>
+                                            </label>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </>
                         ) : (
                             <p>No bookings yet.</p>
                         )}
