@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode'; // Import jwtDecode correctly
+import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { FaFlag } from 'react-icons/fa';
+import "../styles/ViewGuide.css"
 
 const ViewGuide = () => {
-    const { id } = useParams(); // Get the guide ID from the URL
+    const { id } = useParams();
     const [guideDetails, setGuideDetails] = useState(null);
     const [showReviewModal, setShowReviewModal] = useState(false);
     const [revvs, setRevDetails] = useState(null);
-    const [rating, setRating] = useState(1); // Default rating value
-    const [comment, setComment] = useState(''); // Comment value
-    const [bookingStatus, setBookingStatus] = useState(''); // For displaying booking status
-    const token = localStorage.getItem('token'); // Get token from localStorage
-
-    // Decode the token to get the customerId
+    const [rating, setRating] = useState(1);
+    const [comment, setComment] = useState('');
+    const [bookingStatus, setBookingStatus] = useState('');
+    const token = localStorage.getItem('token');
     const customerId = token ? jwtDecode(token).id : null;
 
     useEffect(() => {
@@ -27,43 +26,37 @@ const ViewGuide = () => {
             }
         };
         const fetchReviews = async () => {
-          try {
-            const res = await fetch(`http://localhost:5000/reviews/guides/${id}`);
-            const data = await res.json();
-            setRevDetails(data);
-          } catch (error) {
-            console.error('Error fetching reviews:', error);
-          }
+            try {
+                const res = await fetch(`http://localhost:5000/reviews/guides/${id}`);
+                const data = await res.json();
+                setRevDetails(data);
+            } catch (error) {
+                console.error('Error fetching reviews:', error);
+            }
         };
         
-      fetchReviews();
+        fetchReviews();
         fetchGuideDetails();
     }, [id]);
 
-    // Function to handle booking submission
     const handleBooking = async () => {
         try {
             if (!customerId) {
                 setBookingStatus('Customer is not authenticated. Please log in.');
                 return;
             }
-    
-            // Assuming you have packageId from somewhere (e.g., a selected package)
-            const packageId = null; // Change this as per your actual packageId source
-    
+            const packageId = null;
             const bookingData = {
-                customerId,   // Use decoded customer ID from token
-                guideId: guideDetails._id, // Use guide ID
-                packageId: packageId || null,  // Optional packageId
+                customerId,
+                guideId: guideDetails._id,
+                packageId: packageId || null,
             };
-    
             const response = await axios.post('http://localhost:5000/bookings', bookingData, {
                 headers: {
-                    Authorization: `Bearer ${token}`, // Send token in headers if required
+                    Authorization: `Bearer ${token}`,
                 },
             });
-    
-            if (response.status === 201) { // 201 for successful creation
+            if (response.status === 201) {
                 setBookingStatus('Booking confirmed successfully!');
             } else {
                 setBookingStatus('Failed to book the guide.');
@@ -73,66 +66,64 @@ const ViewGuide = () => {
             setBookingStatus('An error occurred while booking.');
         }
     };
+
     const handleOpenReviewModal = () => {
         setShowReviewModal(true);
-      };
-      const handleCloseReviewModal = () => {
+    };
+
+    const handleCloseReviewModal = () => {
         setShowReviewModal(false);
-        setRating(1); // Reset rating
-        setComment(''); // Reset comment
-      };
-    
-      // Submit the review
-      const handleSubmitReview = async () => {
+        setRating(1);
+        setComment('');
+    };
+
+    const handleSubmitReview = async () => {
         try {
-          const response = await fetch('http://localhost:5000/reviews', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`, // Include token for authentication
-            },
-            body: JSON.stringify({
-              customerId,    // Logged-in user's customerId
-              guideId: id,  // Use the package name from the package details
-              rating,  // Rating value from the form
-              comment,  // Comment from the form
-            }),
-          });
-    
-          if (response.ok) {
-            const result = await response.json();
-            console.log('Review submitted:', result);
-            alert('Review submitted successfully!');
-            handleCloseReviewModal(); // Close the modal
-          } else {
-            const errorData = await response.json();
-            console.error('Failed to submit review:', errorData.message);
-            alert(`Failed to submit review: ${errorData.message}`);
-          }
+            const response = await fetch('http://localhost:5000/reviews', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    customerId,
+                    guideId: id,
+                    rating,
+                    comment,
+                }),
+            });
+            if (response.ok) {
+                const result = await response.json();
+                console.log('Review submitted:', result);
+                alert('Review submitted successfully!');
+                handleCloseReviewModal();
+            } else {
+                const errorData = await response.json();
+                console.error('Failed to submit review:', errorData.message);
+                alert(`Failed to submit review: ${errorData.message}`);
+            }
         } catch (error) {
-          console.error('Error submitting review:', error);
-          alert('An error occurred while submitting the review.');
+            console.error('Error submitting review:', error);
+            alert('An error occurred while submitting the review.');
         }
-      };
-      const handleAddToWishlist = async () => {
+    };
+
+    const handleAddToWishlist = async () => {
         try {
             if (!customerId) {
                 setBookingStatus('Customer is not authenticated. Please log in.');
                 return;
             }
-    
             const wishlistData = {
-                customerId, // Use decoded customer ID from token
-                guideId: guideDetails._id, // Use guide ID
+                customerId,
+                guideId: guideDetails._id,
             };
-    
             const response = await axios.post('http://localhost:5000/wishlistGuides', wishlistData, {
                 headers: {
-                    Authorization: `Bearer ${token}`, // Send token in headers if required
+                    Authorization: `Bearer ${token}`,
                 },
             });
-    
-            if (response.status === 201) { // 201 for successful creation
+            if (response.status === 201) {
                 alert('Guide added to wishlist successfully!');
             } else {
                 alert('Failed to add guide to wishlist.');
@@ -149,68 +140,65 @@ const ViewGuide = () => {
 
     return (
         <div className="guide-details">
-            <h1>{guideDetails.username}</h1>
-            <p>{guideDetails.description}</p>
-            <p>Experience: {guideDetails.experience} years</p>
-            <p>Languages: {guideDetails.languages.join(', ')}</p>
-            {/* Display reviews */}
-      <div className="reviews-section">
-        <h2>Reviews:</h2>
-        {revvs && revvs.length > 0 ? (
-          revvs.map((review) => (
-            <div key={review._id} className="review-item">
-              <p><strong>Rating:</strong> {review.rating} / 5</p>
-              <p><strong>Comment:</strong> {review.comment}</p>
-              <p><strong>Reviewed by:</strong> {review.customerName || 'Anonymous'}</p>
-              {/* Report button */}
-              <button
-                className="report-button"
-                onClick={() => handleReportReview(review._id)}
-                title="Report this review"
-              >
-                <FaFlag style={{ color: 'red' }} /> {/* Report icon */}
-              </button>
-            </div>
-          ))
-        ) : (
-          <p>No reviews for this Guide yet.</p>
-        )}
-      </div>
+            <h1 className="guide-title">{guideDetails.username}</h1>
+            <p className="guide-description">{guideDetails.description}</p>
+            <p className="guide-experience">Experience: {guideDetails.experience} years</p>
+            <p className="guide-languages">Languages: {guideDetails.languages.join(', ')}</p>
 
-            {/* Display booking section */}
+            <div className="reviews-section">
+                <h2 className="reviews-title">Reviews:</h2>
+                {revvs && revvs.length > 0 ? (
+                    revvs.map((review) => (
+                        <div key={review._id} className="review-item">
+                            <p><strong>Rating:</strong> {review.rating} / 5</p>
+                            <p><strong>Comment:</strong> {review.comment}</p>
+                            <p><strong>Reviewed by:</strong> {review.customerName || 'Anonymous'}</p>
+                            <button
+                                className="report-button"
+                                onClick={() => handleReportReview(review._id)}
+                                title="Report this review"
+                            >
+                                <FaFlag className="report-icon" />
+                            </button>
+                        </div>
+                    ))
+                ) : (
+                    <p>No reviews for this Guide yet.</p>
+                )}
+            </div>
+
             <div className="booking-section">
-                <h2>Book this guide</h2>
-                <button onClick={handleBooking}>Book Guide</button>
-                {bookingStatus && <p>{bookingStatus}</p>}
+                <h2 className="booking-title">Book this guide</h2>
+                <button className="book-guide-button" onClick={handleBooking}>Book Guide</button>
+                {bookingStatus && <p className="booking-status">{bookingStatus}</p>}
             </div>
-            <button onClick={handleOpenReviewModal}>Add Review</button>
-            <button onClick={handleAddToWishlist}>Add to wishlist</button>
-            {/* Modal for adding a review */}
-      {showReviewModal && (
-        <div className="modal">
-          <div className="modal-content">
-            <h2>Rate and Review</h2>
-            <label>Rating (1 to 5):</label>
-            <select value={rating} onChange={(e) => setRating(e.target.value)}>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-            </select>
+            <button className="add-review-button" onClick={handleOpenReviewModal}>Add Review</button>
+            <button className="add-wishlist-button" onClick={handleAddToWishlist}>Add to wishlist</button>
 
-            <label>Comment:</label>
-            <textarea
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              rows="4"
-            />
-
-            <button onClick={handleSubmitReview}>Submit Review</button>
-            <button onClick={handleCloseReviewModal}>Close</button>
-          </div>
-        </div>
-      )}
+            {showReviewModal && (
+                <div className="modal">
+                    <div className="modal-content">
+                        <h2 className="modal-title">Rate and Review</h2>
+                        <label className="modal-rating-label">Rating (1 to 5):</label>
+                        <select className="modal-rating-dropdown" value={rating} onChange={(e) => setRating(e.target.value)}>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                        <label className="modal-comment-label">Comment:</label>
+                        <textarea
+                            className="modal-comment-textarea"
+                            value={comment}
+                            onChange={(e) => setComment(e.target.value)}
+                            rows="4"
+                        />
+                        <button className="modal-submit-button" onClick={handleSubmitReview}>Submit Review</button>
+                        <button className="modal-close-button" onClick={handleCloseReviewModal}>Close</button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

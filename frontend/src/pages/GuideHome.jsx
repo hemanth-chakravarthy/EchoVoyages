@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
-import ViewPendingCustomers from '../components/ViewPedingCustomers';
+import ViewPendingCustomers from '../components/ViewPendingCustomers';
 import axios from 'axios';
+import '../styles/GuideHome.css';
 
 const GuideHome = () => {
   const [guide, setGuide] = useState(null);
@@ -12,12 +13,13 @@ const GuideHome = () => {
   useEffect(() => {
     const fetchGuideData = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/reviews/guides/${guideId}`); // Replace 'guideID' with the actual guide ID
+        const response = await axios.get(`http://localhost:5000/reviews/guides/${guideId}`);
         setGuide(response.data.guide);
       } catch (error) {
         console.error('Error fetching guide data:', error);
       }
     };
+
     const fetchReviews = async () => {
       try {
         const res = await fetch(`http://localhost:5000/reviews/guides/${guideId}`);
@@ -27,34 +29,40 @@ const GuideHome = () => {
         console.error('Error fetching reviews:', error);
       }
     };
-    
-  fetchReviews();
 
+    fetchReviews();
     fetchGuideData();
   }, [guideId]);
 
   return (
-    <div>
-      <h1>Guide Home</h1>
-      <div>
-        <Link to={'/guideHome'}>Home Page</Link>
-        <Link to={`/GuideProfilePage`}>Profile Page</Link>
-      </div>
-      <ViewPendingCustomers/>
+    <div className="guide-home-container">
+      <nav className="navbar">
+        <ul className="navbar-links">
+          
+            <Link to={'/guideHome'} className="navbar-link">Guide Home</Link>
+            <Link to={`/GuideProfilePage`} className="navbar-link">Profile Page</Link>
 
-      {/* Check if reviews are available */}
-      <h2>Reviews</h2>
-      {reviews && reviews.length > 0 ? (
-        <ul>
-          {reviews.map((review) => (
-            <li key={review._id}>
-              <p><strong>{review.customerName}</strong>: {review.comment} (Rating: {review.rating})</p>
-            </li>
-          ))}
         </ul>
-      ) : (
-        <p>No reviews available.</p>
-      )}
+      </nav>
+
+      <ViewPendingCustomers />
+
+      <div className="reviews-section">
+        <h2 className="reviews-heading">Reviews</h2>
+        {reviews && reviews.length > 0 ? (
+          <ul className="reviews-list">
+            {reviews.map((review) => (
+              <li key={review._id} className="review-item">
+                <p>
+                  <strong className="review-author">{review.customerName}</strong>: {review.comment} (Rating: <span className="review-rating">{review.rating}</span>)
+                </p>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="no-reviews">No reviews available.</p>
+        )}
+      </div>
     </div>
   );
 };

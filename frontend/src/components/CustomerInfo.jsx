@@ -165,7 +165,7 @@ const CustomerInfo = () => {
                         <div key={booking._id} className="booking">
                             <h3>Package: {booking.packageName || 'N/A'}</h3>
                             <p><strong>Guide Name:</strong> {booking.guideName || 'N/A'}</p>
-                            <p><strong>Total Price:</strong> ${booking.totalPrice}</p>
+                            <p><strong>Total Price:</strong> Rs. {booking.totalPrice} /-</p>
                             <p><strong>Status:</strong> {booking.status}</p>
                             <p><strong>Booking Date:</strong> {new Date(booking.bookingDate).toLocaleDateString()}</p>
                         </div>

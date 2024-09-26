@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode'; // corrected import
-
+import '../styles/GuideProfilePage.css'
 const GuideProfilePage = () => {
     const guideId = jwtDecode(localStorage.getItem('token')).id; // Get guideId from the token
     const [guide, setGuide] = useState(null);
@@ -13,12 +13,11 @@ const GuideProfilePage = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Fetch guide details based on the guideId
         const fetchGuideDetails = async () => {
             try {
                 const response = await axios.get(`http://localhost:5000/guides/${guideId}`);
                 setGuide(response.data);
-                setUpdatedGuide(response.data); // Initialize updatedGuide with fetched data
+                setUpdatedGuide(response.data); 
                 setLoading(false);
             } catch (error) {
                 console.error("Error fetching guide details:", error);
@@ -26,7 +25,6 @@ const GuideProfilePage = () => {
             }
         };
 
-        // Fetch reviews and calculate average rating
         const fetchReviewsAndCalculateRating = async () => {
             try {
                 const response = await axios.get(`http://localhost:5000/reviews/guides/${guideId}`);
@@ -34,11 +32,9 @@ const GuideProfilePage = () => {
                 setReviews(reviewsData);
 
                 if (reviewsData.length > 0) {
-                    // Calculate average rating
                     const totalRating = reviewsData.reduce((sum, review) => sum + review.rating, 0);
                     const averageRating = totalRating / reviewsData.length;
 
-                    // Update guide with the new ratings
                     await axios.put(`http://localhost:5000/guides/${guideId}`, {
                         ...updatedGuide,
                         ratings: {
@@ -47,7 +43,6 @@ const GuideProfilePage = () => {
                         },
                     });
 
-                    // Update guide state with new ratings
                     setGuide((prevGuide) => ({
                         ...prevGuide,
                         ratings: {
@@ -66,14 +61,13 @@ const GuideProfilePage = () => {
     }, [guideId]);
 
     const handleEditToggle = () => {
-        setEditing(!editing); // Toggle between edit and view mode
+        setEditing(!editing);
     };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
 
         if (name === "languages") {
-            // Handle languages input as a comma-separated string and convert to array
             const languagesArray = value.split(',').map(lang => lang.trim());
             setUpdatedGuide({
                 ...updatedGuide,
@@ -118,9 +112,9 @@ const GuideProfilePage = () => {
         try {
             await axios.put(`http://localhost:5000/guides/${guideId}`, updatedGuide);
             alert('Guide details updated successfully');
-            setGuide(updatedGuide); // Save changes to guide data
-            setEditing(false); // Exit edit mode
-            navigate('/GuideProfilePage'); // Optional: Redirect to another page after saving
+            setGuide(updatedGuide);
+            setEditing(false);
+            navigate('/GuideProfilePage');
         } catch (error) {
             console.error('Error updating guide details:', error);
             alert('Error occurred while saving guide details');
@@ -128,8 +122,8 @@ const GuideProfilePage = () => {
     };
 
     const handleCancel = () => {
-        setUpdatedGuide(guide); // Revert changes to original guide data
-        setEditing(false); // Exit edit mode
+        setUpdatedGuide(guide);
+        setEditing(false);
     };
 
     if (loading) {
@@ -142,66 +136,64 @@ const GuideProfilePage = () => {
 
     return (
         <div className="guide-profile-container">
-            <div>
-                <Link to={'/guideHome'}>Home Page</Link>
-                <Link to={`/GuideProfilePage`}>Profile Page</Link>
-            </div>
-            <h1>Guide Profile</h1>
+            <nav className="navbar">
+        <ul className="navbar-links">
+          
+            <Link to={'/guideHome'} className="navbar-link">Guide Home</Link>
+            <Link to={`/GuideProfilePage`} className="navbar-link">Profile Page</Link>
 
-            {/* Guide Bio Section */}
+        </ul>
+      </nav>
+            <h1 className="guide-profile-heading">Guide Profile</h1>
+
             <div className="guide-bio">
                 <h2>{editing ? (
                     <input
                         type="text"
                         name="name"
+                        className="input-field"
                         value={updatedGuide.name}
                         onChange={handleChange}
                     />
                 ) : (
                     guide.name
                 )}</h2>
-                <p>
-                    <strong>Username:</strong> {guide.username}
-                </p>
-                <p>
-                    <strong>Experience:</strong> {editing ? (
-                        <input
-                            type="number"
-                            name="experience"
-                            value={updatedGuide.experience}
-                            onChange={handleChange}
-                        />
-                    ) : (
-                        `${guide.experience} years`
-                    )}
-                </p>
-                <p>
-                    <strong>Languages Spoken:</strong> {editing ? (
-                        <input
-                            type="text"
-                            name="languages"
-                            value={updatedGuide.languages.join(', ')} // Display as comma-separated string
-                            onChange={handleChange}
-                        />
-                    ) : (
-                        guide.languages.join(', ') // Show languages as comma-separated string
-                    )}
-                </p>
-                <p>
-                    <strong>Location:</strong> {editing ? (
-                        <input
-                            type="text"
-                            name="location"
-                            value={updatedGuide.location}
-                            onChange={handleChange}
-                        />
-                    ) : (
-                        guide.location || 'N/A'
-                    )}
-                </p>
+                <p><strong>Username:</strong> {guide.username}</p>
+                <p><strong>Experience:</strong> {editing ? (
+                    <input
+                        type="number"
+                        name="experience"
+                        className="input-field"
+                        value={updatedGuide.experience}
+                        onChange={handleChange}
+                    />
+                ) : (
+                    `${guide.experience} years`
+                )}</p>
+                <p><strong>Languages Spoken:</strong> {editing ? (
+                    <input
+                        type="text"
+                        name="languages"
+                        className="input-field"
+                        value={updatedGuide.languages.join(', ')}
+                        onChange={handleChange}
+                    />
+                ) : (
+                    guide.languages.join(', ')
+                )}</p>
+                <p><strong>Location:</strong> {editing ? (
+                    <input
+                        type="text"
+                        name="location"
+                        className="input-field"
+                        value={updatedGuide.location}
+                        onChange={handleChange}
+                    />
+                ) : (
+                    guide.location || 'N/A'
+                )}</p>
             </div>
 
-            {/* Guide Availability Section */}
             <div className="guide-availability">
                 <h3>Availability & Packages</h3>
                 {editing ? (
@@ -211,6 +203,7 @@ const GuideProfilePage = () => {
                                 <label>Start Date:</label>
                                 <input
                                     type="date"
+                                    className="input-field"
                                     value={dateRange.startDate}
                                     onChange={(e) =>
                                         handleAvailabilityDateChange(index, 'startDate', e.target.value)
@@ -219,6 +212,7 @@ const GuideProfilePage = () => {
                                 <label>End Date:</label>
                                 <input
                                     type="date"
+                                    className="input-field"
                                     value={dateRange.endDate}
                                     onChange={(e) =>
                                         handleAvailabilityDateChange(index, 'endDate', e.target.value)
@@ -226,7 +220,7 @@ const GuideProfilePage = () => {
                                 />
                             </div>
                         ))}
-                        <button onClick={handleAddDateRange}>Add Date Range</button>
+                        <button className="add-date-range-btn" onClick={handleAddDateRange}>Add Date Range</button>
                     </>
                 ) : (
                     guide.availableDates && guide.availableDates.length > 0 ? (
@@ -244,20 +238,19 @@ const GuideProfilePage = () => {
                 )}
             </div>
 
-            {/* Ratings Section */}
             <div className="guide-ratings">
                 <h3>Ratings</h3>
                 <p><strong>Average Rating:</strong> {guide.ratings.averageRating} / 5</p>
                 <p><strong>Number of Reviews:</strong> {guide.ratings.numberOfReviews}</p>
             </div>
 
-            {/* Contact Section */}
             <div className="guide-contact">
                 <h3>Contact Information</h3>
                 <p><strong>Phone:</strong> {editing ? (
                     <input
                         type="text"
                         name="phone"
+                        className="input-field"
                         value={updatedGuide.contact.phone}
                         onChange={(e) => handleNestedChange(e, 'contact')}
                     />
@@ -268,6 +261,7 @@ const GuideProfilePage = () => {
                     <input
                         type="email"
                         name="email"
+                        className="input-field"
                         value={updatedGuide.contact.email}
                         onChange={(e) => handleNestedChange(e, 'contact')}
                     />
@@ -276,7 +270,6 @@ const GuideProfilePage = () => {
                 )}</p>
             </div>
 
-            {/* Edit and Save/Cancel Buttons */}
             <div className="edit-save-buttons">
                 {editing ? (
                     <>

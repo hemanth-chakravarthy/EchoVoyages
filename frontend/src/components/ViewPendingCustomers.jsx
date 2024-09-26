@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
-import Navbar from '../components/Navbar'; // Assuming you have a Navbar component
 import { Link } from 'react-router-dom';
+import '../styles/GuideHome.css'
 
 const ViewPendingCustomers = () => {
     const [bookings, setBookings] = useState([]);
@@ -50,7 +50,8 @@ const ViewPendingCustomers = () => {
 
     return (
         <div>
-            <h1>Pending Bookings</h1>
+
+            <h1>All Bookings</h1>
             {bookings.length > 0 ? (
                 <ul>
                     {bookings.map((booking) => (

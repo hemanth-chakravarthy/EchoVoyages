@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import "../styles/ViewBooking.css"
+
 
 const ViewBooking = () => {
     const { bookingId } = useParams(); // Get the booking ID from the URL
@@ -70,28 +72,29 @@ const ViewBooking = () => {
     };
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <div className="loading-message">Loading...</div>;
     }
 
     if (error) {
-        return <div>Error: {error}</div>;
+        return <div className="error-message">Error: {error}</div>;
     }
 
     if (!booking || !booking.guideId) {
-        return <div>No booking found or this booking is not associated with a guide.</div>;
+        return <div className="error-message">No booking found or this booking is not associated with a guide.</div>;
     }
 
     return (
-        <div>
-            <h1>Booking Details</h1>
-            <h2>Booking ID: {booking._id}</h2>
-            <p>Customer Name: {booking.customerName}</p>
-            <p>Status: {booking.status}</p>
+        <div className="booking-container">
+            <h1 className="booking-title">Booking Details</h1>
+            <h2 className="booking-id">Booking ID: {booking._id}</h2>
+            <p className="booking-info">Customer Name: {booking.customerName}</p>
+            <p className="booking-info">Status: {booking.status}</p>
 
             {/* Dropdown for updating status */}
-            <label htmlFor="status">Update Status: </label>
+            <label htmlFor="status" className="status-label">Update Status: </label>
             <select
                 id="status"
+                className="status-dropdown"
                 value={status} // Set the current value to the state variable
                 onChange={handleStatusChange} // Handle status change
             >
