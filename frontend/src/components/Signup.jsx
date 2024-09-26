@@ -29,7 +29,7 @@ const Signup = () => {
 
         switch (name) {
             case 'gmail':
-                newErrors.gmail = value.includes('@') ? '' : 'Email must contain "@"';
+                newErrors.gmail = validateEmail(value);
                 break;
             case 'password':
                 newErrors.password = validatePassword(value);
@@ -42,6 +42,12 @@ const Signup = () => {
         }
 
         setErrors(newErrors);
+    };
+
+    // Validate email to include "@" and "."
+    const validateEmail = (email) => {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailPattern.test(email) ? '' : 'Email must contain "@" and "."';
     };
 
     // Validate password with stronger security
@@ -63,7 +69,7 @@ const Signup = () => {
         return '';
     };
 
-    // Validate phone number to have exactly 10 digits
+    // Validate phone number to have exactly 10 digits and no other characters
     const validatePhoneNumber = (phno) => {
         const phoneNumberPattern = /^[0-9]{10}$/;
         return phoneNumberPattern.test(phno) ? '' : 'Phone number must be exactly 10 digits';
@@ -90,8 +96,9 @@ const Signup = () => {
         }
 
         // Email validation
-        if (!formData.gmail || !formData.gmail.includes('@')) {
-            validationErrors.gmail = 'Valid email is required';
+        const emailError = validateEmail(formData.gmail);
+        if (emailError) {
+            validationErrors.gmail = emailError;
         }
 
         // Password validation
