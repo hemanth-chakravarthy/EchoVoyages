@@ -3,9 +3,17 @@ import { Link } from 'react-router-dom';
 import '../assets/css/tables.css'
 
 const AgenciesTable = ({ agencies }) => {
+    const now = new Date();
+    const agentsLast24Hours = agencies.filter(user => {
+        const agentCreatedAt = new Date(user.createdAt); // Assuming `createdAt` is the timestamp field
+        return (now - agentCreatedAt) < 24 * 60 * 60 * 1000; // Difference in milliseconds
+    });
     return (
         <div>
             <div className='head1'>Agencies List:</div>
+            <div className='head2'>
+                Agents added in the last 24 hours: {agentsLast24Hours.length}
+            </div>
             <table>
                 <thead>
                     <tr>

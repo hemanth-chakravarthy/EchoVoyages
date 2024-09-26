@@ -1,11 +1,23 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import '../assets/css/tables.css'
+import '../assets/css/tables.css';
 
 const UsersTable = ({ users }) => {
+    // Get the current date and time
+    const now = new Date();
+
+    // Filter users created in the last 24 hours
+    const usersLast24Hours = users.filter(user => {
+        const userCreatedAt = new Date(user.createdAt); // Assuming `createdAt` is the timestamp field
+        return (now - userCreatedAt) < 24 * 60 * 60 * 1000; // Difference in milliseconds
+    });
+
     return (
         <div>
             <div className='head1'>Users List:</div>
+            <div className='head2'>
+                Users added in the last 24 hours: {usersLast24Hours.length}
+            </div>
             <table>
                 <thead>
                     <tr>

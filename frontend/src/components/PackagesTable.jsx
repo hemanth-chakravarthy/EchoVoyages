@@ -3,9 +3,17 @@ import { Link } from 'react-router-dom';
 import '../assets/css/tables.css'
 
 const PackagesTable = ({ packages }) => {
+    const now = new Date();
+    const packsLast24Hours = packages.filter(user => {
+        const agentCreatedAt = new Date(user.createdAt); // Assuming `createdAt` is the timestamp field
+        return (now - agentCreatedAt) < 24 * 60 * 60 * 1000; // Difference in milliseconds
+    });
     return (
         <div>
             <div className='head1'>Packages List:</div>
+            <div className='head2'>
+                Packages added in the last 24 hours: {packsLast24Hours.length}
+            </div>
             <table>
                 <thead>
                     <tr>
