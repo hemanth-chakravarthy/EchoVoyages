@@ -32,16 +32,41 @@ const Signup = () => {
                 newErrors.gmail = value.includes('@') ? '' : 'Email must contain "@"';
                 break;
             case 'password':
-                newErrors.password = value.length >= 6 ? '' : 'Password must be at least 6 characters long';
+                newErrors.password = validatePassword(value);
                 break;
             case 'phno':
-                newErrors.phno = /^[0-9]*$/.test(value) ? '' : 'Phone number must be numeric';
+                newErrors.phno = validatePhoneNumber(value);
                 break;
             default:
                 break;
         }
 
         setErrors(newErrors);
+    };
+
+    // Validate password with stronger security
+    const validatePassword = (password) => {
+        const passwordLength = password.length >= 6;
+        const hasUpperCase = /[A-Z]/.test(password);
+        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+        if (!passwordLength) {
+            return 'Password must be at least 6 characters long';
+        }
+        if (!hasUpperCase) {
+            return 'Password must contain at least one uppercase letter';
+        }
+        if (!hasSpecialChar) {
+            return 'Password must contain at least one special character';
+        }
+
+        return '';
+    };
+
+    // Validate phone number to have exactly 10 digits
+    const validatePhoneNumber = (phno) => {
+        const phoneNumberPattern = /^[0-9]{10}$/;
+        return phoneNumberPattern.test(phno) ? '' : 'Phone number must be exactly 10 digits';
     };
 
     // Validate the entire form before submission
@@ -59,8 +84,9 @@ const Signup = () => {
         }
 
         // Phone number validation
-        if (!formData.phno || !/^[0-9]+$/.test(formData.phno)) {
-            validationErrors.phno = 'Valid phone number is required';
+        const phnoError = validatePhoneNumber(formData.phno);
+        if (phnoError) {
+            validationErrors.phno = phnoError;
         }
 
         // Email validation
@@ -69,10 +95,12 @@ const Signup = () => {
         }
 
         // Password validation
-        if (!formData.password || formData.password.length < 6) {
-            validationErrors.password = 'Password must be at least 6 characters long';
+        const passwordError = validatePassword(formData.password);
+        if (passwordError) {
+            validationErrors.password = passwordError;
         }
 
+        setErrors(validationErrors); // Update errors state
         return validationErrors;
     };
 
@@ -83,7 +111,7 @@ const Signup = () => {
         // Validate form
         const validationErrors = validateForm();
         if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors);
+            console.log('Form validation failed:', validationErrors); // Debugging: Log errors
             return;
         }
 
@@ -106,14 +134,14 @@ const Signup = () => {
                     role: 'customer'
                 });
                 setErrors({});
+                alert("Signup successful!"); // Display success alert
                 console.log("Signup successful!");
             } else {
                 const data = await response.json();
-                console.log(data.error);
-                console.log("Signup failed.");
+                console.log("Signup failed with error:", data.error); // Debugging: Log error from server
             }
         } catch (err) {
-            console.error("Error signing up:", err);
+            console.error("Error signing up:", err); // Debugging: Log any caught error
         }
     };
 
