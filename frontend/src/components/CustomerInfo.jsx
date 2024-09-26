@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import '../assets/css/updateEntity.css'; // Importing the CSS file
 
@@ -168,6 +168,7 @@ const CustomerInfo = () => {
                             <p><strong>Total Price:</strong> ${booking.totalPrice}</p>
                             <p><strong>Status:</strong> {booking.status}</p>
                             <p><strong>Booking Date:</strong> {new Date(booking.bookingDate).toLocaleDateString()}</p>
+                            <Link to={`/packages/${booking.packageId}`}><button>View Package</button></Link>
                         </div>
                     ))
                 ) : (
