@@ -1,27 +1,34 @@
+/* Navbar Container */
 .navbar {
-  background: linear-gradient(90deg, rgb(28, 27, 27) 0%, rgb(26, 23, 23) 100%);
+  background: rgba(255, 255, 255, 0.2); /* Translucent white with blur effect */
+  backdrop-filter: blur(20px); /* Blur effect to simulate glass */
+  -webkit-backdrop-filter: blur(10px); /* Safari support */
   height: 80px;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   font-size: 1.2rem;
   position: sticky;
   top: 0;
   z-index: 999;
+  padding: 0 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Border to define edges */
+  border-radius: 10px;
 }
 
+/* Navbar Items */
 .navbar-container {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  height: 80px;
   max-width: 1500px;
+  width: 100%;
 }
 
 .navbar-logo {
   color: #fff;
-  justify-self: start;
-  margin-left: 20px;
+  margin-left: 175px;
   cursor: pointer;
   text-decoration: none;
   font-size: 2rem;
@@ -29,18 +36,24 @@
   align-items: center;
 }
 
+/* Icon Styles */
+.nav--icon {
+  height: 60px;
+  padding-left: 20px;
+}
+
 .fa-typo3 {
   margin-left: 0.5rem;
   font-size: 1.8rem;
 }
 
+/* Nav Links */
 .nav-menu {
   display: grid;
-  grid-template-columns: repeat(4, auto);
-  grid-gap: 10px;
+  grid-template-columns: repeat(5, auto);
+  gap: 20px;
   list-style: none;
   text-align: center;
-  width: 60vw;
   justify-content: end;
   margin-right: 2rem;
 }
@@ -49,52 +62,44 @@
   height: 80px;
 }
 
-.nav-links {
+.nav-links, .nav--element--1, .nav--element--2 {
   color: #fff;
   display: flex;
   align-items: center;
   text-decoration: none;
   padding: 0.5rem 1rem;
-  height: 100%;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.3s ease;
 }
 
-.nav-links:hover {
-  border-bottom: 4px solid #fff;
-  transition: all 0.2s ease-out;
+.nav--element--1, .nav--element--2 {
+  margin-left: 20px;
 }
 
-.fa-bars {
-  color: #fff;
+.nav-links:hover, .nav--element--1:hover, .nav--element--2:hover {
+  color: #050404; /* Hover effect */
 }
 
-.nav-links-mobile {
-  display: none;
-}
-
+/* Mobile Menu */
 .menu-icon {
   display: none;
 }
 
 @media screen and (max-width: 960px) {
-  .NavbarItems {
-    position: relative;
-  }
-
   .nav-menu {
-    display: flex;
     flex-direction: column;
-    width: 100%;
-    height: 90vh;
     position: absolute;
     top: 80px;
     left: -100%;
     opacity: 1;
     transition: all 0.5s ease;
-    padding: 0 0 200px 0;
+    background-color: #242222;
+    width: 100%;
+    height: 90vh;
   }
 
   .nav-menu.active {
-    background: #242222;
     left: 0;
     opacity: 1;
     transition: all 0.5s ease;
@@ -105,13 +110,12 @@
     text-align: center;
     padding: 2rem;
     width: 100%;
-    display: table;
+    display: block;
   }
 
   .nav-links:hover {
     background-color: #fff;
     color: #242424;
-    border-radius: 0;
   }
 
   .navbar-logo {
@@ -126,7 +130,6 @@
     position: absolute;
     top: 0;
     right: 0;
-    transform: translate(-100%, 60%);
     font-size: 1.8rem;
     cursor: pointer;
   }
@@ -140,20 +143,33 @@
     display: block;
     text-align: center;
     margin: 2rem auto;
-    border-radius: 4px;
     width: 80%;
-    text-decoration: none;
-    font-size: 1.5rem;
-    background-color: transparent;
-    color: #fff;
     padding: 14px 20px;
     border: 1px solid #fff;
+    font-size: 1.5rem;
+    color: #fff;
+    background-color: transparent;
     transition: all 0.3s ease-out;
   }
 
   .nav-links-mobile:hover {
     background: #fff;
     color: #242424;
-    transition: 250ms;
   }
+}
+
+/* Logout Button */
+.logout-button {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-left: auto;
+}
+
+.logout-button:hover {
+  background-color: #ff1a1a;
 }

@@ -5,7 +5,7 @@ const Navbar = () => {
   return (
     <div>
         <nav>
-            <img src="../images/logo_ev-removebg-preview.png" className="nav--icon" />
+            <img src="/images/echo_voyage_logo.png" className="nav--icon" />
             <div className="nav-elements">
             <Link to={`/home`} className="nav--element--2">Home</Link>
             <Link to={`/search`} className="nav--element--2">Search</Link>
