@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
+import '../styles/CreatePackage.css';  // Assuming this CSS file for styling
 
 const CreatePackage = () => {
     const navigate = useNavigate();
     const AgentId = jwtDecode(localStorage.getItem('token')).id;
-    const AgentName = jwtDecode(localStorage.getItem('token')).name
+    const AgentName = jwtDecode(localStorage.getItem('token')).name;
+
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -16,12 +18,12 @@ const CreatePackage = () => {
         highlights: '',
         availableDates: '',
         maxGroupSize: '',
-        AgentID:AgentId,
-        AgentName: AgentName
-
+        AgentID: AgentId,
+        AgentName: AgentName,
     });
 
     const [images, setImages] = useState([]);
+    const [errors, setErrors] = useState({});  // State for validation errors
 
     // Handling form data changes
     const handleInputChange = (e) => {
@@ -37,9 +39,29 @@ const CreatePackage = () => {
         setImages([...e.target.files]);
     };
 
+    // Validation logic
+    const validateForm = () => {
+        const newErrors = {};
+
+        if (!formData.name) newErrors.name = "Package name is required.";
+        if (!formData.description) newErrors.description = "Description is required.";
+        if (formData.price <= 0) newErrors.price = "Price must be a positive number.";
+        if (formData.duration <= 0) newErrors.duration = "Duration must be greater than 0.";
+        if (!formData.location) newErrors.location = "Location is required.";
+        if (!formData.itinerary) newErrors.itinerary = "Itinerary is required.";
+        if (!formData.highlights) newErrors.highlights = "Highlights are required.";
+        if (!formData.availableDates) newErrors.availableDates = "Available dates are required.";
+        if (formData.maxGroupSize <= 0) newErrors.maxGroupSize = "Max group size must be greater than 0.";
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0; // Return true if no errors
+    };
+
     // Handling form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!validateForm()) return;  // If form validation fails, prevent submission
 
         const formPayload = new FormData();
         // Append all form fields to FormData
@@ -70,9 +92,10 @@ const CreatePackage = () => {
                     availableDates: '',
                     maxGroupSize: '',
                     AgentID: AgentId,
+                    AgentName: AgentName,
                 });
                 setImages([]);
-                navigate('/AgentHome')
+                navigate('/AgentHome');
                 console.log("Package created successfully!");
 
             } else {
@@ -85,47 +108,133 @@ const CreatePackage = () => {
 
     return (
         <form onSubmit={handleSubmit} encType="multipart/form-data">
-            <div>
+            <div className="form-group">
                 <label>Package Name</label>
-                <input type="text" name="name" value={formData.name} onChange={handleInputChange} required />
+                <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    className={errors.name ? 'input-error' : ''}
+                    required
+                />
+                {errors.name && <p className="error-message">{errors.name}</p>}
             </div>
-            <div>
+
+            <div className="form-group">
                 <label>Description</label>
-                <textarea name="description" value={formData.description} onChange={handleInputChange} required />
+                <textarea
+                    name="description"
+                    value={formData.description}
+                    onChange={handleInputChange}
+                    className={errors.description ? 'input-error' : ''}
+                    required
+                />
+                {errors.description && <p className="error-message">{errors.description}</p>}
             </div>
-            <div>
+
+            <div className="form-group">
                 <label>Price</label>
-                <input type="number" name="price" value={formData.price} onChange={handleInputChange} required />
+                <input
+                    type="number"
+                    name="price"
+                    value={formData.price}
+                    onChange={handleInputChange}
+                    className={errors.price ? 'input-error' : ''}
+                    required
+                />
+                {errors.price && <p className="error-message">{errors.price}</p>}
             </div>
-            <div>
+
+            <div className="form-group">
                 <label>Duration (Days)</label>
-                <input type="number" name="duration" value={formData.duration} onChange={handleInputChange} required />
+                <input
+                    type="number"
+                    name="duration"
+                    value={formData.duration}
+                    onChange={handleInputChange}
+                    className={errors.duration ? 'input-error' : ''}
+                    required
+                />
+                {errors.duration && <p className="error-message">{errors.duration}</p>}
             </div>
-            <div>
+
+            <div className="form-group">
                 <label>Location</label>
-                <input type="text" name="location" value={formData.location} onChange={handleInputChange} required />
+                <input
+                    type="text"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleInputChange}
+                    className={errors.location ? 'input-error' : ''}
+                    required
+                />
+                {errors.location && <p className="error-message">{errors.location}</p>}
             </div>
-            <div>
+
+            <div className="form-group">
                 <label>Itinerary</label>
-                <textarea name="itinerary" value={formData.itinerary} onChange={handleInputChange} required />
+                <textarea
+                    name="itinerary"
+                    value={formData.itinerary}
+                    onChange={handleInputChange}
+                    className={errors.itinerary ? 'input-error' : ''}
+                    required
+                />
+                {errors.itinerary && <p className="error-message">{errors.itinerary}</p>}
             </div>
-            <div>
+
+            <div className="form-group">
                 <label>Highlights</label>
-                <input type="text" name="highlights" value={formData.highlights} onChange={handleInputChange} required />
+                <input
+                    type="text"
+                    name="highlights"
+                    value={formData.highlights}
+                    onChange={handleInputChange}
+                    className={errors.highlights ? 'input-error' : ''}
+                    required
+                />
+                {errors.highlights && <p className="error-message">{errors.highlights}</p>}
             </div>
-            <div>
+
+            <div className="form-group">
                 <label>Available Dates</label>
-                <input type="date" name="availableDates" value={formData.availableDates} onChange={handleInputChange} required />
+                <input
+                    type="date"
+                    name="availableDates"
+                    value={formData.availableDates}
+                    onChange={handleInputChange}
+                    className={errors.availableDates ? 'input-error' : ''}
+                    required
+                />
+                {errors.availableDates && <p className="error-message">{errors.availableDates}</p>}
             </div>
-            <div>
+
+            <div className="form-group">
                 <label>Max Group Size</label>
-                <input type="number" name="maxGroupSize" value={formData.maxGroupSize} onChange={handleInputChange} required />
+                <input
+                    type="number"
+                    name="maxGroupSize"
+                    value={formData.maxGroupSize}
+                    onChange={handleInputChange}
+                    className={errors.maxGroupSize ? 'input-error' : ''}
+                    required
+                />
+                {errors.maxGroupSize && <p className="error-message">{errors.maxGroupSize}</p>}
             </div>
-            <div>
+
+            <div className="form-group">
                 <label>Images</label>
-                <input type="file" name="image" onChange={handleImageChange} multiple required />
+                <input
+                    type="file"
+                    name="images"
+                    onChange={handleImageChange}
+                    multiple
+                    required
+                />
             </div>
-            <button type="submit">Create Package</button>
+
+            <button type="submit" className="submit-button">Create Package</button>
         </form>
     );
 };
