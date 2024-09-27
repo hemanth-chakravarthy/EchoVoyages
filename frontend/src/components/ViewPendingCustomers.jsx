@@ -22,9 +22,9 @@ const ViewPendingCustomers = () => {
                     },
                 });
 
-                if (!response.ok) {
-                    throw new Error('Failed to fetch bookings.');
-                }
+                // if (!response.ok) {
+                //     throw new Error('No bookings.');
+                // }
 
                 const data = await response.json();
                 setBookings(data); // Set the bookings state
@@ -63,7 +63,7 @@ const ViewPendingCustomers = () => {
                     ))}
                 </ul>
             ) : (
-                <p>No pending bookings.</p>
+                <p>No bookings.</p>
             )}
         </div>
     );
