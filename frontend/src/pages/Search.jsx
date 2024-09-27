@@ -189,9 +189,6 @@ const Search = () => {
                                     setAvailableDates([...availableDates, date]);
                                 }}
                             />
-                            <button className="clear-dates-btn" onClick={() => setAvailableDates([])}>
-                                Clear Dates
-                            </button>
                         </div>
                     </div>
                 )}
@@ -240,7 +237,7 @@ const Search = () => {
                                         <strong>Max Group Size:</strong> {result.maxGroupSize}
                                     </p>
                                     <p>
-                                        <strong>Price:</strong> ${result.price}
+                                        <strong>Price:</strong> Rs.{result.price}
                                     </p>
                                     <p>
                                         <strong>Available Dates:</strong>{' '}

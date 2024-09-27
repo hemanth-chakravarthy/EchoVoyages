@@ -144,6 +144,8 @@ const ViewGuide = () => {
             <p className="guide-description">{guideDetails.description}</p>
             <p className="guide-experience">Experience: {guideDetails.experience} years</p>
             <p className="guide-languages">Languages: {guideDetails.languages.join(', ')}</p>
+            <p className="guide-phone">Phone Number: {guideDetails.contact.phone}</p>
+            <p className="guide-email">Email: {guideDetails.contact.email}</p>
 
             <div className="reviews-section">
                 <h2 className="reviews-title">Reviews:</h2>

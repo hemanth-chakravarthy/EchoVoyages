@@ -196,7 +196,9 @@ html, body {
     margin-bottom: 20px;
 }
 
-
+.stats{
+    margin-left:30px;
+}
 .profile-item {
     display: flex;
     justify-content: space-between;

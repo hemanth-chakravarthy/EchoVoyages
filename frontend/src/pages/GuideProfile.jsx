@@ -83,7 +83,7 @@ const GuideProfilePage = () => {
     };
     const validateAvailabilityDates = () => {
         let dateErrors = {};
-        const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+        const today = new Date().toISOString().split('T')[0];
     
         updatedGuide.availableDates.forEach((dateRange, index) => {
             const { startDate, endDate } = dateRange;
@@ -308,7 +308,6 @@ const GuideProfilePage = () => {
                         <p className="error-message">{validationErrors[`endDate${index}`]}</p>
                     )}
                     
-                    {/* Remove button for each date range */}
                     <button
                         className="remove-date-range-btn"
                         onClick={() => handleRemoveDateRange(index)}

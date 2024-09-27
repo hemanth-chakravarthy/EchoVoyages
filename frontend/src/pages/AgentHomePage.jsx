@@ -61,7 +61,7 @@ const AgentHomePage = () => {
             <li key={pkg._id}>
               <h2>{pkg.name}</h2>
               <p>Description: {pkg.description}</p>
-              <p>Price: {pkg.price}</p>
+              <p>Price: Rs. {pkg.price}</p>
               <p>Duration: {pkg.duration} days</p>
               <Link to={`/packages/${pkg._id}`}><button>View Package</button></Link>
             </li>

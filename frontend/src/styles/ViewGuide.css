@@ -25,7 +25,9 @@
 
 /* Experience and languages */
 .guide-experience,
-.guide-languages {
+.guide-languages,
+.guide-phone,
+.guide-email {
     font-size: 16px;
     color: #666;
     margin: 5px 0;

@@ -9,6 +9,9 @@ const CustomerInfo = () => {
     const [loading, setLoading] = useState(true);
     const [editing, setEditing] = useState(false);
     const [customer, setCustomer] = useState({});
+    const totalPackagesBooked = bookings.filter(booking => booking.packageId).length;
+    const totalGuidesBooked = bookings.filter(booking => booking.guideId).length;
+
     const id = jwtDecode(localStorage.getItem('token')).id;
     const navigate = useNavigate();
     const fieldLabels = {
@@ -159,6 +162,9 @@ const CustomerInfo = () => {
             </div>
             <div className="booking-list">
             <h2>Bookings and Status</h2>
+            <p className='stats'>Total Packages Booked: {totalPackagesBooked}</p>
+            <p className='stats'>Total Guides Booked: {totalGuidesBooked}</p>
+
             <div className="bookings-grid">
                 {bookings.length > 0 ? (
                     bookings.map((booking) => (

@@ -12,9 +12,10 @@ const AgentInfo = () => {
     const AgentID = id;
     const navigate = useNavigate();
     const specializations = ['luxury', 'adventure', 'business', 'family', 'other'];
+  
+    const totalAmountEarned = bookings.reduce((total, booking) => total + booking.price, 0);
 
     useEffect(() => {
-        // Fetch the agent details based on ID
         const fetchAgent = async () => {
             try {
                 const response = await axios.get(`http://localhost:5000/agency/${id}`);
@@ -42,13 +43,10 @@ const AgentInfo = () => {
         setEditing(!editing);
     };
     const handleLogout = () => {
-        // Clear the token from localStorage
         localStorage.removeItem('token');
 
-        // Redirect to login page
         navigate('/');
     };
-    // Handle changes in form inputs
     const handleChange = (e) => {
         const { name, value } = e.target;
         setAgent((prevAgent) => ({
@@ -57,7 +55,6 @@ const AgentInfo = () => {
         }));
     };
 
-    // Handle form submission
     const handleUpdateAgent = async () => {
         try {
             await axios.put(`http://localhost:5000/agency/${id}`, agent);
@@ -174,12 +171,15 @@ const AgentInfo = () => {
             </div>
             <div className="booking-list">
             <h2>Previous Bookings</h2>
+            <div className="statistics">
+                <p><strong>Total Amount Earned:</strong> Rs. {totalAmountEarned}</p>
+            </div>
             <div className="bookings-grid">
                 {bookings ? (
                     bookings.map((booking) => (
                         <div key={booking._id} className="booking">
                             <h3>Package: {booking.name || 'N/A'}</h3>
-                            <p><strong>Total Price:</strong> ${booking.price}</p>
+                            <p><strong>Total Price:</strong> Rs. {booking.price}</p>
                             <p><strong>Booking Date:</strong> {new Date(booking.availableDates).toLocaleDateString()}</p>
                         </div>
                     ))
