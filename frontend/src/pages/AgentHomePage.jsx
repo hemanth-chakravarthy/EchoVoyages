@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import {jwtDecode} from 'jwt-decode'; 
+import {jwtDecode} from 'jwt-decode';
+import '../styles/AgentHomePage.css'; // Add the CSS file
 
 const AgentHomePage = () => {
   const [bookedPackages, setPackages] = useState([]);
@@ -46,6 +47,13 @@ const AgentHomePage = () => {
 
   return (
     <div>
+       <nav className="navbarr">
+        <ul className="nav-linkss">
+          <li><Link to="/AgentHome">Home Page</Link></li>
+          <li><Link to="/createPackage">Create Package</Link></li>
+          <li><Link to="/AgentProfilePage">Profile Page</Link></li>
+        </ul>
+      </nav>
       <h1>Listed Packages</h1>
       {bookedPackages.length > 0 ? (
         <ul>
@@ -62,9 +70,6 @@ const AgentHomePage = () => {
       ) : (
         <p>No packages booked.</p>
       )}
-      <Link to={'/AgentHome'}>Home Page</Link>
-      <Link to={`/createPackage`}>Create package</Link>
-      <Link to={`/AgentProfilePage`}>Profile Page</Link>
     </div>
   );
 };
