@@ -33,10 +33,8 @@ const HomePage = () => {
 
     return (
         <div>
-            {/* Navbar */}
             <Navbar />
 
-            {/* Packages Section */}
             <section>
                 <h1>Available Packages</h1>
                 {loading ? (
@@ -44,7 +42,7 @@ const HomePage = () => {
                 ) : packages.length > 0 ? (
                     <ul>
                         {packages.map((pack) => (
-                            pack.isActive && (  // Conditional rendering for active packages
+                            pack.isActive && (  
                                 <li key={pack._id}>
                                     <h2>{pack.name}</h2>
                                     <p>{pack.description}</p>
@@ -77,7 +75,6 @@ const HomePage = () => {
                 )}
             </section>
 
-            {/* Footer */}
             <Footer />
         </div>
     );

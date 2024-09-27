@@ -4,15 +4,15 @@ import "../styles/ViewBooking.css"
 
 
 const ViewBooking = () => {
-    const { bookingId } = useParams(); // Get the booking ID from the URL
-    const [booking, setBooking] = useState(null); // State to hold booking details
-    const [loading, setLoading] = useState(true); // Loading state
-    const [error, setError] = useState(''); // Error state
-    const [status, setStatus] = useState(''); // State to track the selected status
-    const token = localStorage.getItem('token'); // Get token from local storage
+    const { bookingId } = useParams();
+    const [booking, setBooking] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+    const [status, setStatus] = useState('');
+    const token = localStorage.getItem('token');
+
 
     useEffect(() => {
-        console.log('Booking ID:', bookingId); // Check what bookingId is
 
         const fetchBooking = async () => {
             try {
@@ -29,11 +29,11 @@ const ViewBooking = () => {
                 }
 
                 const data = await response.json();
-                setBooking(data); // Set the fetched booking data
-                setStatus(data.status); // Initialize status with the current booking status
+                setBooking(data); 
+                setStatus(data.status); 
                 setLoading(false);
             } catch (error) {
-                setError(error.message); // Set error message
+                setError(error.message); 
                 setLoading(false);
             }
         };
@@ -41,7 +41,7 @@ const ViewBooking = () => {
         fetchBooking();
     }, [bookingId, token]);
 
-    // Function to update booking status
+   
     const updateStatus = async (newStatus) => {
         try {
             const response = await fetch(`http://localhost:5000/bookings/${bookingId}`, {
@@ -50,7 +50,7 @@ const ViewBooking = () => {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ status: newStatus }), // Send updated status
+                body: JSON.stringify({ status: newStatus }), 
             });
 
             if (!response.ok) {
@@ -58,17 +58,17 @@ const ViewBooking = () => {
             }
 
             const updatedBooking = await response.json();
-            setBooking(updatedBooking); // Update the booking with new status
+            setBooking(updatedBooking); 
         } catch (error) {
             setError(error.message);
         }
     };
 
-    // Handle dropdown change
+    
     const handleStatusChange = (e) => {
         const newStatus = e.target.value;
-        setStatus(newStatus); // Update local state immediately
-        updateStatus(newStatus); // Send the updated status to the backend
+        setStatus(newStatus); 
+        updateStatus(newStatus); 
     };
 
     if (loading) {
@@ -95,8 +95,8 @@ const ViewBooking = () => {
             <select
                 id="status"
                 className="status-dropdown"
-                value={status} // Set the current value to the state variable
-                onChange={handleStatusChange} // Handle status change
+                value={status} 
+                onChange={handleStatusChange} 
             >
                 <option value="pending">Pending</option>
                 <option value="confirmed">Confirmed</option>

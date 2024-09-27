@@ -4,12 +4,12 @@ const wishListGuideSchema = new mongoose.Schema({
     customerId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref: 'customers' // Adjust this if your customer model is named differently
+        ref: 'customers'
     },
     guideId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref: 'Guide' // Adjust this if your package model is named differently
+        ref: 'Guide' 
     }
 }, {timestamps: true})
 

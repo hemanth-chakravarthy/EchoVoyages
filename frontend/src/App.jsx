@@ -7,7 +7,7 @@ import DeleteEntity from './pages/DeleteEntity';
 import ShowEntity from './pages/ShowEntity'
 import UpdateEntity from "./pages/UpdateEntity";
 import ViewPage from "./pages/ViewPage"
-import DummyPage from "./pages/DummyPage"
+import CreatePackagePage from "./pages/CreatePackagePage"
 import AgentHomePage from "./pages/AgentHomePage"
 import AgentProfilePage from "./pages/AgentProfilePage"
 import PrivateRoute from "./components/PrivateRoute"
@@ -64,7 +64,7 @@ const App = () => {
     </Route>
   {/* For the /createPackage route */}
   <Route path="/createPackage" element={<PrivateRoute />}>
-    <Route path="/createPackage" element={<DummyPage />} />
+    <Route path="/createPackage" element={<CreatePackagePage />} />
   </Route>
  <Route path="/custProfilePage" element={<PrivateRoute />}>
   <Route path="/custProfilePage" element={<CustomerProfile/>}/>

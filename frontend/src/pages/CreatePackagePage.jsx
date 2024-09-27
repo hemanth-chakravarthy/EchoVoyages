@@ -2,10 +2,10 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import CreatePackage from '../components/createPackage'
 
-const DummyPage = () => {
+const CreatePackagePage = () => {
   return (
     <div>
-      <CreatePackage/>
+        <CreatePackage/>
     
     <Link to={'/AgentHome'}>Home Page</Link>
     <Link to={`/createPackage`}>Create package</Link>
@@ -14,4 +14,4 @@ const DummyPage = () => {
   )
 }
 
-export default DummyPage
+export default CreatePackagePage

@@ -13,7 +13,6 @@ const Signup = () => {
 
     const [errors, setErrors] = useState({});
 
-    // Handle input changes
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -22,7 +21,6 @@ const Signup = () => {
         });
     };
 
-    // Validation function
     const validateForm = async () => {
         const newErrors = {};
 
@@ -39,11 +37,11 @@ const Signup = () => {
         return newErrors;
     };
 
-    // Handle form submission
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Validate form
+
         const validationErrors = await validateForm();
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);

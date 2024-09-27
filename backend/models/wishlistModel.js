@@ -5,12 +5,12 @@ const wishlistSchema = new mongoose.Schema({
     customerId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref: 'customers' // Adjust this if your customer model is named differently
+        ref: 'customers' 
     },
     packageId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref: 'packages' // Adjust this if your package model is named differently
+        ref: 'packages' 
     }
 }, { timestamps: true });
 

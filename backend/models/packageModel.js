@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+
 const packageSchema = mongoose.Schema(
     {
         name: {
@@ -17,7 +18,7 @@ const packageSchema = mongoose.Schema(
             min: 0
         },
         duration: {
-            type: Number,  // Duration in days
+            type: Number,
             required: true
         },
         location: {
@@ -28,7 +29,7 @@ const packageSchema = mongoose.Schema(
             type: String
         },
         highlights: {
-            type: String,  // Array of highlights or key features of the package
+            type: String,
             required: true
         },
         availableDates: [
@@ -42,25 +43,25 @@ const packageSchema = mongoose.Schema(
             min: 1
         },
         guide: {
-            type: mongoose.Schema.Types.ObjectId,  // Reference to the guide associated with the package
+            type: mongoose.Schema.Types.ObjectId,
             ref: 'guides',
             required: false
         },
-        AgentID:{
-            type: mongoose.Schema.Types.ObjectId,  // Reference to the guide associated with the package
+        AgentID: {
+            type: mongoose.Schema.Types.ObjectId,
             ref: 'agencies',
             required: true
         },
-        AgentName:{
+        AgentName: {
             type: String,
             required: false
         },
         reviews: [
             {
-            customer: { type: mongoose.Schema.Types.ObjectId, ref: 'customers' },
-            rating: { type: Number, min: 1, max: 5 },
-            comment: String,
-            date: { type: Date, default: Date.now }
+                customer: { type: mongoose.Schema.Types.ObjectId, ref: 'customers' },
+                rating: { type: Number, min: 1, max: 5 },
+                comment: String,
+                date: { type: Date, default: Date.now }
             }
         ],
         image: {
@@ -82,4 +83,4 @@ const packageSchema = mongoose.Schema(
     }
 );
 
-export const packages = mongoose.model('packages',packageSchema)
+export const packages = mongoose.model('packages', packageSchema);

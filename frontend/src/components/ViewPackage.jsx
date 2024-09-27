@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'; 
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { FaFlag } from 'react-icons/fa'; // Import report flag icon
-import "../styles/ViewPackage.css"
+import { FaFlag } from 'react-icons/fa'; 
+import "../styles/ViewPackage.css";
+
 const ViewPackage = () => {
-  const { id } = useParams(); // Get the package ID from the URL
+  const { id } = useParams(); 
   const [packageDetails, setPackageDetails] = useState(null);
   const [revvs, setRevDetails] = useState(null);
 
@@ -14,10 +15,16 @@ const ViewPackage = () => {
         const response = await fetch(`http://localhost:5000/packages/${id}`);
         const data = await response.json();
         setPackageDetails(data);
+
+
+        if (data.reviewCount > 0) { 
+          await fetchReviews(); 
+        }
       } catch (error) {
         console.error('Error fetching package details:', error);
       }
     };
+
     const fetchReviews = async () => {
       try {
         const res = await fetch(`http://localhost:5000/reviews/package/${id}`);
@@ -27,7 +34,7 @@ const ViewPackage = () => {
         console.error('Error fetching reviews:', error);
       }
     };
-    fetchReviews();
+
     fetchPackageDetails();
   }, [id]);
 
@@ -89,7 +96,7 @@ const ViewPackage = () => {
                 onClick={() => handleReportReview(review._id)}
                 title="Report this review"
               >
-                <FaFlag className='report-icon' /> {/* Report icon */}
+                <FaFlag className='report-icon' /> 
               </button>
             </div>
           ))

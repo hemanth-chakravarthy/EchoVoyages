@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode'; // corrected import
+import { jwtDecode } from 'jwt-decode'; 
 import '../styles/GuideProfilePage.css'
 const GuideProfilePage = () => {
-    const guideId = jwtDecode(localStorage.getItem('token')).id; // Get guideId from the token
+    const guideId = jwtDecode(localStorage.getItem('token')).id; 
     const [guide, setGuide] = useState(null);
-    const [reviews, setReviews] = useState([]); // Holds reviews for the guide
+    const [reviews, setReviews] = useState([]); 
     const [loading, setLoading] = useState(true);
-    const [editing, setEditing] = useState(false); // Track whether we are in "edit" mode
-    const [updatedGuide, setUpdatedGuide] = useState(null); // Holds updated guide info
+    const [editing, setEditing] = useState(false); 
+    const [updatedGuide, setUpdatedGuide] = useState(null); 
     const navigate = useNavigate();
     const [validationErrors, setValidationErrors] = useState({});
 

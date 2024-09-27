@@ -13,11 +13,11 @@ const guideSchema = new mongoose.Schema({
     },
     experience: {
         type: Number,
-        required: false,  // Years of experience
+        required: false,  
         min: 0
     },
     languages: {
-        type: [String],  // List of languages the guide speaks
+        type: [String],  
         required: false
     },
     location: {
@@ -52,7 +52,7 @@ const guideSchema = new mongoose.Schema({
     },
     availability: {
         type: Boolean,
-        default: false  // Whether the guide is available or not
+        default: false  
     },
     availableDates: [{
         startDate: {
@@ -67,10 +67,10 @@ const guideSchema = new mongoose.Schema({
     assignedPackages: [{
         packageId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'packages'  // References the 'Package' model
+            ref: 'packages'  
         },
         price: {
-            type: Number,  // Price for the specific package
+            type: Number,  
             required: false
         }
     }]

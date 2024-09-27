@@ -28,11 +28,11 @@ const CustomerWishlist = () => {
 
                 const data = await response.json();
 
-                // Ensure data is an array, if not wrap it in an array
+                
                 if (Array.isArray(data)) {
                     setWishlist(data);
                 } else if (data && typeof data === 'object') {
-                    setWishlist([data]); // Wrap the object in an array
+                    setWishlist([data]); 
                 } else {
                     setError('Received data is not valid.');
                 }
@@ -60,11 +60,11 @@ const CustomerWishlist = () => {
 
                 const data = await response.json();
 
-                // Ensure data is an array, if not wrap it in an array
+                
                 if (Array.isArray(data)) {
                     setGuideWishlist(data);
                 } else if (data && typeof data === 'object') {
-                    setGuideWishlist([data]); // Wrap the object in an array
+                    setGuideWishlist([data]); 
                 } else {
                     setError('Received guide data is not valid.');
                 }
