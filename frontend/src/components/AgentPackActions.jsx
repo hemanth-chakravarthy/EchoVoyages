@@ -22,12 +22,9 @@ const AgentPackActions = () => {
             setPrice(price);
             setDescription(description);
             setIsActive(isActive);
-
-            // Conditionally fetch bookings only if the package is active
-            if (isActive !== 'pending') {
-                const bookingResponse = await axios.get(`http://localhost:5000/bookings/pack/${id}`);
-                setBookings(bookingResponse.data); // Set the fetched bookings
-            }
+            const bookingResponse = await axios.get(`http://localhost:5000/bookings/pack/${id}`);
+            setBookings(bookingResponse.data); 
+            
         } catch (error) {
             console.error('Error fetching package details or bookings', error);
             setMessage('Error fetching package details or bookings');

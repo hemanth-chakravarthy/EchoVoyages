@@ -36,6 +36,7 @@ const ViewPackage = () => {
     };
 
     fetchPackageDetails();
+    fetchReviews();
   }, [id]);
 
   const handleReportReview = async (reviewId) => {
