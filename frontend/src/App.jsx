@@ -70,19 +70,19 @@ const App = () => {
   <Route path="/custProfilePage" element={<CustomerProfile/>}/>
  </Route>
   {/* For the /admin/:entity/delete/:id route */}
-  <Route path="/admin/:entity/delete/:id" element={<PrivateRoute />}>
+  {/* <Route path="/admin/:entity/delete/:id" element={<PrivateRoute />}> */}
     <Route path="/admin/:entity/delete/:id" element={<DeleteEntity />} />
-  </Route>
+  {/* </Route> */}
 
   {/* For the /admin/:entityType/:id route */}
-  <Route path="/admin/:entityType/:id" element={<PrivateRoute />}>
+  {/* <Route path="/admin/:entityType/:id" element={<PrivateRoute />}> */}
     <Route path="/admin/:entityType/:id" element={<ShowEntity />} />
-  </Route>
+  {/* </Route> */}
 
   {/* For the /admin/:entityType/edit/:id route */}
-  <Route path="/admin/:entityType/edit/:id" element={<PrivateRoute />}>
+  {/* <Route path="/admin/:entityType/edit/:id" element={<PrivateRoute />}> */}
     <Route path="/admin/:entityType/edit/:id" element={<UpdateEntity />} />
-  </Route>
+  {/* </Route> */}
   <Route path="/search" element={<PrivateRoute />}>
         <Route path="/search" element={<Search />} />  {/* <-- Search component */}
   </Route>

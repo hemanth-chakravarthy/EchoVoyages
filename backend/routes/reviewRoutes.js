@@ -3,18 +3,36 @@ import { reviews } from '../models/customerReviewModel.js';
 import { packages } from '../models/packageModel.js';
 import { customers } from '../models/customerModel.js';
 import { Guide } from '../models/guideModel.js';
+import {bookings} from '../models/bookingModel.js'
 const router = express.Router();
 
 // Save a review
 router.post('/', async (req, res) => {
     try {
-        const { customerId, packageId, guideId, rating, comment } = req.body;
+        const { customerId, packageId, guideId, rating, comment, bookingId } = req.body;
 
         // Validate required fields
-        if (!customerId || !rating || !comment) {
+        if (!customerId || !rating || !comment || !bookingId) {
             return res.status(400).send({
-                message: "Send all required fields"
+                message: "Please provide all required fields: customerId, rating, comment, and bookingId"
             });
+        }
+
+        // Check for the customer
+        const customerData = await customers.findById(customerId);
+        if (!customerData) {
+            return res.status(404).send({ message: 'Customer not found' });
+        }
+
+        // Check if the booking is valid
+        const bookingData = await bookings.findById(bookingId);
+        if (!bookingData) {
+            return res.status(404).send({ message: 'Invalid booking ID. Please provide a valid booking for this package.' });
+        }
+
+        // Ensure that the booking matches the customer and package IDs
+        if (bookingData.customerId.toString() !== customerId || bookingData.packageId.toString() !== packageId) {
+            return res.status(403).send({ message: 'You can only review packages that you have booked.' });
         }
 
         // Check for the package if packageId is provided
@@ -26,13 +44,7 @@ router.post('/', async (req, res) => {
             }
         }
 
-        // Check for the customer
-        const customerData = await customers.findById(customerId);
-        if (!customerData) {
-            return res.status(404).send({ message: 'Customer not found' });
-        }
-
-        // Check for the guide if guideId is provided
+        // Check for the guide if guideId is provided (optional)
         let guideData;
         if (guideId) {
             guideData = await Guide.findById(guideId);
@@ -51,11 +63,12 @@ router.post('/', async (req, res) => {
             guideName: guideData ? guideData.name : undefined,  // Optional if guide is not provided
             rating,
             comment,
-            status: "approved"
+            status: "approved",
+            bookingId // Store the booking ID in the review for future reference
         };
 
         const review = await reviews.create(newReview);
-        return res.status(201).send(review);
+        return res.status(201).send({ message: 'Review submitted successfully', review });
     } catch (error) {
         console.log(error);
         res.status(500).send({ message: "Internal Server Error" });

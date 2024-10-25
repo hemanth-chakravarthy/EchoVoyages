@@ -79,6 +79,7 @@ router.post('/signup',async(req,res)=>{
         console.log(error)
     }
 })
+
 router.post('/login', async (req, res) => {
     try {
         const { username, password, role } = req.body;
@@ -227,6 +228,35 @@ router.put('/:id',async (req,res) => {
     }
     
 })
+// Update password route
+router.put('/customers/:id/update-password', async (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+    const { id } = req.params;
+
+    try {
+        // Find the customer by ID
+        const customer = await Customer.findById(id);
+        if (!customer) {
+            return res.status(404).json({ error: 'Customer not found' });
+        }
+
+        // Check if the current password matches
+        const isMatch = await bcrypt.compare(currentPassword, customer.password);
+        if (!isMatch) {
+            return res.status(400).json({ error: 'Incorrect current password' });
+        }
+
+        // Hash the new password before updating
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        customer.password = hashedPassword;
+        await customer.save();
+
+        res.json({ message: 'Password updated successfully' });
+    } catch (error) {
+        console.error('Error updating password:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
 // view a single customer
 router.get('/:id',async (req,res) => {
     try {

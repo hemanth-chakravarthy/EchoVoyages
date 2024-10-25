@@ -200,6 +200,16 @@ router.get('/:id',async (req,res) => {
     }
     
 })
-
+router.get('/verifyBooking', async (req, res) => {
+    const { customerId, packageId } = req.query;
+  
+    try {
+      const booking = await Booking.findOne({ customerId, packageId });
+      res.status(200).json({ hasBooking: !!booking });
+    } catch (error) {
+      res.status(500).json({ message: 'Error verifying booking', error });
+    }
+  });
+  
 export default router
 
