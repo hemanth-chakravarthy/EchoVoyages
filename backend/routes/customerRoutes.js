@@ -235,7 +235,7 @@ router.put('/customers/:id/update-password', async (req, res) => {
 
     try {
         // Find the customer by ID
-        const customer = await Customer.findById(id);
+        const customer = await customers.findById(id);
         if (!customer) {
             return res.status(404).json({ error: 'Customer not found' });
         }
@@ -251,12 +251,14 @@ router.put('/customers/:id/update-password', async (req, res) => {
         customer.password = hashedPassword;
         await customer.save();
 
-        res.json({ message: 'Password updated successfully' });
+        console.log("Password updated successfully");
+        res.status(200).json({ message: 'Password updated successfully' }); // Added success response
     } catch (error) {
         console.error('Error updating password:', error);
         res.status(500).json({ error: 'Server error' });
     }
 });
+
 // view a single customer
 router.get('/:id',async (req,res) => {
     try {

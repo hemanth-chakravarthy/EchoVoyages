@@ -19,6 +19,8 @@ import GuideProfile from "./pages/GuideProfile"
 import CustomerGuide from "./pages/CustomerGuide"
 import ViewGuide from "./components/ViewGuide"
 import ViewBooking from "./pages/ViewBooking"
+import ForgotPassword from "./pages/ForgotPassword"
+import ResetPassword from "./pages/ResetPassword"
 
 const App = () => {
   return(
@@ -42,6 +44,8 @@ const App = () => {
   <Route path="/guides/:id" element={<PrivateRoute />}>
     <Route path="/guides/:id" element={<ViewGuide />} />
   </Route>
+  <Route path="/forgot-password" element={<ForgotPassword/>}/>
+  <Route path="/reset-password/:id/:token" element={<ResetPassword/>}/>
   <Route path="/AgentHome" element={<PrivateRoute />}>
     <Route path="/AgentHome" element={<AgentHomePage />} />
   </Route>

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {jwtDecode} from 'jwt-decode'; // Corrected import
-import '../assets/css/updateEntity.css'; // Importing the CSS file
+import '../assets/css/updateEntity.css';
 
 const CustomerInfo = () => {
     const [bookings, setBookings] = useState([]);
@@ -14,15 +14,11 @@ const CustomerInfo = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [errors, setErrors] = useState({});
 
-    const totalPackagesBooked = bookings.filter(booking => booking.packageId).length;
-    const totalGuidesBooked = bookings.filter(booking => booking.guideId).length;
-
     const token = localStorage.getItem('token');
     const id = token ? jwtDecode(token).id : null;
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Fetch customer details
         const fetchCustomer = async () => {
             try {
                 const response = await axios.get(`http://localhost:5000/customers/${id}`);
@@ -33,7 +29,6 @@ const CustomerInfo = () => {
             }
         };
 
-        // Fetch bookings data
         const fetchBookingsData = async () => {
             try {
                 const bookingsResponse = await axios.get(`http://localhost:5000/bookings/cust/${id}`);
@@ -52,27 +47,22 @@ const CustomerInfo = () => {
     const validateForm = () => {
         let formErrors = {};
 
-        // Username validation: No special characters except underscores and dots
         if (!/^[a-zA-Z0-9._]+$/.test(customer.username)) {
             formErrors.username = 'Username should only contain letters, numbers, underscores, and dots.';
         }
 
-        // Name validation: Should not contain special characters or numbers
         if (!/^[a-zA-Z\s]+$/.test(customer.name)) {
             formErrors.name = 'Name should only contain letters and spaces.';
         }
 
-        // Phone Number: 10 digits only
         if (!/^\d{10}$/.test(customer.phoneNumber)) {
             formErrors.phoneNumber = 'Phone number should be a 10-digit number.';
         }
 
-        // Email: Valid email pattern
         if (!/^[\w-]+@([\w-]+\.)+[\w-]{2,4}$/.test(customer.email)) {
             formErrors.email = 'Email is not valid.';
         }
 
-        // Password validation if the user is changing it
         if (changePassword) {
             if (!/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/.test(newPassword)) {
                 formErrors.newPassword = 'Password must be at least 6 characters long, include a number, a special character, and an uppercase letter.';
@@ -100,7 +90,7 @@ const CustomerInfo = () => {
     };
 
     const handleUpdateCustomer = async () => {
-        if (!validateForm()) return;
+        // if (!validateForm()) return;
 
         try {
             await axios.put(`http://localhost:5000/customers/${id}`, customer);
@@ -127,7 +117,11 @@ const CustomerInfo = () => {
             setNewPassword('');
             setConfirmPassword('');
         } catch (error) {
-            alert('Error updating password. Please check the current password.');
+            if (error.response && error.response.status === 400) {
+                alert('Incorrect current password.');
+            } else {
+                alert('Error updating password. Please try again later.');
+            }
             console.log(error);
         }
     };
@@ -165,7 +159,7 @@ const CustomerInfo = () => {
                                 onChange={handleChange}
                                 className="input-field"
                             />
-                            {errors.Name && <p className="error-message">{errors.Name}</p>}
+                            {errors.name && <p className="error-message">{errors.name}</p>}
                             <label>Username</label>
                             <input
                                 type="text"
@@ -178,30 +172,30 @@ const CustomerInfo = () => {
                             <label>Phone Number</label>
                             <input
                                 type="text"
-                                name="phoneNumber"
+                                name="phno"
                                 value={customer.phno || ''}
                                 onChange={handleChange}
                                 className="input-field"
                             />
-                            {errors.phno && <p className="error-message">{errors.phno}</p>}
+                            {errors.phoneNumber && <p className="error-message">{errors.phoneNumber}</p>}
                             <label>Email</label>
                             <input
                                 type="text"
-                                name="email"
+                                name="gmail"
                                 value={customer.gmail || ''}
                                 onChange={handleChange}
                                 className="input-field"
                             />
-                            {errors.gmail && <p className="error-message">{errors.gmail}</p>}
+                            {errors.email && <p className="error-message">{errors.email}</p>}
                             <button onClick={handleUpdateCustomer} className="save-button">
                                 Save Changes
                             </button>
                         </div>
                     ) : (
                         <div>
-                            {['name', 'username', 'phoneNumber', 'email'].map((field) => (
+                            {['Name', 'username', 'phno', 'gmail'].map((field) => (
                                 <div className="profile-item" key={field}>
-                                    <span className="label">{field}:</span>
+                                    <span className="label">{field.charAt(0).toUpperCase() + field.slice(1)}:</span>
                                     <span>{customer[field] || 'N/A'}</span>
                                 </div>
                             ))}
@@ -237,6 +231,24 @@ const CustomerInfo = () => {
                                 Update Password
                             </button>
                         </div>
+                    )}
+                </div>
+            </div>
+            <div className="booking-list">
+                <h2>Previous Bookings</h2>
+                <div className="bookings-grid">
+                    {bookings.length > 0 ? (
+                        bookings.map((booking) => (
+                            <div key={booking._id} className="booking">
+                                <h3>Package: {booking.packageName || 'N/A'}</h3>
+                                <p><strong>Guide Name:</strong> {booking.guideName || 'N/A'}</p>
+                                <p><strong>Total Price:</strong> ${booking.totalPrice}</p>
+                                <p><strong>Status:</strong> {booking.status}</p>
+                                <p><strong>Booking Date:</strong> {new Date(booking.bookingDate).toLocaleDateString()}</p>
+                            </div>
+                        ))
+                    ) : (
+                        <p>No previous bookings available.</p>
                     )}
                 </div>
             </div>

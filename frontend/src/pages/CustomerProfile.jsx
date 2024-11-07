@@ -41,8 +41,8 @@ const CustomerProfile = () => {
     return (
         <div className="profile-page">
             <Navbar/>
-
             {customer ? <CustomerInfo customer={customer} /> : <p>Loading customer info...</p>}
+            
         </div>
     );
 };

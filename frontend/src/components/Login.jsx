@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import './Signup.css'; // Reuse styles
 
 const Login = () => {
@@ -142,6 +143,7 @@ const Login = () => {
                 </div>
                 <button type="submit" className="submit-btn">Log In</button>
             </form>
+            <Link to='/forgot-password'>Forgot Password?</Link>
 
             {/* Admin Login Button */}
             <button className="admin-btn" onClick={() => setIsAdminModalOpen(true)}>Admin Login</button>
