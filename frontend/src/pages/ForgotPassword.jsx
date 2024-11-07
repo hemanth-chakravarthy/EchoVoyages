@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const ForgotPassword = () => {
-    const [gmail, setEmail] = useState();
     const navigate = useNavigate();
     // Handle input changes
     const [formData, setFormData] = useState({
@@ -18,9 +17,9 @@ const ForgotPassword = () => {
     };
     const handleSubmit = (e) => {
         e.preventDefault()
-        axios.post('http://localhost:5000/forgot-password', {gmail})
+        axios.post('http://localhost:5000/forgot-password', {gmail:formData.gmail})
         .then(res => {
-            if(res.data.Status === "Success") {
+            if(res.data.status === "Success") {
                 navigate('/')
                
             }

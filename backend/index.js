@@ -56,7 +56,7 @@ app.post('/forgot-password', (req, res) => {
   // Log the request body for debugging
   console.log("Request body:", req.body);
 
-  customers.findOne({ email: gmail })  // Make sure 'email' matches your schema field
+  customers.findOne({ gmail: gmail })  // Make sure 'email' matches your schema field
     .then(user => {
       if (!user) {
         console.log("User not found in database");
@@ -75,7 +75,7 @@ app.post('/forgot-password', (req, res) => {
 
       const mailOptions = {
         from: 'ksaiananya5104@gmail.com',
-        to: 'saiananya.k22@iiits.in',  // Using the email from request body
+        to: gmail,  // Using the email from request body
         subject: 'Reset Password Link',
         text: `Please click the link to reset your password: http://localhost:5173/reset-password/${user._id}/${token}`
       };
