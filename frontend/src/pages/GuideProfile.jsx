@@ -172,6 +172,11 @@ const GuideProfilePage = () => {
             availableDates: updatedDates,
         });
     };
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+
+        navigate('/');
+    };
     
     const handleSaveChanges = async () => {
         if (!validateForm()) {
@@ -390,6 +395,7 @@ const GuideProfilePage = () => {
                     </button>
                 )}
             </div>
+            <p className="logout-btn" onClick={handleLogout}>Logout</p>
         </div>
     );
 };
