@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import './Signup.css'; // Reuse styles
+import './Signup.css';
 
 const Login = () => {
     const [formData, setFormData] = useState({
         username: '',
-        password: '',
-        role: 'customer', // Default role
+        password: ''
     });
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
@@ -46,33 +45,30 @@ const Login = () => {
             });
 
             if (response.ok) {
-                console.log("Login successful!");
-                setFormData({
-                    username: '',
-                    password: '',
-                    role: 'customer'
-                });
-                
                 const data = await response.json();
                 localStorage.setItem('token', data.token);
 
-                // Redirect based on role
-                if (formData.role === 'customer') {
+                // Redirect based on the role provided in the response
+                if (data.role === 'customer') {
                     navigate('/home');
-                } else if (formData.role === 'travel agency') {
+                } else if (data.role === 'agency') {
                     navigate('/AgentHome');
-                } else {
+                } else if (data.role === 'guide') {
                     navigate('/guideHome');
+                } else {
+                    setErrors({ login: 'Unknown user role' });
                 }
             } else {
                 const data = await response.json();
-                setErrors({ login: data.error || 'Login failed.' });
+                setErrors({ login: data.msg || 'Login failed.' });
             }
         } catch (err) {
             console.error("Error logging in:", err);
+            setErrors({ login: 'Server error. Please try again later.' });
         }
     };
 
+    // Handle admin login
     const handleAdminLogin = async () => {
         try {
             const response = await fetch('http://localhost:5000/customers/adminlogin', {
@@ -80,10 +76,7 @@ const Login = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    username: adminCredentials.username,
-                    password: adminCredentials.password,
-                }),
+                body: JSON.stringify(adminCredentials),
             });
     
             const data = await response.json();
@@ -99,9 +92,6 @@ const Login = () => {
             setAdminError('An error occurred. Please try again.');
         }
     };
-    
-
-   
 
     return (
         <div>
@@ -128,19 +118,7 @@ const Login = () => {
                         required
                     />
                 </div>
-                <div className="form-group">
-                    <label>Role</label>
-                    <select
-                        name="role"
-                        value={formData.role}
-                        onChange={handleInputChange}
-                        required
-                    >
-                        <option value="customer">Customer</option>
-                        <option value="travel agency">Travel Agency</option>
-                        <option value="guide">Guide</option>
-                    </select>
-                </div>
+                
                 <button type="submit" className="submit-btn">Log In</button>
             </form>
             <Link to='/forgot-password'>Forgot Password?</Link>
@@ -155,10 +133,10 @@ const Login = () => {
                         <h2>Admin Login</h2>
                         {adminError && <p className="error-message">{adminError}</p>}
                         <input
-                            type="text" // Change input type from email to text for username
-                            placeholder="Admin Username" // Update placeholder to reflect username
-                            value={adminCredentials.username} // Use adminCredentials.username instead of email
-                            onChange={(e) => setAdminCredentials({ ...adminCredentials, username: e.target.value })} // Update state with username
+                            type="text"
+                            placeholder="Admin Username"
+                            value={adminCredentials.username}
+                            onChange={(e) => setAdminCredentials({ ...adminCredentials, username: e.target.value })}
                         />
                         <input
                             type="password"

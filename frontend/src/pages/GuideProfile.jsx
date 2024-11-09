@@ -148,13 +148,13 @@ const GuideProfilePage = () => {
             errors.location = 'Location is required';
         }
     
-        if (!updatedGuide.contact.phone || updatedGuide.contact.phone.trim() === '') {
+        if (!updatedGuide.phno || updatedGuide.phno.trim() === '') {
             errors.phone = 'Phone number is required';
-        } else if (!/^\d{10}$/.test(updatedGuide.contact.phone)) {
+        } else if (!/^\d{10}$/.test(updatedGuide.phno)) {
             errors.phone = 'Phone number must be 10 digits';
         }
     
-        if (!updatedGuide.contact.email || !/\S+@\S+\.\S+/.test(updatedGuide.contact.email)) {
+        if (!updatedGuide.gmail || !/\S+@\S+\.\S+/.test(updatedGuide.gmail)) {
             errors.email = 'A valid email address is required';
         }
          // Validate date ranges
@@ -350,13 +350,13 @@ const GuideProfilePage = () => {
                 type="text"
                 name="phone"
                 className="input-field"
-                value={updatedGuide.contact.phone}
+                value={updatedGuide.phno}
                 onChange={(e) => handleNestedChange(e, 'contact')}
             />
             {validationErrors.phone && <p className="error-message">{validationErrors.phone}</p>}
         </>
     ) : (
-        guide.contact.phone
+        guide.phno
     )}</p>
                 <p><strong>Email:</strong> {editing ? (
         <>
@@ -364,13 +364,13 @@ const GuideProfilePage = () => {
                 type="email"
                 name="email"
                 className="input-field"
-                value={updatedGuide.contact.email}
+                value={updatedGuide.gmail}
                 onChange={(e) => handleNestedChange(e, 'contact')}
             />
             {validationErrors.email && <p className="error-message">{validationErrors.email}</p>}
         </>
     ) : (
-        guide.contact.email
+        guide.gmail
     )}</p>
             </div>
 

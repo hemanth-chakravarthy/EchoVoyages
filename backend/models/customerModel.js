@@ -26,7 +26,12 @@ const customerSchema = mongoose.Schema(
         },
         role :{
             type: String,
-            required: true,
+            default: 'custome'
+        },
+        specialization: {
+            type: String, // e.g., luxury, adventure
+            required: false,
+            enum: ['luxury', 'adventure', 'business', 'family', 'other']
         }
     },
     {

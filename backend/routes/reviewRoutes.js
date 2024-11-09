@@ -143,7 +143,7 @@ router.get('/guides/:guideId', async (req, res) => {
 
         // If no reviews are found
         if (revs.length === 0) {
-            return res.status(404).json({ message: 'No reviews found for this package' });
+            return res.status(404).json({ message: 'No reviews found for this guide' });
         }
 
         // Send the found reviews as a response

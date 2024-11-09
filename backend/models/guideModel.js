@@ -24,15 +24,19 @@ const guideSchema = new mongoose.Schema({
         type: String,
         required: false
     },
-    contact: {
-        phone: {
-            type: String,
-            required: true
-        },
-        email: {
-            type: String,
-            required: true
-        }
+    
+    phno: {
+        type: String,
+        required: true
+    },
+    gmail: {
+        type: String,
+        required: true
+    },
+
+    role: {
+        type: String,
+        default: 'guide',
     },
     password : {
         type: String,

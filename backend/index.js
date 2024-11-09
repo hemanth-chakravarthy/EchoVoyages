@@ -53,8 +53,7 @@ app.use('/public', express.static('public'));
 app.post('/forgot-password', (req, res) => {
   const { gmail } = req.body;
 
-  // Log the request body for debugging
-  console.log("Request body:", req.body);
+
 
   customers.findOne({ gmail: gmail })  // Make sure 'email' matches your schema field
     .then(user => {

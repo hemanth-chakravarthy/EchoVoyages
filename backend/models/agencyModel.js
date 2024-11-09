@@ -34,6 +34,10 @@ const agencySchema = mongoose.Schema(
             required: false,
             trim: true
         },
+        role: {
+            type: String,
+            default: 'agency',
+        },
         specialization: {
             type: String, // e.g., luxury, adventure
             required: false,
@@ -76,6 +80,7 @@ const agencySchema = mongoose.Schema(
         ],
         
     },
+    
     {
         timestamps: true
     }

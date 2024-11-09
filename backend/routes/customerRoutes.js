@@ -6,6 +6,7 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { Admin } from '../models/adminModel.js';
 const router = express.Router()
+const JWT_SECRET ='Voyage_secret'
 
 
 //save a customer
@@ -52,7 +53,7 @@ router.post('/signup',async(req,res)=>{
             const newAgency = {
                 username: req.body.username, 
                 name: req.body.Name, 
-                contactInfo: {email: req.body.gmail, phone: req.body.phno},
+                contactInfo: {username: req.body.gmail, phone: req.body.phno},
                 password: hashedPassword,
             }
             const agency = await Agency.create(newAgency)
@@ -68,7 +69,8 @@ router.post('/signup',async(req,res)=>{
             const newGuide = {
                 username: req.body.username, 
                 name: req.body.Name, 
-                contact: {email: req.body.gmail, phone: req.body.phno},
+                phno: req.body.phno, 
+                gmail: req.body.gmail, 
                 password: hashedPassword,
             }
             const guide = await Guide.create(newGuide)
@@ -81,80 +83,33 @@ router.post('/signup',async(req,res)=>{
 })
 
 router.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+
     try {
-        const { username, password, role } = req.body;
-        console.log(username, role);
-        if(role == 'customer')
-        {
-            // Find user by username
-            const user = await customers.findOne({ username });
-            if (!user) {
-                return res.status(400).json({ message: 'Invalid credentials' });
-            }
-
-            // Compare passwords
-            const isMatch = await bcrypt.compare(password, user.password);
-            if (!isMatch) {
-                return res.status(400).json({ message: 'Invalid credentials' });
-            }
-
-            // Generate JWT token
-            const token = jwt.sign({ id: user._id }, 'Voyage_secret',{
-                expiresIn: '1h',
-            });
-            
-
-            res.status(200).json({ token: token, message: 'Login successful' });
-        }
-        else if(role == 'travel agency')
-        {
-            // Find user by username
-            const user = await Agency.findOne({ username });
-            if (!user) {
-                return res.status(400).json({ message: 'Invalid credentials' });
-            }
-
-            // Compare passwords
-            const isMatch = await bcrypt.compare(password, user.password);
-            if (!isMatch) {
-                return res.status(400).json({ message: 'Invalid credentials' });
-            }
-
-            // Generate JWT token
-            const token = jwt.sign({ id: user._id }, 'Voyage_secret',{
-                expiresIn: '1h',
-            });
-            
-
-            res.status(200).json({ token: token, message: 'Login successful' });
-        }
-        else if(role == 'guide')
-        {
-            // Find user by username
-            const user = await Guide.findOne({ username });
-            if (!user) {
-                return res.status(400).json({ message: 'Invalid credentials' });
-            }
-
-            // Compare passwords
-            const isMatch = await bcrypt.compare(password, user.password);
-            if (!isMatch) {
-                return res.status(400).json({ message: 'Invalid credentials' });
-            }
-
-            // Generate JWT token
-            const token = jwt.sign({ id: user._id }, 'Voyage_secret',{
-                expiresIn: '1h',
-            });
-            
-
-            res.status(200).json({ token: token, message: 'Login successful' });
+        if (!username || !password) {
+            return res.status(400).json({ msg: 'Please enter all fields' });
         }
 
-    } catch (error) {
-        res.status(500).json({ message: 'Internal server error' });
+        const user = await customers.findOne({ username }) || await Agency.findOne({ username }) || await Guide.findOne({username});
+        if (!user) {
+            return res.status(400).json({ msg: 'Invalid username or password' });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ msg: 'Invalid username or password' });
+        }
+
+        const payload = { id: user._id, role: user.role };
+        const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
+
+        res.json({ token, msg: `${user.role} logged in successfully`, role: user.role }); // Include role in response
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
     }
 });
+
 
 router.post('/adminlogin', async (req, res) => {
     const { username, password } = req.body;
