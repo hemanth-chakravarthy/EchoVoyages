@@ -1,15 +1,12 @@
-import React from 'react'
-import CreatePackage from '../components/createPackage'
-import Signup from '../components/Signup'
-import Login from '../components/Login'
+import React from "react";
+import Signup from "../components/Signup";
 
 const LandingPage = () => {
   return (
     <div>
-      <Signup/>
-      <Login/>
+      <Signup />
     </div>
-  )
-}
+  );
+};
 
-export default LandingPage
+export default LandingPage;
