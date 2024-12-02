@@ -64,23 +64,42 @@ const AgentHomePage = () => {
           </div>
         </div>
       </div>
-      <h1>Listed Packages</h1>
+      <h1 className="text-center font-bold text-4xl m-8">Listed Packages</h1>
       {bookedPackages.length > 0 ? (
-        <ul>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-4 ml-16 ">
           {bookedPackages.map((pkg) => (
-            <li key={pkg._id}>
-              <h2>{pkg.name}</h2>
-              <p>Description: {pkg.description}</p>
-              <p>Price: Rs. {pkg.price}</p>
-              <p>Duration: {pkg.duration} days</p>
-              <Link to={`/packages/${pkg._id}`}>
-                <button>View Package</button>
-              </Link>
-            </li>
+            <div
+              key={pkg._id}
+              className="card card-compact bg-base-100 w-96 shadow-xl"
+            >
+              <figure>
+                <img
+                  src={
+                    pkg.image && pkg.image.length > 0
+                      ? `http://localhost:5000${pkg.image[0]}`
+                      : "https://via.placeholder.com/300"
+                  }
+                  alt={pkg.name}
+                />
+              </figure>
+              <div className="card-body">
+                <h2 className="card-title">{pkg.name}</h2>
+                <p>{pkg.description}</p>
+                <p>Price: Rs. {pkg.price}</p>
+                <p>Duration: {pkg.duration} days</p>
+                <div className="card-actions justify-end">
+                  <Link to={`/packages/${pkg._id}`}>
+                    <button className="btn btn-primary">View Package</button>
+                  </Link>
+                </div>
+              </div>
+            </div>
           ))}
-        </ul>
+        </div>
       ) : (
-        <p>No packages booked.</p>
+        <p className="text-center font-medium text-xl m-8">
+          No packages booked.
+        </p>
       )}
     </div>
   );
