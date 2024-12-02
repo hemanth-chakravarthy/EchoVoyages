@@ -66,7 +66,7 @@ const AgentHomePage = () => {
         </div>
       </div>
       <h1 className="text-center font-bold text-4xl m-8">Listed Packages</h1>
-      {bookedPackages.length > 0 ? (
+      {requests.length > 0 ? (
         <ul>
           {requests.map((req) => (
             <li key={req._id} className="mb-4 p-4 border rounded-lg shadow-sm">
