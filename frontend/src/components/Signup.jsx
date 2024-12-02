@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     username: "",
     Name: "",
@@ -162,6 +164,7 @@ const Signup = () => {
         });
         setErrors({});
         alert("Signup successful!");
+        navigate('/login')
         console.log("Signup successful!");
       } else {
         const data = await response.json();
@@ -297,7 +300,7 @@ const Signup = () => {
                 className="input input-bordered w-full"
               >
                 <option value="customer">Customer</option>
-                <option value="local-guide">Local Guide</option>
+                <option value="guide">Local Guide</option>
                 <option value="travel-agency">Travel Agency</option>
               </select>
             </div>

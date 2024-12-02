@@ -13,11 +13,14 @@ import agencyRoutes from "./routes/agencyRoutes.js";
 import wishlistRoutes from "./routes/wishlistRoutes.js";
 import wishlistGuideRoutes from "./routes/wishlistGuideRoutes.js";
 import { customers } from "./models/customerModel.js";
+import { Agency } from "./models/agencyModel.js";
+import { Guide } from "./models/guideModel.js";
 import cors from "cors";
 import multer from "multer";
 import path from "path";
 import jwt from "jsonwebtoken";
 import searchRoutes from "./routes/searchRoutes.js";
+import requests from './routes/requestRoutes.js'
 import nodemailer from "nodemailer";
 mongoose
   .connect(mongoURL)
@@ -50,55 +53,65 @@ app.use("/agency", agencyRoutes);
 app.use("/wishlist", wishlistRoutes);
 app.use("/search", searchRoutes);
 app.use("/wishlistGuides", wishlistGuideRoutes);
+app.use('/requests',requests)
 app.use("/public", express.static("public"));
 
 // forgot password
-app.post("/forgot-password", (req, res) => {
+app.post("/forgot-password", async (req, res) => {
   const { gmail } = req.body;
 
-  customers
-    .findOne({ gmail: gmail }) // Make sure 'email' matches your schema field
-    .then((user) => {
-      if (!user) {
-        console.log("User not found in database");
-        return res.send({ status: "User not found" });
-      }
+  try {
+    let user = await customers.findOne({ gmail });
+    let userType = "Customer";
 
-      const token = jwt.sign({ id: user._id }, "Voyage_secret1", {
-        expiresIn: "1h",
-      });
+    if (!user) {
+      user = await Agency.findOne({ gmail });
+      userType = "Agency";
+    }
 
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: "ksaiananya5104@gmail.com",
-          pass: "iiqy lxus jqet vbzh",
-        },
-      });
+    if (!user) {
+      user = await Guide.findOne({ gmail });
+      userType = "Guide";
+    }
 
-      const mailOptions = {
-        from: "ksaiananya5104@gmail.com",
-        to: gmail, // Using the email from request body
-        subject: "Reset Password Link",
-        text: `Please click the link to reset your password: http://localhost:5173/reset-password/${user._id}/${token}`,
-      };
+    if (!user) {
+      console.log("User not found in any database");
+      return res.send({ status: "User not found" });
+    }
 
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          console.log("Error sending email:", error);
-          return res.send({ status: "Error sending email" });
-        } else {
-          console.log("Email sent:", info.response);
-          return res.send({ status: "Success" });
-        }
-      });
-    })
-    .catch((err) => {
-      console.error("Database error:", err);
-      res.send({ status: "Database error", error: err.message });
+    const token = jwt.sign({ id: user._id }, "Voyage_secret1", {
+      expiresIn: "1h",
     });
-});
 
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "ksaiananya5104@gmail.com",
+        pass: "iiqy lxus jqet vbzh",
+      },
+    });
+
+    const mailOptions = {
+      from: "ksaiananya5104@gmail.com",
+      to: gmail,
+      subject: "Reset Password Link",
+      text: `Hello ${userType},\n\nPlease click the link below to reset your password:\n\nhttp://localhost:5173/reset-password/${user._id}/${token}\n\nThis link will expire in 1 hour.`,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log("Error sending email:", error);
+        return res.send({ status: "Error sending email" });
+      } else {
+        console.log("Email sent:", info.response);
+        return res.send({ status: "Success", userType });
+      }
+    });
+  } catch (error) {
+    console.error("Error:", error);
+    res.send({ status: "Error", message: error.message });
+  }
+});
 app.post("/reset-password/:id/:token", (req, res) => {
   const { id, token } = req.params;
   const { password } = req.body;
