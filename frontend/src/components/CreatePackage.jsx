@@ -22,7 +22,9 @@ const CreatePackage = () => {
   });
 
   const [images, setImages] = useState([]);
-  const [errors, setErrors] = useState({}); // State for validation errors
+  const [errors, setErrors] = useState({});
+  const [currentStep, setCurrentStep] = useState(1);
+  const [progress, setProgress] = useState(33);
 
   // Handling form data changes
   const handleInputChange = (e) => {
@@ -38,27 +40,37 @@ const CreatePackage = () => {
     setImages([...e.target.files]);
   };
 
-  // Validation logic
+  // Validation logic for all steps
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.name) newErrors.name = "Package name is required.";
-    if (!formData.description)
-      newErrors.description = "Description is required.";
-    if (formData.price <= 0)
-      newErrors.price = "Price must be a positive number.";
-    if (formData.duration <= 0)
-      newErrors.duration = "Duration must be greater than 0.";
-    if (!formData.location) newErrors.location = "Location is required.";
-    if (!formData.itinerary) newErrors.itinerary = "Itinerary is required.";
-    if (!formData.highlights) newErrors.highlights = "Highlights are required.";
-    if (!formData.availableDates)
-      newErrors.availableDates = "Available dates are required.";
-    if (formData.maxGroupSize <= 0)
-      newErrors.maxGroupSize = "Max group size must be greater than 0.";
+    if (currentStep === 1) {
+      if (!formData.name) newErrors.name = "Package name is required.";
+      if (!formData.description)
+        newErrors.description = "Description is required.";
+      if (formData.price <= 0)
+        newErrors.price = "Price must be a positive number.";
+      if (formData.duration <= 0)
+        newErrors.duration = "Duration must be greater than 0.";
+      if (!formData.location) newErrors.location = "Location is required.";
+    }
+
+    if (currentStep === 2) {
+      if (!formData.itinerary) newErrors.itinerary = "Itinerary is required.";
+      if (!formData.highlights)
+        newErrors.highlights = "Highlights are required.";
+      if (!formData.availableDates)
+        newErrors.availableDates = "Available dates are required.";
+      if (formData.maxGroupSize <= 0)
+        newErrors.maxGroupSize = "Max group size must be greater than 0.";
+    }
+
+    if (currentStep === 3 && images.length === 0) {
+      newErrors.images = "At least one image is required.";
+    }
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0; // Return true if no errors
+    return Object.keys(newErrors).length === 0;
   };
 
   // Handling form submission
@@ -81,10 +93,9 @@ const CreatePackage = () => {
     try {
       const response = await fetch("http://localhost:5000/packages", {
         method: "POST",
-        body: formPayload, // No need to set headers for FormData
+        body: formPayload,
       });
       if (response.ok) {
-        // Reset form fields and images if successful
         setFormData({
           name: "",
           description: "",
@@ -99,8 +110,11 @@ const CreatePackage = () => {
           AgentName: AgentName,
         });
         setImages([]);
-        navigate("/AgentHome");
-        console.log("Package created successfully!");
+        setProgress(100); // Complete the progress bar
+        document.getElementById("my_modal_3").showModal(); // Open the modal
+        setTimeout(() => {
+          navigate("/AgentHome");
+        }, 2000); // Redirect after dialog disappears
       } else {
         console.log("Failed to create package.");
       }
@@ -109,147 +123,236 @@ const CreatePackage = () => {
     }
   };
 
+  // Handling next step
+  const nextStep = () => {
+    if (!validateForm()) return; // Validate before moving to the next step
+    if (currentStep < 3) {
+      setCurrentStep(currentStep + 1);
+      setProgress(progress + 33);
+    }
+  };
+
+  // Handling previous step
+  const prevStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+      setProgress(progress - 33);
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmit} encType="multipart/form-data">
-      <div className="form-group">
-        <label>Package Name</label>
-        <input
-          type="text"
-          name="name"
-          value={formData.name}
-          onChange={handleInputChange}
-          className={errors.name ? "input-error" : ""}
-          required
-        />
-        {errors.name && <p className="error-message">{errors.name}</p>}
+    <form
+      onSubmit={handleSubmit}
+      encType="multipart/form-data"
+      className="space-y-6 max-w-4xl mx-auto"
+    >
+      {/* Progress Bar */}
+      <div className="flex justify-center my-4">
+        <progress
+          className="progress w-56"
+          value={progress}
+          max="100"
+        ></progress>
       </div>
 
-      <div className="form-group">
-        <label>Description</label>
-        <textarea
-          name="description"
-          value={formData.description}
-          onChange={handleInputChange}
-          className={errors.description ? "input-error" : ""}
-          required
-        />
-        {errors.description && (
-          <p className="error-message">{errors.description}</p>
+      {/* Step 1: Package Info */}
+      {currentStep === 1 && (
+        <div>
+          <div>
+            <label htmlFor="name">Package Name</label>
+            <input
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleInputChange}
+              type="text"
+              placeholder="Enter package name"
+              className="input input-bordered w-full"
+            />
+            {errors.name && <p className="text-red-500">{errors.name}</p>}
+          </div>
+
+          <div>
+            <label htmlFor="description">Description</label>
+            <textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              placeholder="Enter description"
+              className="textarea textarea-bordered w-full"
+            />
+            {errors.description && (
+              <p className="text-red-500">{errors.description}</p>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="price">Price</label>
+            <input
+              id="price"
+              name="price"
+              value={formData.price}
+              onChange={handleInputChange}
+              type="number"
+              placeholder="Enter price"
+              className="input input-bordered w-full"
+            />
+            {errors.price && <p className="text-red-500">{errors.price}</p>}
+          </div>
+
+          <div>
+            <label htmlFor="duration">Duration</label>
+            <input
+              id="duration"
+              name="duration"
+              value={formData.duration}
+              onChange={handleInputChange}
+              type="number"
+              placeholder="Enter duration"
+              className="input input-bordered w-full"
+            />
+            {errors.duration && (
+              <p className="text-red-500">{errors.duration}</p>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="location">Location</label>
+            <input
+              id="location"
+              name="location"
+              value={formData.location}
+              onChange={handleInputChange}
+              type="text"
+              placeholder="Enter location"
+              className="input input-bordered w-full"
+            />
+            {errors.location && (
+              <p className="text-red-500">{errors.location}</p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Step 2: Package Details */}
+      {currentStep === 2 && (
+        <div>
+          <div>
+            <label htmlFor="itinerary">Itinerary</label>
+            <textarea
+              id="itinerary"
+              name="itinerary"
+              value={formData.itinerary}
+              onChange={handleInputChange}
+              placeholder="Enter itinerary"
+              className="textarea textarea-bordered w-full"
+            />
+            {errors.itinerary && (
+              <p className="text-red-500">{errors.itinerary}</p>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="highlights">Highlights</label>
+            <textarea
+              id="highlights"
+              name="highlights"
+              value={formData.highlights}
+              onChange={handleInputChange}
+              placeholder="Enter highlights"
+              className="textarea textarea-bordered w-full"
+            />
+            {errors.highlights && (
+              <p className="text-red-500">{errors.highlights}</p>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="availableDates">Available Dates</label>
+            <input
+              id="availableDates"
+              name="availableDates"
+              value={formData.availableDates}
+              onChange={handleInputChange}
+              type="date"
+              className="input input-bordered w-full"
+            />
+            {errors.availableDates && (
+              <p className="text-red-500">{errors.availableDates}</p>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="maxGroupSize">Max Group Size</label>
+            <input
+              id="maxGroupSize"
+              name="maxGroupSize"
+              value={formData.maxGroupSize}
+              onChange={handleInputChange}
+              type="number"
+              placeholder="Enter max group size"
+              className="input input-bordered w-full"
+            />
+            {errors.maxGroupSize && (
+              <p className="text-red-500">{errors.maxGroupSize}</p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Step 3: Upload Images */}
+      {currentStep === 3 && (
+        <div>
+          <label htmlFor="images">Upload Images</label>
+          <input
+            id="images"
+            name="images"
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleImageChange}
+            className="file-input file-input-bordered w-full"
+          />
+          {errors.images && <p className="text-red-500">{errors.images}</p>}
+        </div>
+      )}
+
+      {/* Navigation Buttons */}
+      <div className="flex justify-between">
+        {currentStep > 1 && (
+          <button
+            type="button"
+            onClick={prevStep}
+            className="btn btn-secondary"
+          >
+            Previous
+          </button>
+        )}
+        {currentStep < 3 && (
+          <button type="button" onClick={nextStep} className="btn btn-primary">
+            Next
+          </button>
+        )}
+        {currentStep === 3 && (
+          <button type="submit" className="btn btn-success">
+            Submit
+          </button>
         )}
       </div>
 
-      <div className="form-group">
-        <label>Price</label>
-        <input
-          type="number"
-          name="price"
-          value={formData.price}
-          onChange={handleInputChange}
-          className={errors.price ? "input-error" : ""}
-          required
-        />
-        {errors.price && <p className="error-message">{errors.price}</p>}
-      </div>
-
-      <div className="form-group">
-        <label>Duration (Days)</label>
-        <input
-          type="number"
-          name="duration"
-          value={formData.duration}
-          onChange={handleInputChange}
-          className={errors.duration ? "input-error" : ""}
-          required
-        />
-        {errors.duration && <p className="error-message">{errors.duration}</p>}
-      </div>
-
-      <div className="form-group">
-        <label>Location</label>
-        <input
-          type="text"
-          name="location"
-          value={formData.location}
-          onChange={handleInputChange}
-          className={errors.location ? "input-error" : ""}
-          required
-        />
-        {errors.location && <p className="error-message">{errors.location}</p>}
-      </div>
-
-      <div className="form-group">
-        <label>Itinerary</label>
-        <textarea
-          name="itinerary"
-          value={formData.itinerary}
-          onChange={handleInputChange}
-          className={errors.itinerary ? "input-error" : ""}
-          required
-        />
-        {errors.itinerary && (
-          <p className="error-message">{errors.itinerary}</p>
-        )}
-      </div>
-
-      <div className="form-group">
-        <label>Highlights</label>
-        <input
-          type="text"
-          name="highlights"
-          value={formData.highlights}
-          onChange={handleInputChange}
-          className={errors.highlights ? "input-error" : ""}
-          required
-        />
-        {errors.highlights && (
-          <p className="error-message">{errors.highlights}</p>
-        )}
-      </div>
-
-      <div className="form-group">
-        <label>Available Dates</label>
-        <input
-          type="date"
-          name="availableDates"
-          value={formData.availableDates}
-          onChange={handleInputChange}
-          className={errors.availableDates ? "input-error" : ""}
-          required
-        />
-        {errors.availableDates && (
-          <p className="error-message">{errors.availableDates}</p>
-        )}
-      </div>
-
-      <div className="form-group">
-        <label>Max Group Size</label>
-        <input
-          type="number"
-          name="maxGroupSize"
-          value={formData.maxGroupSize}
-          onChange={handleInputChange}
-          className={errors.maxGroupSize ? "input-error" : ""}
-          required
-        />
-        {errors.maxGroupSize && (
-          <p className="error-message">{errors.maxGroupSize}</p>
-        )}
-      </div>
-
-      <div className="form-group">
-        <label>Images</label>
-        <input
-          type="file"
-          name="images"
-          onChange={handleImageChange}
-          multiple
-          required
-        />
-      </div>
-
-      <button type="submit" className="submit-button">
-        Create Package
-      </button>
+      {/* Modal */}
+      <dialog id="my_modal_3" className="modal">
+        <div className="modal-box">
+          <form method="dialog">
+            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+              ✕
+            </button>
+          </form>
+          <h3 className="font-bold text-lg">Success!</h3>
+          <p className="py-4">Your package has been successfully created.</p>
+        </div>
+      </dialog>
     </form>
   );
 };

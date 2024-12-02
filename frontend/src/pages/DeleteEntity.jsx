@@ -1,35 +1,35 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate, useParams } from 'react-router-dom';
-import BackButton from '../components/BackButton';
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate, useParams } from "react-router-dom";
+import BackButton from "../components/BackButton";
 
 const DeleteEntity = () => {
-    const navigate = useNavigate();
-    const { id, entity } = useParams(); 
-    const [entityType, setEntityType] = useState(entity || 'customers');
+  const navigate = useNavigate();
+  const { id, entity } = useParams();
+  const [entityType, setEntityType] = useState(entity || "customers");
 
-    const handleDelete = () => {
-        axios
-            .delete(`http://localhost:5000/admin/${entityType}/${id}`)
-            .then(() => {
-                navigate(`/admin`);
-            })
-            .catch((error) => {
-                alert('An error occurred while deleting the entity');
-                console.log(error);
-            });
-    };
+  const handleDelete = () => {
+    axios
+      .delete(`http://localhost:5000/admin/${entityType}/${id}`)
+      .then(() => {
+        navigate(`/admin`);
+      })
+      .catch((error) => {
+        alert("An error occurred while deleting the entity");
+        console.log(error);
+      });
+  };
 
-    return (
-        <div>
-            <BackButton />
-            <h1>Delete {entityType.charAt(0).toUpperCase() + entityType.slice(1)}</h1>
-            <div>
-                <h3>Are you sure you want to delete this {entityType.slice(0, -1)}?</h3>
-                <button onClick={handleDelete}>Yes, Delete it</button>
-            </div>
-        </div>
-    );
+  return (
+    <div>
+      <BackButton />
+      <h1>Delete {entityType.charAt(0).toUpperCase() + entityType.slice(1)}</h1>
+      <div>
+        <h3>Are you sure you want to delete this {entityType.slice(0, -1)}?</h3>
+        <button onClick={handleDelete}>Yes, Delete it</button>
+      </div>
+    </div>
+  );
 };
 
 export default DeleteEntity;
