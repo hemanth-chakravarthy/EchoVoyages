@@ -22,6 +22,7 @@ import ViewGuide from "./components/ViewGuide";
 import ViewBooking from "./pages/ViewBooking";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import ViewReq from "./components/ViewReq";
 
 const App = () => {
   return (
@@ -39,14 +40,21 @@ const App = () => {
       <Route path="/home" element={<PrivateRoute />}>
         <Route path="/home" element={<Home />} />
       </Route>
+      {/* <Route path="/login" element={<PrivateRoute />}>
+        <Route path="/login" element={<Login />} />
+      </Route> */}
       {/* <Route path="/login" element={<PrivateRoute />}> */}
       <Route path="/login" element={<Login />} />
       {/* </Route> */}
       <Route path="/CustomerGuide" element={<PrivateRoute />}>
         <Route path="/CustomerGuide" element={<CustomerGuide />} />
       </Route>
+
       <Route path="/guides/:id" element={<PrivateRoute />}>
         <Route path="/guides/:id" element={<ViewGuide />} />
+      </Route>
+      <Route path="/requests/:id" element={<PrivateRoute />}>
+        <Route path="/requests/:id" element={<ViewReq />} />
       </Route>
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password/:id/:token" element={<ResetPassword />} />

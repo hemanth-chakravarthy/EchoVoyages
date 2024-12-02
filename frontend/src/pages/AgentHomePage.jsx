@@ -3,29 +3,30 @@ import { Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
 const AgentHomePage = () => {
-  const [bookedPackages, setPackages] = useState([]);
+  const [requests, setRequests] = useState([]);
   const [allRevs, setReviews] = useState([]);
   const token = localStorage.getItem("token");
   const agentid = jwtDecode(token).id;
 
   useEffect(() => {
-    const fetchPackages = async () => {
+    // Fetching requests for the logged-in agent
+    const fetchRequests = async () => {
       try {
-        const response = await fetch("http://localhost:5000/packages");
+        const response = await fetch(
+          `http://localhost:5000/requests/agen/${agentid}`
+        );
         const data = await response.json();
         if (data && data.data) {
-          const agentPackages = data.data.filter(
-            (pkg) => pkg.AgentID === agentid
-          );
-          setPackages(agentPackages);
+          // Filter requests to only show those belonging to the logged-in agent
+          const agentRequests = data.data;
+          setRequests(agentRequests);
         } else {
-          console.error("No packages found in the response.");
+          console.error("No requests found in the response.");
         }
       } catch (error) {
-        console.error("Failed to fetch packages:", error);
+        console.error("Failed to fetch requests:", error);
       }
     };
-
     const fetchReviews = async () => {
       try {
         const response = await fetch("http://localhost:5000/reviews");
@@ -40,7 +41,7 @@ const AgentHomePage = () => {
       }
     };
 
-    fetchPackages();
+    fetchRequests();
     fetchReviews();
   }, [agentid]);
 
@@ -66,40 +67,33 @@ const AgentHomePage = () => {
       </div>
       <h1 className="text-center font-bold text-4xl m-8">Listed Packages</h1>
       {bookedPackages.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-4 ml-16 ">
-          {bookedPackages.map((pkg) => (
-            <div
-              key={pkg._id}
-              className="card card-compact bg-base-100 w-96 shadow-xl"
-            >
-              <figure>
-                <img
-                  src={
-                    pkg.image && pkg.image.length > 0
-                      ? `http://localhost:5000${pkg.image[0]}`
-                      : "https://via.placeholder.com/300"
-                  }
-                  alt={pkg.name}
-                />
-              </figure>
-              <div className="card-body">
-                <h2 className="card-title">{pkg.name}</h2>
-                <p>{pkg.description}</p>
-                <p>Price: Rs. {pkg.price}</p>
-                <p>Duration: {pkg.duration} days</p>
-                <div className="card-actions justify-end">
-                  <Link to={`/packages/${pkg._id}`}>
-                    <button className="btn btn-primary">View Package</button>
-                  </Link>
-                </div>
-              </div>
-            </div>
+        <ul>
+          {requests.map((req) => (
+            <li key={req._id} className="mb-4 p-4 border rounded-lg shadow-sm">
+              <h2 className="text-xl font-semibold">{req.packageName}</h2>
+              <p>
+                <strong>Customer Name:</strong> {req.customerName}
+              </p>
+              <p>
+                <strong>Status:</strong> {req.status}
+              </p>
+              <p>
+                <strong>Request Date:</strong>{" "}
+                {new Date(req.date).toLocaleDateString()}
+              </p>
+              <p>
+                <strong>Message:</strong> {req.message}
+              </p>
+              <Link to={`/requests/${req._id}`}>
+                <button className="mt-2 p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
+                  View Request
+                </button>
+              </Link>
+            </li>
           ))}
-        </div>
+        </ul>
       ) : (
-        <p className="text-center font-medium text-xl m-8">
-          No packages booked.
-        </p>
+        <p>No requests available for your packages.</p>
       )}
     </div>
   );
