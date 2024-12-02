@@ -49,7 +49,7 @@ const App = () => {
       <Route path="/CustomerGuide" element={<PrivateRoute />}>
         <Route path="/CustomerGuide" element={<CustomerGuide />} />
       </Route>
-      
+
       <Route path="/guides/:id" element={<PrivateRoute />}>
         <Route path="/guides/:id" element={<ViewGuide />} />
       </Route>
