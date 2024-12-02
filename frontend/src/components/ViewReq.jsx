@@ -40,6 +40,7 @@ const ViewReq = () => {
     fetchRequestDetails();
   }, [id]);
 
+
   const handleStatusChange = async (newStatus) => {
     try {
       const response = await fetch(`http://localhost:5000/requests/${id}`, {
