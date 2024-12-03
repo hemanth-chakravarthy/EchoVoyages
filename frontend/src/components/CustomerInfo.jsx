@@ -91,7 +91,7 @@ const CustomerInfo = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    navigate("/");
+    navigate("/login");
   };
 
   const handleChange = (e) => {

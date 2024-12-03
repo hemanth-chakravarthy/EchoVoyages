@@ -88,7 +88,6 @@ router.get('/cust/:customerId', async (req, res) => {
     if (!customerId) {
         return res.status(400).json({ message: 'Customer ID is required' });
     }
-
     try {
         // Find bookings associated with the specific customerId
         const booking = await bookings.find({ customerId });
