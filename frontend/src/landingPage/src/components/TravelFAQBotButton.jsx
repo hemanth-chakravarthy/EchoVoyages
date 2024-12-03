@@ -3,24 +3,24 @@ import { Search, ChevronUp, ChevronDown } from 'lucide-react';
 
 const faqData = [
   {
-    question: "What documents do I need for international travel?",
-    answer: "For international travel, you typically need a valid passport. Depending on your destination, you may also need a visa. It's best to check the specific requirements for your destination country well in advance of your trip."
+    question: "How can I book a trip through Echo Voyage?",
+    answer: "To book a trip, log in to your Echo Voyage account, browse available destinations, and select your preferred package. Complete the payment process, and you'll receive a confirmation email with all the details."
   },
   {
-    question: "How early should I arrive at the airport for my flight?",
-    answer: "For domestic flights, it's recommended to arrive at least 2 hours before your scheduled departure time. For international flights, arrive at least 3 hours early. This allows time for check-in, security screening, and any unexpected delays."
+    question: "What payment methods does Echo Voyage accept?",
+    answer: "Echo Voyage accepts credit cards, debit cards, and popular digital payment methods like PayPal and UPI. All transactions are secure and encrypted for your safety."
   },
   {
-    question: "What are the baggage allowance limits?",
-    answer: "Baggage allowances vary by airline and ticket class. Generally, economy class allows one carry-on bag and one personal item. Checked baggage limits typically range from 20-30kg (44-66lbs). Always check with your specific airline for their policy."
+    question: "Can I cancel or modify my booking?",
+    answer: "Yes, you can cancel or modify your booking through the 'My Bookings' section on your dashboard. Please note that cancellation or modification policies may vary depending on the package or service provider."
   },
   {
-    question: "How can I get the best deals on flights and hotels?",
-    answer: "To get the best deals, book in advance, be flexible with your travel dates, use comparison websites, sign up for airline and hotel newsletters, and consider package deals. Traveling during off-peak seasons can also lead to significant savings."
+    question: "How do I contact a local guide through Echo Voyage?",
+    answer: "After booking a package that includes local guide services, you'll find the guide's contact details in the 'My Bookings' section. You can directly communicate with them for assistance."
   },
   {
-    question: "What should I do if I lose my passport while traveling?",
-    answer: "If you lose your passport while traveling, immediately contact your country's nearest embassy or consulate. They can help you get a replacement passport. It's also a good idea to have a photocopy of your passport stored separately or digitally, which can speed up the replacement process."
+    question: "What should I do if I encounter an issue during my trip?",
+    answer: "If you face any issues during your trip, contact our 24/7 support team through the 'Help' section on Echo Voyage. We'll ensure your concerns are addressed promptly."
   }
 ];
 
@@ -31,7 +31,7 @@ const TravelFAQBotButton = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const matchedFaq = faqData.find(faq => 
+    const matchedFaq = faqData.find(faq =>
       faq.question.toLowerCase().includes(question.toLowerCase())
     );
     setAnswer(matchedFaq ? matchedFaq.answer : "I'm sorry, I couldn't find an answer to that question. Please try rephrasing or ask another travel-related question.");
@@ -47,12 +47,12 @@ const TravelFAQBotButton = () => {
         {isOpen ? (
           <>
             <ChevronDown className="w-5 h-5 mr-2" />
-            Close FAQ Bot
+            FAQ
           </>
         ) : (
           <>
             <ChevronUp className="w-5 h-5 mr-2" />
-            Open FAQ Bot
+            FAQ
           </>
         )}
       </button>
@@ -84,18 +84,20 @@ const TravelFAQBotButton = () => {
           )}
           <div>
             <h3 className="font-semibold text-gray-800 mb-2">Popular Questions:</h3>
-            <ul className="list-disc pl-5 text-gray-600">
-              {faqData.map((faq, index) => (
-                <li key={index} className="mb-1">
-                  <button
-                    onClick={() => setQuestion(faq.question)}
-                    className="text-blue-500 hover:text-blue-700 focus:outline-none text-left"
-                  >
-                    {faq.question}
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <div className="overflow-y-auto max-h-60">
+              <ul className="list-disc pl-5 text-gray-600">
+                {faqData.map((faq, index) => (
+                  <li key={index} className="mb-1">
+                    <button
+                      onClick={() => setQuestion(faq.question)}
+                      className="text-blue-500 hover:text-blue-700 focus:outline-none text-left"
+                    >
+                      {faq.question}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       )}

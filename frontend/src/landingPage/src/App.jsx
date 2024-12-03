@@ -26,9 +26,9 @@ const App = () => (
         <AdventureCards />
         <CardDeal />
         <Testimonials />
-        <CTA />
+        <CTA />        
         <GoToTop />
-
+        <TravelFAQBotButton/>
         <Footer />
       </div>
     </div>
