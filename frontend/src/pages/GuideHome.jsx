@@ -72,19 +72,29 @@ const GuideHome = () => {
   }, [guideId]);
 
   return (
-    <div className="guide-home-container">
-      <nav className="navbar">
-        <ul className="navbar-links">
-          <Link to={"/guideHome"} className="navbar-link">
+    <div
+      className="p-6"
+      style={{
+        backgroundColor: "rgba(66, 71, 91, 0.1)", // Custom background color
+        minHeight: "100vh",
+      }}
+    >
+      <nav className="mb-6">
+        <ul className="flex justify-around  text-white p-4 rounded">
+          <Link to={"/guideHome"} className="hover:underline btn btn-primary">
             Guide Home
           </Link>
-          <Link to={`/GuideProfilePage`} className="navbar-link">
+          <Link to={`/GuideProfilePage`} className="hover:underline btn btn-primary">
             Profile Page
           </Link>
         </ul>
       </nav>
-      <div className="statistics-section">
-        <h2>Booking Statistics</h2>
+      <div className="flex justify-center items-center flex-col">
+      <div className="bg-white shadow-lg text-black rounded p-6"
+      style={{ width: "70%" }}>
+        <h2 className="text-2xl font-bold mb-4 text-blue-800">
+          Booking Statistics
+        </h2>
         <p>
           <strong>Total Bookings:</strong> {totalCount}
         </p>
@@ -100,25 +110,25 @@ const GuideHome = () => {
       </div>
       <ViewPendingCustomers />
 
-      <div className="reviews-section">
-        <h2 className="reviews-heading">Reviews</h2>
+      <div 
+      className="mt-6 bg-white shadow-lg rounded p-6 text-black"
+      style={{ width: "70%" }}>
+        <h2 className="text-2xl font-bold mb-4 text-blue-800">Reviews</h2>
         {reviews && reviews.length > 0 ? (
-          <ul className="reviews-list">
+          <ul>
             {reviews.map((review) => (
-              <li key={review._id} className="review-item">
+              <li key={review._id} className="mb-4">
                 <p>
-                  <strong className="review-author">
-                    {review.customerName}
-                  </strong>
-                  : {review.comment} (Rating:{" "}
-                  <span className="review-rating">{review.rating}</span>)
+                  <strong>{review.customerName}</strong>: {review.comment} (
+                  Rating: {review.rating})
                 </p>
               </li>
             ))}
           </ul>
         ) : (
-          <p className="no-reviews">No reviews available.</p>
+          <p className="text-gray-600">No reviews available.</p>
         )}
+      </div>
       </div>
     </div>
   );

@@ -51,8 +51,9 @@ const ViewPendingCustomers = () => {
   }
 
   return (
-    <div>
-      <h1>All Bookings</h1>
+    <div className="mt-6 bg-white shadow-lg rounded p-6 text-black"
+    style={{ width: "70%" }}>
+      <h1 className="text-2xl font-bold mb-4 text-blue-800">All Bookings</h1>
       {bookings.length > 0 ? (
         <ul>
           {bookings.map((booking) => (
