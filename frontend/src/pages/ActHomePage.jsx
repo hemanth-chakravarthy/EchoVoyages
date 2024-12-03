@@ -8,7 +8,7 @@ import HowItWorksSection from "../components/sections/HowItWorksSection";
 import AgenciesInfo from "../components/sections/AgenciesInfo";
 import Footer from "../components/sections/Footer";
 
-const HomePage = () => {
+const ActHomePage = () => {
   const makeYourChoiceRef = useRef(null);
   return (
     <>
@@ -26,4 +26,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default ActHomePage;
