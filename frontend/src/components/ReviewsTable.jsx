@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 const ReviewsTable = ({ reviews }) => {
   const now = new Date();
   const revsLast24Hours = reviews.filter((user) => {
-    const revCreatedAt = new Date(user.createdAt); // Assuming `createdAt` is the timestamp field
-    return now - revCreatedAt < 24 * 60 * 60 * 1000; // Difference in milliseconds
+    const revCreatedAt = new Date(user.createdAt);
+    return now - revCreatedAt < 24 * 60 * 60 * 1000;
   });
 
   return (
@@ -40,9 +40,9 @@ const ReviewsTable = ({ reviews }) => {
                 <td>{new Date(review.date).toLocaleDateString()}</td>
                 <td>{review.reports}</td>
                 <td>
-                  <div className="linksPacks">
-                    <Link
-                      className="links"
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <Link 
+                      className="btn btn-error btn-xs" 
                       to={`/admin/reviews/delete/${review._id}`}
                     >
                       Delete
