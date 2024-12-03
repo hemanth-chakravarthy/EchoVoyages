@@ -24,6 +24,8 @@ const ViewReq = () => {
 
         const data = await response.json();
         if (data.data) {
+          
+          console.log(requestDetails)
           setRequestDetails(data.data);
           setStatus(data.data.status);
         } else {
