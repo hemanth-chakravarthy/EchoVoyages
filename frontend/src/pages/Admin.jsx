@@ -142,7 +142,7 @@ const Admin = () => {
           ) : entity === "bookings" ? (
             <BookingsTable bookings={data.bookings} />
           ) : entity === "agency" ? (
-            <AgencyTable agencies={data.agencies} />
+            <AgencyTable agencies={data.agency} />
           ) : (
             <div>No Data Available</div>
           )}

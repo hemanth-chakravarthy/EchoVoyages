@@ -36,6 +36,7 @@ router.post("/", async (req, res) => {
             "Invalid booking ID. Please provide a valid booking for this package.",
         });
     }
+    console.log(bookingData)
 
     // Ensure that the booking matches the customer and package IDs
     if (

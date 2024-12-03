@@ -48,6 +48,7 @@ router.post("/", async (req, res) => {
         return res.status(404).send({ message: 'Customer not found' });
     }
     const customerName = customerData.username;
+    const packageName = packageData.name;
     // Create a new request object
     const newReq = {
       customerId,
