@@ -10,7 +10,7 @@ const Signup = () => {
     gmail: "",
     password: "",
     role: "customer",
-    specialization: "luxury", // Default value for specialization
+    specialization: "luxury",
   });
 
   const [errors, setErrors] = useState({});
@@ -23,7 +23,7 @@ const Signup = () => {
       ...formData,
       [name]: value,
     });
-    validateField(name, value); // Validate on input change
+    validateField(name, value);
   };
 
   // Validate individual fields
@@ -160,7 +160,7 @@ const Signup = () => {
           gmail: "",
           password: "",
           role: "customer",
-          specialization: "luxury", // Reset to default value after submission
+          specialization: "luxury",
         });
         setErrors({});
         alert("Signup successful!");
@@ -182,177 +182,232 @@ const Signup = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold mb-4 text-center">Sign Up</h2>
-      <div className="mb-4">
-        <div className="relative pt-1">
-          <div className="flex justify-between mb-2">
-            <span>Step {step} of 3</span>
+    <div className="min-h-screen flex items-center justify-center bg-cover bg-center py-12 px-4 sm:px-6 lg:px-8" style={{ backgroundImage: "url('../public/images/travel-background.jpg')" }}>
+      <div className="max-w-md w-full space-y-8 bg-gray-900 bg-opacity-80 p-10 rounded-xl shadow-2xl">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-white">Create your account</h2>
+          <p className="mt-2 text-center text-sm text-gray-300">
+            Start your journey with us
+          </p>
+        </div>
+        <div className="mt-8 space-y-6">
+          <div className="relative">
+            <div className="flex mb-2 items-center justify-between">
+              <div>
+                <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-indigo-300 bg-indigo-900">
+                  Step {step} of 3
+                </span>
+              </div>
+              <div className="text-right">
+                <span className="text-xs font-semibold inline-block text-indigo-300">
+                  {Math.round((step / 3) * 100)}%
+                </span>
+              </div>
+            </div>
+            <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-indigo-900">
+              <div style={{ width: `${(step / 3) * 100}%` }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-indigo-500"></div>
+            </div>
           </div>
-          <div className="overflow-hidden h-2 mb-2 text-xs flex rounded bg-gray-200">
-            <div
-              style={{ width: `${(step / 3) * 100}%` }}
-              className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500"
-            ></div>
-          </div>
+
+          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+            <input type="hidden" name="remember" defaultValue="true" />
+            <div className="rounded-md shadow-sm -space-y-px">
+              {step === 1 && (
+                <>
+                  <div className="mb-4">
+                    <label htmlFor="username" className="sr-only">
+                      Username
+                    </label>
+                    <input
+                      id="username"
+                      name="username"
+                      type="text"
+                      required
+                      className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
+                        errors.username ? "border-red-500" : "border-gray-700"
+                      } bg-gray-800 text-white placeholder-gray-400 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                      placeholder="Username"
+                      value={formData.username}
+                      onChange={handleInputChange}
+                    />
+                    {errors.username && (
+                      <p className="mt-2 text-sm text-red-400" id="email-error">
+                        {errors.username}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <label htmlFor="Name" className="sr-only">
+                      Name
+                    </label>
+                    <input
+                      id="Name"
+                      name="Name"
+                      type="text"
+                      required
+                      className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
+                        errors.Name ? "border-red-500" : "border-gray-700"
+                      } bg-gray-800 text-white placeholder-gray-400 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                      placeholder="Name"
+                      value={formData.Name}
+                      onChange={handleInputChange}
+                    />
+                    {errors.Name && (
+                      <p className="mt-2 text-sm text-red-400" id="email-error">
+                        {errors.Name}
+                      </p>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {step === 2 && (
+                <>
+                  <div className="mb-4">
+                    <label htmlFor="phno" className="sr-only">
+                      Phone Number
+                    </label>
+                    <input
+                      id="phno"
+                      name="phno"
+                      type="text"
+                      required
+                      className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
+                        errors.phno ? "border-red-500" : "border-gray-700"
+                      } bg-gray-800 text-white placeholder-gray-400 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                      placeholder="Phone Number"
+                      value={formData.phno}
+                      onChange={handleInputChange}
+                    />
+                    {errors.phno && (
+                      <p className="mt-2 text-sm text-red-400" id="email-error">
+                        {errors.phno}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <label htmlFor="gmail" className="sr-only">
+                      Email address
+                    </label>
+                    <input
+                      id="gmail"
+                      name="gmail"
+                      type="email"
+                      autoComplete="email"
+                      required
+                      className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
+                        errors.gmail ? "border-red-500" : "border-gray-700"
+                      } bg-gray-800 text-white placeholder-gray-400 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                      placeholder="Email address"
+                      value={formData.gmail}
+                      onChange={handleInputChange}
+                    />
+                    {errors.gmail && (
+                      <p className="mt-2 text-sm text-red-400" id="email-error">
+                        {errors.gmail}
+                      </p>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {step === 3 && (
+                <>
+                  <div className="mb-4">
+                    <label htmlFor="password" className="sr-only">
+                      Password
+                    </label>
+                    <input
+                      id="password"
+                      name="password"
+                      type="password"
+                      autoComplete="current-password"
+                      required
+                      className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
+                        errors.password ? "border-red-500" : "border-gray-700"
+                      } bg-gray-800 text-white placeholder-gray-400 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                      placeholder="Password"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                    />
+                    {errors.password && (
+                      <p className="mt-2 text-sm text-red-400" id="password-error">
+                        {errors.password}
+                      </p>
+                    )}
+                  </div>
+                  <div className="mb-4">
+                    <label htmlFor="role" className="sr-only">
+                      Role
+                    </label>
+                    <select
+                      id="role"
+                      name="role"
+                      className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                      value={formData.role}
+                      onChange={handleInputChange}
+                    >
+                      <option value="customer">Customer</option>
+                      <option value="guide">Local Guide</option>
+                      <option value="travel-agency">Travel Agency</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label htmlFor="specialization" className="sr-only">
+                      Specialization
+                    </label>
+                    <select
+                      id="specialization"
+                      name="specialization"
+                      className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white placeholder-gray-400 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                      value={formData.specialization}
+                      onChange={handleInputChange}
+                    >
+                      <option value="luxury">Luxury</option>
+                      <option value="adventure">Adventure</option>
+                      <option value="budget">Budget-Friendly</option>
+                      <option value="family">Family</option>
+                      <option value="business">Business</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className="flex items-center justify-between">
+              {step > 1 && (
+                <button
+                  type="button"
+                  onClick={handlePrevious}
+                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-indigo-300 bg-indigo-900 hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  Previous
+                </button>
+              )}
+              {step < 3 ? (
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  Next
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  Sign up
+                </button>
+              )}
+            </div>
+          </form>
         </div>
       </div>
-
-      <form onSubmit={handleSubmit}>
-        {step === 1 && (
-          <>
-            <div className="form-group mb-4">
-              <label className="block text-gray-700">Username</label>
-              <input
-                type="text"
-                name="username"
-                value={formData.username}
-                onChange={handleInputChange}
-                required
-                className={`input input-bordered w-full ${
-                  errors.username ? "border-red-500" : ""
-                }`}
-              />
-              {errors.username && (
-                <p className="text-red-500 text-sm mt-1">{errors.username}</p>
-              )}
-            </div>
-            <div className="form-group mb-4">
-              <label className="block text-gray-700">Name</label>
-              <input
-                type="text"
-                name="Name"
-                value={formData.Name}
-                onChange={handleInputChange}
-                required
-                className={`input input-bordered w-full ${
-                  errors.Name ? "border-red-500" : ""
-                }`}
-              />
-              {errors.Name && (
-                <p className="text-red-500 text-sm mt-1">{errors.Name}</p>
-              )}
-            </div>
-          </>
-        )}
-
-        {step === 2 && (
-          <>
-            <div className="form-group mb-4">
-              <label className="block text-gray-700">Phone Number</label>
-              <input
-                type="text"
-                name="phno"
-                value={formData.phno}
-                onChange={handleInputChange}
-                required
-                className={`input input-bordered w-full ${
-                  errors.phno ? "border-red-500" : ""
-                }`}
-              />
-              {errors.phno && (
-                <p className="text-red-500 text-sm mt-1">{errors.phno}</p>
-              )}
-            </div>
-            <div className="form-group mb-4">
-              <label className="block text-gray-700">Email</label>
-              <input
-                type="email"
-                name="gmail"
-                value={formData.gmail}
-                onChange={handleInputChange}
-                required
-                className={`input input-bordered w-full ${
-                  errors.gmail ? "border-red-500" : ""
-                }`}
-              />
-              {errors.gmail && (
-                <p className="text-red-500 text-sm mt-1">{errors.gmail}</p>
-              )}
-            </div>
-          </>
-        )}
-
-        {step === 3 && (
-          <>
-            <div className="form-group mb-4">
-              <label className="block text-gray-700">Password</label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                required
-                className={`input input-bordered w-full ${
-                  errors.password ? "border-red-500" : ""
-                }`}
-              />
-              {errors.password && (
-                <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-              )}
-            </div>
-            <div className="form-group mb-4">
-              <label className="block text-gray-700">Role</label>
-              <select
-                name="role"
-                value={formData.role}
-                onChange={handleInputChange}
-                className="input input-bordered w-full"
-              >
-                <option value="customer">Customer</option>
-                <option value="guide">Local Guide</option>
-                <option value="travel-agency">Travel Agency</option>
-              </select>
-            </div>
-            <div className="form-group mb-4">
-              <label className="block text-gray-700">Specialization</label>
-              <select
-                name="specialization"
-                value={formData.specialization}
-                onChange={handleInputChange}
-                className="input input-bordered w-full"
-              >
-                <option value="luxury">Luxury</option>
-                <option value="adventure">Adventure</option>
-                <option value="budget">Budget-Friendly</option>
-                <option value="family">Family</option>
-                <option value="business">Business</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-          </>
-        )}
-
-        <div className="flex justify-between mt-4">
-          {step > 1 && (
-            <button
-              type="button"
-              onClick={handlePrevious}
-              className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-600"
-            >
-              Previous
-            </button>
-          )}
-          {step < 3 ? (
-            <button
-              type="button"
-              onClick={handleNext}
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
-            >
-              Next
-            </button>
-          ) : (
-            <button
-              type="submit"
-              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700"
-            >
-              Submit
-            </button>
-          )}
-        </div>
-      </form>
     </div>
   );
 };
 
 export default Signup;
+
