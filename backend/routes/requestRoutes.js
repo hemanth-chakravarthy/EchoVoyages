@@ -37,14 +37,12 @@ router.post("/", async (req, res) => {
 
     // Find the package to get the AgentID
     const packageData = await packages.findById(packageId);
-    const custData = await packages.findById(customerId);
     if (!packageData) {
       return res.status(404).send({
         message: "Package not found",
       });
     }
     const { AgentID } = packageData.AgentID;
-    const { packageName} = packageData.name;
     const customerData = await customers.findById(customerId);
     if (!customerData) {
         return res.status(404).send({ message: 'Customer not found' });
