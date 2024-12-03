@@ -6,105 +6,143 @@ import ReviewsTable from "../components/ReviewsTable";
 import GuidesTable from "../components/GuideTable";
 import BookingsTable from "../components/BookingsTable";
 import AgencyTable from "../components/AgenciesTable";
+import { BookingsChart, UserTypeDistribution, RevenueChart } from "../components/dashboard/DashboardCharts";
+import DashboardStats from "../components/dashboard/DashboardStats";
 
 const Admin = () => {
-  const [entity, setEntity] = useState("customers");
-  const [data, setData] = useState([]);
+  const [entity, setEntity] = useState("dashboard");
+  const [data, setData] = useState({
+    customers: [],
+    packages: [],
+    reviews: [],
+    guides: [],
+    bookings: [],
+    agencies: [],
+  });
 
   useEffect(() => {
-    fetchData();
-  }, [entity]);
+    fetchAllData();
+  }, []);
 
-  const fetchData = async () => {
+  const fetchAllData = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/admin/${entity}`);
-      setData(response.data.data);
+      const endpoints = ['customers', 'packages', 'reviews', 'guides', 'bookings', 'agency'];
+      const responses = await Promise.all(
+        endpoints.map(endpoint => 
+          axios.get(`http://localhost:5000/admin/${endpoint}`)
+        )
+      );
+      
+      const newData = {};
+      endpoints.forEach((endpoint, index) => {
+        newData[endpoint] = responses[index].data.data;
+      });
+      setData(newData);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleEntityChange = (entity) => {
-    setEntity(entity);
+  const handleEntityChange = (newEntity) => {
+    setEntity(newEntity);
   };
 
+  const renderDashboard = () => (
+    <div className="space-y-6">
+      <DashboardStats data={data} />
+      
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <BookingsChart data={data.bookings} />
+        <UserTypeDistribution data={data.customers} />
+      </div>
+      
+      <div className="mt-6">
+        <RevenueChart data={data.bookings} />
+      </div>
+    </div>
+  );
+
   return (
-    <div className="admin-container">
-      <h1 className="text-center font-bold text-4xl m-8">Admin Dashboard</h1>
+    <div className="min-h-screen bg-background p-6">
+      <h1 className="text-4xl font-bold text-foreground mb-8">Admin Dashboard</h1>
 
-      <div className="tabs-container">
-        {/* Sidebar Tabs */}
-        <div role="tablist" className="tabs tabs-bordered sidebar-tabs">
-          <input
-            type="radio"
-            name="my_tabs_1"
-            role="tab"
-            className="tab"
-            aria-label="Users"
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Sidebar */}
+        <div className="lg:w-64 space-y-2">
+          <button
+            onClick={() => handleEntityChange("dashboard")}
+            className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
+              entity === "dashboard" ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+            }`}
+          >
+            Dashboard
+          </button>
+          <button
             onClick={() => handleEntityChange("customers")}
-            defaultChecked
-          />
-
-          <input
-            type="radio"
-            name="my_tabs_1"
-            role="tab"
-            className="tab"
-            aria-label="Packages"
+            className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
+              entity === "customers" ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+            }`}
+          >
+            Users
+          </button>
+          <button
             onClick={() => handleEntityChange("packages")}
-          />
-
-          <input
-            type="radio"
-            name="my_tabs_1"
-            role="tab"
-            className="tab"
-            aria-label="Reviews"
+            className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
+              entity === "packages" ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+            }`}
+          >
+            Packages
+          </button>
+          <button
             onClick={() => handleEntityChange("reviews")}
-          />
-
-          <input
-            type="radio"
-            name="my_tabs_1"
-            role="tab"
-            className="tab"
-            aria-label="Guides"
+            className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
+              entity === "reviews" ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+            }`}
+          >
+            Reviews
+          </button>
+          <button
             onClick={() => handleEntityChange("guides")}
-          />
-
-          <input
-            type="radio"
-            name="my_tabs_1"
-            role="tab"
-            className="tab"
-            aria-label="Bookings"
+            className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
+              entity === "guides" ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+            }`}
+          >
+            Guides
+          </button>
+          <button
             onClick={() => handleEntityChange("bookings")}
-          />
-
-          <input
-            type="radio"
-            name="my_tabs_1"
-            role="tab"
-            className="tab"
-            aria-label="Agency"
+            className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
+              entity === "bookings" ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+            }`}
+          >
+            Bookings
+          </button>
+          <button
             onClick={() => handleEntityChange("agency")}
-          />
+            className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
+              entity === "agency" ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+            }`}
+          >
+            Agencies
+          </button>
         </div>
 
-        {/* Main Content Area */}
-        <div className="tab-content-container">
-          {entity === "customers" ? (
-            <UsersTable users={data} />
+        {/* Main Content */}
+        <div className="flex-1 bg-card rounded-lg p-6">
+          {entity === "dashboard" ? (
+            renderDashboard()
+          ) : entity === "customers" ? (
+            <UsersTable users={data.customers} />
           ) : entity === "packages" ? (
-            <PackagesTable packages={data} />
+            <PackagesTable packages={data.packages} />
           ) : entity === "reviews" ? (
-            <ReviewsTable reviews={data} />
+            <ReviewsTable reviews={data.reviews} />
           ) : entity === "guides" ? (
-            <GuidesTable guides={data} />
+            <GuidesTable guides={data.guides} />
           ) : entity === "bookings" ? (
-            <BookingsTable bookings={data} />
+            <BookingsTable bookings={data.bookings} />
           ) : entity === "agency" ? (
-            <AgencyTable agencies={data} />
+            <AgencyTable agencies={data.agencies} />
           ) : (
             <div>No Data Available</div>
           )}

@@ -31,8 +31,7 @@ const GoToTop = () => {
         <button
           onClick={scrollToTop}
           aria-label="Go to top"
-          className="fixed bottom-4 right-4 p-2 rounded-full bg-black/70 text-white shadow-lg hover:bg-white/30 hover:backdrop-blur-lg hover:shadow-xl transition-all duration-300 ease-in-out focus:outline-none"
-
+          className="fixed bottom-16 right-4 p-2 rounded-full bg-black/70 text-white shadow-lg hover:bg-white/30 hover:backdrop-blur-lg hover:shadow-xl transition-all duration-300 ease-in-out focus:outline-none"
         >
           <ChevronUp className="h-6 w-6" />
         </button>
@@ -42,4 +41,3 @@ const GoToTop = () => {
 }
 
 export default GoToTop
-
