@@ -1,5 +1,6 @@
-import { useState } from 'react'
-import { ArrowUpIcon } from 'lucide-react'
+import { useState } from 'react';
+import { ArrowUpIcon } from 'lucide-react';
+import '../landingpage.css';
 
 export default function Component() {
   const [isHovered, setIsHovered] = useState(false)

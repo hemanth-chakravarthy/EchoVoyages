@@ -1,5 +1,6 @@
 import {adventurecards} from "../assets";
 import styles, { layout } from "../style";
+import '../landingpage.css';
 
 const AdventureCards = () => (
   <section id="product" className={layout.sectionReverse}>

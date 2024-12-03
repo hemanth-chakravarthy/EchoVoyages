@@ -23,11 +23,14 @@ import ViewBooking from "./pages/ViewBooking";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import ViewReq from "./components/ViewReq";
+import RealLandingPage from "./components/RealLandingPage";
+
 
 const App = () => {
   return (
     <Routes>
-      <Route path="/" element={<LandingPage />} />
+      <Route path="/signup" element={<LandingPage />} />
+      <Route path="/" element={<RealLandingPage />} />
       {/* For the /packages/:id route */}
       <Route path="/packages/:id" element={<PrivateRoute />}>
         <Route path="/packages/:id" element={<ViewPage />} />

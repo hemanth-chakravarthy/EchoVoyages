@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
-import { ChevronUp } from 'lucide-react'
+import { useState, useEffect } from 'react';
+import { ChevronUp } from 'lucide-react';
+import '../landingpage.css';
 
 const GoToTop = () => {
   const [isVisible, setIsVisible] = useState(false)

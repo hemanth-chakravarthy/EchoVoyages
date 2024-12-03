@@ -1,9 +1,10 @@
 import styles from "./style";
-import { AdventureCards, Business, CardDeal, CTA, Footer, Navbar, Testimonials, Hero } from "./components";
-import GoToTop from "./components/go-to-top";
-import TravelFAQBotButton from "./components/TravelFAQBotButton";
+import { AdventureCards, Business, CardDeal, CTA, Footer, Navbar, Testimonials, Hero } from "../components/landing";
+import GoToTop from "./landing/go-to-top";
+import TravelFAQBotButton from "./landing/TravelFAQBotButton";
 
-const App = () => (
+
+const RealLandingPage = () => (
   <div className="bg-primary w-full min-h-screen overflow-hidden">
     {/* Navbar Section */}
     <div className={`${styles.paddingX} ${styles.flexCenter}`}>
@@ -35,4 +36,4 @@ const App = () => (
   </div>
 );
 
-export default App;
+export default RealLandingPage;
