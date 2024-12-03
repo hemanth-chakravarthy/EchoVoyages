@@ -35,18 +35,21 @@ const UsersTable = ({ users }) => {
                 <td>{user.phno}</td>
                 <td>{user.gmail}</td>
                 <td>
-                  <div className="linksPacks">
-                    <Link className="links" to={`/admin/customers/${user._id}`}>
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <Link 
+                      className="btn btn-neutral btn-xs" 
+                      to={`/admin/customers/${user._id}`}
+                    >
                       Show
                     </Link>
-                    <Link
-                      className="links"
+                    <Link 
+                      className="btn btn-dark btn-xs" 
                       to={`/admin/customers/edit/${user._id}`}
                     >
                       Update
                     </Link>
-                    <Link
-                      className="links"
+                    <Link 
+                      className="btn btn-error btn-xs" 
                       to={`/admin/customers/delete/${user._id}`}
                     >
                       Delete

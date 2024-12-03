@@ -14,7 +14,7 @@ const StatCard = ({ title, value, icon }) => (
 
 const DashboardStats = ({ data }) => {
   const stats = {
-    totalUsers: data.customers?.length || 0,
+    totalUsers: (data.customers?.length || 0) + (data.guides?.length || 0) + (data.agencies?.length || 0),
     totalBookings: data.bookings?.length || 0,
     totalRevenue: data.bookings?.reduce((acc, booking) => acc + (booking.amount || 0), 0) || 0,
     activePackages: data.packages?.length || 0,
@@ -47,3 +47,4 @@ const DashboardStats = ({ data }) => {
 };
 
 export default DashboardStats;
+

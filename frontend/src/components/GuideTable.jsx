@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 const GuidesTable = ({ guides }) => {
   const now = new Date();
   const guidesLast24Hours = guides.filter((user) => {
-    const guideCreatedAt = new Date(user.createdAt); // Assuming `createdAt` is the timestamp field
-    return now - guideCreatedAt < 24 * 60 * 60 * 1000; // Difference in milliseconds
+    const guideCreatedAt = new Date(user.createdAt);
+    return now - guideCreatedAt < 24 * 60 * 60 * 1000;
   });
 
   return (
@@ -34,18 +34,21 @@ const GuidesTable = ({ guides }) => {
                 <td>{user.contact?.email || "N/A"}</td>
                 <td>{user.languages}</td>
                 <td>
-                  <div className="linksPacks">
-                    <Link className="links" to={`/admin/guides/${user._id}`}>
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <Link 
+                      className="btn btn-neutral btn-xs" 
+                      to={`/admin/guides/${user._id}`}
+                    >
                       Show
                     </Link>
-                    <Link
-                      className="links"
+                    <Link 
+                      className="btn btn-dark btn-xs" 
                       to={`/admin/guides/edit/${user._id}`}
                     >
                       Update
                     </Link>
-                    <Link
-                      className="links"
+                    <Link 
+                      className="btn btn-error btn-xs" 
                       to={`/admin/guides/delete/${user._id}`}
                     >
                       Delete
