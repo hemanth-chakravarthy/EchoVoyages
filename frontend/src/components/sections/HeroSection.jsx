@@ -1,28 +1,35 @@
-// src/components/sections/HeroSection.jsx
-
 import React from "react";
-
+import { Link } from "react-router-dom";
 const HeroSection = () => {
   return (
     <div
-      className="hero mb-16 ml-5 mr-5 rounded-lg"
-      style={{
-        backgroundImage:
-          "url(https://img.daisyui.com/images/stock/photo-1507358522600-9f71e620c44e.webp)",
-        width: "auto",
-        height: "50rem",
-      }}
+      className="hero mb-16 ml-5 mr-5 rounded-lg relative"
+      style={{ width: "auto", height: "50rem" }}
     >
-      <div className="hero-overlay bg-opacity-60"></div>
-      <div className="hero-content text-neutral-content text-center">
+      {/* Video background */}
+      <video
+        className="absolute top-0 left-0 w-full h-full object-cover"
+        src="../public/videos/homepage_video.mp4"
+        autoPlay
+        loop
+        muted
+      ></video>
+      {/* Overlay */}
+      <div className="hero-overlay bg-opacity-60 absolute top-0 left-0 w-full h-full bg-black"></div>
+      {/* Content */}
+      <div className="hero-content text-neutral-content text-center relative z-10">
         <div className="max-w-md">
-          <h1 className="mb-5 text-5xl font-bold">Hello there</h1>
+          <h1 className="mb-5 text-5xl font-bold">
+            Ready for your next adventure??
+          </h1>
           <p className="mb-5">
-            Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda
-            excepturi exercitationem quasi. In deleniti eaque aut repudiandae et
-            a id nisi.
+            Discover breathtaking destinations, plan unforgettable trips, and
+            connect with local guides and travel experts. Your next adventure
+            starts here!
           </p>
-          <button className="btn btn-primary">Get Started</button>
+          <Link to={`/search`} className="btn btn-primary">
+            Start Your Journey
+          </Link>
         </div>
       </div>
     </div>

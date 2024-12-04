@@ -1,5 +1,6 @@
 import styles from "../style";
 import Button from "./Button2";
+import '../landingpage.css';
 
 const CTA = () => (
   <section className={`${styles.flexCenter} ${styles.marginY} ${styles.padding} sm:flex-row flex-col bg-black-gradient-2 rounded-[20px] box-shadow`}>

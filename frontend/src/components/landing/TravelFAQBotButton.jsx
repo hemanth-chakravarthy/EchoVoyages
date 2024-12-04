@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Search, ChevronUp, ChevronDown } from 'lucide-react';
+import '../landingpage.css';
 
 const faqData = [
   {

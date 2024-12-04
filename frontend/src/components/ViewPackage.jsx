@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { FaFlag, FaStar } from "react-icons/fa";
-import PropTypes from 'prop-types';
-import Navbar from "./Navbar";
+import { FaFlag } from "react-icons/fa";
 
 const ViewPackage = () => {
   const { id } = useParams();
@@ -58,94 +56,68 @@ const ViewPackage = () => {
   };
 
   if (!packageDetails) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700">
-        <p className="text-white text-2xl">Loading...</p>
-      </div>
-    );
+    return <p>Loading...</p>;
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700">
-      <Navbar />
-      <main className="flex-grow container mx-auto px-4 py-12">
-        <div className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl shadow-xl overflow-hidden">
-          <div className="p-6">
-            <h1 className="text-4xl font-bold text-white mb-4">{packageDetails.name}</h1>
-            <p className="text-gray-300 mb-6">{packageDetails.description}</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              <div>
-                <p className="text-white">
-                  <span className="font-semibold">Price:</span> ${packageDetails.price}
-                </p>
-                <p className="text-white">
-                  <span className="font-semibold">Duration:</span> {packageDetails.duration} days
-                </p>
-              </div>
-              <div>
-                <p className="text-white">
-                  <span className="font-semibold">Location:</span> {packageDetails.location}
-                </p>
-                <p className="text-white">
-                  <span className="font-semibold">Highlights:</span> {packageDetails.highlights}
-                </p>
-              </div>
-            </div>
+    <div className="package-details">
+      <h1 className="package-name">{packageDetails.name}</h1>
+      <p className="package-description">{packageDetails.description}</p>
+      <p className="package-price">Price: {packageDetails.price}</p>
+      <p className="package-duration">
+        Duration: {packageDetails.duration} days
+      </p>
+      <p className="package-location">Location: {packageDetails.location}</p>
+      <p className="package-highlights">
+        Highlights: {packageDetails.highlights}
+      </p>
 
-            {packageDetails.image && packageDetails.image.length > 0 ? (
-              <div className="relative pb-2/3 mb-8">
-                <div className="absolute inset-0 flex overflow-x-auto snap-x">
-                  {packageDetails.image.map((img, index) => (
-                    <img
-                      key={index}
-                      src={img}
-                      alt={`Image of ${packageDetails.name}`}
-                      className="h-64 w-full object-cover snap-center"
-                    />
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <p className="text-gray-300 mb-8">No images available for this package</p>
-            )}
-
-            <div className="reviews-section">
-              <h2 className="text-2xl font-semibold text-white mb-4">Reviews:</h2>
-              {reviews && reviews.length > 0 ? (
-                <div className="space-y-6">
-                  {reviews.map((review) => (
-                    <div key={review._id} className="bg-white bg-opacity-5 p-4 rounded-lg">
-                      <div className="flex items-center mb-2">
-                        <div className="flex text-yellow-400 mr-2">
-                          {[...Array(5)].map((_, i) => (
-                            <FaStar key={i} className={i < review.rating ? "text-yellow-400" : "text-gray-400"} />
-                          ))}
-                        </div>
-                        <p className="text-white">{review.rating} / 5</p>
-                      </div>
-                      <p className="text-gray-300 mb-2">{review.comment}</p>
-                      <div className="flex justify-between items-center">
-                        <p className="text-sm text-gray-400">
-                          Reviewed by: {review.customerName || "Anonymous"}
-                        </p>
-                        <button
-                          className="text-gray-400 hover:text-red-500 transition-colors duration-300"
-                          onClick={() => handleReportReview(review._id)}
-                          title="Report this review"
-                        >
-                          <FaFlag />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-gray-300">No reviews for this package yet.</p>
-              )}
-            </div>
-          </div>
+      {/* Display images */}
+      {packageDetails.image && packageDetails.image.length > 0 ? (
+        <div className="package-images">
+          {packageDetails.image.map((img, index) => (
+            <img
+              key={index}
+              src={`http://localhost:5000${img}`}
+              alt={`Image of ${packageDetails.name}`}
+              className="package-image"
+            />
+          ))}
         </div>
-      </main>
+      ) : (
+        <p>No images available for this package</p>
+      )}
+
+      {/* Display reviews */}
+      <div className="reviews-section">
+        <h2 className="reviews-title">Reviews:</h2>
+        {revvs && revvs.length > 0 ? (
+          revvs.map((review) => (
+            <div key={review._id} className="review-item">
+              <p className="review-rating">
+                <strong>Rating:</strong> {review.rating} / 5
+              </p>
+              <p className="review-comment">
+                <strong>Comment:</strong> {review.comment}
+              </p>
+              <p className="review-author">
+                <strong>Reviewed by:</strong>{" "}
+                {review.customerName || "Anonymous"}
+              </p>
+              {/* Report button */}
+              <button
+                className="report-button"
+                onClick={() => handleReportReview(review._id)}
+                title="Report this review"
+              >
+                <FaFlag className="report-icon" />
+              </button>
+            </div>
+          ))
+        ) : (
+          <p>No reviews for this package yet.</p>
+        )}
+      </div>
     </div>
   );
 };

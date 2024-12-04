@@ -17,24 +17,24 @@ const HowItWorksSection = ({ prevSectionRef }) => {
         </li>
         <li
           className={`step transition-all duration-10000 ${
-            activeStep >= 2 ? "step-secondary" : ""
+            activeStep >= 2 ? "step-primary" : ""
           }`}
         >
-          Choose plan
+          Choose guide or agency
         </li>
         <li
           className={`step transition-all duration-10000 ${
-            activeStep >= 3 ? "step-accent" : ""
+            activeStep >= 3 ? "step-primary" : ""
           }`}
         >
-          Purchase
+          Book your dream package
         </li>
         <li
           className={`step transition-all duration-10000 ${
-            activeStep >= 4 ? "step-info" : ""
+            activeStep >= 4 ? "step-primary" : ""
           }`}
         >
-          Receive Product
+          Enjoy your trip!
         </li>
       </ul>
     </section>

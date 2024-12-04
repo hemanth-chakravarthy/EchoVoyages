@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import '../landingpage.css';
 import { close, logo, menu } from "../assets";
 import { navLinks } from "../constants";
 

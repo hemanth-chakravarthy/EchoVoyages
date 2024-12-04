@@ -142,7 +142,7 @@ const CustomerPackActions = () => {
     }
   };
 
-  // Handle adding to wishlist
+  // Handle adding to wishlis
   const addToWishlist = async () => {
     try {
       const response = await fetch("http://localhost:5000/wishlist", {
