@@ -31,7 +31,7 @@ const App = () => {
   return (
     <Routes>
       <Route path="/signup" element={<LandingPage />} />
-      {/* <Route path="/" element={<RealLandingPage />} /> */}
+      <Route path="/" element={<RealLandingPage />} />
       <Route path="/landingpage" element={<LandingPage />} />
       <Route path="/realhome" element={<ActHomePage />} />
       {/* For the /packages/:id route */}
