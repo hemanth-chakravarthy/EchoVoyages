@@ -4,7 +4,7 @@ import CreatePackage from "../components/CreatePackage.jsx";
 
 const CreatePackagePage = () => {
   return (
-    <div>
+    <div className="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700">
       <div className="navbar bg-base-100">
         <div className="flex-1">
           <a className="btn btn-ghost text-xl">EchoVoyages</a>
@@ -15,7 +15,7 @@ const CreatePackagePage = () => {
               Home Page
             </Link>
             <Link to="/mylistings" className="btn btn-ghost">
-             My Listings
+              My Listings
             </Link>
             <Link to="/createPackage" className="btn btn-ghost">
               Create Package

@@ -69,7 +69,7 @@ const HomePage = () => {
                         <p className="text-sm text-gray-300">{pack.duration} days</p>
                       </div>
                       <Link to={`/packages/${pack._id}`} className="block">
-                        <button className="w-full bg-transparent text-transparent font-bold py-3 px-6 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient
+                        <button className="w-full bg-transparent text-transparent font-bold py-3 px- rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient
 ">
                           View Package
                         </button>
