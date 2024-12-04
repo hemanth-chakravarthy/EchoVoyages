@@ -9,8 +9,8 @@ const ViewReq = () => {
   const [requestDetails, setRequestDetails] = useState(null);
   const [status, setStatus] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false); // Modal visibility state
-  const [modalMessage, setModalMessage] = useState(""); // Message for modal
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
 
   useEffect(() => {
     if (!id) {
@@ -27,7 +27,6 @@ const ViewReq = () => {
 
         const data = await response.json();
         if (data.data) {
-          console.log(requestDetails);
           setRequestDetails(data.data);
           setStatus(data.data.status);
         } else {
@@ -61,9 +60,8 @@ const ViewReq = () => {
         setStatus(newStatus);
         if (newStatus === "approved") {
           await addRequestToBookings();
-        } 
+        }
 
-        // Show modal with success message
         setModalMessage("Status updated successfully.");
         setShowModal(true);
       } else {
@@ -99,16 +97,16 @@ const ViewReq = () => {
 
       if (response.ok) {
         setModalMessage("Request successfully added to bookings.");
-        setShowModal(true); 
+        setShowModal(true);
       } else {
         const errorData = await response.json();
         setModalMessage(`Failed to add to bookings: ${errorData.message}`);
-        setShowModal(true); // Show error modal
+        setShowModal(true);
       }
     } catch (error) {
       console.error("Error adding to bookings:", error);
       setModalMessage("An error occurred while adding to bookings.");
-      setShowModal(true); // Show error modal
+      setShowModal(true);
     }
   };
 
@@ -130,6 +128,7 @@ const ViewReq = () => {
 
   return (
     <div className="min-h-screen bg-base-300">
+      {/* Navbar */}
       <div className="navbar bg-base-100 shadow-lg">
         <div className="flex-1">
           <a className="btn btn-ghost text-xl">EchoVoyages</a>
@@ -155,13 +154,13 @@ const ViewReq = () => {
         </div>
       </div>
 
+      {/* Request Details */}
       <div className="p-6 max-w-4xl mx-auto mt-8">
         <div className="bg-base-100 shadow-xl rounded-lg overflow-hidden">
           <div className="p-6">
             <h1 className="text-3xl font-bold mb-6 text-primary">
               Request Details
             </h1>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div className="bg-base-200 p-4 rounded-lg">
@@ -205,11 +204,13 @@ const ViewReq = () => {
               </div>
             </div>
 
+            {/* Status */}
             <div className="mt-6 bg-base-200 p-4 rounded-lg">
               <strong className="text-primary">Current Status: </strong>
               <span className="text-base-content">{status}</span>
             </div>
 
+            {/* Change Status */}
             <div className="mt-6">
               <label
                 htmlFor="status"
@@ -229,24 +230,28 @@ const ViewReq = () => {
               </select>
             </div>
 
-      <div className="mt-6 flex justify-end">
-        <button
-          onClick={() => navigate("/AgentHome")}
-          className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-        >
-          Back to Home
-        </button>
+            {/* Back Button */}
+            <div className="mt-6 flex justify-end">
+              <button
+                onClick={() => navigate("/AgentHome")}
+                className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+              >
+                Back to Home
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Modal for Success/Error Messages */}
+      {/* Modal */}
       {showModal && (
         <div
           className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
-          onClick={() => setShowModal(false)} // Close modal if user clicks outside
+          onClick={() => setShowModal(false)}
         >
           <div
             className="bg-white p-6 rounded-lg shadow-lg w-1/3"
-            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
+            onClick={(e) => e.stopPropagation()}
           >
             <h2 className="text-xl font-bold">Notification</h2>
             <p>{modalMessage}</p>
