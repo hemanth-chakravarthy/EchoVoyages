@@ -4,7 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Signup = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
     Name: "",
@@ -166,16 +166,16 @@ const Signup = () => {
         });
         setErrors({});
         toast.success("Signup successful!");
-        navigate('/login')
+        navigate("/login");
         console.log("Signup successful!");
       } else {
         const data = await response.json();
         console.log("Signup failed with error:", data.error);
-        toast.error(`Signup failed with error: ${data.error}`)
+        toast.error(`Signup failed with error: ${data.error}`);
       }
     } catch (err) {
       console.error("Error signing up:", err);
-      toast.error(`Error:${err}`)
+      toast.error(`Error:${err}`);
     }
   };
 
@@ -186,11 +186,18 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-cover bg-center py-12 px-4 sm:px-6 lg:px-8" style={{ backgroundImage: "url('../public/images/travel-background.jpg')" }}>
+    <div
+      className="min-h-screen flex items-center justify-center bg-cover bg-center py-12 px-4 sm:px-6 lg:px-8"
+      style={{
+        backgroundImage: "url('../public/images/travel-background.jpg')",
+      }}
+    >
       <ToastContainer position="top-right" autoClose={3000} />
       <div className="max-w-md w-full space-y-8 bg-gray-900 bg-opacity-80 p-10 rounded-xl shadow-2xl">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-white">Create your account</h2>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
+            Create your account
+          </h2>
           <p className="mt-2 text-center text-sm text-gray-300">
             Start your journey with us
           </p>
@@ -210,7 +217,10 @@ const Signup = () => {
               </div>
             </div>
             <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-indigo-900">
-              <div style={{ width: `${(step / 3) * 100}%` }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-indigo-500"></div>
+              <div
+                style={{ width: `${(step / 3) * 100}%` }}
+                className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-indigo-500"
+              ></div>
             </div>
           </div>
 
@@ -336,7 +346,10 @@ const Signup = () => {
                       onChange={handleInputChange}
                     />
                     {errors.password && (
-                      <p className="mt-2 text-sm text-red-400" id="password-error">
+                      <p
+                        className="mt-2 text-sm text-red-400"
+                        id="password-error"
+                      >
                         {errors.password}
                       </p>
                     )}
@@ -370,7 +383,7 @@ const Signup = () => {
                     >
                       <option value="luxury">Luxury</option>
                       <option value="adventure">Adventure</option>
-                      <option value="budget">Budget-Friendly</option>
+                      <option value="budget-friendly">Budget-Friendly</option>
                       <option value="family">Family</option>
                       <option value="business">Business</option>
                       <option value="Other">Other</option>
@@ -415,4 +428,3 @@ const Signup = () => {
 };
 
 export default Signup;
-
