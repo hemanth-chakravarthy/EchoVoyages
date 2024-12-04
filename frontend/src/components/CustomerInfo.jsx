@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 const CustomerInfo = () => {
   const [bookings, setBookings] = useState([]);
@@ -25,7 +28,7 @@ const CustomerInfo = () => {
         );
         setCustomer(response.data);
       } catch (error) {
-        alert("Error fetching customer details");
+        toast.error("Error fetching customer details");
         console.log(error);
       }
     };
@@ -104,11 +107,11 @@ const CustomerInfo = () => {
 
     try {
       await axios.put(`http://localhost:5000/customers/${id}`, customer);
-      alert("Customer details updated successfully");
+      toast.success("Customer details updated successfully");
       setEditing(false);
       navigate("/custProfilePage");
     } catch (error) {
-      alert("Error occurred while updating customer details");
+      toast.error("Error occurred while updating customer details");
       console.log(error);
     }
   };
@@ -121,16 +124,16 @@ const CustomerInfo = () => {
         currentPassword,
         newPassword,
       });
-      alert("Password updated successfully");
+      toast.success("Password updated successfully");
       setChangePassword(false);
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
     } catch (error) {
       if (error.response && error.response.status === 400) {
-        alert("Incorrect current password.");
+        toast.error("Incorrect current password.");
       } else {
-        alert("Error updating password. Please try again later.");
+        toast.error("Error updating password. Please try again later.");
       }
       console.log(error);
     }
@@ -139,6 +142,8 @@ const CustomerInfo = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 text-white">
       <div className="container mx-auto px-4 py-12">
+        <ToastContainer position="top-right" autoClose={3000} />
+            
         <h1 className="text-5xl font-bold text-center mb-16">Customer Profile</h1>
         <div className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl shadow-xl overflow-hidden p-8">
           <div className="flex flex-col md:flex-row items-center md:items-start mb-8">

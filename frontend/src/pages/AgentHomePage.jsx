@@ -9,7 +9,6 @@ const AgentHomePage = () => {
   const agentid = jwtDecode(token).id;
 
   useEffect(() => {
-    // Fetching requests for the logged-in agent
     const fetchRequests = async () => {
       try {
         const response = await fetch(
@@ -17,9 +16,7 @@ const AgentHomePage = () => {
         );
         const data = await response.json();
         if (data && data.data) {
-          // Filter requests to only show those belonging to the logged-in agent
-          const agentRequests = data.data;
-          setRequests(agentRequests);
+          setRequests(data.data);
         } else {
           console.error("No requests found in the response.");
         }
@@ -46,7 +43,7 @@ const AgentHomePage = () => {
   }, [agentid]);
 
   return (
-    <div>
+    <div className="min-h-screen flex flex-col bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700">
       <div className="navbar bg-base-100">
         <div className="flex-1">
           <a className="btn btn-ghost text-xl">EchoVoyages</a>
@@ -68,29 +65,36 @@ const AgentHomePage = () => {
           </div>
         </div>
       </div>
-      <h1 className="text-center font-bold text-4xl m-8">Booking Requests</h1>
+      <h1 className="text-center font-bold text-4xl m-8 text-white">Booking Requests</h1>
       {requests.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mx-4">
           {requests.map((req) => (
-            <div key={req._id} className="card bg-base-100 w-full shadow-xl">
-              <div className="card-body">
-                <h2 className="card-title">{req.packageName}</h2>
-                <p>
+            <div
+              key={req._id}
+              className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:bg-opacity-20"
+            >
+              <div className="p-6">
+                <h2 className="text-2xl font-semibold text-white mb-2">
+                  {req.packageName}
+                </h2>
+                <p className="text-gray-300 mb-4">
                   <strong>Customer Name:</strong> {req.customerName}
                 </p>
-                <p>
+                <p className="text-gray-300 mb-4">
                   <strong>Status:</strong> {req.status}
                 </p>
-                <p>
+                <p className="text-gray-300 mb-4">
                   <strong>Request Date:</strong>{" "}
                   {new Date(req.date).toLocaleDateString()}
                 </p>
-                <p>
+                <p className="text-gray-300 mb-4">
                   <strong>Message:</strong> {req.message}
                 </p>
-                <div className="card-actions justify-end">
+                <div className="flex justify-end">
                   <Link to={`/requests/${req._id}`}>
-                    <button className="btn btn-primary">View Request</button>
+                    <button className="w-full bg-transparent text-transparent font-bold py-3 px-6 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient">
+                      View Request
+                    </button>
                   </Link>
                 </div>
               </div>
@@ -98,7 +102,7 @@ const AgentHomePage = () => {
           ))}
         </div>
       ) : (
-        <p>No requests available for your packages.</p>
+        <p className="text-center text-xl text-gray-300">No requests available for your packages.</p>
       )}
     </div>
   );
