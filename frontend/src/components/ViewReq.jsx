@@ -234,7 +234,7 @@ const ViewReq = () => {
             <div className="mt-6 flex justify-end">
               <button
                 onClick={() => navigate("/AgentHome")}
-                className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                className="bg-transparent text-transparent font-bold py-3 px-6 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
               >
                 Back to Home
               </button>
