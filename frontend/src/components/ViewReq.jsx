@@ -9,6 +9,8 @@ const ViewReq = () => {
   const [requestDetails, setRequestDetails] = useState(null);
   const [status, setStatus] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false); // Modal visibility state
+  const [modalMessage, setModalMessage] = useState(""); // Message for modal
 
   useEffect(() => {
     if (!id) {
@@ -57,21 +59,22 @@ const ViewReq = () => {
 
       if (response.ok) {
         setStatus(newStatus);
-
         if (newStatus === "approved") {
           await addRequestToBookings();
-        } else {
-          navigate("/AgentHome");
-        }
+        } 
 
-        alert("Status updated successfully.");
+        // Show modal with success message
+        setModalMessage("Status updated successfully.");
+        setShowModal(true);
       } else {
         const errorData = await response.json();
-        alert(`Failed to update status: ${errorData.message}`);
+        setModalMessage(`Failed to update status: ${errorData.message}`);
+        setShowModal(true);
       }
     } catch (error) {
       console.error("Error updating status:", error);
-      alert("An error occurred while updating the status.");
+      setModalMessage("An error occurred while updating the status.");
+      setShowModal(true);
     }
   };
 
@@ -95,15 +98,17 @@ const ViewReq = () => {
       });
 
       if (response.ok) {
-        alert("Request successfully added to bookings.");
-        navigate("/AgentHome");
+        setModalMessage("Request successfully added to bookings.");
+        setShowModal(true); 
       } else {
         const errorData = await response.json();
-        alert(`Failed to add to bookings: ${errorData.message}`);
+        setModalMessage(`Failed to add to bookings: ${errorData.message}`);
+        setShowModal(true); // Show error modal
       }
     } catch (error) {
       console.error("Error adding to bookings:", error);
-      alert("An error occurred while adding to bookings.");
+      setModalMessage("An error occurred while adding to bookings.");
+      setShowModal(true); // Show error modal
     }
   };
 
@@ -224,17 +229,38 @@ const ViewReq = () => {
               </select>
             </div>
 
-            <div className="mt-8 flex justify-end">
+      <div className="mt-6 flex justify-end">
+        <button
+          onClick={() => navigate("/AgentHome")}
+          className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+        >
+          Back to Home
+        </button>
+      </div>
+
+      {/* Modal for Success/Error Messages */}
+      {showModal && (
+        <div
+          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+          onClick={() => setShowModal(false)} // Close modal if user clicks outside
+        >
+          <div
+            className="bg-white p-6 rounded-lg shadow-lg w-1/3"
+            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
+          >
+            <h2 className="text-xl font-bold">Notification</h2>
+            <p>{modalMessage}</p>
+            <div className="flex justify-end mt-4">
               <button
-                onClick={() => navigate("/AgentHome")}
                 className="btn btn-primary"
+                onClick={() => setShowModal(false)}
               >
-                Back to Home
+                Close
               </button>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

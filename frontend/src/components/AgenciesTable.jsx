@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 const AgenciesTable = ({ agencies }) => {
   const now = new Date();
   const agentsLast24Hours = agencies.filter((user) => {
-    const agentCreatedAt = new Date(user.createdAt); // Assuming `createdAt` is the timestamp field
-    return now - agentCreatedAt < 24 * 60 * 60 * 1000; // Difference in milliseconds
+    const agentCreatedAt = new Date(user.createdAt);
+    return now - agentCreatedAt < 24 * 60 * 60 * 1000;
   });
 
   return (
@@ -34,18 +34,21 @@ const AgenciesTable = ({ agencies }) => {
                 <td>{agency.contactInfo?.phone || "N/A"}</td>
                 <td>{agency.specialization}</td>
                 <td>
-                  <div className="linksPacks">
-                    <Link className="links" to={`/admin/agency/${agency._id}`}>
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <Link 
+                      className="btn btn-neutral btn-xs" 
+                      to={`/admin/agency/${agency._id}`}
+                    >
                       Show
                     </Link>
-                    <Link
-                      className="links"
+                    <Link 
+                      className="btn btn-dark btn-xs" 
                       to={`/admin/agency/edit/${agency._id}`}
                     >
                       Update
                     </Link>
-                    <Link
-                      className="links"
+                    <Link 
+                      className="btn btn-error btn-xs" 
                       to={`/admin/agency/delete/${agency._id}`}
                     >
                       Delete

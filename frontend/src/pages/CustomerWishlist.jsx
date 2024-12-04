@@ -28,13 +28,10 @@ const CustomerWishlist = () => {
 
                 const data = await response.json();
 
-                
                 if (Array.isArray(data)) {
                     setWishlist(data);
                 } else if (data && typeof data === 'object') {
                     setWishlist([data]); 
-                } else {
-                    setError('Received data is not valid.');
                 }
 
                 setLoading(false);
@@ -60,13 +57,10 @@ const CustomerWishlist = () => {
 
                 const data = await response.json();
 
-                
                 if (Array.isArray(data)) {
                     setGuideWishlist(data);
                 } else if (data && typeof data === 'object') {
                     setGuideWishlist([data]); 
-                } else {
-                    setError('Received guide data is not valid.');
                 }
 
                 setLoading(false);
@@ -128,69 +122,69 @@ const CustomerWishlist = () => {
         return <div>Loading...</div>;
     }
 
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
-
     return (
         <div>
             <Navbar />
             <h1>My Wishlist</h1>
 
             {/* Packages Section */}
-            <h2>Packages</h2>
-            {wishlist.length > 0 ? (
-                <ul>
-                    {wishlist.map((item) => (
-                        <li key={item._id}>
-                            {item.packageId ? (
-                                <>
-                                    <h2>{item.packageId.name}</h2>
-                                    <p>{item.packageId.description}</p>
-                                    <p>Price: {item.packageId.price}</p>
-                                    <p>Duration: {item.packageId.duration} days</p>
-                                    {item.packageId.image && item.packageId.image.length > 0 ? (
-                                        <img
-                                            src={`http://localhost:5000${item.packageId.image[0]}`} 
-                                            alt={item.packageId.name}
-                                            style={{ width: '200px', height: '150px' }}
-                                        />
-                                    ) : (
-                                        <p>No image available</p>
-                                    )}
-                                </>
-                            ) : (
-                                <p>Package details unavailable.</p>
-                            )}
-                            <button onClick={() => handleRemoveItem(item._id)}>Remove</button>
-                        </li>
-                    ))}
-                </ul>
-            ) : (
-                <p>No packages in your wishlist.</p>
+            {wishlist.length > 0 && (
+                <>
+                    <h2>Packages</h2>
+                    <ul>
+                        {wishlist.map((item) => (
+                            <li key={item._id}>
+                                {item.packageId ? (
+                                    <>
+                                        <h2>{item.packageId.name}</h2>
+                                        <p>{item.packageId.description}</p>
+                                        <p>Price: {item.packageId.price}</p>
+                                        <p>Duration: {item.packageId.duration} days</p>
+                                        {item.packageId.image && item.packageId.image.length > 0 ? (
+                                            <img
+                                                src={`http://localhost:5000${item.packageId.image[0]}`} 
+                                                alt={item.packageId.name}
+                                                style={{ width: '200px', height: '150px' }}
+                                            />
+                                        ) : (
+                                            <p>No image available</p>
+                                        )}
+                                    </>
+                                ) : (
+                                    <p>Package details unavailable.</p>
+                                )}
+                                <button onClick={() => handleRemoveItem(item._id)}>Remove</button>
+                            </li>
+                        ))}
+                    </ul>
+                </>
             )}
 
             {/* Guides Section */}
-            <h2>Guides</h2>
-            {guideWishlist.length > 0 ? (
-                <ul>
-                    {guideWishlist.map((item) => (
-                        <li key={item._id}>
-                            {item.guideId ? (
-                                <>
-                                    <h2>{item.guideId.name}</h2>
-                                    <p>{item.guideId.description}</p>
-                                    <p>Experience: {item.guideId.experience} years</p>
-                                </>
-                            ) : (
-                                <p>Guide details unavailable.</p>
-                            )}
-                            <button onClick={() => handleRemoveGuide(item._id)}>Remove</button>
-                        </li>
-                    ))}
-                </ul>
-            ) : (
-                <p>No guides in your wishlist.</p>
+            {guideWishlist.length > 0 && (
+                <>
+                    <h2>Guides</h2>
+                    <ul>
+                        {guideWishlist.map((item) => (
+                            <li key={item._id}>
+                                {item.guideId ? (
+                                    <>
+                                        <h2>{item.guideId.name}</h2>
+                                        <p>{item.guideId.description}</p>
+                                        <p>Experience: {item.guideId.experience} years</p>
+                                    </>
+                                ) : (
+                                    <p>Guide details unavailable.</p>
+                                )}
+                                <button onClick={() => handleRemoveGuide(item._id)}>Remove</button>
+                            </li>
+                        ))}
+                    </ul>
+                </>
+            )}
+
+            {wishlist.length === 0 && guideWishlist.length === 0 && (
+                <p>No items in your wishlist.</p>
             )}
         </div>
     );

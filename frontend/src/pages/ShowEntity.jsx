@@ -18,134 +18,96 @@ const ShowEntity = () => {
       });
   }, [id, entityType]);
 
+  const renderEntityRows = () => {
+    switch (entityType) {
+      case "customers":
+        return (
+          <>
+            <EntityRow label="ID" value={entity._id} />
+            <EntityRow label="Name" value={entity.Name} />
+            <EntityRow label="Username" value={entity.username} />
+            <EntityRow label="Gmail" value={entity.gmail} />
+          </>
+        );
+      case "packages":
+        return (
+          <>
+            <EntityRow label="ID" value={entity._id} />
+            <EntityRow label="Package Name" value={entity.name} />
+            <EntityRow label="Description" value={entity.description} />
+            <EntityRow label="Price" value={entity.price} />
+          </>
+        );
+      case "guides":
+        return (
+          <>
+            <EntityRow label="ID" value={entity._id} />
+            <EntityRow label="Name" value={entity.name} />
+            <EntityRow label="Availability" value={entity.availability} />
+            <EntityRow label="Location" value={entity.location} />
+          </>
+        );
+      case "bookings":
+        return (
+          <>
+            <EntityRow label="ID" value={entity._id} />
+            <EntityRow label="Customer Name" value={entity.customerName} />
+            <EntityRow label="Package Name" value={entity.packageName} />
+            <EntityRow label="Date" value={entity.bookingDate} />
+            <EntityRow label="Price" value={entity.totalPrice} />
+          </>
+        );
+      case "agency":
+        return (
+          <>
+            <EntityRow label="ID" value={entity._id} />
+            <EntityRow label="Name" value={entity.name} />
+            <EntityRow label="Email" value={entity.contactInfo?.email} />
+            <EntityRow label="Phone" value={entity.contactInfo?.phone} />
+            <EntityRow label="Bio" value={entity.bio} />
+            <EntityRow label="Specialization" value={entity.specialization} />
+          </>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
-    <div className="entity-container">
-      <BackButton className="back-button" />
-      <h1>
-        {entityType === "customers"
-          ? "Customer Details"
-          : entityType === "packages"
-          ? "Package Details"
-          : entityType === "guides"
-          ? "Guide Details"
-          : "Details"}
-      </h1>
-      <div className="entity-card">
-        {entityType === "customers" && (
-          <>
-            <div className="entity-row">
-              <span>ID: </span>
-              <span>{entity._id}</span>
-            </div>
-            <div className="entity-row">
-              <span>Name: </span>
-              <span>{entity.Name}</span>
-            </div>
-            <div className="entity-row">
-              <span>Username: </span>
-              <span>{entity.username}</span>
-            </div>
-            <div className="entity-row">
-              <span>Gmail: </span>
-              <span>{entity.gmail}</span>
-            </div>
-          </>
-        )}
-        {entityType === "packages" && (
-          <>
-            <div className="entity-row">
-              <span>ID: </span>
-              <span>{entity._id}</span>
-            </div>
-            <div className="entity-row">
-              <span>Package Name: </span>
-              <span>{entity.name}</span>
-            </div>
-            <div className="entity-row">
-              <span>Description: </span>
-              <span>{entity.description}</span>
-            </div>
-            <div className="entity-row">
-              <span>Price: </span>
-              <span>{entity.price}</span>
-            </div>
-          </>
-        )}
-        {entityType === "guides" && (
-          <>
-            <div className="entity-row">
-              <span>ID: </span>
-              <span>{entity._id}</span>
-            </div>
-            <div className="entity-row">
-              <span>Name: </span>
-              <span>{entity.name}</span>
-            </div>
-            <div className="entity-row">
-              <span>Availability: </span>
-              <span>{entity.availability}</span>
-            </div>
-            <div className="entity-row">
-              <span>Location: </span>
-              <span>{entity.location}</span>
-            </div>
-          </>
-        )}
-        {entityType === "bookings" && (
-          <>
-            <div className="entity-row">
-              <span>ID: </span>
-              <span>{entity._id}</span>
-            </div>
-            <div className="entity-row">
-              <span>Customer Name: </span>
-              <span>{entity.customerName}</span>
-            </div>
-            <div className="entity-row">
-              <span>Package Name: </span>
-              <span>{entity.packageName}</span>
-            </div>
-            <div className="entity-row">
-              <span>Date: </span>
-              <span>{entity.bookingDate}</span>
-            </div>
-            <div className="entity-row">
-              <span>Price: </span>
-              <span>{entity.totalPrice}</span>
-            </div>
-          </>
-        )}
-        {entityType === "agency" && (
-          <>
-            <div className="entity-row">
-              <span>ID: </span>
-              <span>{entity._id}</span>
-            </div>
-            <div className="entity-row">
-              <span>Name: </span>
-              <span>{entity.name}</span>
-            </div>
-            <div className="entity-row">
-              <span>Email: </span>
-              <span>{entity.contactInfo?.email}</span>
-            </div>
-            <div className="entity-row">
-              <span>Phone: </span>
-              <span>{entity.contactInfo?.phone}</span>
-            </div>
-            <div className="entity-row">
-              <span>Bio: </span>
-              <span>{entity.bio}</span>
-            </div>
-            <div className="entity-row">
-              <span>Specialization: </span>
-              <span>{entity.specialization}</span>
-            </div>
-          </>
-        )}
+    <div className="min-h-screen bg-background p-6">
+      <div className="max-w-2xl mx-auto">
+        <BackButton className="mb-6 inline-flex items-center px-4 py-2 rounded-md text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition duration-150 ease-in-out" />
+        <div className="bg-card shadow-xl rounded-lg overflow-hidden">
+          <div className="bg-primary px-6 py-4">
+            <h1 className="text-2xl font-bold text-primary-foreground">
+              {entityType === "customers"
+                ? "Customer Details"
+                : entityType === "packages"
+                ? "Package Details"
+                : entityType === "guides"
+                ? "Guide Details"
+                : entityType === "bookings"
+                ? "Booking Details"
+                : entityType === "agency"
+                ? "Agency Details"
+                : "Details"}
+            </h1>
+          </div>
+          <div className="px-4 py-3 space-y-2">
+            {renderEntityRows()}
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
+const EntityRow = ({ label, value }) => (
+  <div className="entity-row flex py-2 transition duration-150 ease-in-out hover:bg-muted">
+    <span className="font-medium text-muted-foreground w-1/3">{label}:</span>
+    <span className="text-foreground w-2/3">{value}</span>
+  </div>
+);
+
 export default ShowEntity;
+

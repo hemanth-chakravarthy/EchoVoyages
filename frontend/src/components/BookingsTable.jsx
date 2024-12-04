@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 const BookingsTable = ({ bookings }) => {
   const now = new Date();
   const booksLast24Hours = bookings.filter((user) => {
-    const agentCreatedAt = new Date(user.createdAt); // Assuming `createdAt` is the timestamp field
-    return now - agentCreatedAt < 24 * 60 * 60 * 1000; // Difference in milliseconds
+    const agentCreatedAt = new Date(user.createdAt);
+    return now - agentCreatedAt < 24 * 60 * 60 * 1000;
   });
 
   return (
@@ -32,21 +32,21 @@ const BookingsTable = ({ bookings }) => {
                 <td>{booking.bookingDate}</td>
                 <td>{booking.totalPrice}</td>
                 <td>
-                  <div className="linksPacks">
-                    <Link
-                      className="links"
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <Link 
+                      className="btn btn-neutral btn-xs" 
                       to={`/admin/bookings/${booking._id}`}
                     >
                       Show
                     </Link>
-                    <Link
-                      className="links"
+                    <Link 
+                      className="btn btn-dark btn-xs" 
                       to={`/admin/bookings/edit/${booking._id}`}
                     >
                       Update
                     </Link>
-                    <Link
-                      className="links"
+                    <Link 
+                      className="btn btn-error btn-xs" 
                       to={`/admin/bookings/delete/${booking._id}`}
                     >
                       Delete
