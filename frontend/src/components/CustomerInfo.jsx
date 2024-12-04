@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 const CustomerInfo = () => {
   const [bookings, setBookings] = useState([]);
@@ -25,7 +28,7 @@ const CustomerInfo = () => {
         );
         setCustomer(response.data);
       } catch (error) {
-        alert("Error fetching customer details");
+        toast.error("Error fetching customer details");
         console.log(error);
       }
     };
@@ -59,11 +62,11 @@ const CustomerInfo = () => {
       formErrors.name = "Name should only contain letters and spaces.";
     }
 
-    if (!/^\d{10}$/.test(customer.phoneNumber)) {
+    if (!/^\d{10}$/.test(customer.phno)) {
       formErrors.phoneNumber = "Phone number should be a 10-digit number.";
     }
 
-    if (!/^[\w-]+@([\w-]+\.)+[\w-]{2,4}$/.test(customer.email)) {
+    if (!/^[\w-]+@([\w-]+\.)+[\w-]{2,4}$/.test(customer.gmail)) {
       formErrors.email = "Email is not valid.";
     }
 
@@ -104,11 +107,11 @@ const CustomerInfo = () => {
 
     try {
       await axios.put(`http://localhost:5000/customers/${id}`, customer);
-      alert("Customer details updated successfully");
+      toast.success("Customer details updated successfully");
       setEditing(false);
       navigate("/custProfilePage");
     } catch (error) {
-      alert("Error occurred while updating customer details");
+      toast.error("Error occurred while updating customer details");
       console.log(error);
     }
   };
@@ -121,16 +124,16 @@ const CustomerInfo = () => {
         currentPassword,
         newPassword,
       });
-      alert("Password updated successfully");
+      toast.success("Password updated successfully");
       setChangePassword(false);
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
     } catch (error) {
       if (error.response && error.response.status === 400) {
-        alert("Incorrect current password.");
+        toast.error("Incorrect current password.");
       } else {
-        alert("Error updating password. Please try again later.");
+        toast.error("Error updating password. Please try again later.");
       }
       console.log(error);
     }
@@ -139,6 +142,8 @@ const CustomerInfo = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 text-white">
       <div className="container mx-auto px-4 py-12">
+        <ToastContainer position="top-right" autoClose={3000} />
+            
         <h1 className="text-5xl font-bold text-center mb-16">Customer Profile</h1>
         <div className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl shadow-xl overflow-hidden p-8">
           <div className="flex flex-col md:flex-row items-center md:items-start mb-8">
@@ -157,12 +162,7 @@ const CustomerInfo = () => {
                   >
                     {editing ? "Cancel" : "Edit Profile"}
                   </button>
-                  <button
-                    onClick={handlePasswordToggle}
-                    className="bg-transparent text-transparent font-bold py-2 px-4 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
-                  >
-                    {changePassword ? "Cancel" : "Change Password"}
-                  </button>
+                  
                 </div>
               </div>
               {editing ? (
@@ -284,6 +284,7 @@ const CustomerInfo = () => {
                     <p><strong>Total Price:</strong> ${booking.totalPrice}</p>
                     <p><strong>Status:</strong> {booking.status}</p>
                     <p><strong>Booking Date:</strong> {new Date(booking.bookingDate).toLocaleDateString()}</p>
+                    <p><strong>Booking ID: </strong>{booking._id}</p>
                   </div>
                 ))
               ) : (

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const GuideProfilePage = () => {
   const guideId = jwtDecode(localStorage.getItem("token")).id;
@@ -201,13 +203,13 @@ const GuideProfilePage = () => {
 
     try {
       await axios.put(`http://localhost:5000/guides/${guideId}`, updatedGuide);
-      alert("Guide details updated successfully");
+      toast.success("Guide details updated successfully");
       setGuide(updatedGuide);
       setEditing(false);
       navigate("/GuideProfilePage");
     } catch (error) {
       console.error("Error updating guide details:", error);
-      alert("Error occurred while saving guide details");
+      toast.error("Error occurred while saving guide details");
     }
   };
 
@@ -250,6 +252,8 @@ const GuideProfilePage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700">
       <nav className="navbar bg-base-100 shadow-lg mb-6">
+        
+      <ToastContainer position="top-right" autoClose={3000} />
         <div className="flex-1">
           <Link to="/guideHome" className="btn btn-ghost normal-case text-xl">
             Guide Home
