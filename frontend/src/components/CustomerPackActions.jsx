@@ -171,22 +171,25 @@ const CustomerPackActions = () => {
   };
 
   return (
-    <div className="p-4">
+    <div className="p-4 bg-base-300">
       <ToastContainer position="top-right" autoClose={3000} />
 
       <button
-        className="btn btn-primary"
+        className="bg-transparent mx-4 text-transparent font-bold py-3 px-6 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
         onClick={() => setShowRequestModal(true)}
       >
         Customize / Book
       </button>
       <button
         onClick={handleOpenReviewModal}
-        className="btn btn-secondary ml-2"
+        className="bg-transparent mx-4 text-transparent font-bold py-3 px-6 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
       >
         Add Review
       </button>
-      <button onClick={addToWishlist} className="btn btn-accent ml-2">
+      <button
+        onClick={addToWishlist}
+        className="bg-transparent mx-4 text-transparent font-bold py-3 px-6 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
+      >
         Add to Wishlist
       </button>
 

@@ -250,14 +250,14 @@ const ViewReq = () => {
           onClick={() => setShowModal(false)}
         >
           <div
-            className="bg-white p-6 rounded-lg shadow-lg w-1/3"
+            className="bg-base-300 p-6 rounded-lg shadow-lg w-1/3"
             onClick={(e) => e.stopPropagation()}
           >
             <h2 className="text-xl font-bold">Notification</h2>
             <p>{modalMessage}</p>
             <div className="flex justify-end mt-4">
               <button
-                className="btn btn-primary"
+                className="btn bg-transparent text-transparent font-bold py-3 px-6 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
                 onClick={() => setShowModal(false)}
               >
                 Close
