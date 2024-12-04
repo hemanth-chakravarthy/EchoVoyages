@@ -7,6 +7,21 @@ const ViewPackage = () => {
   const { id } = useParams();
   const [packageDetails, setPackageDetails] = useState(null);
   const [revvs, setReviews] = useState([]);
+  const [isAgent, setIsAgent] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token"); // Retrieve the token from localStorage or another source
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        if (decodedToken.role === "agent") {
+          setIsAgent(true); // Set isAgent if role is "agent"
+        }
+      } catch (error) {
+        console.error("Error decoding token:", error);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const fetchPackageDetails = async () => {
@@ -65,22 +80,24 @@ const ViewPackage = () => {
 
   return (
     <div>
-      <div className="flex-none gap-2">
-          <div className="flex space-x-4">
-            <Link to="/AgentHome" className="btn btn-ghost">
-              Home Page
-            </Link>
-            <Link to="/mylistings" className="btn btn-ghost">
-              My Listings
-            </Link>
-            <Link to="/createPackage" className="btn btn-ghost">
-              Create Package
-            </Link>
-            <Link to="/AgentProfilePage" className="btn btn-ghost">
-              Profile Page
-            </Link>
-          </div>
+      {isAgent && (
+        <div className="flex-none gap-2">
+        <div className="flex space-x-4">
+          <Link to="/AgentHome" className="btn btn-ghost">
+            Home Page
+          </Link>
+          <Link to="/mylistings" className="btn btn-ghost">
+            My Listings
+          </Link>
+          <Link to="/createPackage" className="btn btn-ghost">
+            Create Package
+          </Link>
+          <Link to="/AgentProfilePage" className="btn btn-ghost">
+            Profile Page
+          </Link>
         </div>
+      </div>
+      )}
       <div className="bg-base-300 min-h-[85vh] p-4 md:p-8">
         <div className="max-w-8xl mx-auto bg-base-100 rounded-lg shadow-xl overflow-hidden">
           <div className="p-6 md:p-8">

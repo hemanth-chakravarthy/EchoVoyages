@@ -38,16 +38,7 @@ router.post("/", async (req, res) => {
     }
 
     // Ensure that the booking matches the customer and package IDs
-    if (
-      bookingData.customerId.toString() !== customerId ||
-      bookingData.packageId.toString() !== packageId
-    ) {
-      return res
-        .status(403)
-        .send({
-          message: "You can only review packages that you have booked.",
-        });
-    }
+    
 
     // Check for the package if packageId is provided
     let packageData;
@@ -55,6 +46,18 @@ router.post("/", async (req, res) => {
       packageData = await packages.findById(packageId);
       if (!packageData) {
         return res.status(404).send({ message: "Package not found" });
+      }
+    }
+    if(packageData!=null){
+      if (
+        bookingData.customerId.toString() !== customerId ||
+        bookingData.packageId.toString() !== packageId
+      ) {
+        return res
+          .status(403)
+          .send({
+            message: "You can only review packages that you have booked.",
+          });
       }
     }
 
