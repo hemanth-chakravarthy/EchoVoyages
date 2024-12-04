@@ -88,6 +88,7 @@ const GuideProfilePage = () => {
       });
     }
   };
+
   const validateAvailabilityDates = () => {
     let dateErrors = {};
     const today = new Date().toISOString().split("T")[0];
@@ -110,6 +111,7 @@ const GuideProfilePage = () => {
 
     return dateErrors;
   };
+
   const handleNestedChange = (e, parentKey) => {
     const { name, value } = e.target;
     setUpdatedGuide({
@@ -139,6 +141,7 @@ const GuideProfilePage = () => {
       ],
     });
   };
+
   const validateForm = () => {
     let errors = {};
 
@@ -167,7 +170,7 @@ const GuideProfilePage = () => {
     if (!updatedGuide.gmail || !/\S+@\S+\.\S+/.test(updatedGuide.gmail)) {
       errors.email = "A valid email address is required";
     }
-    // Validate date ranges
+
     const dateErrors = validateAvailabilityDates();
     if (Object.keys(dateErrors).length > 0) {
       errors = { ...errors, ...dateErrors };
@@ -175,6 +178,7 @@ const GuideProfilePage = () => {
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
+
   const handleRemoveDateRange = (index) => {
     const updatedDates = updatedGuide.availableDates.filter(
       (_, i) => i !== index
@@ -184,9 +188,9 @@ const GuideProfilePage = () => {
       availableDates: updatedDates,
     });
   };
+
   const handleLogout = () => {
     localStorage.removeItem("token");
-
     navigate("/");
   };
 
@@ -213,276 +217,322 @@ const GuideProfilePage = () => {
   };
 
   if (loading) {
-    return <p>Loading guide details...</p>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-base-200">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
   }
 
   if (!guide) {
-    return <p>Guide not found!</p>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-base-200">
+        <div className="alert alert-error">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="stroke-current shrink-0 h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <span>Guide not found!</span>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto  min-h-screen">
-  <nav className="mb-6">
-        <ul className="flex justify-around  text-white p-4 rounded">
-          <Link to={"/guideHome"} className="hover:underline btn btn-primary">
+    <div className="min-h-screen bg-base-200">
+      <nav className="navbar bg-base-100 shadow-lg mb-6">
+        <div className="flex-1">
+          <Link to="/guideHome" className="btn btn-ghost normal-case text-xl">
             Guide Home
           </Link>
-          <Link to={`/GuideProfilePage`} className="hover:underline btn btn-primary">
+        </div>
+        <div className="flex-none">
+          <Link to="/GuideProfilePage" className="btn btn-primary">
             Profile Page
           </Link>
-        </ul>
-  </nav>
-  <h1 className="text-3xl font-bold mb-6 text-center ">
-    Guide Profile
-  </h1>
+        </div>
+      </nav>
+      <div className="container mx-auto px-4">
+        <h1 className="text-4xl font-bold mb-8 text-center text-base-content">
+          Guide Profile
+        </h1>
 
-  <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-    <h2 className="text-2xl font-semibold mb-2 text-black">
-      {editing ? (
-        <>
-          <input
-            type="text"
-            name="name"
-            className="border border-gray-300 rounded p-2 w-full"
-            value={updatedGuide.name}
-            onChange={handleChange}
-          />
-          {validationErrors.name && (
-            <p className="text-red-500 text-sm mt-1">
-              {validationErrors.name}
-            </p>
-          )}
-        </>
-      ) : (
-        guide.name
-      )}
-    </h2>
-    <p className="text-gray-700">
-      <strong>Username:</strong> {guide.username}
-    </p>
-    <p className="text-gray-700">
-      <strong>Experience:</strong>{" "}
-      {editing ? (
-        <>
-          <input
-            type="number"
-            name="experience"
-            className="border border-gray-300 rounded p-2 w-full"
-            value={updatedGuide.experience}
-            onChange={handleChange}
-          />
-          {validationErrors.experience && (
-            <p className="text-red-500 text-sm mt-1">
-              {validationErrors.experience}
-            </p>
-          )}
-        </>
-      ) : (
-        `${guide.experience} years`
-      )}
-    </p>
-    <p className="text-gray-700">
-      <strong>Languages Spoken:</strong>{" "}
-      {editing ? (
-        <>
-          <input
-            type="text"
-            name="languages"
-            className="border border-gray-300 rounded p-2 w-full"
-            value={updatedGuide.languages.join(", ")}
-            onChange={handleChange}
-          />
-          {validationErrors.languages && (
-            <p className="text-red-500 text-sm mt-1">
-              {validationErrors.languages}
-            </p>
-          )}
-        </>
-      ) : (
-        guide.languages.join(", ")
-      )}
-    </p>
-    <p className="text-gray-700">
-      <strong>Location:</strong>{" "}
-      {editing ? (
-        <>
-          <input
-            type="text"
-            name="location"
-            className="border border-gray-300 rounded p-2 w-full"
-            value={updatedGuide.location}
-            onChange={handleChange}
-          />
-          {validationErrors.location && (
-            <p className="text-red-500 text-sm mt-1">
-              {validationErrors.location}
-            </p>
-          )}
-        </>
-      ) : (
-        guide.location || "N/A"
-      )}
-    </p>
-  </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="space-y-8">
+            <div className="card bg-base-100 shadow-xl">
+              <div className="card-body">
+                <h2 className="card-title text-2xl mb-4">
+                  {editing ? (
+                    <>
+                      <input
+                        type="text"
+                        name="name"
+                        className="input input-bordered w-full"
+                        value={updatedGuide.name}
+                        onChange={handleChange}
+                      />
+                      {validationErrors.name && (
+                        <p className="text-error text-sm mt-1">
+                          {validationErrors.name}
+                        </p>
+                      )}
+                    </>
+                  ) : (
+                    guide.name
+                  )}
+                </h2>
+                <p>
+                  <strong>Username:</strong> {guide.username}
+                </p>
+                <p>
+                  <strong>Experience:</strong>{" "}
+                  {editing ? (
+                    <>
+                      <input
+                        type="number"
+                        name="experience"
+                        className="input input-bordered w-full mt-1"
+                        value={updatedGuide.experience}
+                        onChange={handleChange}
+                      />
+                      {validationErrors.experience && (
+                        <p className="text-error text-sm mt-1">
+                          {validationErrors.experience}
+                        </p>
+                      )}
+                    </>
+                  ) : (
+                    `${guide.experience} years`
+                  )}
+                </p>
+                <p>
+                  <strong>Languages Spoken:</strong>{" "}
+                  {editing ? (
+                    <>
+                      <input
+                        type="text"
+                        name="languages"
+                        className="input input-bordered w-full mt-1"
+                        value={updatedGuide.languages.join(", ")}
+                        onChange={handleChange}
+                      />
+                      {validationErrors.languages && (
+                        <p className="text-error text-sm mt-1">
+                          {validationErrors.languages}
+                        </p>
+                      )}
+                    </>
+                  ) : (
+                    guide.languages.join(", ")
+                  )}
+                </p>
+                <p>
+                  <strong>Location:</strong>{" "}
+                  {editing ? (
+                    <>
+                      <input
+                        type="text"
+                        name="location"
+                        className="input input-bordered w-full mt-1"
+                        value={updatedGuide.location}
+                        onChange={handleChange}
+                      />
+                      {validationErrors.location && (
+                        <p className="text-error text-sm mt-1">
+                          {validationErrors.location}
+                        </p>
+                      )}
+                    </>
+                  ) : (
+                    guide.location || "N/A"
+                  )}
+                </p>
+              </div>
+            </div>
 
-  <div className="bg-white p-6 rounded-lg shadow-md mb-6 text-black">
-    <h3 className="text-xl font-semibold mb-4 ">Availability & Packages</h3>
-    {editing ? (
-      <>
-        {updatedGuide.availableDates.map((dateRange, index) => (
-          <div key={index} className="flex flex-wrap items-center gap-4 mb-4">
-            <div>
-              <label className="block text-sm font-medium">Start Date:</label>
-              <input
-                type="date"
-                className="border border-gray-300 rounded p-2 w-full"
-                value={dateRange.startDate}
-                onChange={(e) =>
-                  handleAvailabilityDateChange(index, "startDate", e.target.value)
-                }
-              />
-              {validationErrors[`startDate${index}`] && (
-                <p className="text-red-500 text-sm mt-1">
-                  {validationErrors[`startDate${index}`]}
+            <div className="card bg-base-100 shadow-xl">
+              <div className="card-body">
+                <h3 className="card-title text-xl mb-4">Contact Information</h3>
+                <p>
+                  <strong>Phone:</strong>{" "}
+                  {editing ? (
+                    <>
+                      <input
+                        type="text"
+                        name="phno"
+                        className="input input-bordered w-full mt-1"
+                        value={updatedGuide.phno}
+                        onChange={handleChange}
+                      />
+                      {validationErrors.phone && (
+                        <p className="text-error text-sm mt-1">
+                          {validationErrors.phone}
+                        </p>
+                      )}
+                    </>
+                  ) : (
+                    guide.phno
+                  )}
                 </p>
-              )}
-            </div>
-            <div>
-              <label className="block text-sm font-medium">End Date:</label>
-              <input
-                type="date"
-                className="border border-gray-300 rounded p-2 w-full"
-                value={dateRange.endDate}
-                onChange={(e) =>
-                  handleAvailabilityDateChange(index, "endDate", e.target.value)
-                }
-              />
-              {validationErrors[`endDate${index}`] && (
-                <p className="text-red-500 text-sm mt-1">
-                  {validationErrors[`endDate${index}`]}
+                <p>
+                  <strong>Email:</strong>{" "}
+                  {editing ? (
+                    <>
+                      <input
+                        type="email"
+                        name="gmail"
+                        className="input input-bordered w-full mt-1"
+                        value={updatedGuide.gmail}
+                        onChange={handleChange}
+                      />
+                      {validationErrors.email && (
+                        <p className="text-error text-sm mt-1">
+                          {validationErrors.email}
+                        </p>
+                      )}
+                    </>
+                  ) : (
+                    guide.gmail
+                  )}
                 </p>
-              )}
+              </div>
             </div>
-            <button
-              className="bg-red-500 text-white p-2 rounded hover:bg-red-600"
-              onClick={() => handleRemoveDateRange(index)}
-            >
-              Remove
-            </button>
           </div>
-        ))}
-        <button
-          className="bg-green-500 text-white p-2 rounded hover:bg-green-600"
-          onClick={handleAddDateRange}
-        >
-          Add Date Range
-        </button>
-      </>
-    ) : guide.availableDates && guide.availableDates.length > 0 ? (
-      <ul className="list-disc pl-6">
-        {guide.availableDates.map((dateRange, index) => (
-          <li key={index} className="mb-2">
-            <strong>From:</strong>{" "}
-            {new Date(dateRange.startDate).toLocaleDateString()}{" "}
-            <strong>To:</strong>{" "}
-            {new Date(dateRange.endDate).toLocaleDateString()}
-          </li>
-        ))}
-      </ul>
-    ) : (
-      <p>No available dates provided</p>
-    )}
-  </div>
 
-  <div className="bg-white p-6 rounded-lg shadow-md mb-6 text-black">
-    <h3 className="text-xl font-semibold mb-4">Ratings</h3>
-    <p className="text-gray-700">
-      <strong>Average Rating:</strong> {guide.ratings.averageRating} / 5
-    </p>
-    <p className="text-gray-700">
-      <strong>Number of Reviews:</strong> {guide.ratings.numberOfReviews}
-    </p>
-  </div>
+          <div className="space-y-8">
+            <div className="card bg-base-100 shadow-xl">
+              <div className="card-body">
+                <h3 className="card-title text-xl mb-4">
+                  Availability & Packages
+                </h3>
+                {editing ? (
+                  <>
+                    {updatedGuide.availableDates.map((dateRange, index) => (
+                      <div key={index} className="mb-4">
+                        <div className="flex flex-wrap items-center gap-4">
+                          <div className="flex-1">
+                            <label className="label">
+                              <span className="label-text">Start Date:</span>
+                            </label>
+                            <input
+                              type="date"
+                              className="input input-bordered w-full"
+                              value={dateRange.startDate}
+                              onChange={(e) =>
+                                handleAvailabilityDateChange(
+                                  index,
+                                  "startDate",
+                                  e.target.value
+                                )
+                              }
+                            />
+                            {validationErrors[`startDate${index}`] && (
+                              <p className="text-error text-sm mt-1">
+                                {validationErrors[`startDate${index}`]}
+                              </p>
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <label className="label">
+                              <span className="label-text">End Date:</span>
+                            </label>
+                            <input
+                              type="date"
+                              className="input input-bordered w-full"
+                              value={dateRange.endDate}
+                              onChange={(e) =>
+                                handleAvailabilityDateChange(
+                                  index,
+                                  "endDate",
+                                  e.target.value
+                                )
+                              }
+                            />
+                            {validationErrors[`endDate${index}`] && (
+                              <p className="text-error text-sm mt-1">
+                                {validationErrors[`endDate${index}`]}
+                              </p>
+                            )}
+                          </div>
+                          <button
+                            className="btn btn-error btn-sm mt-4"
+                            onClick={() => handleRemoveDateRange(index)}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                    <button
+                      className="btn btn-primary btn-sm mt-4"
+                      onClick={handleAddDateRange}
+                    >
+                      Add Date Range
+                    </button>
+                  </>
+                ) : guide.availableDates && guide.availableDates.length > 0 ? (
+                  <ul className="list-disc pl-6">
+                    {guide.availableDates.map((dateRange, index) => (
+                      <li key={index} className="mb-2">
+                        <strong>From:</strong>{" "}
+                        {new Date(dateRange.startDate).toLocaleDateString()}{" "}
+                        <strong>To:</strong>{" "}
+                        {new Date(dateRange.endDate).toLocaleDateString()}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No available dates provided</p>
+                )}
+              </div>
+            </div>
 
-  <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-    <h3 className="text-xl font-semibold mb-4 text-black">Contact Information</h3>
-    <p className="text-gray-700">
-      <strong>Phone:</strong>{" "}
-      {editing ? (
-        <>
-          <input
-            type="text"
-            name="phone"
-            className="border border-gray-300 rounded p-2 w-full"
-            value={updatedGuide.phno}
-            onChange={(e) => handleNestedChange(e, "contact")}
-          />
-          {validationErrors.phone && (
-            <p className="text-red-500 text-sm mt-1">
-              {validationErrors.phone}
-            </p>
+            <div className="card bg-base-100 shadow-xl">
+              <div className="card-body">
+                <h3 className="card-title text-xl mb-4">Ratings</h3>
+                <p>
+                  <strong>Average Rating:</strong> {guide.ratings.averageRating}{" "}
+                  / 5
+                </p>
+                <p>
+                  <strong>Number of Reviews:</strong>{" "}
+                  {guide.ratings.numberOfReviews}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-8 flex justify-between items-center">
+          {editing ? (
+            <>
+              <button className="btn btn-primary" onClick={handleSaveChanges}>
+                Save Changes
+              </button>
+              <button className="btn btn-ghost" onClick={handleCancel}>
+                Cancel
+              </button>
+            </>
+          ) : (
+            <button className="btn btn-primary" onClick={handleEditToggle}>
+              Edit Profile
+            </button>
           )}
-        </>
-      ) : (
-        guide.phno
-      )}
-    </p>
-    <p className="text-gray-700">
-      <strong>Email:</strong>{" "}
-      {editing ? (
-        <>
-          <input
-            type="email"
-            name="email"
-            className="border border-gray-300 rounded p-2 w-full"
-            value={updatedGuide.gmail}
-            onChange={(e) => handleNestedChange(e, "contact")}
-          />
-          {validationErrors.email && (
-            <p className="text-red-500 text-sm mt-1">
-              {validationErrors.email}
-            </p>
-          )}
-        </>
-      ) : (
-        guide.gmail
-      )}
-    </p>
-  </div>
-
-  <div className="flex justify-between items-center">
-    {editing ? (
-      <>
-        <button
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          onClick={handleSaveChanges}
-        >
-          Save Changes
-        </button>
-        <button
-          className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-          onClick={handleCancel}
-        >
-          Cancel
-        </button>
-      </>
-    ) : (
-      <button
-        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        onClick={handleEditToggle}
-      >
-        Edit Profile
-      </button>
-    )}
-    <p
-      className="text-red-500 cursor-pointer underline"
-      onClick={handleLogout}
-    >
-      Logout
-    </p>
-  </div>
-</div>
-
+          <button className="btn btn-error" onClick={handleLogout}>
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };
 
