@@ -14,6 +14,9 @@ const AgentProfilePage = () => {
             <Link to="/AgentHome" className="btn btn-ghost">
               Home Page
             </Link>
+            <Link to="/mylistings" className="btn btn-ghost">
+              My Listings
+            </Link>
             <Link to="/createPackage" className="btn btn-ghost">
               Create Package
             </Link>
