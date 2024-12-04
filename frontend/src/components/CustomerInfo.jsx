@@ -153,13 +153,13 @@ const CustomerInfo = () => {
                 <div>
                   <button
                     onClick={handleEditToggle}
-                    className="bg-[#81c3d2] text-white font-bold py-2 px-4 rounded-full hover:bg-[#2c494b] transition-colors duration-300 mr-2"
+                    className="bg-transparent text-transparent font-bold py-2 px-4 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
                   >
                     {editing ? "Cancel" : "Edit Profile"}
                   </button>
                   <button
                     onClick={handlePasswordToggle}
-                    className="bg-[#81c3d2] text-white font-bold py-2 px-4 rounded-full hover:bg-[#2c494b] transition-colors duration-300"
+                    className="bg-transparent text-transparent font-bold py-2 px-4 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
                   >
                     {changePassword ? "Cancel" : "Change Password"}
                   </button>
@@ -225,7 +225,7 @@ const CustomerInfo = () => {
               {editing && (
                 <button
                   onClick={handleUpdateCustomer}
-                  className="mt-4 bg-[#81c3d2] text-white font-bold py-2 px-4 rounded-full hover:bg-[#2c494b] transition-colors duration-300"
+                  className="bg-transparent text-transparent font-bold py-2 px-4 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
                 >
                   Save Changes
                 </button>
@@ -264,7 +264,7 @@ const CustomerInfo = () => {
                   <div>
                     <button
                       onClick={handleUpdatePassword}
-                      className="mt-6 bg-[#81c3d2] text-white font-bold py-2 px-4 rounded-full hover:bg-[#2c494b] transition-colors duration-300"
+                      className="mt-6 bg-transparent text-transparent font-bold py-2 px-4 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
                     >
                       Update Password
                     </button>
