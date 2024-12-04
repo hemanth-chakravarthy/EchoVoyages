@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import { FaFlag } from "react-icons/fa";
+import { jwtDecode } from "jwt-decode"; // Fix the import here
 
 const ViewPackage = () => {
   const { id } = useParams();
@@ -110,7 +111,7 @@ const ViewPackage = () => {
                     {packageDetails.image.map((img, index) => (
                       <img
                         key={index}
-                        src={`http://localhost:5000${img}`}
+                        src={img}
                         alt={`Image of ${packageDetails.name}`}
                         className="w-full h-auto object-cover rounded-lg shadow-md"
                       />
@@ -126,7 +127,9 @@ const ViewPackage = () => {
               </div>
 
               <div className="lg:w-1/2 space-y-6">
-                <p className="text-base-content">{packageDetails.description}</p>
+                <p className="text-base-content">
+                  {packageDetails.description}
+                </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="bg-base-200 p-4 rounded-lg">
                     <p className="font-semibold text-white">Price:</p>
