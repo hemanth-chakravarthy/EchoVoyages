@@ -65,8 +65,8 @@ const ViewPackage = () => {
   return (
     <div>
       <Navbar />
-      <div className="bg-base-300 min-h-screen p-4 md:p-8">
-        <div className="max-w-6xl mx-auto bg-base-100 rounded-lg shadow-xl overflow-hidden">
+      <div className="bg-base-300 min-h-[85vh] p-4 md:p-8">
+        <div className="max-w-8xl mx-auto bg-base-100 rounded-lg shadow-xl overflow-hidden">
           <div className="p-6 md:p-8">
             <h1 className="text-3xl font-bold text-primary mb-6">
               {packageDetails.name}
