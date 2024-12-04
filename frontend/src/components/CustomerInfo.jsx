@@ -100,7 +100,7 @@ const CustomerInfo = () => {
   };
 
   const handleUpdateCustomer = async () => {
-    // if (!validateForm()) return;
+    if (!validateForm()) return;
 
     try {
       await axios.put(`http://localhost:5000/customers/${id}`, customer);
@@ -137,154 +137,171 @@ const CustomerInfo = () => {
   };
 
   return (
-    <div className="update-container">
-      <h1 className="title">Edit Customer Details</h1>
-      <div className="customer-profile">
-        <div className="customer-image-logout">
-          <img
-            src={"./images/empty-profile-pic.png"}
-            alt="Profile"
-            style={{ width: "150px", height: "150px", borderRadius: "50%" }}
-          />
-          <p className="logout-btn" onClick={handleLogout}>
-            Logout
-          </p>
-        </div>
-        <div className="customer-info">
-          <div className="heading-profile">
-            <h2>Customer Profile</h2>
-            <button className="edit-profile-btn" onClick={handleEditToggle}>
-              {editing ? "Cancel" : "Edit Profile"}
-            </button>
-            <button className="edit-profile-btn" onClick={handlePasswordToggle}>
-              {changePassword ? "Cancel" : "Change Password"}
-            </button>
-          </div>
-
-          {editing ? (
-            <div className="update-card">
-              <label>Name</label>
-              <input
-                type="text"
-                name="name"
-                value={customer.Name || ""}
-                onChange={handleChange}
-                className="input-field"
-              />
-              {errors.name && <p className="error-message">{errors.name}</p>}
-              <label>Username</label>
-              <input
-                type="text"
-                name="username"
-                value={customer.username || ""}
-                onChange={handleChange}
-                className="input-field"
-              />
-              {errors.username && (
-                <p className="error-message">{errors.username}</p>
-              )}
-              <label>Phone Number</label>
-              <input
-                type="text"
-                name="phno"
-                value={customer.phno || ""}
-                onChange={handleChange}
-                className="input-field"
-              />
-              {errors.phoneNumber && (
-                <p className="error-message">{errors.phoneNumber}</p>
-              )}
-              <label>Email</label>
-              <input
-                type="text"
-                name="gmail"
-                value={customer.gmail || ""}
-                onChange={handleChange}
-                className="input-field"
-              />
-              {errors.email && <p className="error-message">{errors.email}</p>}
-              <button onClick={handleUpdateCustomer} className="save-button">
-                Save Changes
-              </button>
-            </div>
-          ) : (
-            <div>
-              {["Name", "username", "phno", "gmail"].map((field) => (
-                <div className="profile-item" key={field}>
-                  <span className="label">
-                    {field.charAt(0).toUpperCase() + field.slice(1)}:
-                  </span>
-                  <span>{customer[field] || "N/A"}</span>
+    <div className="min-h-screen flex flex-col bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 text-white">
+      <div className="container mx-auto px-4 py-12">
+        <h1 className="text-5xl font-bold text-center mb-16">Customer Profile</h1>
+        <div className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl shadow-xl overflow-hidden p-8">
+          <div className="flex flex-col md:flex-row items-center md:items-start mb-8">
+            <img
+              src="./images/empty-profile-pic.png"
+              alt="Profile"
+              className="w-32 h-32 rounded-full mb-4 md:mb-0 md:mr-8"
+            />
+            <div className="flex-grow">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-3xl font-semibold">Customer Details</h2>
+                <div>
+                  <button
+                    onClick={handleEditToggle}
+                    className="bg-[#81c3d2] text-white font-bold py-2 px-4 rounded-full hover:bg-[#2c494b] transition-colors duration-300 mr-2"
+                  >
+                    {editing ? "Cancel" : "Edit Profile"}
+                  </button>
+                  <button
+                    onClick={handlePasswordToggle}
+                    className="bg-[#81c3d2] text-white font-bold py-2 px-4 rounded-full hover:bg-[#2c494b] transition-colors duration-300"
+                  >
+                    {changePassword ? "Cancel" : "Change Password"}
+                  </button>
                 </div>
-              ))}
-            </div>
-          )}
-
-          {changePassword && (
-            <div className="update-card">
-              <label>Current Password</label>
-              <input
-                type="password"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                className="input-field"
-              />
-              <label>New Password</label>
-              <input
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                className="input-field"
-              />
-              {errors.newPassword && (
-                <p className="error-message">{errors.newPassword}</p>
-              )}
-              <label>Confirm New Password</label>
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="input-field"
-              />
-              {errors.confirmPassword && (
-                <p className="error-message">{errors.confirmPassword}</p>
-              )}
-              <button onClick={handleUpdatePassword} className="save-button">
-                Update Password
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-      <div className="booking-list">
-        <h2>Previous Bookings</h2>
-        <div className="bookings-grid">
-          {bookings.length > 0 ? (
-            bookings.map((booking) => (
-              <div key={booking._id} className="booking">
-                <h3>Package: {booking.packageName || "N/A"}</h3>
-                <p>
-                  <strong>Guide Name:</strong> {booking.guideName || "N/A"}
-                </p>
-                <p>
-                  <strong>Total Price:</strong> ${booking.totalPrice}
-                </p>
-                <p>
-                  <strong>Status:</strong> {booking.status}
-                </p>
-                <p>
-                  <strong>Booking Date:</strong>{" "}
-                  {new Date(booking.bookingDate).toLocaleDateString()}
-                </p>
               </div>
-            ))
-          ) : (
-            <p>No previous bookings available.</p>
-          )}
+              {editing ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Name</label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={customer.Name || ""}
+                      onChange={handleChange}
+                      className="w-full bg-gray-700 rounded-md py-2 px-3"
+                    />
+                    {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Username</label>
+                    <input
+                      type="text"
+                      name="username"
+                      value={customer.username || ""}
+                      onChange={handleChange}
+                      className="w-full bg-gray-700 rounded-md py-2 px-3"
+                    />
+                    {errors.username && <p className="text-red-500 text-sm mt-1">{errors.username}</p>}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Phone Number</label>
+                    <input
+                      type="text"
+                      name="phno"
+                      value={customer.phno || ""}
+                      onChange={handleChange}
+                      className="w-full bg-gray-700 rounded-md py-2 px-3"
+                    />
+                    {errors.phoneNumber && <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Email</label>
+                    <input
+                      type="text"
+                      name="gmail"
+                      value={customer.gmail || ""}
+                      onChange={handleChange}
+                      className="w-full bg-gray-700 rounded-md py-2 px-3"
+                    />
+                    {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {["Name", "username", "phno", "gmail"].map((field) => (
+                    <div key={field} className="mb-2">
+                      <span className="font-medium">{field.charAt(0).toUpperCase() + field.slice(1)}:</span>{" "}
+                      <span>{customer[field] || "N/A"}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {editing && (
+                <button
+                  onClick={handleUpdateCustomer}
+                  className="mt-4 bg-[#81c3d2] text-white font-bold py-2 px-4 rounded-full hover:bg-[#2c494b] transition-colors duration-300"
+                >
+                  Save Changes
+                </button>
+              )}
+              {changePassword && (
+                <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Current Password</label>
+                    <input
+                      type="password"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      className="w-full bg-gray-700 rounded-md py-2 px-3"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">New Password</label>
+                    <input
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="w-full bg-gray-700 rounded-md py-2 px-3"
+                    />
+                    {errors.newPassword && <p className="text-red-500 text-sm mt-1">{errors.newPassword}</p>}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Confirm New Password</label>
+                    <input
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="w-full bg-gray-700 rounded-md py-2 px-3"
+                    />
+                    {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
+                  </div>
+                  <div>
+                    <button
+                      onClick={handleUpdatePassword}
+                      className="mt-6 bg-[#81c3d2] text-white font-bold py-2 px-4 rounded-full hover:bg-[#2c494b] transition-colors duration-300"
+                    >
+                      Update Password
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="mt-8">
+            <h2 className="text-3xl font-semibold mb-4">Previous Bookings</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {bookings.length > 0 ? (
+                bookings.map((booking) => (
+                  <div key={booking._id} className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl p-6 transition-all duration-300 hover:scale-105">
+                    <h3 className="text-xl font-semibold mb-2">Package: {booking.packageName || "N/A"}</h3>
+                    <p><strong>Guide Name:</strong> {booking.guideName || "N/A"}</p>
+                    <p><strong>Total Price:</strong> ${booking.totalPrice}</p>
+                    <p><strong>Status:</strong> {booking.status}</p>
+                    <p><strong>Booking Date:</strong> {new Date(booking.bookingDate).toLocaleDateString()}</p>
+                  </div>
+                ))
+              ) : (
+                <p className="col-span-full text-center text-xl text-gray-300">No previous bookings available.</p>
+              )}
+            </div>
+          </div>
         </div>
+        <button
+          onClick={handleLogout}
+          className="mt-8 bg-red-500 text-white font-bold py-2 px-4 rounded-full hover:bg-red-600 transition-colors duration-300"
+        >
+          Logout
+        </button>
       </div>
     </div>
   );
 };
 
 export default CustomerInfo;
+

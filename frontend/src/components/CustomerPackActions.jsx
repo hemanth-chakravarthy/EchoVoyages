@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const CustomerPackActions = () => {
   const { id } = useParams(); // `id` is the packageId
@@ -73,16 +75,16 @@ const CustomerPackActions = () => {
         }),
       });
       if (response.ok) {
-        alert(`Request submitted successfully as ${requestType}.`);
+        toast.success(`Request submitted successfully as ${requestType}.`);
         setShowRequestModal(false);
         navigate("/home");
       } else {
         const errorData = await response.json();
-        alert(`Failed to submit request: ${errorData.message}`);
+        toast.error(`Failed to submit request: ${errorData.message}`);
       }
     } catch (error) {
       console.error("Error submitting request:", error);
-      alert("An error occurred while submitting the request.");
+      toast.error("An error occurred while submitting the request.");
     }
   };
 
@@ -105,7 +107,7 @@ const CustomerPackActions = () => {
   // Function to submit the review
   const handleSubmitReview = async () => {
     if (!bookingId) {
-      alert("Please enter the Booking ID.");
+      toast.error("Please enter the Booking ID.");
       return;
     }
 
@@ -128,20 +130,20 @@ const CustomerPackActions = () => {
       if (response.ok) {
         const result = await response.json();
         console.log("Review submitted:", result);
-        alert("Review submitted successfully!");
+        toast.success("Review submitted successfully!");
         handleCloseReviewModal(); // Close the modal
       } else {
         const errorData = await response.json();
         console.error("Failed to submit review:", errorData.message);
-        alert(`Failed to submit review: ${errorData.message}`);
+        toast.error(`Failed to submit review: ${errorData.message}`);
       }
     } catch (error) {
       console.error("Error submitting review:", error);
-      alert("An error occurred while submitting the review.");
+      toast.error("An error occurred while submitting the review.");
     }
   };
 
-  // Handle adding to wishlist
+  // Handle adding to wishlis
   const addToWishlist = async () => {
     try {
       const response = await fetch("http://localhost:5000/wishlist", {
@@ -157,19 +159,21 @@ const CustomerPackActions = () => {
       });
 
       if (response.ok) {
-        alert("Package added to wishlist successfully!");
+        toast.success("Package added to wishlist successfully!");
       } else {
         const errorData = await response.json();
-        alert(`Failed to add to wishlist: ${errorData.message}`);
+        toast.error(`Failed to add to wishlist: ${errorData.message}`);
       }
     } catch (error) {
       console.error("Error adding to wishlist:", error);
-      alert("An error occurred while adding to the wishlist.");
+      toast.error("An error occurred while adding to the wishlist.");
     }
   };
 
   return (
-    <div className="p-4 bg-base-300">
+    <div className="p-4">
+      <ToastContainer position="top-right" autoClose={3000} />
+
       <button
         className="btn btn-primary"
         onClick={() => setShowRequestModal(true)}

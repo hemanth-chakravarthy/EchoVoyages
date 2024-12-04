@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import BackButton from "../components/BackButton";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const UpdateEntity = () => {
   const [entity, setEntity] = useState({});
@@ -9,12 +11,14 @@ const UpdateEntity = () => {
 
   const navigate = useNavigate();
   const { id, type } = useParams(); // Assuming you're using useParams for id and type
+  console.log(type)
 
   useEffect(() => {
     // Fetch entity data based on id and type
     const fetchEntity = async () => {
       try {
-        const response = await axios.get(`/api/${type}/${id}`); // Replace with your API endpoint
+        const response = await axios.get(`/admin/${type}/${id}`); // Replace with your API endpoint
+        console.log(data)
         setEntity(response.data);
         setEntityType(type);
       } catch (error) {
@@ -66,6 +70,7 @@ const UpdateEntity = () => {
         return (
           <>
             <div className="mb-4">
+            <ToastContainer position="top-right" autoClose={3000} />
               <label htmlFor="name" className={labelClass}>Name</label>
               <input type="text" id="name" name="name" value={entity.name || ""} onChange={handleChange} className={inputClass} />
             </div>
@@ -87,6 +92,7 @@ const UpdateEntity = () => {
         return (
           <>
             <div className="mb-4">
+            <ToastContainer position="top-right" autoClose={3000} />
               <label htmlFor="name" className={labelClass}>Package Name</label>
               <input type="text" id="name" name="name" value={entity.name || ""} onChange={handleChange} className={inputClass} />
             </div>
@@ -104,6 +110,7 @@ const UpdateEntity = () => {
         return (
           <>
             <div className="mb-4">
+            <ToastContainer position="top-right" autoClose={3000} />
               <label htmlFor="name" className={labelClass}>Name</label>
               <input type="text" id="name" name="name" value={entity.name || ""} onChange={handleChange} className={inputClass} />
             </div>
@@ -124,6 +131,7 @@ const UpdateEntity = () => {
       case "bookings":
         return (
           <div className="mb-4">
+            <ToastContainer position="top-right" autoClose={3000} />
             <label htmlFor="totalPrice" className={labelClass}>Total Price</label>
             <input type="number" id="totalPrice" name="totalPrice" value={entity.totalPrice || ""} onChange={handleChange} className={inputClass} />
           </div>
@@ -132,6 +140,7 @@ const UpdateEntity = () => {
         return (
           <>
             <div className="mb-4">
+            <ToastContainer position="top-right" autoClose={3000} />
               <label htmlFor="email" className={labelClass}>Email</label>
               <input type="email" id="email" name="contactInfo.email" value={entity.contactInfo?.email || ""} onChange={handleChange} className={inputClass} />
             </div>
@@ -155,6 +164,7 @@ const UpdateEntity = () => {
         return (
           <>
             <div className="mb-4">
+            <ToastContainer position="top-right" autoClose={3000} />
               <label htmlFor="rating" className={labelClass}>Rating</label>
               <input type="number" id="rating" name="rating" value={entity.rating || ""} onChange={handleChange} min={1} max={5} className={inputClass} />
             </div>
@@ -177,6 +187,7 @@ const UpdateEntity = () => {
 
   return (
     <div className="min-h-screen bg-background p-6">
+      <ToastContainer position="top-right" autoClose={3000} />
       <div className="max-w-2xl mx-auto">
         <BackButton className="mb-6 inline-flex items-center px-4 py-2 rounded-md text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition duration-150 ease-in-out" />
         <div className="bg-card shadow-xl rounded-lg overflow-hidden">
