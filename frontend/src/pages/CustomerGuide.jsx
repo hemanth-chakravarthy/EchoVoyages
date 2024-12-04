@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom'; 
 import Navbar from '../components/Navbar';
 
-
 const CustomerGuide = () => {
     const [guides, setGuides] = useState([]);
 
@@ -26,29 +25,37 @@ const CustomerGuide = () => {
     }, []);
 
     return (
-        <div>
+        <div className="min-h-screen flex flex-col bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700">
             <Navbar />
-            <h1>Our Guides</h1>
-            {guides.length > 0 ? (
-                <ul>
-                    {guides.map((guide) => (
-                        <li key={guide._id}>
-                            <h2>{guide.username}</h2>
-                            <p>{guide.description}</p>
-                            <p>Experience: {guide.experience} years</p>
-                            <p>Languages: {guide.languages.join(', ')}</p>
-                            {/* Add View Guide button */}
-                            <Link to={`/guides/${guide._id}`}>
-                                <button>View Guide</button>
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
-            ) : (
-                <p>No guides available</p>
-            )}
+            <main className="flex-grow container mx-auto px-4 py-12">
+                <h1 className="text-5xl font-bold text-center mb-16 text-white">Our Guides</h1>
+                {guides.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {guides.map((guide) => (
+                            <div key={guide._id} className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105">
+                                <div className="p-6">
+                                    <h2 className="text-2xl font-semibold text-white mb-2">{guide.username}</h2>
+                                    <p className="text-gray-300 mb-4">{guide.description}</p>
+                                    <div className="flex justify-between items-center mb-4">
+                                        <p className="text-sm text-gray-300">Experience: {guide.experience} years</p>
+                                    </div>
+                                    <p className="text-sm text-gray-300 mb-4">Languages: {guide.languages.join(', ')}</p>
+                                    <Link to={`/guides/${guide._id}`} className="block w-full">
+                                        <button className="w-full bg-[#81c3d2] text-white font-bold py-3 px-6 rounded-full hover:bg-[#2c494b] transition-colors duration-300 transform hover:scale-105">
+                                            View Guide
+                                        </button>
+                                    </Link>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <p className="text-center text-xl text-white">No guides available</p>
+                )}
+            </main>
         </div>
     );
 };
 
 export default CustomerGuide;
+

@@ -1,5 +1,6 @@
 import {people01, people02, people03, facebook, instagram, linkedin, twitter, tag, suitcase, flight} from "../assets";
 
+
 export const navLinks = [
   {
     id: "home",

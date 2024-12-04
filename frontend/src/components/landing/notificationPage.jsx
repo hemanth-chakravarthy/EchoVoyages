@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Bell, Check, Trash2, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import '../landingpage.css';
 
 export default function NotificationsPage() {
   const [notifications, setNotifications] = useState([

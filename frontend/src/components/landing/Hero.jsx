@@ -1,5 +1,6 @@
 import styles from "../style";
 import GetStarted from "./GetStarted";
+import '../landingpage.css';
 
 import travelVideo1 from "../assets/travelVideo1.mp4";
 
