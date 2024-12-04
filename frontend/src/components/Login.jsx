@@ -46,7 +46,7 @@ const Login = () => {
         localStorage.setItem("token", data.token);
 
         if (data.role === "customer") {
-          navigate("/home");
+          navigate("/realhome");
         } else if (data.role === "agency") {
           navigate("/AgentHome");
         } else if (data.role === "guide") {

@@ -34,7 +34,7 @@ const App = () => {
       <Route path="/signup" element={<LandingPage />} />
       <Route path="/" element={<RealLandingPage />} />
       <Route path="/landingpage" element={<LandingPage />} />
-      <Route path="/" element={<ActHomePage />} />
+      <Route path="/realhome" element={<ActHomePage />} />
       {/* For the /packages/:id route */}
       <Route path="/packages/:id" element={<PrivateRoute />}>
         <Route path="/packages/:id" element={<ViewPage />} />
