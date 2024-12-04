@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import { FaFlag } from "react-icons/fa";
+import Navbar from "../components/Navbar";
 
 const ViewPackage = () => {
   const { id } = useParams();
@@ -27,19 +28,11 @@ const ViewPackage = () => {
     const fetchPackageDetails = async () => {
       try {
         const response = await fetch(`http://localhost:5000/packages/${id}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch package details");
+        }
         const data = await response.json();
-        console.log("Fetched package details:", data);
-        if (data && data.image) {
-          // Ensure image URLs are complete
-          data.image = data.image.map((img) =>
-            img.startsWith("http") ? img : `http://localhost:5000${img}`
-          );
-        }
         setPackageDetails(data);
-
-        if (data.reviewCount > 0) {
-          await fetchReviews();
-        }
       } catch (error) {
         console.error("Error fetching package details:", error);
       }
@@ -47,8 +40,13 @@ const ViewPackage = () => {
 
     const fetchReviews = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/reviews/package/${id}`);
-        const data = await res.json();
+        const response = await fetch(
+          `http://localhost:5000/reviews/package/${id}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch reviews");
+        }
+        const data = await response.json();
         setReviews(data);
       } catch (error) {
         console.error("Error fetching reviews:", error);
@@ -56,12 +54,13 @@ const ViewPackage = () => {
     };
 
     fetchPackageDetails();
+    fetchReviews();
   }, [id]);
 
   const handleReportReview = async (reviewId) => {
     try {
       const response = await axios.post(
-        `http://localhost:5000/reviews/${reviewId}`
+        `http://localhost:5000/reviews/report/${reviewId}`
       );
       if (response.status === 200) {
         alert("Review has been reported successfully!");
@@ -75,28 +74,32 @@ const ViewPackage = () => {
   };
 
   if (!packageDetails) {
-    return <p>Loading...</p>;
+    return (
+      <div className="flex justify-center items-center h-screen bg-base-300">
+        <div className="loading loading-spinner loading-lg text-primary"></div>
+      </div>
+    );
   }
 
   return (
     <div>
       {isAgent && (
         <div className="flex-none gap-2">
-        <div className="flex space-x-4">
-          <Link to="/AgentHome" className="btn btn-ghost">
-            Home Page
-          </Link>
-          <Link to="/mylistings" className="btn btn-ghost">
-            My Listings
-          </Link>
-          <Link to="/createPackage" className="btn btn-ghost">
-            Create Package
-          </Link>
-          <Link to="/AgentProfilePage" className="btn btn-ghost">
-            Profile Page
-          </Link>
+          <div className="flex space-x-4">
+            <Link to="/AgentHome" className="btn btn-ghost">
+              Home Page
+            </Link>
+            <Link to="/mylistings" className="btn btn-ghost">
+              My Listings
+            </Link>
+            <Link to="/createPackage" className="btn btn-ghost">
+              Create Package
+            </Link>
+            <Link to="/AgentProfilePage" className="btn btn-ghost">
+              Profile Page
+            </Link>
+          </div>
         </div>
-      </div>
       )}
       <div className="bg-base-300 min-h-[85vh] p-4 md:p-8">
         <div className="max-w-8xl mx-auto bg-base-100 rounded-lg shadow-xl overflow-hidden">
@@ -105,7 +108,6 @@ const ViewPackage = () => {
               {packageDetails.name}
             </h1>
             <div className="flex flex-col lg:flex-row gap-8 mb-8">
-              {/* Images on the left */}
               <div className="lg:w-1/2">
                 {packageDetails.image && packageDetails.image.length > 0 ? (
                   <div className="grid grid-cols-1 gap-4">
@@ -127,7 +129,6 @@ const ViewPackage = () => {
                 )}
               </div>
 
-              {/* Details on the right */}
               <div className="lg:w-1/2 space-y-6">
                 <p className="text-base-content">
                   {packageDetails.description}
@@ -159,12 +160,11 @@ const ViewPackage = () => {
               </div>
             </div>
 
-            {/* Reviews at the bottom */}
             <div className="bg-base-100 p-6 rounded-lg">
               <h2 className="text-2xl font-bold text-primary mb-4">Reviews:</h2>
-              {revvs && revvs.length > 0 ? (
+              {reviews.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {revvs.map((review) => (
+                  {reviews.map((review) => (
                     <div
                       key={review._id}
                       className="bg-base-200 p-4 rounded-lg shadow"
@@ -205,9 +205,5 @@ const ViewPackage = () => {
     </div>
   );
 };
-
-// ViewPackage.propTypes = {
-//   id: PropTypes.string.isRequired,
-// };
 
 export default ViewPackage;
