@@ -7,7 +7,7 @@ import Navbar from "../components/Navbar";
 const ViewPackage = () => {
   const { id } = useParams();
   const [packageDetails, setPackageDetails] = useState(null);
-  const [revvs, setReviews] = useState([]);
+  const [reviews, setReviews] = useState([]);
   const [isAgent, setIsAgent] = useState(false);
 
   useEffect(() => {
