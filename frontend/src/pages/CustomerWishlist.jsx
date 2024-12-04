@@ -119,75 +119,107 @@ const CustomerWishlist = () => {
     };
 
     if (loading) {
-        return <div>Loading...</div>;
+        return (
+            <div className="min-h-screen flex flex-col bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700">
+                <Navbar />
+                <div className="flex-grow flex items-center justify-center">
+                    <p className="text-white text-2xl">Loading...</p>
+                </div>
+            </div>
+        );
     }
 
     return (
-        <div>
+        <div className="min-h-screen flex flex-col bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700">
             <Navbar />
-            <h1>My Wishlist</h1>
+            <main className="flex-grow container mx-auto px-4 py-12">
+                <h1 className="text-5xl font-bold text-center mb-16 text-white">My Wishlist</h1>
 
-            {/* Packages Section */}
-            {wishlist.length > 0 && (
-                <>
-                    <h2>Packages</h2>
-                    <ul>
-                        {wishlist.map((item) => (
-                            <li key={item._id}>
-                                {item.packageId ? (
-                                    <>
-                                        <h2>{item.packageId.name}</h2>
-                                        <p>{item.packageId.description}</p>
-                                        <p>Price: {item.packageId.price}</p>
-                                        <p>Duration: {item.packageId.duration} days</p>
-                                        {item.packageId.image && item.packageId.image.length > 0 ? (
-                                            <img
-                                                src={`http://localhost:5000${item.packageId.image[0]}`} 
-                                                alt={item.packageId.name}
-                                                style={{ width: '200px', height: '150px' }}
-                                            />
-                                        ) : (
-                                            <p>No image available</p>
-                                        )}
-                                    </>
-                                ) : (
-                                    <p>Package details unavailable.</p>
-                                )}
-                                <button onClick={() => handleRemoveItem(item._id)}>Remove</button>
-                            </li>
-                        ))}
-                    </ul>
-                </>
-            )}
+                {/* Packages Section */}
+                {wishlist.length > 0 && (
+                    <div className="mb-12">
+                        <h2 className="text-3xl font-bold mb-6 text-white">Packages</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {wishlist.map((item) => (
+                                <div key={item._id} className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105">
+                                    {item.packageId ? (
+                                        <>
+                                            <div className="relative pb-2/3">
+                                                {item.packageId.image && item.packageId.image.length > 0 ? (
+                                                    <img
+                                                        src={`http://localhost:5000${item.packageId.image[0]}`}
+                                                        alt={item.packageId.name}
+                                                        className="absolute h-64 w-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">
+                                                        <p className="text-gray-500">No image available</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="p-6">
+                                                <h3 className="text-2xl font-semibold text-white mb-2">{item.packageId.name}</h3>
+                                                <p className="text-gray-300 mb-4">{item.packageId.description}</p>
+                                                <div className="flex justify-between items-center mb-4">
+                                                    <p className="text-lg font-bold text-white">${item.packageId.price}</p>
+                                                    <p className="text-sm text-gray-300">{item.packageId.duration} days</p>
+                                                </div>
+                                                <button 
+                                                    onClick={() => handleRemoveItem(item._id)}
+                                                    className="w-full bg-red-500 text-white font-bold py-2 px-4 rounded-full hover:bg-red-600 transition-colors duration-300"
+                                                >
+                                                    Remove
+                                                </button>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <div className="p-6">
+                                            <p className="text-white">Package details unavailable.</p>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
 
-            {/* Guides Section */}
-            {guideWishlist.length > 0 && (
-                <>
-                    <h2>Guides</h2>
-                    <ul>
-                        {guideWishlist.map((item) => (
-                            <li key={item._id}>
-                                {item.guideId ? (
-                                    <>
-                                        <h2>{item.guideId.name}</h2>
-                                        <p>{item.guideId.description}</p>
-                                        <p>Experience: {item.guideId.experience} years</p>
-                                    </>
-                                ) : (
-                                    <p>Guide details unavailable.</p>
-                                )}
-                                <button onClick={() => handleRemoveGuide(item._id)}>Remove</button>
-                            </li>
-                        ))}
-                    </ul>
-                </>
-            )}
+                {/* Guides Section */}
+                {guideWishlist.length > 0 && (
+                    <div className="mb-12">
+                        <h2 className="text-3xl font-bold mb-6 text-white">Guides</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {guideWishlist.map((item) => (
+                                <div key={item._id} className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105">
+                                    {item.guideId ? (
+                                        <div className="p-6">
+                                            <h3 className="text-2xl font-semibold text-white mb-2">{item.guideId.name}</h3>
+                                            <p className="text-gray-300 mb-4">{item.guideId.description}</p>
+                                            <p className="text-sm text-gray-300 mb-4">Experience: {item.guideId.experience} years</p>
+                                            <button 
+                                                onClick={() => handleRemoveGuide(item._id)}
+                                                className="w-full bg-red-500 text-white font-bold py-2 px-4 rounded-full hover:bg-red-600 transition-colors duration-300"
+                                            >
+                                                Remove
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div className="p-6">
+                                            <p className="text-white">Guide details unavailable.</p>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
 
-            {wishlist.length === 0 && guideWishlist.length === 0 && (
-                <p>No items in your wishlist.</p>
-            )}
+                {wishlist.length === 0 && guideWishlist.length === 0 && (
+                    <p className="text-center text-xl text-white">No items in your wishlist.</p>
+                )}
+            </main>
         </div>
     );
 };
 
 export default CustomerWishlist;
+
