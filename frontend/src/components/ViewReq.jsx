@@ -127,7 +127,7 @@ const ViewReq = () => {
   }
 
   return (
-    <div className="min-h-screen bg-base-300">
+    <div className="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700">
       {/* Navbar */}
       <div className="navbar bg-base-100 shadow-lg">
         <div className="flex-1">
@@ -158,25 +158,25 @@ const ViewReq = () => {
       <div className="p-6 max-w-4xl mx-auto mt-8">
         <div className="bg-base-100 shadow-xl rounded-lg overflow-hidden">
           <div className="p-6">
-            <h1 className="text-3xl font-bold mb-6 text-primary">
+            <h1 className="text-3xl font-bold mb-6 text-white">
               Request Details
             </h1>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div className="bg-base-200 p-4 rounded-lg">
-                  <strong className="text-primary">Request ID: </strong>
+                  <strong className="text-white">Request ID: </strong>
                   <span className="text-base-content">
                     {requestDetails._id}
                   </span>
                 </div>
                 <div className="bg-base-200 p-4 rounded-lg">
-                  <strong className="text-primary">Customer Name: </strong>
+                  <strong className="text-white">Customer Name: </strong>
                   <span className="text-base-content">
                     {requestDetails.customerName}
                   </span>
                 </div>
                 <div className="bg-base-200 p-4 rounded-lg">
-                  <strong className="text-primary">Package Name: </strong>
+                  <strong className="text-white">Package Name: </strong>
                   <span className="text-base-content">
                     {requestDetails.packageName}
                   </span>
@@ -184,19 +184,19 @@ const ViewReq = () => {
               </div>
               <div className="space-y-4">
                 <div className="bg-base-200 p-4 rounded-lg">
-                  <strong className="text-primary">Price: </strong>
+                  <strong className="text-white">Price: </strong>
                   <span className="text-base-content">
                     Rs. {requestDetails.price}
                   </span>
                 </div>
                 <div className="bg-base-200 p-4 rounded-lg">
-                  <strong className="text-primary">Duration: </strong>
+                  <strong className="text-white">Duration: </strong>
                   <span className="text-base-content">
                     {requestDetails.duration} days
                   </span>
                 </div>
                 <div className="bg-base-200 p-4 rounded-lg">
-                  <strong className="text-primary">Requested Date: </strong>
+                  <strong className="text-white">Requested Date: </strong>
                   <span className="text-base-content">
                     {new Date(requestDetails.requestDate).toLocaleDateString()}
                   </span>
@@ -206,7 +206,7 @@ const ViewReq = () => {
 
             {/* Status */}
             <div className="mt-6 bg-base-200 p-4 rounded-lg">
-              <strong className="text-primary">Current Status: </strong>
+              <strong className="text-white">Current Status: </strong>
               <span className="text-base-content">{status}</span>
             </div>
 
