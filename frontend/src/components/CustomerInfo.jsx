@@ -289,6 +289,7 @@ const CustomerInfo = () => {
                     <p><strong>Total Price:</strong> ${booking.totalPrice}</p>
                     <p><strong>Status:</strong> {booking.status}</p>
                     <p><strong>Booking Date:</strong> {new Date(booking.bookingDate).toLocaleDateString()}</p>
+                    <p><strong>Booking ID: </strong>{booking._id}</p>
                   </div>
                 ))
               ) : (
