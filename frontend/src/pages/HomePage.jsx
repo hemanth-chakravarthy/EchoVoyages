@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+
 
 const HomePage = () => {
   const [packages, setPackages] = useState([]);
@@ -30,57 +30,61 @@ const HomePage = () => {
   }, []);
 
   return (
-    <div>
+    <div className="min-h-screen flex flex-col bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700">
       <Navbar />
 
-      <section>
-        <h1>Available Packages</h1>
+      <main className="flex-grow container mx-auto px-4 py-12">
+        <h1 className="text-5xl font-bold text-center mb-16 text-white">Explore Our Packages</h1>
         {loading ? (
-          <p>Loading packages...</p>
+          <p className="text-center text-xl text-gray-300">Loading packages...</p>
         ) : packages.length > 0 ? (
-          <ul>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {packages.map(
               (pack) =>
                 pack.isActive && (
-                  <li key={pack._id}>
-                    <h2>{pack.name}</h2>
-                    <p>{pack.description}</p>
-                    <p>Price: {pack.price}</p>
-                    <p>Duration: {pack.duration} days</p>
-                    <Link to={`/packages/${pack._id}`}>
-                      <button>View Package</button>
-                    </Link>
-                    {/* Display images */}
-                    {pack.image && pack.image.length > 0 ? (
-                      <div>
-                        {pack.image.map((img, index) => (
-                          <img
-                            key={index}
-                            src={`http://localhost:5000${img}`}
-                            alt={`Package ${pack.name}`}
-                            style={{
-                              width: "200px",
-                              height: "150px",
-                              marginRight: "10px",
-                            }}
-                          />
-                        ))}
+                  <div key={pack._id} className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:bg-opacity-20">
+                    <div className="relative pb-2/3">
+                      {pack.image && pack.image.length > 0 ? (
+                        <div className="absolute inset-0 flex overflow-x-auto snap-x">
+                          {pack.image.map((img, index) => (
+                            <img
+                              key={index}
+                              src={`http://localhost:5000${img}`}
+                              alt={`Package ${pack.name}`}
+                              className="h-64 w-full object-cover snap-center"
+                            />
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">
+                          <p className="text-gray-500">No image available</p>
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-6">
+                      <h2 className="text-2xl font-semibold text-white mb-2">{pack.name}</h2>
+                      <p className="text-gray-300 mb-4">{pack.description}</p>
+                      <div className="flex justify-between items-center mb-4">
+                        <p className="text-lg font-bold text-white">${pack.price}</p>
+                        <p className="text-sm text-gray-300">{pack.duration} days</p>
                       </div>
-                    ) : (
-                      <p>No images available for this package</p>
-                    )}
-                  </li>
+                      <Link to={`/packages/${pack._id}`} className="block">
+                        <button className="w-full bg-[#81c3d2] text-white font-bold py-3 px-6 rounded-full hover:bg-[#2c494b] transition-colors duration-300 transform hover:scale-105">
+                          View Package
+                        </button>
+                      </Link>
+                    </div>
+                  </div>
                 )
             )}
-          </ul>
+          </div>
         ) : (
-          <p>No packages available</p>
+          <p className="text-center text-xl text-gray-300">No packages available</p>
         )}
-      </section>
-
-      <Footer />
+      </main>
     </div>
   );
 };
 
 export default HomePage;
+

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Signup = () => {
   const navigate = useNavigate()
@@ -163,15 +165,17 @@ const Signup = () => {
           specialization: "luxury",
         });
         setErrors({});
-        alert("Signup successful!");
+        toast.success("Signup successful!");
         navigate('/login')
         console.log("Signup successful!");
       } else {
         const data = await response.json();
         console.log("Signup failed with error:", data.error);
+        toast.error(`Signup failed with error: ${data.error}`)
       }
     } catch (err) {
       console.error("Error signing up:", err);
+      toast.error(`Error:${err}`)
     }
   };
 
@@ -183,6 +187,7 @@ const Signup = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-cover bg-center py-12 px-4 sm:px-6 lg:px-8" style={{ backgroundImage: "url('../public/images/travel-background.jpg')" }}>
+      <ToastContainer position="top-right" autoClose={3000} />
       <div className="max-w-md w-full space-y-8 bg-gray-900 bg-opacity-80 p-10 rounded-xl shadow-2xl">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-white">Create your account</h2>

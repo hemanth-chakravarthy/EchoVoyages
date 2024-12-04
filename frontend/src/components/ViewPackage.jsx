@@ -2,18 +2,24 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { FaFlag } from "react-icons/fa";
-import Navbar from "../components/Navbar";
 
 const ViewPackage = () => {
   const { id } = useParams();
   const [packageDetails, setPackageDetails] = useState(null);
-  const [revvs, setRevDetails] = useState(null);
+  const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
     const fetchPackageDetails = async () => {
       try {
         const response = await fetch(`http://localhost:5000/packages/${id}`);
         const data = await response.json();
+        console.log("Fetched package details:", data);
+        if (data && data.image) {
+          // Ensure image URLs are complete
+          data.image = data.image.map((img) =>
+            img.startsWith("http") ? img : `http://localhost:5000${img}`
+          );
+        }
         setPackageDetails(data);
 
         if (data.reviewCount > 0) {
@@ -28,14 +34,13 @@ const ViewPackage = () => {
       try {
         const res = await fetch(`http://localhost:5000/reviews/package/${id}`);
         const data = await res.json();
-        setRevDetails(data);
+        setReviews(data);
       } catch (error) {
         console.error("Error fetching reviews:", error);
       }
     };
 
     fetchPackageDetails();
-    fetchReviews();
   }, [id]);
 
   const handleReportReview = async (reviewId) => {
@@ -55,18 +60,14 @@ const ViewPackage = () => {
   };
 
   if (!packageDetails) {
-    return (
-      <div className="flex justify-center items-center h-screen bg-base-300">
-        <div className="loading loading-spinner loading-lg text-primary"></div>
-      </div>
-    );
+    return <p>Loading...</p>;
   }
 
   return (
     <div>
       <Navbar />
-      <div className="bg-base-300 min-h-screen p-4 md:p-8">
-        <div className="max-w-6xl mx-auto bg-base-100 rounded-lg shadow-xl overflow-hidden">
+      <div className="bg-base-300 min-h-[85vh] p-4 md:p-8">
+        <div className="max-w-8xl mx-auto bg-base-100 rounded-lg shadow-xl overflow-hidden">
           <div className="p-6 md:p-8">
             <h1 className="text-3xl font-bold text-primary mb-6">
               {packageDetails.name}
@@ -171,6 +172,10 @@ const ViewPackage = () => {
       </div>
     </div>
   );
+};
+
+ViewPackage.propTypes = {
+  id: PropTypes.string.isRequired,
 };
 
 export default ViewPackage;

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const CustomerPackActions = () => {
   const { id } = useParams(); // `id` is the packageId
@@ -70,20 +72,19 @@ const CustomerPackActions = () => {
           requestType,
           ...customDetails,
           message,
-
         }),
       });
       if (response.ok) {
-        alert(`Request submitted successfully as ${requestType}.`);
+        toast.success(`Request submitted successfully as ${requestType}.`);
         setShowRequestModal(false);
         navigate("/home");
       } else {
         const errorData = await response.json();
-        alert(`Failed to submit request: ${errorData.message}`);
+        toast.error(`Failed to submit request: ${errorData.message}`);
       }
     } catch (error) {
       console.error("Error submitting request:", error);
-      alert("An error occurred while submitting the request.");
+      toast.error("An error occurred while submitting the request.");
     }
   };
 
@@ -106,7 +107,7 @@ const CustomerPackActions = () => {
   // Function to submit the review
   const handleSubmitReview = async () => {
     if (!bookingId) {
-      alert("Please enter the Booking ID.");
+      toast.error("Please enter the Booking ID.");
       return;
     }
 
@@ -129,16 +130,16 @@ const CustomerPackActions = () => {
       if (response.ok) {
         const result = await response.json();
         console.log("Review submitted:", result);
-        alert("Review submitted successfully!");
+        toast.success("Review submitted successfully!");
         handleCloseReviewModal(); // Close the modal
       } else {
         const errorData = await response.json();
         console.error("Failed to submit review:", errorData.message);
-        alert(`Failed to submit review: ${errorData.message}`);
+        toast.error(`Failed to submit review: ${errorData.message}`);
       }
     } catch (error) {
       console.error("Error submitting review:", error);
-      alert("An error occurred while submitting the review.");
+      toast.error("An error occurred while submitting the review.");
     }
   };
 
@@ -158,58 +159,66 @@ const CustomerPackActions = () => {
       });
 
       if (response.ok) {
-        alert("Package added to wishlist successfully!");
+        toast.success("Package added to wishlist successfully!");
       } else {
         const errorData = await response.json();
-        alert(`Failed to add to wishlist: ${errorData.message}`);
+        toast.error(`Failed to add to wishlist: ${errorData.message}`);
       }
     } catch (error) {
       console.error("Error adding to wishlist:", error);
-      alert("An error occurred while adding to the wishlist.");
+      toast.error("An error occurred while adding to the wishlist.");
     }
   };
 
-
   return (
-    
     <div className="p-4">
-      
+      <ToastContainer position="top-right" autoClose={3000} />
+
       <button
-        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+        className="btn btn-primary"
         onClick={() => setShowRequestModal(true)}
       >
         Customize / Book
       </button>
-      <button onClick={handleOpenReviewModal}>Add Review</button>
-      <button onClick={addToWishlist}>Add to Wishlist</button>
+      <button
+        onClick={handleOpenReviewModal}
+        className="btn btn-secondary ml-2"
+      >
+        Add Review
+      </button>
+      <button onClick={addToWishlist} className="btn btn-accent ml-2">
+        Add to Wishlist
+      </button>
 
       {showRequestModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-lg">
-            <h2 className="text-xl font-semibold mb-4">
+        <div className="fixed inset-0 flex items-center justify-center bg-base-300 bg-opacity-50">
+          <div className="bg-base-100 p-6 rounded-lg shadow-lg w-11/12 max-w-lg">
+            <h2 className="text-2xl font-semibold mb-4 text-base-content">
               {requestType === "book" ? "Book Package" : "Customize Package"}
             </h2>
             {isLoading ? (
-              <p>Loading package details...</p>
+              <p className="text-base-content">Loading package details...</p>
             ) : (
               <>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium mb-2">
-                    Request Type:
+                <div className="form-control mb-4">
+                  <label className="label">
+                    <span className="label-text">Request Type:</span>
                   </label>
                   <select
                     name="requestType"
                     value={requestType}
                     onChange={(e) => setRequestType(e.target.value)}
-                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="select select-bordered w-full"
                   >
                     <option value="book">Book</option>
                     <option value="customize">Customize</option>
                   </select>
                 </div>
 
-                <div className="mb-4">
-                  <label className="block text-sm font-medium mb-2">Price:</label>
+                <div className="form-control mb-4">
+                  <label className="label">
+                    <span className="label-text">Price:</span>
+                  </label>
                   <input
                     name="price"
                     type="number"
@@ -217,66 +226,81 @@ const CustomerPackActions = () => {
                     onChange={(e) =>
                       handleCustomDetailsChange("price", e.target.value)
                     }
-                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="input input-bordered w-full"
                   />
                 </div>
 
-                <div className="mb-4">
-  <label className="block text-sm font-medium mb-2">Duration (days):</label>
-  <input
-    name="duration"
-    type="number"
-    value={customDetails.duration}
-    onChange={(e) =>
-      handleCustomDetailsChange("duration", parseInt(e.target.value, 10))
-    }
-    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-  />
-</div>
+                <div className="form-control mb-4">
+                  <label className="label">
+                    <span className="label-text">Duration (days):</span>
+                  </label>
+                  <input
+                    name="duration"
+                    type="number"
+                    value={customDetails.duration}
+                    onChange={(e) =>
+                      handleCustomDetailsChange(
+                        "duration",
+                        parseInt(e.target.value, 10)
+                      )
+                    }
+                    className="input input-bordered w-full"
+                  />
+                </div>
 
-<div className="mb-4">
-  <label className="block text-sm font-medium mb-2">Itinerary:</label>
-  <textarea
-    name="itinerary"
-    value={customDetails.itinerary}
-    onChange={(e) =>
-      handleCustomDetailsChange("itinerary", e.target.value)
-    }
-    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-    rows="4"
-  ></textarea>
-</div>
+                <div className="form-control mb-4">
+                  <label className="label">
+                    <span className="label-text">Itinerary:</span>
+                  </label>
+                  <textarea
+                    name="itinerary"
+                    value={customDetails.itinerary}
+                    onChange={(e) =>
+                      handleCustomDetailsChange("itinerary", e.target.value)
+                    }
+                    className="textarea textarea-bordered w-full"
+                    rows="4"
+                  ></textarea>
+                </div>
 
-<div className="mb-4">
-  <label className="block text-sm font-medium mb-2">
-    Available Dates (comma-separated):
-  </label>
-  <input
-    name="availableDates"
-    type="text"
-    onChange={(e) =>
-      handleCustomDetailsChange(
-        "availableDates",
-        e.target.value.split(",").map((date) => new Date(date.trim()))
-      )
-    }k
-    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-  />
-</div>
+                <div className="form-control mb-4">
+                  <label className="label">
+                    <span className="label-text">
+                      Available Dates (comma-separated):
+                    </span>
+                  </label>
+                  <input
+                    name="availableDates"
+                    type="text"
+                    onChange={(e) =>
+                      handleCustomDetailsChange(
+                        "availableDates",
+                        e.target.value
+                          .split(",")
+                          .map((date) => new Date(date.trim()))
+                      )
+                    }
+                    className="input input-bordered w-full"
+                  />
+                </div>
 
-<div className="mb-4">
-  <label className="block text-sm font-medium mb-2">Max Group Size:</label>
-  <input
-    name="maxGroupSize"
-    type="number"
-    value={customDetails.maxGroupSize}
-    onChange={(e) =>
-      handleCustomDetailsChange("maxGroupSize", parseInt(e.target.value, 10))
-    }
-    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-  />
-</div>
-
+                <div className="form-control mb-4">
+                  <label className="label">
+                    <span className="label-text">Max Group Size:</span>
+                  </label>
+                  <input
+                    name="maxGroupSize"
+                    type="number"
+                    value={customDetails.maxGroupSize}
+                    onChange={(e) =>
+                      handleCustomDetailsChange(
+                        "maxGroupSize",
+                        parseInt(e.target.value, 10)
+                      )
+                    }
+                    className="input input-bordered w-full"
+                  />
+                </div>
               </>
             )}
 
@@ -284,14 +308,14 @@ const CustomerPackActions = () => {
               <button
                 name="submit"
                 onClick={handleRequestSubmit}
-                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
+                className="btn btn-primary"
               >
                 Submit
               </button>
               <button
                 name="cancel"
                 onClick={() => setShowRequestModal(false)}
-                className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition"
+                className="btn btn-ghost"
               >
                 Cancel
               </button>
@@ -300,66 +324,68 @@ const CustomerPackActions = () => {
         </div>
       )}
       {showReviewModal && (
-  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-    <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-md">
-      <h2 className="text-xl font-semibold mb-4 text-center">Rate and Review</h2>
+        <div className="fixed inset-0 flex items-center justify-center bg-base-300 bg-opacity-50 z-50">
+          <div className="bg-base-100 p-6 rounded-lg shadow-lg w-11/12 max-w-md">
+            <h2 className="text-2xl font-semibold mb-4 text-center text-base-content">
+              Rate and Review
+            </h2>
 
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-2">Booking ID:</label>
-        <input
-          type="text"
-          value={bookingId}
-          onChange={(e) => setBookingId(e.target.value)}
-          className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
+            <div className="form-control mb-4">
+              <label className="label">
+                <span className="label-text">Booking ID:</span>
+              </label>
+              <input
+                type="text"
+                value={bookingId}
+                onChange={(e) => setBookingId(e.target.value)}
+                className="input input-bordered w-full"
+              />
+            </div>
 
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-2">Rating (1 to 5):</label>
-        <select
-          value={rating}
-          onChange={(e) => setRating(e.target.value)}
-          className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-        </select>
-      </div>
+            <div className="form-control mb-4">
+              <label className="label">
+                <span className="label-text">Rating (1 to 5):</span>
+              </label>
+              <select
+                value={rating}
+                onChange={(e) => setRating(e.target.value)}
+                className="select select-bordered w-full"
+              >
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </div>
 
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-2">Comment:</label>
-        <textarea
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          rows="4"
-          className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-        ></textarea>
-      </div>
+            <div className="form-control mb-4">
+              <label className="label">
+                <span className="label-text">Comment:</span>
+              </label>
+              <textarea
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                rows="4"
+                className="textarea textarea-bordered w-full"
+              ></textarea>
+            </div>
 
-      <div className="flex justify-end space-x-4">
-        <button
-          onClick={handleSubmitReview}
-          className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
-        >
-          Submit
-        </button>
-        <button
-          onClick={handleCloseReviewModal}
-          className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition"
-        >
-          Close
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
+            <div className="flex justify-end space-x-4">
+              <button onClick={handleSubmitReview} className="btn btn-primary">
+                Submit
+              </button>
+              <button
+                onClick={handleCloseReviewModal}
+                className="btn btn-ghost"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-  
 };
-
 export default CustomerPackActions;
