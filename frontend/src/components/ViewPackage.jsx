@@ -54,7 +54,7 @@ const ViewPackage = () => {
         console.error("Error fetching reviews:", error);
       }
     };
-
+    fetchReviews();
     fetchPackageDetails();
   }, [id]);
 

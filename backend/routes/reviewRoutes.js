@@ -139,7 +139,7 @@ router.get("/package/:packageId", async (req, res) => {
   try {
     // Find reviews associated with the specific packageId
     const revs = await reviews.find({ packageId });
-
+    console.log(revs.length)
     // If no reviews are found
     if (revs.length === 0) {
       return res
