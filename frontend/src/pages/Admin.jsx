@@ -6,7 +6,7 @@ import ReviewsTable from "../components/ReviewsTable";
 import GuidesTable from "../components/GuideTable";
 import BookingsTable from "../components/BookingsTable";
 import AgencyTable from "../components/AgenciesTable";
-import { BookingsChart, UserDistributionChart, RevenueChart } from "../components/dashboard";
+import {  UserDistributionChart,  } from "../components/dashboard";
 import DashboardStats from "../components/dashboard/DashboardStats";
 
 const Admin = () => {
@@ -68,7 +68,7 @@ const Admin = () => {
       <DashboardStats data={data} />
     
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <BookingsChart data={data.bookings} />
+       
         <UserDistributionChart data={{
           customers: data.customers,
           guides: data.guides,
@@ -77,7 +77,7 @@ const Admin = () => {
       </div>
     
       <div className="mt-6">
-        <RevenueChart data={data.bookings} />
+       
       </div>
     </div>
   );
