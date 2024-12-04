@@ -15,12 +15,15 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
-const COLORS = ['hsl(var(--chart-1))', 'hsl(var(--chart-2))', 'hsl(var(--chart-3))', 'hsl(var(--chart-4))', 'hsl(var(--chart-5))'];
+const COLORS = ['#8dd3c7', '#ffffb3', '#bebada', '#fb8072', '#80b1d3', '#fdb462', '#b3de69', '#fccde5'];
 
-export const BookingsChart = ({ data }) => {
+export const BookingsChart = ({ data = [] }) => {
   const bookingsByMonth = data.reduce((acc, booking) => {
-    const month = new Date(booking.date).toLocaleString('default', { month: 'short' });
-    acc[month] = (acc[month] || 0) + 1;
+    const date = new Date(booking.date);
+    if (!isNaN(date.getTime())) {
+      const month = date.toLocaleString('default', { month: 'short' });
+      acc[month] = (acc[month] || 0) + 1;
+    }
     return acc;
   }, {});
 
@@ -39,7 +42,7 @@ export const BookingsChart = ({ data }) => {
           <YAxis />
           <Tooltip />
           <Legend />
-          <Bar dataKey="bookings" fill="hsl(var(--chart-1))" />
+          <Bar dataKey="bookings" fill="#8dd3c7" />
         </BarChart>
       </ResponsiveContainer>
     </div>
@@ -47,15 +50,15 @@ export const BookingsChart = ({ data }) => {
 };
 
 export const UserTypeDistribution = ({ data }) => {
-  const distribution = data.reduce((acc, user) => {
-    acc[user.role] = (acc[user.role] || 0) + 1;
-    return acc;
-  }, {});
-
-  const chartData = Object.entries(distribution).map(([role, count]) => ({
-    name: role,
-    value: count,
-  }));
+  // Ensure we have arrays for each user type, defaulting to empty arrays if undefined
+  const { customers = [], guides = [], agencies = [] } = data;
+  
+  // Create distribution data
+  const distribution = [
+    { name: 'Customers', value: customers.length },
+    { name: 'Guides', value: guides.length },
+    { name: 'Agencies', value: agencies.length }
+  ].filter(item => item.value > 0); // Only include non-zero values
 
   return (
     <div className="bg-card p-4 rounded-lg shadow-md">
@@ -63,7 +66,7 @@ export const UserTypeDistribution = ({ data }) => {
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
           <Pie
-            data={chartData}
+            data={distribution}
             cx="50%"
             cy="50%"
             labelLine={false}
@@ -72,7 +75,7 @@ export const UserTypeDistribution = ({ data }) => {
             fill="#8884d8"
             dataKey="value"
           >
-            {chartData.map((entry, index) => (
+            {distribution.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
             ))}
           </Pie>
@@ -84,16 +87,19 @@ export const UserTypeDistribution = ({ data }) => {
   );
 };
 
-export const RevenueChart = ({ data }) => {
+export const RevenueChart = ({ data = [] }) => {
   const revenueByMonth = data.reduce((acc, booking) => {
-    const month = new Date(booking.date).toLocaleString('default', { month: 'short' });
-    acc[month] = (acc[month] || 0) + (booking.amount || 0);
+    const date = new Date(booking.date);
+    if (!isNaN(date.getTime())) {
+      const month = date.toLocaleString('default', { month: 'short' });
+      acc[month] = (acc[month] || 0) + (parseFloat(booking.amount) || 0);
+    }
     return acc;
   }, {});
 
   const chartData = Object.entries(revenueByMonth).map(([month, revenue]) => ({
     month,
-    revenue,
+    revenue: Number(revenue.toFixed(2)),
   }));
 
   return (
@@ -106,7 +112,7 @@ export const RevenueChart = ({ data }) => {
           <YAxis />
           <Tooltip />
           <Legend />
-          <Line type="monotone" dataKey="revenue" stroke="hsl(var(--chart-2))" />
+          <Line type="monotone" dataKey="revenue" stroke="#80b1d3" />
         </LineChart>
       </ResponsiveContainer>
     </div>

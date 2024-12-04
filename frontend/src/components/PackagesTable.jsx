@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 const PackagesTable = ({ packages }) => {
   const now = new Date();
   const packsLast24Hours = packages.filter((user) => {
-    const agentCreatedAt = new Date(user.createdAt); // Assuming `createdAt` is the timestamp field
-    return now - agentCreatedAt < 24 * 60 * 60 * 1000; // Difference in milliseconds
+    const agentCreatedAt = new Date(user.createdAt);
+    return now - agentCreatedAt < 24 * 60 * 60 * 1000;
   });
 
   return (
@@ -32,18 +32,21 @@ const PackagesTable = ({ packages }) => {
                 <td>{pkg.description}</td>
                 <td>{pkg.price}</td>
                 <td>
-                  <div className="linksPacks">
-                    <Link className="links" to={`/admin/packages/${pkg._id}`}>
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <Link 
+                      className="btn btn-neutral btn-xs" 
+                      to={`/admin/packages/${pkg._id}`}
+                    >
                       Show
                     </Link>
-                    <Link
-                      className="links"
+                    <Link 
+                      className="btn btn-dark btn-xs" 
                       to={`/admin/packages/edit/${pkg._id}`}
                     >
                       Update
                     </Link>
-                    <Link
-                      className="links"
+                    <Link 
+                      className="btn btn-error btn-xs" 
                       to={`/admin/packages/delete/${pkg._id}`}
                     >
                       Delete

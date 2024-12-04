@@ -65,33 +65,35 @@ const AgentHomePage = () => {
           </div>
         </div>
       </div>
-      <h1 className="text-center font-bold text-4xl m-8">Listed Packages</h1>
+      <h1 className="text-center font-bold text-4xl m-8">Booking Requests</h1>
       {requests.length > 0 ? (
-        <ul>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mx-4">
           {requests.map((req) => (
-            <li key={req._id} className="mb-4 p-4 border rounded-lg shadow-sm">
-              <h2 className="text-xl font-semibold">{req.packageName}</h2>
-              <p>
-                <strong>Customer Name:</strong> {req.customerName}
-              </p>
-              <p>
-                <strong>Status:</strong> {req.status}
-              </p>
-              <p>
-                <strong>Request Date:</strong>{" "}
-                {new Date(req.date).toLocaleDateString()}
-              </p>
-              <p>
-                <strong>Message:</strong> {req.message}
-              </p>
-              <Link to={`/requests/${req._id}`}>
-                <button className="mt-2 p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
-                  View Request
-                </button>
-              </Link>
-            </li>
+            <div key={req._id} className="card bg-base-100 w-full shadow-xl">
+              <div className="card-body">
+                <h2 className="card-title">{req.packageName}</h2>
+                <p>
+                  <strong>Customer Name:</strong> {req.customerName}
+                </p>
+                <p>
+                  <strong>Status:</strong> {req.status}
+                </p>
+                <p>
+                  <strong>Request Date:</strong>{" "}
+                  {new Date(req.date).toLocaleDateString()}
+                </p>
+                <p>
+                  <strong>Message:</strong> {req.message}
+                </p>
+                <div className="card-actions justify-end">
+                  <Link to={`/requests/${req._id}`}>
+                    <button className="btn btn-primary">View Request</button>
+                  </Link>
+                </div>
+              </div>
+            </div>
           ))}
-        </ul>
+        </div>
       ) : (
         <p>No requests available for your packages.</p>
       )}

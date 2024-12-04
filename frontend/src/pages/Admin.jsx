@@ -6,7 +6,7 @@ import ReviewsTable from "../components/ReviewsTable";
 import GuidesTable from "../components/GuideTable";
 import BookingsTable from "../components/BookingsTable";
 import AgencyTable from "../components/AgenciesTable";
-import { BookingsChart, UserTypeDistribution, RevenueChart } from "../components/dashboard/DashboardCharts";
+import { BookingsChart, UserDistributionChart, RevenueChart } from "../components/dashboard";
 import DashboardStats from "../components/dashboard/DashboardStats";
 
 const Admin = () => {
@@ -30,16 +30,32 @@ const Admin = () => {
       const responses = await Promise.all(
         endpoints.map(endpoint => 
           axios.get(`http://localhost:5000/admin/${endpoint}`)
+            .catch(error => {
+              console.error(`Error fetching ${endpoint}:`, error);
+              return { data: { data: [] } };
+            })
         )
       );
-      
+    
       const newData = {};
       endpoints.forEach((endpoint, index) => {
-        newData[endpoint] = responses[index].data.data;
+        const responseData = responses[index]?.data?.data || [];
+        console.log(`Fetched ${endpoint} data:`, responseData);
+        newData[endpoint === 'agency' ? 'agencies' : endpoint] = responseData;
       });
+      
       setData(newData);
+      console.log('Updated dashboard data:', newData);
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching data:", error);
+      setData({
+        customers: [],
+        packages: [],
+        reviews: [],
+        guides: [],
+        bookings: [],
+        agencies: [],
+      });
     }
   };
 
@@ -50,12 +66,16 @@ const Admin = () => {
   const renderDashboard = () => (
     <div className="space-y-6">
       <DashboardStats data={data} />
-      
+    
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <BookingsChart data={data.bookings} />
-        <UserTypeDistribution data={data.customers} />
+        <UserDistributionChart data={{
+          customers: data.customers,
+          guides: data.guides,
+          agencies: data.agencies
+        }} />
       </div>
-      
+    
       <div className="mt-6">
         <RevenueChart data={data.bookings} />
       </div>
