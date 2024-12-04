@@ -59,11 +59,11 @@ const CustomerInfo = () => {
       formErrors.name = "Name should only contain letters and spaces.";
     }
 
-    if (!/^\d{10}$/.test(customer.phoneNumber)) {
+    if (!/^\d{10}$/.test(customer.phno)) {
       formErrors.phoneNumber = "Phone number should be a 10-digit number.";
     }
 
-    if (!/^[\w-]+@([\w-]+\.)+[\w-]{2,4}$/.test(customer.email)) {
+    if (!/^[\w-]+@([\w-]+\.)+[\w-]{2,4}$/.test(customer.gmail)) {
       formErrors.email = "Email is not valid.";
     }
 
@@ -157,12 +157,7 @@ const CustomerInfo = () => {
                   >
                     {editing ? "Cancel" : "Edit Profile"}
                   </button>
-                  <button
-                    onClick={handlePasswordToggle}
-                    className="bg-transparent text-transparent font-bold py-2 px-4 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
-                  >
-                    {changePassword ? "Cancel" : "Change Password"}
-                  </button>
+                  
                 </div>
               </div>
               {editing ? (
