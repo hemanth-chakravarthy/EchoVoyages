@@ -162,12 +162,7 @@ const CustomerInfo = () => {
                   >
                     {editing ? "Cancel" : "Edit Profile"}
                   </button>
-                  <button
-                    onClick={handlePasswordToggle}
-                    className="bg-transparent text-transparent font-bold py-2 px-4 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
-                  >
-                    {changePassword ? "Cancel" : "Change Password"}
-                  </button>
+                  
                 </div>
               </div>
               {editing ? (
