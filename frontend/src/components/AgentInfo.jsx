@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   BarChart,
   Bar,
@@ -41,7 +43,7 @@ const AgentInfo = () => {
         const response = await axios.get(`http://localhost:5000/agency/${id}`);
         setAgent(response.data);
       } catch (error) {
-        alert("Error fetching agent details");
+        toast.error("Error fetching agent details");
         console.log(error);
       }
     };
@@ -98,10 +100,10 @@ const AgentInfo = () => {
     if (validateForm()) {
       try {
         await axios.put(`http://localhost:5000/agency/${id}`, agent);
-        alert("Agent details updated successfully");
+        toast.success("Agent details updated successfully");
         navigate("/AgentProfilePage");
       } catch (error) {
-        alert("Error occurred while updating agent details");
+        toast.error("Error occurred while updating agent details");
         console.log(error);
       }
     }
@@ -119,6 +121,7 @@ const AgentInfo = () => {
 
   return (
     <div className="min-h-screen bg-base-300 py-12 px-4 sm:px-6 lg:px-8">
+      <ToastContainer position="top-right" autoClose={3000} />
       <div className="max-w-4xl mx-auto bg-base-200 rounded-lg shadow-xl overflow-hidden">
         <div className="px-4 py-5 sm:px-6 bg-base200">
           <h1 className="text-2xl font-bold text-primary">
