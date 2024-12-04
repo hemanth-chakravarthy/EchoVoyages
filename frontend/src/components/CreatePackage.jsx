@@ -330,7 +330,7 @@ const CreatePackage = () => {
           </button>
         )}
         {currentStep < 3 && (
-          <button type="button" onClick={nextStep} className="btn btn-primary">
+          <button type="button" onClick={nextStep} className="bg-transparent text-transparent font-bold py-3 px-6 rounded-[35px] border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient">
             Next
           </button>
         )}
