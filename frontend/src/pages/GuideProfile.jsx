@@ -218,7 +218,7 @@ const GuideProfilePage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-base-200">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700">
         <span className="loading loading-spinner loading-lg"></span>
       </div>
     );
@@ -226,7 +226,7 @@ const GuideProfilePage = () => {
 
   if (!guide) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-base-200">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700">
         <div className="alert alert-error">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -248,7 +248,7 @@ const GuideProfilePage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-base-200">
+    <div className="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700">
       <nav className="navbar bg-base-100 shadow-lg mb-6">
         <div className="flex-1">
           <Link to="/guideHome" className="btn btn-ghost normal-case text-xl">
@@ -256,7 +256,7 @@ const GuideProfilePage = () => {
           </Link>
         </div>
         <div className="flex-none">
-          <Link to="/GuideProfilePage" className="btn btn-primary">
+          <Link to="/GuideProfilePage" className="btn btn-w-full bg-transparent text-transparent font-bold py-3 px-6 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient">
             Profile Page
           </Link>
         </div>
@@ -473,7 +473,7 @@ const GuideProfilePage = () => {
                       </div>
                     ))}
                     <button
-                      className="btn btn-primary btn-sm mt-4"
+                      className="btn btn-w-full bg-transparent text-transparent font-bold py-3 px-6 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
                       onClick={handleAddDateRange}
                     >
                       Add Date Range
@@ -515,7 +515,7 @@ const GuideProfilePage = () => {
         <div className="mt-8 flex justify-between items-center">
           {editing ? (
             <>
-              <button className="btn btn-primary" onClick={handleSaveChanges}>
+              <button className="btn btn-w-full bg-transparent text-transparent font-bold py-3 px-6 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient" onClick={handleSaveChanges}>
                 Save Changes
               </button>
               <button className="btn btn-ghost" onClick={handleCancel}>
@@ -523,7 +523,7 @@ const GuideProfilePage = () => {
               </button>
             </>
           ) : (
-            <button className="btn btn-primary" onClick={handleEditToggle}>
+            <button className="btn btn-w-full bg-transparent text-transparent font-bold py-3 px-6 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient" onClick={handleEditToggle}>
               Edit Profile
             </button>
           )}
