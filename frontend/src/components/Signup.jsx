@@ -354,7 +354,7 @@ const Signup = () => {
                     >
                       <option value="customer">Customer</option>
                       <option value="guide">Local Guide</option>
-                      <option value="travel-agency">Travel Agency</option>
+                      <option value="agency">Travel Agency</option>
                     </select>
                   </div>
                   <div>

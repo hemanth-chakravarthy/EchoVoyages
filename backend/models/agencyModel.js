@@ -12,19 +12,17 @@ const agencySchema = mongoose.Schema(
       required: true,
       trim: true,
     },
-    contactInfo: {
-      email: {
+      gmail: {
         type: String,
         required: true,
         unique: true,
         trim: true,
       },
-      phone: {
+      phno: {
         type: String,
         required: true,
         trim: true,
       },
-    },
     password: {
       type: String,
       required: true,

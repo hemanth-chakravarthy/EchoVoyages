@@ -42,14 +42,15 @@ router.post("/signup", async (req, res) => {
       console.log("DON'T KNOW WHWRE I AM");
       const customer = await customers.create(newCust);
       return res.status(201).send(customer);
-    } else if (req.body.role == "travel agency") {
+    } else if (req.body.role == "agency") {
       if (await Agency.findOne({ username: req.body.username })) {
         return res.status(404).send({ error: "User already Exists" });
       }
       const newAgency = {
         username: req.body.username,
         name: req.body.Name,
-        contactInfo: { username: req.body.gmail, phone: req.body.phno },
+        phno: req.body.phno,
+        gmail: req.body.gmail,
         password: hashedPassword,
         specialization: req.body.specialization,
       };
