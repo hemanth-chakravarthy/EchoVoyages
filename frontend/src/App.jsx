@@ -26,7 +26,7 @@ import ViewReq from "./components/ViewReq";
 import RealLandingPage from "./components/RealLandingPage";
 import AgentViewAll from "./pages/AgentViewAll";
 import ActHomePage from "./pages/ActHomePage";
-import ActHomePage1 from "./pages/ActHomePage";
+
 
 const App = () => {
   return (
