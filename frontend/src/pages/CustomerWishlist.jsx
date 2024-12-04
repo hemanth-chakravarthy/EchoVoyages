@@ -5,8 +5,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const CustomerWishlist = () => {
-    const [wishlist, setWishlist] = useState([]);
-    const [guideWishlist, setGuideWishlist] = useState([]);
+    const [wishlist, setWishlist] = useState({ packages: [], guides: [] });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
@@ -14,57 +13,38 @@ const CustomerWishlist = () => {
     const customerId = token ? jwtDecode(token).id : null;
 
     useEffect(() => {
-        const fetchWishlist = async () => {
+        const fetchWishlistData = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/wishlist/customer/${customerId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
+                const [packageResponse, guideResponse] = await Promise.all([
+                    fetch(`http://localhost:5000/wishlist/customer/${customerId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                        },
+                    }),
+                    fetch(`http://localhost:5000/wishlistGuides/cust/${customerId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                        },
+                    })
+                ]);
+
+                if (!packageResponse.ok || !guideResponse.ok) {
+                    throw new Error('Failed to fetch wishlist data.');
+                }
+
+                const [packageData, guideData] = await Promise.all([
+                    packageResponse.json(),
+                    guideResponse.json()
+                ]);
+
+                setWishlist({
+                    packages: Array.isArray(packageData) ? packageData : [packageData],
+                    guides: Array.isArray(guideData) ? guideData : [guideData]
                 });
-
-                if (!response.ok) {
-                    throw new Error('Failed to fetch wishlist.');
-                }
-
-                const data = await response.json();
-
-                if (Array.isArray(data)) {
-                    setWishlist(data);
-                } else if (data && typeof data === 'object') {
-                    setWishlist([data]); 
-                }
-
-                setLoading(false);
-            } catch (error) {
-                setError(error.message);
-                setLoading(false);
-            }
-        };
-
-        const fetchGuideWishlist = async () => {
-            try {
-                const response = await fetch(`http://localhost:5000/wishlistGuides/cust/${customerId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                });
-
-                if (!response.ok) {
-                    throw new Error('Failed to fetch guide wishlist.');
-                }
-
-                const data = await response.json();
-
-                if (Array.isArray(data)) {
-                    setGuideWishlist(data);
-                } else if (data && typeof data === 'object') {
-                    setGuideWishlist([data]); 
-                }
-
                 setLoading(false);
             } catch (error) {
                 setError(error.message);
@@ -73,50 +53,34 @@ const CustomerWishlist = () => {
         };
 
         if (customerId) {
-            fetchWishlist();
-            fetchGuideWishlist();
+            fetchWishlistData();
         }
     }, [customerId, token]);
 
-    const handleRemoveItem = async (itemId) => {
+    const handleRemoveItem = async (itemId, type) => {
         try {
-            const response = await fetch(`http://localhost:5000/wishlist/${itemId}`, {
+            const endpoint = type === 'package' ? `http://localhost:5000/wishlist/${itemId}` : `http://localhost:5000/wishlistGuides/${itemId}`;
+            const response = await fetch(endpoint, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
             });
+
             const data = await response.json();
             if (response.ok) {
-                setWishlist((prevWishlist) => prevWishlist.filter(item => item._id !== itemId));
+                const updateWishlist = type === 'package' ? 
+                    { ...wishlist, packages: wishlist.packages.filter(item => item._id !== itemId) } :
+                    { ...wishlist, guides: wishlist.guides.filter(item => item._id !== itemId) };
+
+                setWishlist(updateWishlist);
                 toast.success(data.message);
             } else {
-                toast.error(data.message || 'Failed to remove item from wishlist');
+                toast.error(data.message || `Failed to remove ${type} from wishlist`);
             }
         } catch (error) {
             console.error('Error removing item from wishlist:', error);
-        }
-    };
-
-    const handleRemoveGuide = async (itemId) => {
-        try {
-            const response = await fetch(`http://localhost:5000/wishlistGuides/${itemId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-            const data = await response.json();
-            if (response.ok) {
-                setGuideWishlist((prevGuideWishlist) => prevGuideWishlist.filter(item => item._id !== itemId));
-                toast.success(data.message);
-            } else {
-                toast.error(data.message || 'Failed to remove guide from wishlist');
-            }
-        } catch (error) {
-            console.error('Error removing guide from wishlist:', error);
         }
     };
 
@@ -139,42 +103,27 @@ const CustomerWishlist = () => {
                 <h1 className="text-5xl font-bold text-center mb-16 text-white">My Wishlist</h1>
 
                 {/* Packages Section */}
-                {wishlist.length > 0 && (
+                {wishlist.packages.length > 0 ? (
                     <div className="mb-12">
                         <h2 className="text-3xl font-bold mb-6 text-white">Packages</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {wishlist.map((item) => (
+                            {wishlist.packages.map((item) => (
                                 <div key={item._id} className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105">
                                     {item.packageId ? (
-                                        <div className='flex flex-col justify-center items-center'>
-                                            <div className="relative pb-2/3">
-                                                {item.packageId.image && item.packageId.image.length > 0 ? (
-                                                    <img
-                                                        src={`http://localhost:5000/${item.packageId.image[0]}`}
-                                                        alt={item.packageId.name}
-                                                        className="absolute h-64 w-full object-cover"
-                                                    />
-                                                ) : (
-                                                    <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">
-                                                        <p className="text-gray-500">No image available</p>
-                                                    </div>
-                                                )}
-                                            </div>
-                                            <div className="p-6">
-                                                <h3 className="text-2xl font-semibold text-white mb-2">{item.packageId.name}</h3>
-                                                <p className="text-gray-300 mb-4">{item.packageId.description}</p>
-                                                <div className="flex justify-between items-center mb-4">
-                                                    <p className="text-lg font-bold text-white">${item.packageId.price}</p>
-                                                    <p className="text-sm text-gray-300">{item.packageId.duration} days</p>
-                                                </div>
-                                                <button 
-                                                    onClick={() => handleRemoveItem(item._id)}
-                                                    className="w-full bg-red-500 text-white font-bold py-2 px-4 rounded-full hover:bg-red-600 transition-colors duration-300"
-                                                >
-                                                    Remove
-                                                </button>
-                                            </div>
+                                        <div className="p-6 bg-gray-800 rounded-b-xl">
+                                        <h3 className="text-2xl font-semibold text-white mb-2">{item.packageId.name}</h3>
+                                        <p className="text-gray-300 mb-4">{item.packageId.description}</p>
+                                        <div className="flex justify-between items-center mb-4">
+                                            <p className="text-lg font-bold text-white">${item.packageId.price}</p>
+                                            <p className="text-sm text-gray-300">{item.packageId.duration} days</p>
                                         </div>
+                                        <button
+                                            onClick={() => handleRemoveItem(item._id, 'package')}
+                                            className="w-full bg-red-500 text-white font-bold py-2 px-4 rounded-full hover:bg-red-600 transition-colors duration-300"
+                                        >
+                                            Remove
+                                        </button>
+                                    </div>
                                     ) : (
                                         <div className="p-6">
                                             <p className="text-white">Package details unavailable.</p>
@@ -184,22 +133,24 @@ const CustomerWishlist = () => {
                             ))}
                         </div>
                     </div>
+                ) : (
+                    <p className="text-center text-xl text-white">No packages in your wishlist.</p>
                 )}
 
                 {/* Guides Section */}
-                {guideWishlist.length > 0 && (
+                {wishlist.guides.length > 0 ? (
                     <div className="mb-12">
                         <h2 className="text-3xl font-bold mb-6 text-white">Guides</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {guideWishlist.map((item) => (
+                            {wishlist.guides.map((item) => (
                                 <div key={item._id} className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105">
                                     {item.guideId ? (
                                         <div className="p-6">
                                             <h3 className="text-2xl font-semibold text-white mb-2">{item.guideId.name}</h3>
                                             <p className="text-gray-300 mb-4">{item.guideId.description}</p>
                                             <p className="text-sm text-gray-300 mb-4">Experience: {item.guideId.experience} years</p>
-                                            <button 
-                                                onClick={() => handleRemoveGuide(item._id)}
+                                            <button
+                                                onClick={() => handleRemoveItem(item._id, 'guide')}
                                                 className="w-full bg-red-500 text-white font-bold py-2 px-4 rounded-full hover:bg-red-600 transition-colors duration-300"
                                             >
                                                 Remove
@@ -214,9 +165,12 @@ const CustomerWishlist = () => {
                             ))}
                         </div>
                     </div>
+                ) : (
+                    <p className="text-center text-xl text-white">No guides in your wishlist.</p>
                 )}
 
-                {wishlist.length === 0 && guideWishlist.length === 0 && (
+                {/* No Items Message */}
+                {wishlist.packages.length === 0 && wishlist.guides.length === 0 && (
                     <p className="text-center text-xl text-white">No items in your wishlist.</p>
                 )}
             </main>
@@ -225,4 +179,3 @@ const CustomerWishlist = () => {
 };
 
 export default CustomerWishlist;
-

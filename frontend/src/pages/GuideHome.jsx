@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import ViewPendingCustomers from "../components/ViewPendingCustomers";
 import axios from "axios";
 import {
   BarChart,
@@ -92,7 +91,7 @@ const GuideHome = () => {
   const COLORS = ["#FFBB28", "#00C49F", "#FF8042"];
 
   return (
-    <div className="min-h-screen bg-base-200">
+    <div className="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700">
       <nav className="navbar bg-base-100 shadow-lg mb-6">
         <div className="flex-1">
           <Link to="/guideHome" className="btn btn-ghost normal-case text-xl">
@@ -100,7 +99,8 @@ const GuideHome = () => {
           </Link>
         </div>
         <div className="flex-none">
-          <Link to="/GuideProfilePage" className="btn btn-primary">
+          <Link to="/GuideProfilePage" className="btn btn-w-full bg-transparent text-transparent font-bold py-3 px-6 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient
+">
             Profile Page
           </Link>
         </div>
@@ -201,8 +201,9 @@ const GuideHome = () => {
                       <td>
                         <Link
                           to={`/bookings/${booking._id}`}
-                          className="btn btn-sm btn-primary"
-                        >
+                          className="btn btn-sm btn-w-full bg-transparent text-transparent font-bold py-3 px-6 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient
+">
+                        
                           View
                         </Link>
                       </td>
