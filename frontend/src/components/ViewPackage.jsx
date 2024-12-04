@@ -6,7 +6,7 @@ import { FaFlag } from "react-icons/fa";
 const ViewPackage = () => {
   const { id } = useParams();
   const [packageDetails, setPackageDetails] = useState(null);
-  const [reviews, setReviews] = useState([]);
+  const [revvs, setReviews] = useState([]);
 
   useEffect(() => {
     const fetchPackageDetails = async () => {
@@ -122,9 +122,9 @@ const ViewPackage = () => {
   );
 };
 
-ViewPackage.propTypes = {
-  id: PropTypes.string.isRequired,
-};
+// ViewPackage.propTypes = {
+//   id: PropTypes.string.isRequired,
+// };
 
 export default ViewPackage;
 
