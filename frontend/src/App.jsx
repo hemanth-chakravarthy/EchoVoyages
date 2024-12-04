@@ -24,9 +24,9 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import ViewReq from "./components/ViewReq";
 import RealLandingPage from "./components/RealLandingPage";
-
+import AgentViewAll from "./pages/AgentViewAll";
 import ActHomePage from "./pages/ActHomePage";
-import ActHomePage1 from "./pages/ActHomePage";
+
 
 const App = () => {
   return (
@@ -92,6 +92,9 @@ const App = () => {
       </Route>
       <Route path="/custProfilePage" element={<PrivateRoute />}>
         <Route path="/custProfilePage" element={<CustomerProfile />} />
+      </Route>
+      <Route path="/mylistings" element={<PrivateRoute/>}>
+        <Route path="/mylistings" element={<AgentViewAll/>}/>
       </Route>
       {/* For the /admin/:entity/delete/:id route */}
       {/* <Route path="/admin/:entity/delete/:id" element={<PrivateRoute />}> */}

@@ -4,6 +4,8 @@ import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { FaFlag, FaStar } from "react-icons/fa";
 import Navbar from '../components/Navbar';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ViewGuide = () => {
   const { id } = useParams();
@@ -14,6 +16,7 @@ const ViewGuide = () => {
   const [comment, setComment] = useState("");
   const [bookingStatus, setBookingStatus] = useState("");
   const token = localStorage.getItem("token");
+  const [bookingId, setBookingId] = useState("")
   const customerId = token ? jwtDecode(token).id : null;
 
   useEffect(() => {
@@ -90,6 +93,7 @@ const ViewGuide = () => {
         body: JSON.stringify({
           customerId,
           guideId: id,
+          bookingId, // Include bookingId in the payload
           rating,
           comment,
         }),
@@ -97,16 +101,16 @@ const ViewGuide = () => {
       if (response.ok) {
         const result = await response.json();
         console.log("Review submitted:", result);
-        alert("Review submitted successfully!");
+        toast.success("Review submitted successfully!");
         handleCloseReviewModal();
       } else {
         const errorData = await response.json();
         console.error("Failed to submit review:", errorData.message);
-        alert(`Failed to submit review: ${errorData.message}`);
+        toast.error(`Failed to submit review: ${errorData.message}`);
       }
     } catch (error) {
       console.error("Error submitting review:", error);
-      alert("An error occurred while submitting the review.");
+      toast.error("An error occurred while submitting the review.");
     }
   };
   const handleAddToWishlist = async () => {
@@ -129,13 +133,13 @@ const ViewGuide = () => {
         }
       );
       if (response.status === 201) {
-        alert("Guide added to wishlist successfully!");
+        toast.success("Guide added to wishlist successfully!");
       } else {
-        alert("Failed to add guide to wishlist.");
+        toast.error("Failed to add guide to wishlist.");
       }
     } catch (error) {
       console.error("Error adding to wishlist:", error);
-      alert("An error occurred while adding to wishlist.");
+      toast.error(`${error.message}`);
     }
   };
 
@@ -153,6 +157,8 @@ const ViewGuide = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700">
       <Navbar />
+      
+      <ToastContainer position="top-right" autoClose={3000} />
       <main className="flex-grow container mx-auto px-4 py-12">
         <div className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl shadow-xl overflow-hidden p-8">
           <h1 className="text-4xl font-bold text-white mb-6">{guideDetails.username}</h1>
@@ -223,47 +229,57 @@ const ViewGuide = () => {
       </main>
 
       {showReviewModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg p-8 max-w-md w-full">
-            <h2 className="text-2xl font-bold mb-4">Rate and Review</h2>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Rating:</label>
-              <select
-                className="w-full border border-gray-300 rounded-md py-2 px-3"
-                value={rating}
-                onChange={(e) => setRating(Number(e.target.value))}
-              >
-                {[1, 2, 3, 4, 5].map((value) => (
-                  <option key={value} value={value}>{value}</option>
-                ))}
-              </select>
-            </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Comment:</label>
-              <textarea
-                className="w-full border border-gray-300 rounded-md py-2 px-3"
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                rows="4"
-              />
-            </div>
-            <div className="flex justify-end space-x-2">
-              <button
-                className="bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded-full hover:bg-gray-300 transition-colors duration-300"
-                onClick={handleCloseReviewModal}
-              >
-                Close
-              </button>
-              <button
-                className="bg-[#81c3d2] text-white font-bold py-2 px-4 rounded-full hover:bg-[#2c494b] transition-colors duration-300"
-                onClick={handleSubmitReview}
-              >
-                Submit Review
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+    <div className="bg-white rounded-lg p-8 max-w-md w-full">
+      <h2 className="text-2xl font-bold mb-4">Rate and Review</h2>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700 mb-1">Booking ID:</label>
+        <input
+          type="text"
+          className="w-full border border-gray-300 rounded-md py-2 px-3"
+          value={bookingId}
+          onChange={(e) => setBookingId(e.target.value)}
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700 mb-1">Rating:</label>
+        <select
+          className="w-full border border-gray-300 rounded-md py-2 px-3"
+          value={rating}
+          onChange={(e) => setRating(Number(e.target.value))}
+        >
+          {[1, 2, 3, 4, 5].map((value) => (
+            <option key={value} value={value}>{value}</option>
+          ))}
+        </select>
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700 mb-1">Comment:</label>
+        <textarea
+          className="w-full border border-gray-300 rounded-md py-2 px-3"
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          rows="4"
+        />
+      </div>
+      <div className="flex justify-end space-x-2">
+        <button
+          className="bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded-full hover:bg-gray-300 transition-colors duration-300"
+          onClick={handleCloseReviewModal}
+        >
+          Close
+        </button>
+        <button
+          className="bg-[#81c3d2] text-white font-bold py-2 px-4 rounded-full hover:bg-[#2c494b] transition-colors duration-300"
+          onClick={handleSubmitReview}
+        >
+          Submit Review
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };

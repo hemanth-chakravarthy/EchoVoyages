@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import Navbar from '../components/Navbar';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const CustomerWishlist = () => {
     const [wishlist, setWishlist] = useState([]);
@@ -88,9 +90,9 @@ const CustomerWishlist = () => {
             const data = await response.json();
             if (response.ok) {
                 setWishlist((prevWishlist) => prevWishlist.filter(item => item._id !== itemId));
-                alert(data.message);
+                toast.success(data.message);
             } else {
-                alert(data.message || 'Failed to remove item from wishlist');
+                toast.error(data.message || 'Failed to remove item from wishlist');
             }
         } catch (error) {
             console.error('Error removing item from wishlist:', error);
@@ -109,9 +111,9 @@ const CustomerWishlist = () => {
             const data = await response.json();
             if (response.ok) {
                 setGuideWishlist((prevGuideWishlist) => prevGuideWishlist.filter(item => item._id !== itemId));
-                alert(data.message);
+                toast.success(data.message);
             } else {
-                alert(data.message || 'Failed to remove guide from wishlist');
+                toast.error(data.message || 'Failed to remove guide from wishlist');
             }
         } catch (error) {
             console.error('Error removing guide from wishlist:', error);
@@ -132,6 +134,7 @@ const CustomerWishlist = () => {
     return (
         <div className="min-h-screen flex flex-col bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700">
             <Navbar />
+            <ToastContainer position="top-right" autoClose={3000} />
             <main className="flex-grow container mx-auto px-4 py-12">
                 <h1 className="text-5xl font-bold text-center mb-16 text-white">My Wishlist</h1>
 
@@ -143,11 +146,11 @@ const CustomerWishlist = () => {
                             {wishlist.map((item) => (
                                 <div key={item._id} className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105">
                                     {item.packageId ? (
-                                        <>
+                                        <div className='flex flex-col justify-center items-center'>
                                             <div className="relative pb-2/3">
                                                 {item.packageId.image && item.packageId.image.length > 0 ? (
                                                     <img
-                                                        src={`http://localhost:5000${item.packageId.image[0]}`}
+                                                        src={`http://localhost:5000/${item.packageId.image[0]}`}
                                                         alt={item.packageId.name}
                                                         className="absolute h-64 w-full object-cover"
                                                     />
@@ -171,7 +174,7 @@ const CustomerWishlist = () => {
                                                     Remove
                                                 </button>
                                             </div>
-                                        </>
+                                        </div>
                                     ) : (
                                         <div className="p-6">
                                             <p className="text-white">Package details unavailable.</p>

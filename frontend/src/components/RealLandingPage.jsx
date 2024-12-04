@@ -5,7 +5,7 @@ import TravelFAQBotButton from "./landing/TravelFAQBotButton";
 
 
 const RealLandingPage = () => (
-  <div className="bg-primary w-full min-h-screen overflow-hidden">
+  <div className=" w-full min-h-screen overflow-hidden">
     {/* Navbar Section */}
     <div className={`${styles.paddingX} ${styles.flexCenter}`}>
       <div className={`${styles.boxWidth}`}>
@@ -14,14 +14,14 @@ const RealLandingPage = () => (
     </div>
 
     {/* Hero Section */}
-    <div className={`bg-primary ${styles.flexStart}`}>
+    <div className={` ${styles.flexStart}`}>
       <div className={`${styles.boxWidth}`}>
         <Hero />
       </div>
     </div>
     
     {/* Main Content Section */}
-    <div className={`bg-primary ${styles.paddingX} ${styles.flexCenter}`}>
+    <div className={` ${styles.paddingX} ${styles.flexCenter}`}>
       <div className={`${styles.boxWidth}`}>
         <Business />
         <AdventureCards />
