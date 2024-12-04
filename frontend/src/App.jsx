@@ -27,12 +27,11 @@ import RealLandingPage from "./components/RealLandingPage";
 import AgentViewAll from "./pages/AgentViewAll";
 import ActHomePage from "./pages/ActHomePage";
 
-
 const App = () => {
   return (
     <Routes>
       <Route path="/signup" element={<LandingPage />} />
-      <Route path="/" element={<RealLandingPage />} />
+      {/* <Route path="/" element={<RealLandingPage />} /> */}
       <Route path="/landingpage" element={<LandingPage />} />
       <Route path="/" element={<ActHomePage />} />
       {/* For the /packages/:id route */}
@@ -42,7 +41,6 @@ const App = () => {
       <Route path="/bookings/:bookingId" element={<PrivateRoute />}>
         <Route path="/bookings/:bookingId" element={<ViewBooking />} />
       </Route>
-
 
       {/* For the /home route */}
       <Route path="/home" element={<PrivateRoute />}>
@@ -93,8 +91,8 @@ const App = () => {
       <Route path="/custProfilePage" element={<PrivateRoute />}>
         <Route path="/custProfilePage" element={<CustomerProfile />} />
       </Route>
-      <Route path="/mylistings" element={<PrivateRoute/>}>
-        <Route path="/mylistings" element={<AgentViewAll/>}/>
+      <Route path="/mylistings" element={<PrivateRoute />}>
+        <Route path="/mylistings" element={<AgentViewAll />} />
       </Route>
       {/* For the /admin/:entity/delete/:id route */}
       {/* <Route path="/admin/:entity/delete/:id" element={<PrivateRoute />}> */}

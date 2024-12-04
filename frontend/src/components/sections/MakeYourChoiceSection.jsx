@@ -9,18 +9,15 @@ const MakeYourChoiceSection = () => {
       {/* Guide Option */}
       <div className="card bg-base-100 m-16 rounded-box grid h-72 flex-grow place-items-center shadow-lg">
         <div className="text-center p-4">
-          <h2 className="text-2xl font-bold mb-2">
-            Explore with a Local Guide
+          <h2 className="text-3xl font-bold mb-4">
+            Discover the World with a Local Guide
           </h2>
-          <p className="text-lg mb-3">
-            Experience personalized tours and discover hidden gems with an
-            expert local.
+          <p className="text-lg">
+            Immerse yourself in unique cultural experiences and uncover hidden
+            treasures guided by a local expert. Whether it's exploring historic
+            landmarks or finding the best local cuisine, a guide ensures a truly
+            personalized journey.
           </p>
-          <ul className="list-disc list-inside">
-            <li>Tailored itineraries</li>
-            <li>Unique cultural experiences</li>
-            <li>Local insights and stories</li>
-          </ul>
         </div>
       </div>
 
@@ -29,16 +26,15 @@ const MakeYourChoiceSection = () => {
       {/* Agency Package Option */}
       <div className="card bg-base-100 m-16 rounded-box grid h-72 flex-grow place-items-center shadow-lg">
         <div className="text-center p-4">
-          <h2 className="text-2xl font-bold mb-2">Book an Agency Package</h2>
-          <p className="text-lg mb-3">
-            Enjoy a seamless trip with pre-planned itineraries and all-in-one
-            convenience.
+          <h2 className="text-3xl font-bold mb-4">
+            Travel Hassle-Free with Agency Packages
+          </h2>
+          <p className="text-lg">
+            Experience a worry-free journey with pre-planned itineraries and
+            all-inclusive services for your convenience. From comfortable
+            accommodations to guided activities, everything is taken care of so
+            you can focus on enjoying your trip.
           </p>
-          <ul className="list-disc list-inside">
-            <li>Comfortable accommodations</li>
-            <li>Guided tours and activities</li>
-            <li>Stress-free planning</li>
-          </ul>
         </div>
       </div>
     </div>

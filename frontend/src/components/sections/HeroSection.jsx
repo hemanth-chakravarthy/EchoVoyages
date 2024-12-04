@@ -27,8 +27,11 @@ const HeroSection = () => {
             connect with local guides and travel experts. Your next adventure
             starts here!
           </p>
-          <Link to={`/search`} className="btn btn-primary">
-            Start Your Journey
+          <Link
+            to={`/search`}
+            className="bg-transparent text-transparent font-bold py-3 px-8 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
+          >
+            Get Started
           </Link>
         </div>
       </div>
