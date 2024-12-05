@@ -324,18 +324,25 @@ const CreatePackage = () => {
           <button
             type="button"
             onClick={prevStep}
-            className="btn btn-secondary"
+            className="bg-transparent text-transparent font-bold py-3 px-6 rounded-[35px] border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
           >
             Previous
           </button>
         )}
         {currentStep < 3 && (
-          <button type="button" onClick={nextStep} className="bg-transparent text-transparent font-bold py-3 px-6 rounded-[35px] border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient">
+          <button
+            type="button"
+            onClick={nextStep}
+            className="bg-transparent text-transparent font-bold py-3 px-6 rounded-[35px] border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
+          >
             Next
           </button>
         )}
         {currentStep === 3 && (
-          <button type="submit" className="btn btn-success">
+          <button
+            type="submit"
+            className="bg-transparent text-transparent font-bold py-3 px-6 rounded-[35px] border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
+          >
             Submit
           </button>
         )}

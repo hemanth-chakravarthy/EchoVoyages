@@ -124,9 +124,7 @@ const AgentInfo = () => {
       <ToastContainer position="top-right" autoClose={3000} />
       <div className="max-w-4xl mx-auto bg-base-200 rounded-lg shadow-xl overflow-hidden">
         <div className="px-4 py-5 sm:px-6 bg-base200">
-          <h1 className="text-2xl font-bold text-white">
-            Edit Agent Details
-          </h1>
+          <h1 className="text-2xl font-bold text-white">Edit Agent Details</h1>
         </div>
         <div className="px-4 py-5 sm:p-6">
           <div className="flex flex-col md:flex-row">
@@ -152,7 +150,7 @@ const AgentInfo = () => {
                 </h2>
                 <button
                   onClick={handleEditToggle}
-                  className="bg-transparent text-transparentw-full bg-transparent text-transparent font-bold py-3 px-6 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
+                  className="bg-transparent text-transparentw-full text-transparent font-bold py-3 px-6 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
                 >
                   {editing ? "Cancel" : "Edit Profile"}
                 </button>
