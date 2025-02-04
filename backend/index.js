@@ -2,7 +2,7 @@ import express, { response } from "express";
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 const mongoURL =
-  "mongodb+srv://saiananyakatakam:NLnqR9ifdN8qbVft@cluster0.lbvmb.mongodb.net/EchoVoyages2";
+  "mongodb+srv://<MONGODBURL>";
 import adminRoute from "./routes/adminRoutes.js";
 import customerRoute from "./routes/customerRoutes.js";
 import packageRoute from "./routes/packageRoutes.js";
@@ -87,7 +87,7 @@ app.post("/forgot-password", async (req, res) => {
       service: "gmail",
       auth: {
         user: "ksaiananya5104@gmail.com",
-        pass: "iiqy lxus jqet vbzh",
+        pass: "<Password>",
       },
     });
 
