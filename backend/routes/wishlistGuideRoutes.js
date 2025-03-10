@@ -4,7 +4,7 @@ import { wishlistGuide } from '../models/wishlistGuideModel.js'
 const router = express.Router();
 
 // Add to wishlist
-router.post('/', async (req, res) => {
+router.post('/', async (req, res,next) => {
     const { customerId, guideId } = req.body;
 
     try {
@@ -19,10 +19,11 @@ router.post('/', async (req, res) => {
         res.status(201).json(savedWishlist);
     } catch (error) {
         console.error(error);
+        next(error);
         res.status(500).json({ message: 'Error adding to wishlist' });
     }
 });
-router.get('/cust/:customerId', async (req, res) => {
+router.get('/cust/:customerId', async (req, res,next) => {
     const { customerId } = req.params;
     try {
 
@@ -37,6 +38,7 @@ router.get('/cust/:customerId', async (req, res) => {
         res.status(200).json(wishlist);
     } catch (error) {
         console.error('Error fetching wishlist:', error);
+        next(error);
         res.status(500).json({ message: 'Error fetching wishlist' });
     }
 });

@@ -22,6 +22,7 @@ import jwt from "jsonwebtoken";
 import searchRoutes from "./routes/searchRoutes.js";
 import requests from './routes/requestRoutes.js'
 import nodemailer from "nodemailer";
+import ErrorHandler from "./ErrorHandler.js";
 mongoose
   .connect(mongoURL)
   .then(() => {
@@ -55,6 +56,7 @@ app.use("/search", searchRoutes);
 app.use("/wishlistGuides", wishlistGuideRoutes);
 app.use('/requests',requests)
 app.use("/public", express.static("public"));
+app.use(ErrorHandler)
 
 // forgot password
 app.post("/forgot-password", async (req, res) => {

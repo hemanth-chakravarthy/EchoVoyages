@@ -7,7 +7,7 @@ import { bookings } from '../models/bookingModel.js';
 import {Agency} from '../models/agencyModel.js'
 const router = express.Router()
 // get all coustomers
-router.get('/customers',async (req,res) => {
+router.get('/customers',async (req,res,next) => {
     try {
         const custs = await customers.find({});
         return res.status(200).json({
@@ -16,12 +16,13 @@ router.get('/customers',async (req,res) => {
         })
     } catch (error) {
         console.log(error.message);
+        next(error);
         res.status(500).send({message: error.message})
     }
 })
 
 // delete a customer
-router.delete('/customers/:id', async (req,res) => {
+router.delete('/customers/:id', async (req,res,next) => {
     try {
         const {id} = req.params;
         const result = await customers.findByIdAndDelete(id)
@@ -33,12 +34,13 @@ router.delete('/customers/:id', async (req,res) => {
 
     } catch (error) {
         console.log(error.message);
+        next(error);
         res.status(500).send({message: error.message})
     }
     
 })
 // update customers
-router.put('/customers/:id',async (req,res) => {
+router.put('/customers/:id',async (req,res,next) => {
     try {
         const {id} = req.params;
         const result = await customers.findByIdAndUpdate(id, req.body);
@@ -50,12 +52,13 @@ router.put('/customers/:id',async (req,res) => {
 
     } catch (error) {
         console.log(error.message);
+        next(error);
         res.status(500).send({message: error.message})
     }
     
 })
 // view a single customer
-router.get('/customers/:id',async (req,res) => {
+router.get('/customers/:id',async (req,res,next) => {
     try {
         let {id} = req.params
         id = id.toString()
@@ -63,13 +66,14 @@ router.get('/customers/:id',async (req,res) => {
         return res.status(200).json(custs)
     } catch (error) {
         console.log(error.message);
+        next(error);
         res.status(500).send({message: error.message})
     }
     
 })
 
 // view all packages
-router.get('/packages',async (req,res) => {
+router.get('/packages',async (req,res,next) => {
     try {
         const packs = await packages.find({});
         return res.status(200).json({
@@ -78,11 +82,12 @@ router.get('/packages',async (req,res) => {
         })
     } catch (error) {
         console.log(error.message);
+        next(error);
         res.status(500).send({message: error.message})
     }
 })
 // view a single package
-router.get('/packages/:id',async (req,res) => {
+router.get('/packages/:id',async (req,res,next) => {
     try {
         let {id} = req.params
         id = id.toString()
@@ -90,12 +95,13 @@ router.get('/packages/:id',async (req,res) => {
         return res.status(200).json(packs)
     } catch (error) {
         console.log(error.message);
+        next(error);
         res.status(500).send({message: error.message})
     }
     
 })
 // update package
-router.put('/packages/:id',async (req,res) => {
+router.put('/packages/:id',async (req,res,next) => {
     try {
         const {id} = req.params;
         const result = await packages.findByIdAndUpdate(id, req.body);
@@ -107,12 +113,13 @@ router.put('/packages/:id',async (req,res) => {
 
     } catch (error) {
         console.log(error.message);
+        next(error);
         res.status(500).send({message: error.message})
     }
     
 })
 // delete a package
-router.delete('/packages/:id', async (req,res) => {
+router.delete('/packages/:id', async (req,res,next) => {
     try {
         const {id} = req.params;
         const result = await packages.findByIdAndDelete(id)
@@ -124,12 +131,13 @@ router.delete('/packages/:id', async (req,res) => {
 
     } catch (error) {
         console.log(error.message);
+        next(error);
         res.status(500).send({message: error.message})
     }
     
 })
 // get all reviews
-router.get('/reviews',async (req,res) => {
+router.get('/reviews',async (req,res,next) => {
     try {
         const revs = await reviews.find({});
         return res.status(200).json({
@@ -138,6 +146,7 @@ router.get('/reviews',async (req,res) => {
         })
     } catch (error) {
         console.log(error.message);
+        next(error);
         res.status(500).send({message: error.message})
     }
 })
@@ -150,6 +159,7 @@ router.get('/reviews/:id', async (req, res) => {
         return res.status(200).send(review);
     } catch (error) {
         console.log(error);
+        next(error);
         res.status(500).send({ message: "Internal Server Error" });
     }
 });
@@ -169,6 +179,7 @@ router.put('/reviews/:id', async (req, res) => {
         return res.status(200).send(review);
     } catch (error) {
         console.log(error);
+        next(error);
         res.status(500).send({ message: "Internal Server Error" });
     }
 });
@@ -181,11 +192,12 @@ router.delete('/reviews/:id', async (req, res) => {
         return res.status(200).send({ message: "Review deleted successfully" });
     } catch (error) {
         console.log(error);
+        next(error);
         res.status(500).send({ message: "Internal Server Error" });
     }
 });
 // get all guides
-router.get('/guides',async (req,res) => {
+router.get('/guides',async (req,res,next) => {
     try {
         const guides = await Guide.find({});
         return res.status(200).json({
@@ -194,6 +206,7 @@ router.get('/guides',async (req,res) => {
         })
     } catch (error) {
         console.log(error.message);
+        next(error);
         res.status(500).send({message: error.message})
     }
 })
@@ -223,6 +236,7 @@ router.put('/guides/:id', async (req, res) => {
         return res.status(200).send(guide);
     } catch (error) {
         console.log(error);
+        next(error);
         res.status(500).send({ message: "Internal Server Error" });
     }
 });
@@ -236,6 +250,7 @@ router.get('/guides/:id', async (req, res) => {
         return res.status(200).send(guide);
     } catch (error) {
         console.log(error);
+        next(error);
         res.status(500).send({ message: "Internal Server Error" });
     }
 });
@@ -249,11 +264,12 @@ router.delete('/guides/:id', async (req, res) => {
         return res.status(200).send({ message: "Guide deleted successfully" });
     } catch (error) {
         console.log(error);
+        next(error);
         res.status(500).send({ message: "Internal Server Error" });
     }
 });
 // get all bookings
-router.get('/bookings',async (req,res) => {
+router.get('/bookings',async (req,res,next) => {
     try {
         const book = await bookings.find({});
         return res.status(200).json({
@@ -262,12 +278,13 @@ router.get('/bookings',async (req,res) => {
         })
     } catch (error) {
         console.log(error.message);
+        next(error);
         res.status(500).send({message: error.message})
     }
 })
 
 // delete a booking
-router.delete('/bookings/:id', async (req,res) => {
+router.delete('/bookings/:id', async (req,res,next) => {
     try {
         const {id} = req.params;
         const result = await bookings.findByIdAndDelete(id)
@@ -279,12 +296,13 @@ router.delete('/bookings/:id', async (req,res) => {
 
     } catch (error) {
         console.log(error.message);
+        next(error);
         res.status(500).send({message: error.message})
     }
     
 })
 // update booking
-router.put('/bookings/:id',async (req,res) => {
+router.put('/bookings/:id',async (req,res,next) => {
     try {
         const {id} = req.params;
         const result = await bookings.findByIdAndUpdate(id, req.body);
@@ -296,12 +314,13 @@ router.put('/bookings/:id',async (req,res) => {
 
     } catch (error) {
         console.log(error.message);
+        next(error);
         res.status(500).send({message: error.message})
     }
     
 })
 // view a singlebooking
-router.get('/bookings/:id',async (req,res) => {
+router.get('/bookings/:id',async (req,res,next) => {
     try {
         let {id} = req.params
         id = id.toString()
@@ -309,6 +328,7 @@ router.get('/bookings/:id',async (req,res) => {
         return res.status(200).json(book)
     } catch (error) {
         console.log(error.message);
+        next(error);
         res.status(500).send({message: error.message})
     }
     
@@ -323,6 +343,7 @@ router.get('/agency', async (req, res) => {
         });
     } catch (error) {
         console.log(error.message);
+        next(error);
         res.status(500).send({ message: error.message });
     }
 });
@@ -338,6 +359,7 @@ router.delete('/agency/:id', async (req, res) => {
         return res.status(200).json({ message: "Agency deleted" });
     } catch (error) {
         console.log(error.message);
+        next(error);
         res.status(500).send({ message: error.message });
     }
 });
@@ -353,6 +375,7 @@ router.put('/agency/:id', async (req, res) => {
         return res.status(200).json(result);
     } catch (error) {
         console.log(error.message);
+        next(error);
         res.status(500).send({ message: error.message });
     }
 });
@@ -368,6 +391,7 @@ router.get('/agency/:id', async (req, res) => {
         return res.status(200).json(agency);
     } catch (error) {
         console.log(error.message);
+        next(error);
         res.status(500).send({ message: error.message });
     }
 });

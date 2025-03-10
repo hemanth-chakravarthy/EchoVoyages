@@ -7,7 +7,7 @@ import {Guide} from '../models/guideModel.js'
 const router = express.Router();
 
 
-router.post('/', async (req, res) => {
+router.post('/', async (req, res,next) => {
     console.log('Booking request received:', req.body); 
     try {
         const { customerId, packageId, guideId } = req.body;
@@ -65,12 +65,13 @@ router.post('/', async (req, res) => {
 
     } catch (error) {
         console.log(error);
+        next(error);
         return res.status(500).send({ message: 'Error creating booking' });
     }
 });
 
 // get all bookings
-router.get('/',async (req,res) => {
+router.get('/',async (req,res,next) => {
     try {
         const book = await bookings.find({});
         return res.status(200).json({
@@ -79,10 +80,11 @@ router.get('/',async (req,res) => {
         })
     } catch (error) {
         console.log(error.message);
+        next(error);
         res.status(500).send({message: error.message})
     }
 })
-router.get('/cust/:customerId', async (req, res) => {
+router.get('/cust/:customerId', async (req, res,next) => {
     const { customerId } = req.params; // Extract customerId from the URL
 
     if (!customerId) {
@@ -101,10 +103,11 @@ router.get('/cust/:customerId', async (req, res) => {
         res.status(200).json(booking);
     } catch (error) {
         console.error('Error fetching bookings:', error);
+        next(error);
         res.status(500).json({ message: 'Error fetching bookings' });
     }
 });
-router.get('/pack/:packageId', async (req, res) => {
+router.get('/pack/:packageId', async (req, res,next) => {
     const { packageId } = req.params; // Extract customerId from the URL
 
     if (!packageId) {
@@ -124,10 +127,11 @@ router.get('/pack/:packageId', async (req, res) => {
         res.status(200).json(booking);
     } catch (error) {
         console.error('Error fetching bookings:', error);
+        next(error);
         res.status(500).json({ message: 'Error fetching bookings' });
     }
 });
-router.get('/guides/:guideId',async (req, res) => {
+router.get('/guides/:guideId',async (req, res,next) => {
     const { guideId } = req.params; // Extract customerId from the URL
 
     if (!guideId) {
@@ -147,13 +151,14 @@ router.get('/guides/:guideId',async (req, res) => {
         res.status(200).json(booking);
     } catch (error) {
         console.error('Error fetching bookings:', error);
+        next(error);
         res.status(500).json({ message: 'Error fetching bookings' });
     }
     
 })
 
 // delete a booking
-router.delete('/:id', async (req,res) => {
+router.delete('/:id', async (req,res,next) => {
     try {
         const {id} = req.params;
         const result = await bookings.findByIdAndDelete(id)
@@ -165,12 +170,13 @@ router.delete('/:id', async (req,res) => {
 
     } catch (error) {
         console.log(error.message);
+        next(error);
         res.status(500).send({message: error.message})
     }
     
 })
 // update booking
-router.put('/:id',async (req,res) => {
+router.put('/:id',async (req,res,next) => {
     try {
         const {id} = req.params;
         const result = await bookings.findByIdAndUpdate(id, req.body);
@@ -182,12 +188,13 @@ router.put('/:id',async (req,res) => {
 
     } catch (error) {
         console.log(error.message);
+        next(error);
         res.status(500).send({message: error.message})
     }
     
 })
 // view a single booking
-router.get('/:id',async (req,res) => {
+router.get('/:id',async (req,res,next) => {
     try {
         let {id} = req.params
         id = id.toString()
@@ -195,17 +202,19 @@ router.get('/:id',async (req,res) => {
         return res.status(200).json(book)
     } catch (error) {
         console.log(error.message);
+        next(error);
         res.status(500).send({message: error.message})
     }
     
 })
-router.get('/verifyBooking', async (req, res) => {
+router.get('/verifyBooking', async (req, res,next) => {
     const { customerId, packageId } = req.query;
   
     try {
       const booking = await Booking.findOne({ customerId, packageId });
       res.status(200).json({ hasBooking: !!booking });
     } catch (error) {
+        next(error);
       res.status(500).json({ message: 'Error verifying booking', error });
     }
   });
