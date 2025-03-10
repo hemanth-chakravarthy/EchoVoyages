@@ -45,14 +45,14 @@ const HomePage = () => {
                   <div key={pack._id} className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:bg-opacity-20">
                     <div className="relative pb-2/3">
                       {pack.image && pack.image.length > 0 ? (
-                        <div className="absolute inset-0 flex overflow-x-auto snap-x">
+                        <div className="flex justify-center items-center align-middle">
                           {pack.image.map((img, index) => (
                             <img
-                              key={index}
-                              src={`http://localhost:5000${img}`}
-                              alt={`Package ${pack.name}`}
-                              className="h-64 w-full object-cover snap-center"
-                            />
+                            key={index}
+                            src={`http://localhost:5000${img}`}
+                            alt={`Image of ${pack.name}`}
+                            style={{ width: "300px", height: "200px", marginRight: "10px" , }}
+                          />
                           ))}
                         </div>
                       ) : (
