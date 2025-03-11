@@ -6,7 +6,7 @@ import { customers } from "../models/customerModel.js";
 const router = express.Router();
 
 // Endpoint to handle customization or booking request
-router.post("/", async (req, res) => {
+router.post("/", async (req, res,next) => {
   try {
     // Extract request body fields
     const {
@@ -72,12 +72,13 @@ router.post("/", async (req, res) => {
     return res.status(201).send(savedRequest);
   } catch (error) {
     console.error("Error processing request:", error);
+    next(error);
     return res.status(500).send({
       message: "Internal Server Error",
     });
   }
 });
-router.get('/', async (req, res) => {
+router.get('/', async (req, res,next) => {
   try {
     // Fetch all requests from the database
     const req = await requests.find();
@@ -89,10 +90,11 @@ router.get('/', async (req, res) => {
     res.json({ data: req });
   } catch (error) {
     console.error('Error fetching requests:', error);
+    next(error);
     res.status(500).json({ message: 'Server error' });
   }
 });
-router.get('/agen/:agentid', async (req, res) => {
+router.get('/agen/:agentid', async (req, res,next) => {
   const { agentID } = req.params; // Get the agentID from the URL parameter
 
   try {
@@ -106,10 +108,11 @@ router.get('/agen/:agentid', async (req, res) => {
     res.json({ data: requestsForAgent });
   } catch (error) {
     console.error('Error fetching requests:', error);
+    next(error);
     res.status(500).json({ message: 'Server error' });
   }
 });
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res,next) => {
   const { id } = req.params; // Get the requestID from the URL parameter
 
   try {
@@ -123,10 +126,11 @@ router.get('/:id', async (req, res) => {
     res.json({ data: request });
   } catch (error) {
     console.error('Error fetching request:', error);
+    next(error);
     res.status(500).json({ message: 'Server error' });
   }
 });
-router.put('/:id',async (req,res) => {
+router.put('/:id',async (req,res,next) => {
   try {
       const {id} = req.params;
       const result = await requests.findByIdAndUpdate(id, req.body);
@@ -138,6 +142,7 @@ router.put('/:id',async (req,res) => {
 
   } catch (error) {
       console.log(error.message);
+      next(error);
       res.status(500).send({message: error.message})
   }
   

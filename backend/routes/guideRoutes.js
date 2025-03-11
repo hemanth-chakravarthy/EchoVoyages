@@ -4,7 +4,7 @@ import { Guide } from '../models/guideModel.js';  // Import the Guide model
 const router = express.Router();
 
 // Save a guide
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
     try {
         const { name, experience, languages, location, contact, availability, availableDates } = req.body;
 
@@ -29,11 +29,12 @@ router.post('/', async (req, res) => {
         return res.status(201).send(savedGuide)
     } catch (error) {
         console.error(error);
+        next(error);
         res.status(500).json({ message: 'An error occurred while saving the guide' });
     }
 });
 
-router.get('/',async (req,res) => {
+router.get('/',async (req,res, next) => {
     try {
         const guides = await Guide.find({});
         return res.status(200).json({
@@ -42,10 +43,11 @@ router.get('/',async (req,res) => {
         })
     } catch (error) {
         console.log(error.message);
+        next(error);
         res.status(500).send({message: error.message})
     }
 })
-router.put('/:id', async (req, res) => {
+router.put('/:id', async (req, res, next) => {
     try {
         const { 
             name, 
@@ -88,12 +90,13 @@ router.put('/:id', async (req, res) => {
         return res.status(200).send(guide);
     } catch (error) {
         console.log(error);
+        next(error);
         res.status(500).send({ message: "Internal Server Error" });
     }
 });
 
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res, next) => {
     try {
         const guide = await Guide.findById(req.params.id)
         if (!guide) {
@@ -102,11 +105,12 @@ router.get('/:id', async (req, res) => {
         return res.status(200).send(guide);
     } catch (error) {
         console.log(error);
+        next(error);
         res.status(500).send({ message: "Internal Server Error" });
     }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res, next) => {
     try {
         const guide = await Guide.findByIdAndDelete(req.params.id);
         if (!guide) {
@@ -115,6 +119,7 @@ router.delete('/:id', async (req, res) => {
         return res.status(200).send({ message: "Guide deleted successfully" });
     } catch (error) {
         console.log(error);
+        next(error);
         res.status(500).send({ message: "Internal Server Error" });
     }
 });

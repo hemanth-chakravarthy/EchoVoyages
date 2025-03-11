@@ -7,7 +7,7 @@ import { bookings } from "../models/bookingModel.js";
 const router = express.Router();
 
 // Save a review
-router.post("/", async (req, res) => {
+router.post("/", async (req, res,next) => {
   try {
     const { customerId, packageId, guideId, rating, comment, bookingId } =
       req.body;
@@ -94,7 +94,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.post("/:reviewId", async (req, res) => {
+router.post("/:reviewId", async (req, res,next) => {
   const { reviewId } = req.params;
 
   try {
@@ -117,7 +117,7 @@ router.post("/:reviewId", async (req, res) => {
 });
 
 // Get all reviews (for admin panel or other purposes)
-router.get("/", async (req, res) => {
+router.get("/", async (req, res,next) => {
   try {
     const revs = await reviews
       .find()
@@ -129,7 +129,7 @@ router.get("/", async (req, res) => {
     res.status(500).send({ message: "Internal Server Error" });
   }
 });
-router.get("/package/:packageId", async (req, res) => {
+router.get("/package/:packageId", async (req, res,next) => {
   const { packageId } = req.params; // Extract the packageId properly
 
   if (!packageId) {
@@ -151,10 +151,11 @@ router.get("/package/:packageId", async (req, res) => {
     res.status(200).json(revs);
   } catch (error) {
     console.error("Error fetching reviews:", error);
+    next(error);
     res.status(500).json({ message: "Error fetching reviews" });
   }
 });
-router.get("/guides/:guideId", async (req, res) => {
+router.get("/guides/:guideId", async (req, res,next) => {
   const { guideId } = req.params; // Extract the packageId properly
 
   if (!guideId) {
@@ -176,12 +177,13 @@ router.get("/guides/:guideId", async (req, res) => {
     res.status(200).json(revs);
   } catch (error) {
     console.error("Error fetching reviews:", error);
+    next(error);
     res.status(500).json({ message: "Error fetching reviews" });
   }
 });
 
 // Get a specific review by ID
-router.get("/:id", async (req, res) => {
+router.get("/:id", async (req, res,next) => {
   try {
     const review = await reviews
       .findById(req.params.id)
@@ -193,12 +195,13 @@ router.get("/:id", async (req, res) => {
     return res.status(200).send(review);
   } catch (error) {
     console.log(error);
+    next(error);
     res.status(500).send({ message: "Internal Server Error" });
   }
 });
 
 // Update a review by ID
-router.put("/:id", async (req, res) => {
+router.put("/:id", async (req, res,next) => {
   try {
     const { rating, comment, status } = req.body;
 
@@ -214,12 +217,13 @@ router.put("/:id", async (req, res) => {
     return res.status(200).send(review);
   } catch (error) {
     console.log(error);
+    next(error);
     res.status(500).send({ message: "Internal Server Error" });
   }
 });
 
 // Delete a review by ID
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", async (req, res,next) => {
   try {
     const review = await reviews.findByIdAndDelete(req.params.id);
     if (!review) {
@@ -228,10 +232,11 @@ router.delete("/:id", async (req, res) => {
     return res.status(200).send({ message: "Review deleted successfully" });
   } catch (error) {
     console.log(error);
+    next(error);
     res.status(500).send({ message: "Internal Server Error" });
   }
 });
-router.get("/guides/:guideID", async (req, res) => {
+router.get("/guides/:guideID", async (req, res,next) => {
   const { guideID } = req.params;
 
   try {
@@ -249,6 +254,7 @@ router.get("/guides/:guideID", async (req, res) => {
     return res.status(200).json({ guide, review });
   } catch (error) {
     console.error("Error fetching guide details:", error);
+    next(error);
     return res
       .status(500)
       .json({ message: "Server error", error: error.message });

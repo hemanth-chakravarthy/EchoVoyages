@@ -9,7 +9,7 @@ const router = express.Router();
 const JWT_SECRET = "Voyage_secret";
 
 //save a customer
-router.post("/signup", async (req, res) => {
+router.post("/signup", async (req, res,next) => {
   try {
     if (
       !req.body.username ||
@@ -73,10 +73,11 @@ router.post("/signup", async (req, res) => {
     }
   } catch (error) {
     console.log(error);
+    next(error);
   }
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login", async (req, res,next) => {
   const { username, password } = req.body;
 
   try {
@@ -107,11 +108,12 @@ router.post("/login", async (req, res) => {
     }); // Include role in response
   } catch (err) {
     console.error(err.message);
+    next(err);
     res.status(500).send("Server error");
   }
 });
 
-router.post("/adminlogin", async (req, res) => {
+router.post("/adminlogin", async (req, res,next) => {
   const { username, password } = req.body;
 
   try {
@@ -131,12 +133,13 @@ router.post("/adminlogin", async (req, res) => {
     res.json({ message: "Admin login successful", token: "someAuthToken" });
   } catch (error) {
     console.error("Admin login error:", error);
+    next(error);
     res.status(500).json({ error: "Server error" });
   }
 });
 
 // get all coustomers
-router.get("/", async (req, res) => {
+router.get("/", async (req, res,next) => {
   try {
     const custs = await customers.find({});
     return res.status(200).json({
@@ -145,12 +148,13 @@ router.get("/", async (req, res) => {
     });
   } catch (error) {
     console.log(error.message);
+    next(error);
     res.status(500).send({ message: error.message });
   }
 });
 
 // delete a customer
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", async (req, res,next) => {
   try {
     const { id } = req.params;
     const result = await customers.findByIdAndDelete(id);
@@ -160,11 +164,12 @@ router.delete("/:id", async (req, res) => {
     return res.status(200).json({ message: " User deleted" });
   } catch (error) {
     console.log(error.message);
+    next(error);
     res.status(500).send({ message: error.message });
   }
 });
 // update customers
-router.put("/:id", async (req, res) => {
+router.put("/:id", async (req, res,next) => {
   try {
     const { id } = req.params;
     const result = await customers.findByIdAndUpdate(id, req.body);
@@ -175,11 +180,12 @@ router.put("/:id", async (req, res) => {
     return res.status(200).json({ message: " user updated" });
   } catch (error) {
     console.log(error.message);
+    next(error);
     res.status(500).send({ message: error.message });
   }
 });
 // Update password route
-router.put("/customers/:id/update-password", async (req, res) => {
+router.put("/customers/:id/update-password", async (req, res,next) => {
   const { currentPassword, newPassword } = req.body;
   const { id } = req.params;
 
@@ -205,12 +211,13 @@ router.put("/customers/:id/update-password", async (req, res) => {
     res.status(200).json({ message: "Password updated successfully" }); // Added success response
   } catch (error) {
     console.error("Error updating password:", error);
+    next(error);
     res.status(500).json({ error: "Server error" });
   }
 });
 
 // view a single customer
-router.get("/:id", async (req, res) => {
+router.get("/:id", async (req, res,next) => {
   try {
     let { id } = req.params;
     id = id.toString();
@@ -218,6 +225,7 @@ router.get("/:id", async (req, res) => {
     return res.status(200).json(custs);
   } catch (error) {
     console.log(error.message);
+    next(error);
     res.status(500).send({ message: error.message });
   }
 });

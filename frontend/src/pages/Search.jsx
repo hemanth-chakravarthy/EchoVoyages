@@ -86,8 +86,8 @@ const Search = () => {
       <Navbar />
       <main className="flex-grow container mx-auto px-4 py-12">
         <h1 className="text-5xl font-bold text-center mb-16 text-white">Search Packages and Guides</h1>
-        <div className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl shadow-xl overflow-hidden p-6 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        <div className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl shadow-xl overflow-hidden p-6 mb-8 flex justify-center items-center gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 mb-6" style={{"margin-bottom":"0px"}}>
             <select
               className="w-full bg-white text-gray-800 border border-[#81c3d2] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#81c3d2] focus:border-[#81c3d2] shadow-md transition-all duration-300 hover:bg-gray-100"
               value={selectedLocation}
@@ -139,7 +139,7 @@ const Search = () => {
           </div>
 
           {entityType === "Package" && (
-            <div className="bg-white bg-opacity-5 p-4 rounded-lg mb-6">
+            <div className="bg-white bg-opacity-5 p-4 rounded-lg mb-6 " >
               <h3 className="text-lg font-semibold mb-4 text-white">Filters for Packages</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-2">
@@ -218,12 +218,13 @@ const Search = () => {
             className="w-full bg-transparent text-transparent font-bold py-2 px-4 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
             onClick={handleSearch}
             disabled={!selectedLocation || !entityType}
+            style={{width:"200px"}}
           >
             Search
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" >
           {searchResults.length > 0 ? (
             searchResults.map((result, index) => (
               <div key={index} className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:bg-opacity-20">
@@ -246,6 +247,16 @@ const Search = () => {
                     </div>
                   ) : (
                     <div className="text-gray-300">
+                      <div className="flex justify-center items-center align-middle">
+                          {result.image.map((img, index) => (
+                            <img
+                            key={index}
+                            src={`http://localhost:5000${img}`}
+                            alt={`Image of ${result.name}`}
+                            style={{ width: "300px", height: "200px", marginRight: "10px" , }}
+                          />
+                          ))}
+                        </div>
                       <p className="mb-2">{result.description}</p>
                       <p><span className="font-semibold">Duration:</span> {result.duration} days</p>
                       <p><span className="font-semibold">Max Group Size:</span> {result.maxGroupSize}</p>
