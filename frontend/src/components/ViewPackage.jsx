@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import { FaFlag } from "react-icons/fa";
-import { jwtDecode } from "jwt-decode"; // Fix the import here
+import { jwtDecode } from "jwt-decode";
+import { motion } from "framer-motion";
 
 const ViewPackage = () => {
   const { id } = useParams();
@@ -75,131 +76,190 @@ const ViewPackage = () => {
   };
 
   if (!packageDetails) {
-    return <p>Loading...</p>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          className="w-16 h-16 border-4 border-[#4169E1] border-t-transparent rounded-full"
+        />
+      </div>
+    );
   }
 
   return (
-    <div>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="min-h-screen flex flex-col bg-white"
+      style={{
+        backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0, 0, 0) 1px, transparent 0)`,
+        backgroundSize: '20px 20px',
+        backgroundPosition: '0 0',
+        backgroundColor: 'rgba(255, 255, 255, 0.97)'
+      }}
+    >
       {isAgent && (
-        <div className="flex-none gap-2">
-          <div className="flex space-x-4">
-            <Link to="/AgentHome" className="btn btn-ghost">
-              Home Page
-            </Link>
-            <Link to="/mylistings" className="btn btn-ghost">
-              My Listings
-            </Link>
-            <Link to="/createPackage" className="btn btn-ghost">
-              Create Package
-            </Link>
-            <Link to="/AgentProfilePage" className="btn btn-ghost">
-              Profile Page
-            </Link>
+        <nav className="bg-white border-b border-gray-100 shadow-sm relative z-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between h-16 items-center">
+              <div className="flex items-center space-x-4">
+                {[
+                  { to: "/AgentHome", text: "Home" },
+                  { to: "/mylistings", text: "My Listings" },
+                  { to: "/createPackage", text: "Create Package" },
+                  { to: "/AgentProfilePage", text: "Profile" }
+                ].map((link) => (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    className="px-4 py-2 rounded-full text-[#2d3748] hover:bg-[#4169E1]/10 hover:text-[#4169E1] transition-all duration-300"
+                  >
+                    {link.text}
+                  </Link>
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
+        </nav>
       )}
-      <div className="bg-base-300 min-h-[85vh] p-4 md:p-8">
-        <div className="max-w-8xl mx-auto bg-base-100 rounded-lg shadow-xl overflow-hidden">
-          <div className="p-6 md:p-8">
-            <h1 className="text-3xl font-bold text-white mb-6">
+
+      <motion.main 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex-grow container mx-auto px-4 py-12 relative z-10"
+      >
+        <motion.div className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-100">
+          <div className="p-8">
+            <h1 className="text-5xl font-bold text-[#1a365d] tracking-tight mb-8">
               {packageDetails.name}
             </h1>
-            <div className="flex flex-col lg:flex-row gap-8 mb-8">
-              <div className="lg:w-1/2">
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+              <motion.div className="space-y-4">
                 {packageDetails.image && packageDetails.image.length > 0 ? (
-                  <div className="grid grid-cols-1 gap-4">
+                  <div className="grid gap-4">
                     {packageDetails.image.map((img, index) => (
-                      <img
+                      <motion.div
                         key={index}
-                        src={img}
-                        alt={`Image of ${packageDetails.name}`}
-                        className="w-full h-auto object-cover rounded-lg shadow-md"
-                      />
+                        whileHover={{ scale: 1.02 }}
+                        className="overflow-hidden rounded-lg shadow-md"
+                      >
+                        <img
+                          src={img}
+                          alt={`Image of ${packageDetails.name}`}
+                          className="w-full h-auto object-cover"
+                        />
+                      </motion.div>
                     ))}
                   </div>
                 ) : (
-                  <div className="bg-base-200 h-64 flex items-center justify-center rounded-lg">
-                    <p className="text-base-content italic">
-                      No images available for this package
-                    </p>
+                  <div className="bg-gray-50 h-64 flex items-center justify-center rounded-lg">
+                    <p className="text-[#2d3748]">No images available</p>
                   </div>
                 )}
-              </div>
+              </motion.div>
 
-              <div className="lg:w-1/2 space-y-6">
-                <p className="text-base-content">
+              <div className="space-y-6">
+                <p className="text-[#2d3748] leading-relaxed">
                   {packageDetails.description}
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-base-200 p-4 rounded-lg">
-                    <p className="font-semibold text-white">Price:</p>
-                    <p className="text-base-content">{packageDetails.price}</p>
-                  </div>
-                  <div className="bg-base-200 p-4 rounded-lg">
-                    <p className="font-semibold text-white">Duration:</p>
-                    <p className="text-base-content">
-                      {packageDetails.duration} days
-                    </p>
-                  </div>
-                  <div className="bg-base-200 p-4 rounded-lg">
-                    <p className="font-semibold text-white">Location:</p>
-                    <p className="text-base-content">
-                      {packageDetails.location}
-                    </p>
-                  </div>
-                  <div className="bg-base-200 p-4 rounded-lg">
-                    <p className="font-semibold text-white">Highlights:</p>
-                    <p className="text-base-content">
-                      {packageDetails.highlights}
-                    </p>
-                  </div>
+                  <motion.div
+                    whileHover={{
+                      y: -5,
+                      scale: 1.01,
+                      boxShadow: "0 22px 45px -12px rgba(26, 54, 93, 0.15)"
+                    }}
+                    className="bg-white rounded-lg shadow-lg p-4 border border-gray-100"
+                  >
+                    <p className="font-semibold text-[#1a365d]">Price</p>
+                    <p className="text-2xl font-bold text-[#4169E1]">${packageDetails.price}</p>
+                  </motion.div>
+                  
+                  <motion.div
+                    whileHover={{
+                      y: -5,
+                      scale: 1.01,
+                      boxShadow: "0 22px 45px -12px rgba(26, 54, 93, 0.15)"
+                    }}
+                    className="bg-white rounded-lg shadow-lg p-4 border border-gray-100"
+                  >
+                    <p className="font-semibold text-[#1a365d]">Duration</p>
+                    <p className="text-[#2d3748]">{packageDetails.duration} days</p>
+                  </motion.div>
+                  
+                  <motion.div
+                    whileHover={{
+                      y: -5,
+                      scale: 1.01,
+                      boxShadow: "0 22px 45px -12px rgba(26, 54, 93, 0.15)"
+                    }}
+                    className="bg-white rounded-lg shadow-lg p-4 border border-gray-100"
+                  >
+                    <p className="font-semibold text-[#1a365d]">Location</p>
+                    <p className="text-[#2d3748]">{packageDetails.location}</p>
+                  </motion.div>
+                  
+                  <motion.div
+                    whileHover={{
+                      y: -5,
+                      scale: 1.01,
+                      boxShadow: "0 22px 45px -12px rgba(26, 54, 93, 0.15)"
+                    }}
+                    className="bg-white rounded-lg shadow-lg p-4 border border-gray-100"
+                  >
+                    <p className="font-semibold text-[#1a365d]">Highlights</p>
+                    <p className="text-[#2d3748]">{packageDetails.highlights}</p>
+                  </motion.div>
                 </div>
               </div>
             </div>
 
-            <div className="bg-base-100 p-6 rounded-lg">
-              <h2 className="text-2xl font-bold text-white mb-4">Reviews:</h2>
+            <div className="mt-12">
+              <h2 className="text-3xl font-bold text-[#1a365d] tracking-tight mb-6">Reviews</h2>
               {revvs && revvs.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {revvs.map((review) => (
-                    <div
+                    <motion.div
                       key={review._id}
-                      className="bg-base-200 p-4 rounded-lg shadow"
+                      whileHover={{
+                        y: -5,
+                        scale: 1.01,
+                        boxShadow: "0 22px 45px -12px rgba(26, 54, 93, 0.15)"
+                      }}
+                      className="bg-white rounded-lg shadow-lg p-6 border border-gray-100"
                     >
-                      <div className="flex justify-between items-start mb-2">
+                      <div className="flex justify-between items-start mb-4">
                         <div>
-                          <p className="font-semibold text-white">
-                            Rating:{" "}
-                            <span className="text-base-content">
-                              {review.rating} / 5
-                            </span>
+                          <p className="font-semibold text-[#1a365d]">
+                            Rating: <span className="text-[#4169E1]">{review.rating}/5</span>
                           </p>
-                          <p className="text-sm text-base-content/80">
-                            Reviewed by: {review.customerName || "Anonymous"}
+                          <p className="text-sm text-[#2d3748]">
+                            By {review.customerName || "Anonymous"}
                           </p>
                         </div>
-                        <button
-                          className="btn btn-ghost btn-sm"
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.95 }}
                           onClick={() => handleReportReview(review._id)}
-                          title="Report this review"
+                          className="text-[#2d3748] hover:text-[#4169E1] transition-colors"
                         >
-                          <FaFlag className="text-base-content/60 hover:text-white" />
-                        </button>
+                          <FaFlag />
+                        </motion.button>
                       </div>
-                      <p className="text-base-content">{review.comment}</p>
-                    </div>
+                      <p className="text-[#2d3748] leading-relaxed">{review.comment}</p>
+                    </motion.div>
                   ))}
                 </div>
               ) : (
-                <p className="text-base-content italic">
-                  No reviews for this package yet.
-                </p>
+                <p className="text-[#2d3748] italic">No reviews yet</p>
               )}
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+        </motion.div>
+      </motion.main>
+    </motion.div>
   );
 };
 

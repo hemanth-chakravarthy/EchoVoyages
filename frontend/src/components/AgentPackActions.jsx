@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import { motion } from "framer-motion";
 import "react-toastify/dist/ReactToastify.css";
 
 const AgentPackActions = () => {
@@ -58,87 +59,103 @@ const AgentPackActions = () => {
   };
 
   return (
-    <div className="p-4 bg-base-300">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="p-6 bg-white rounded-lg shadow-lg border border-gray-100"
+    >
       <ToastContainer position="top-right" autoClose={3000} />
-      <button
-        className="bg-transparent text-transparent font-bold py-3 px-6 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
-        onClick={handleOpenModal}
-      >
-        Update Package
-      </button>
-      <button
-        className="bg-transparent text-transparent font-bold mx-4 py-3 px-6 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
-        onClick={handleDelete}
-      >
-        Delete Package
-      </button>
+      <div className="flex space-x-4">
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="px-8 py-3 bg-[#4169E1] text-white font-medium rounded-full hover:bg-[#1a365d] transition-all duration-300 shadow-md hover:shadow-lg"
+          onClick={handleOpenModal}
+        >
+          Update Package
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="px-8 py-3 bg-[#00072D] text-white font-medium rounded-full hover:bg-[#1a365d] transition-all duration-300 shadow-md hover:shadow-lg"
+          onClick={handleDelete}
+        >
+          Delete Package
+        </motion.button>
+      </div>
+
       <dialog id="my_modal_3" className="modal" open={showModal}>
-        <div className="modal-box">
-          <form method="dialog">
-            <button
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="modal-box bg-white rounded-lg shadow-xl p-6 max-w-2xl mx-auto"
+        >
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-3xl font-bold text-[#1a365d] tracking-tight">Update Package</h2>
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
               type="button"
-              className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+              className="text-[#2d3748] hover:text-[#1a365d]"
               onClick={() => setShowModal(false)}
             >
               ✕
-            </button>
-          </form>
-          <h2 className="font-bold text-xl mb-4">Update Package</h2>
-          <form onSubmit={handleUpdate} className="space-y-4">
+            </motion.button>
+          </div>
+
+          <form onSubmit={handleUpdate} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Name:
-              </label>
+              <label className="text-[#1a365d] font-medium mb-2 block">Name:</label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2"
+                className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-[#4169E1] focus:ring-2 focus:ring-[#4169E1]/20 transition-all duration-300"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Price:
-              </label>
+              <label className="text-[#1a365d] font-medium mb-2 block">Price:</label>
               <input
                 type="number"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 required
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2"
+                className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-[#4169E1] focus:ring-2 focus:ring-[#4169E1]/20 transition-all duration-300"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Description:
-              </label>
+              <label className="text-[#1a365d] font-medium mb-2 block">Description:</label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 required
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2"
+                className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-[#4169E1] focus:ring-2 focus:ring-[#4169E1]/20 transition-all duration-300 min-h-[120px]"
               />
             </div>
-            <div className="flex space-x-4">
-              <button
+            <div className="flex space-x-4 pt-4">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 type="submit"
-                className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-500"
+                className="px-8 py-3 bg-[#4169E1] text-white font-medium rounded-full hover:bg-[#1a365d] transition-all duration-300 shadow-md hover:shadow-lg"
               >
                 Save Changes
-              </button>
-              <button
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 type="button"
                 onClick={() => setShowModal(false)}
-                className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+                className="px-8 py-3 bg-[#00072D] text-white font-medium rounded-full hover:bg-[#1a365d] transition-all duration-300 shadow-md hover:shadow-lg"
               >
                 Cancel
-              </button>
+              </motion.button>
             </div>
           </form>
-        </div>
+        </motion.div>
       </dialog>
-    </div>
+    </motion.div>
   );
 };
 
