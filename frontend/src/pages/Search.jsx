@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import moment from "moment";
 import Navbar from "../components/Navbar";
+import { motion } from "framer-motion";
 
 const Search = () => {
   const [locations, setLocations] = useState([]);
@@ -23,19 +24,11 @@ const Search = () => {
   useEffect(() => {
     const fetchLocations = async () => {
       try {
-        const guideLocations = await axios.get(
-          "http://localhost:5000/search/guide-locations"
-        );
-        const packageLocations = await axios.get(
-          "http://localhost:5000/search/package-locations"
-        );
-        const allLocations = [
-          ...new Set([
-            ...guideLocations.data.locations,
-            ...packageLocations.data,
-          ]),
-        ];
-        setLocations(allLocations);
+        const [guideRes, packageRes] = await Promise.all([
+          axios.get("http://localhost:5000/search/guide-locations"),
+          axios.get("http://localhost:5000/search/package-locations"),
+        ]);
+        setLocations([...new Set([...guideRes.data.locations, ...packageRes.data])]);
       } catch (error) {
         console.error("Error fetching locations:", error);
       }
@@ -43,10 +36,8 @@ const Search = () => {
 
     const fetchLanguages = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:5000/search/guide-languages"
-        );
-        setLanguages(response.data || []);
+        const res = await axios.get("http://localhost:5000/search/guide-languages");
+        setLanguages(res.data || []);
       } catch (error) {
         console.error("Error fetching languages:", error);
       }
@@ -59,7 +50,7 @@ const Search = () => {
   const handleSearch = async () => {
     if (selectedLocation && entityType) {
       try {
-        const response = await axios.get("http://localhost:5000/search", {
+        const res = await axios.get("http://localhost:5000/search", {
           params: {
             location: selectedLocation,
             entityType,
@@ -74,7 +65,7 @@ const Search = () => {
             availableDates,
           },
         });
-        setSearchResults(response.data || []);
+        setSearchResults(res.data || []);
       } catch (error) {
         console.error("Error searching:", error);
       }
@@ -82,27 +73,39 @@ const Search = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="min-h-screen flex flex-col bg-white"
+      style={{
+        backgroundImage: "radial-gradient(circle, #f0f0f0 1px, transparent 1px)",
+        backgroundSize: "20px 20px",
+        backgroundColor: "#fff",
+      }}
+    >
       <Navbar />
-      <main className="flex-grow container mx-auto px-4 py-12">
-        <h1 className="text-5xl font-bold text-center mb-16 text-white">Search Packages and Guides</h1>
-        <div className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl shadow-xl overflow-hidden p-6 mb-8 flex justify-center items-center gap-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 mb-6" style={{"margin-bottom":"0px"}}>
+      <motion.main 
+        initial={{ y: 20 }}
+        animate={{ y: 0 }}
+        className="flex-grow container mx-auto px-4 py-12 relative"
+      >
+        <h1 className="text-5xl font-bold text-center mb-12 text-[#1a365d]">Search Packages and Guides</h1>
+
+        <motion.div className="bg-white rounded-lg shadow-lg p-8 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <select
-              className="w-full bg-white text-gray-800 border border-[#81c3d2] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#81c3d2] focus:border-[#81c3d2] shadow-md transition-all duration-300 hover:bg-gray-100"
+              className="w-full bg-white text-[#2d3748] border border-gray-200 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-[#4169E1] shadow-sm transition-all duration-300"
               value={selectedLocation}
               onChange={(e) => setSelectedLocation(e.target.value)}
             >
               <option value="">Select Location</option>
-              {locations.map((location, index) => (
-                <option key={index} value={location}>
-                  {location}
-                </option>
+              {locations.map((loc, index) => (
+                <option key={index} value={loc}>{loc}</option>
               ))}
             </select>
 
             <select
-              className="w-full bg-white text-gray-800 border border-[#81c3d2] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#81c3d2] focus:border-[#81c3d2] shadow-md transition-all duration-300 hover:bg-gray-100"
+              className="w-full bg-white text-[#2d3748] border border-gray-200 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-[#4169E1] shadow-sm transition-all duration-300"
               value={entityType}
               onChange={(e) => setEntityType(e.target.value)}
             >
@@ -112,117 +115,93 @@ const Search = () => {
             </select>
 
             {entityType === "Guide" && (
-              <div className="flex items-center space-x-4">
-                <label className="flex items-center space-x-2 text-white">
+              <>
+                <label className="flex items-center space-x-2 text-[#2d3748]">
                   <input
                     type="checkbox"
-                    className="form-checkbox h-5 w-5 text-[#81c3d2]"
+                    className="h-5 w-5 text-[#4169E1] rounded focus:ring-[#4169E1]"
                     checked={availability}
                     onChange={(e) => setAvailability(e.target.checked)}
                   />
                   <span>Available</span>
                 </label>
                 <select
-                  className="w-full bg-white text-gray-800 border border-[#81c3d2] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#81c3d2] focus:border-[#81c3d2] shadow-md transition-all duration-300 hover:bg-gray-100"
+                  className="w-full bg-white text-[#2d3748] border border-gray-200 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-[#4169E1] shadow-sm transition-all duration-300"
                   value={selectedLanguage}
                   onChange={(e) => setSelectedLanguage(e.target.value)}
                 >
                   <option value="">Select Language</option>
                   {languages.map((lang, index) => (
-                    <option key={index} value={lang}>
-                      {lang}
-                    </option>
+                    <option key={index} value={lang}>{lang}</option>
                   ))}
                 </select>
-              </div>
+              </>
             )}
           </div>
 
           {entityType === "Package" && (
-            <div className="bg-white bg-opacity-5 p-4 rounded-lg mb-6 " >
-              <h3 className="text-lg font-semibold mb-4 text-white">Filters for Packages</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm text-gray-300">Duration (days)</label>
-                  <div className="flex space-x-2">
-                    <input
-                      type="number"
-                      className="w-full bg-white text-gray-800 border border-[#81c3d2] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#81c3d2] focus:border-[#81c3d2] shadow-md transition-all duration-300 hover:bg-gray-100"
-                      placeholder="Min"
-                      value={minDuration}
-                      onChange={(e) => setMinDuration(e.target.value)}
-                    />
-                    <input
-                      type="number"
-                      className="w-full bg-white text-gray-800 border border-[#81c3d2] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#81c3d2] focus:border-[#81c3d2] shadow-md transition-all duration-300 hover:bg-gray-100"
-                      placeholder="Max"
-                      value={maxDuration}
-                      onChange={(e) => setMaxDuration(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm text-gray-300">Group Size</label>
-                  <div className="flex space-x-2">
-                    <input
-                      type="number"
-                      className="w-full bg-white text-gray-800 border border-[#81c3d2] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#81c3d2] focus:border-[#81c3d2] shadow-md transition-all duration-300 hover:bg-gray-100"
-                      placeholder="Min"
-                      value={minGroupSize}
-                      onChange={(e) => setMinGroupSize(e.target.value)}
-                    />
-                    <input
-                      type="number"
-                      className="w-full bg-white text-gray-800 border border-[#81c3d2] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#81c3d2] focus:border-[#81c3d2] shadow-md transition-all duration-300 hover:bg-gray-100"
-                      placeholder="Max"
-                      value={maxGroupSize}
-                      onChange={(e) => setMaxGroupSize(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm text-gray-300">Price (Rs.)</label>
-                  <div className="flex space-x-2">
-                    <input
-                      type="number"
-                      className="w-full bg-white text-gray-800 border border-[#81c3d2] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#81c3d2] focus:border-[#81c3d2] shadow-md transition-all duration-300 hover:bg-gray-100"
-                      placeholder="Min"
-                      value={minPrice}
-                      onChange={(e) => setMinPrice(e.target.value)}
-                    />
-                    <input
-                      type="number"
-                      className="w-full bg-white text-gray-800 border border-[#81c3d2] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#81c3d2] focus:border-[#81c3d2] shadow-md transition-all duration-300 hover:bg-gray-100"
-                      placeholder="Max"
-                      value={maxPrice}
-                      onChange={(e) => setMaxPrice(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm text-gray-300">Available Dates</label>
-                  <input
-                    type="date"
-                    className="w-full bg-white text-gray-800 border border-[#81c3d2] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#81c3d2] focus:border-[#81c3d2] shadow-md transition-all duration-300 hover:bg-gray-100"
-                    onChange={(e) => {
-                      const date = moment(e.target.value).format();
-                      setAvailableDates([...availableDates, date]);
-                    }}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="space-y-2">
+                <label className="text-sm text-[#2d3748]">Duration (days)</label>
+                <div className="flex gap-4">
+                  <input 
+                    type="number" 
+                    placeholder="Min" 
+                    value={minDuration} 
+                    onChange={(e) => setMinDuration(e.target.value)} 
+                    className="w-full bg-white text-[#2d3748] border border-gray-200 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-[#4169E1] shadow-sm transition-all duration-300"
+                  />
+                  <input 
+                    type="number" 
+                    placeholder="Max" 
+                    value={maxDuration} 
+                    onChange={(e) => setMaxDuration(e.target.value)} 
+                    className="w-full bg-white text-[#2d3748] border border-gray-200 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-[#4169E1] shadow-sm transition-all duration-300"
                   />
                 </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm text-[#2d3748]">Price Range</label>
+                <div className="flex gap-4">
+                  <input 
+                    type="number" 
+                    placeholder="Min Price" 
+                    value={minPrice} 
+                    onChange={(e) => setMinPrice(e.target.value)} 
+                    className="w-full bg-white text-[#2d3748] border border-gray-200 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-[#4169E1] shadow-sm transition-all duration-300"
+                  />
+                  <input 
+                    type="number" 
+                    placeholder="Max Price" 
+                    value={maxPrice} 
+                    onChange={(e) => setMaxPrice(e.target.value)} 
+                    className="w-full bg-white text-[#2d3748] border border-gray-200 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-[#4169E1] shadow-sm transition-all duration-300"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm text-[#2d3748]">Available Date</label>
+                <input 
+                  type="date" 
+                  onChange={(e) => setAvailableDates([...availableDates, moment(e.target.value).format("YYYY-MM-DD")])} 
+                  className="w-full bg-white text-[#2d3748] border border-gray-200 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-[#4169E1] shadow-sm transition-all duration-300"
+                />
               </div>
             </div>
           )}
 
-          <button
-            className="w-full bg-transparent text-transparent font-bold py-2 px-4 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
+          <motion.button
+            whileHover={{ scale: 1.02, backgroundColor: "#1a365d" }}
+            whileTap={{ scale: 0.98 }}
+            className="mt-8 w-full bg-[#00072D] text-white font-semibold py-4 px-6 rounded-md transition-all duration-300 shadow-md hover:shadow-lg"
             onClick={handleSearch}
             disabled={!selectedLocation || !entityType}
-            style={{width:"200px"}}
           >
             Search
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" >
           {searchResults.length > 0 ? (
@@ -246,26 +225,41 @@ const Search = () => {
                       </Link>
                     </div>
                   ) : (
-                    <div className="text-gray-300">
-                      <div className="flex justify-center items-center align-middle">
-                          {result.image.map((img, index) => (
-                            <img
-                            key={index}
-                            src={`http://localhost:5000${img}`}
-                            alt={`Image of ${result.name}`}
-                            style={{ width: "300px", height: "200px", marginRight: "10px" , }}
-                          />
-                          ))}
-                        </div>
-                      <p className="mb-2">{result.description}</p>
+                    <div className="text-[#2d3748]">
+                      <div className="overflow-hidden mb-4">
+                        {result.image && result.image.length > 0 ? (
+                          <div className="relative group">
+                            {result.image.map((img, index) => (
+                              <motion.div
+                                key={index}
+                                className="relative"
+                              >
+                                <motion.img
+                                  whileHover={{ scale: 1.08 }}
+                                  transition={{ duration: 0.6, ease: "easeOut" }}
+                                  src={`http://localhost:5000${img}`}
+                                  alt={`Image of ${result.name}`}
+                                  className="w-full h-[200px] object-cover transform group-hover:brightness-105 transition-all duration-500"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                              </motion.div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="h-[200px] bg-gradient-to-r from-[#1a365d] to-[#4169E1] flex items-center justify-center">
+                            <p className="text-white font-medium">No image available</p>
+                          </div>
+                        )}
+                      </div>
+                      {/* <p className="mb-2">{result.description}</p> */}
                       <p><span className="font-semibold">Duration:</span> {result.duration} days</p>
                       <p><span className="font-semibold">Max Group Size:</span> {result.maxGroupSize}</p>
-                      <p><span className="font-semibold">Price:</span> Rs.{result.price}</p>
+                      <p><span className="font-semibold ">Price:</span> Rs.{result.price}</p>
                       <p><span className="font-semibold">Available Dates:</span> {result.availableDates.map((date) => moment(date).format("YYYY-MM-DD")).join(", ")}</p>
                       <p><span className="font-semibold">Location:</span> {result.location}</p>
                       <Link
                         to={`/packages/${result._id}`}
-                        className="mt-4 inline-block w-full bg-[#81c3d2] text-white font-bold py-2 px-4 rounded-full hover:bg-[#2c494b] transition-colors duration-300 text-center"
+                        className="mt-4 inline-block w-full bg-[#00072D] text-white font-bold py-2 px-4 rounded-full hover:bg-[#2c494b] transition-colors duration-300 text-center"
                       >
                         View Package
                       </Link>
@@ -280,10 +274,8 @@ const Search = () => {
             </p>
           )}
         </div>
-      </main>
-    </div>
+      </motion.main>
+    </motion.div>
   );
 };
-
 export default Search;
-
