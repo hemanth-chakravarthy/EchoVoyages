@@ -19,7 +19,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // Save a new package with image upload handling
-router.post('/', upload.array('images'), async (req, res) => {
+router.post('/', upload.array('images'), async (req, res, next) => {
     try {
         // Check if all required fields are provided
         const {
@@ -66,6 +66,7 @@ router.post('/', upload.array('images'), async (req, res) => {
         return res.status(201).send(savedPackage);
     } catch (error) {
         console.error(error);
+        next(error);
         return res.status(500).send({
             message: "Internal Server Error"
         });
@@ -73,7 +74,7 @@ router.post('/', upload.array('images'), async (req, res) => {
 });
 
 // view all packages
-router.get('/',async (req,res) => {
+router.get('/',async (req,res,next) => {
     try {
         const packs = await packages.find({});
         return res.status(200).json({
@@ -82,11 +83,12 @@ router.get('/',async (req,res) => {
         })
     } catch (error) {
         console.log(error.message);
+        next(error);
         res.status(500).send({message: error.message})
     }
 })
 // view a single package
-router.get('/:id',async (req,res) => {
+router.get('/:id',async (req,res,next) => {
     try {
         let {id} = req.params
         id = id.toString()
@@ -94,12 +96,13 @@ router.get('/:id',async (req,res) => {
         return res.status(200).json(packs)
     } catch (error) {
         console.log(error.message);
+        next(error);
         res.status(500).send({message: error.message})
     }
     
 })
 // update package
-router.put('/:id',async (req,res) => {
+router.put('/:id',async (req,res,next) => {
     try {
         const {id} = req.params;
         const result = await packages.findByIdAndUpdate(id, req.body);
@@ -111,12 +114,13 @@ router.put('/:id',async (req,res) => {
 
     } catch (error) {
         console.log(error.message);
+        next(error);
         res.status(500).send({message: error.message})
     }
     
 })
 // delete a package
-router.delete('/:id', async (req,res) => {
+router.delete('/:id', async (req,res,next) => {
     try {
         const {id} = req.params;
         const result = await packages.findByIdAndDelete(id)
@@ -128,11 +132,12 @@ router.delete('/:id', async (req,res) => {
 
     } catch (error) {
         console.log(error.message);
+        next(error);
         res.status(500).send({message: error.message})
     }
     
 })
-router.get('/agents/:AgentID', async (req, res) => {
+router.get('/agents/:AgentID', async (req, res, next) => {
     const { AgentID } = req.params;
     // This check might not be needed since AgentID is expected in the route
     if (!AgentID) {
@@ -152,6 +157,7 @@ router.get('/agents/:AgentID', async (req, res) => {
         res.status(200).json(agentPackages);
     } catch (error) {
         console.error(error);
+        next(error);
         res.status(500).json({ message: 'Server error' });
     }
 });

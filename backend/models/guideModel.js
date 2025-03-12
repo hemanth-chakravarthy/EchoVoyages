@@ -1,85 +1,112 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const guideSchema = new mongoose.Schema({
+const guideSchema = new mongoose.Schema(
+  {
     username: {
-        type: String,
-        required: true,
-        trim: true
+      type: String,
+      required: true,
+      trim: true,
     },
     name: {
-        type: String,
-        required: true,
-        trim: true
+      type: String,
+      required: true,
+      trim: true,
     },
     experience: {
-        type: Number,
-        required: false,  
-        min: 0
+      type: Number,
+      required: false,
+      min: 0,
     },
     languages: {
-        type: [String],  
-        required: false
+      type: [String],
+      required: false,
     },
     location: {
-        type: String,
-        required: false
+      type: String,
+      required: false,
     },
-    
+
     phno: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     gmail: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
 
     role: {
-        type: String,
-        default: 'guide',
+      type: String,
+      default: "guide",
     },
-    password : {
-        type: String,
-        required: true,
+    password: {
+      type: String,
+      required: true,
     },
     ratings: {
-        averageRating: {
-            type: Number,
-            min: 0,
-            max: 5,
-            default: 0
-        },
-        numberOfReviews: {
-            type: Number,
-            default: 0
-        }
+      averageRating: {
+        type: Number,
+        min: 0,
+        max: 5,
+        default: 0,
+      },
+      numberOfReviews: {
+        type: Number,
+        default: 0,
+      },
     },
     availability: {
-        type: Boolean,
-        default: false  
+      type: Boolean,
+      default: false,
     },
-    availableDates: [{
+    availableDates: [
+      {
         startDate: {
-            type: Date,
-            required: false
+          type: Date,
+          required: false,
         },
         endDate: {
-            type: Date,
-            required: false
-        }
-    }],
-    assignedPackages: [{
+          type: Date,
+          required: false,
+        },
+      },
+    ],
+    assignedPackages: [
+      {
         packageId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'packages'  
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "packages",
         },
         price: {
-            type: Number,  
-            required: false
-        }
-    }]
-}, {
-    timestamps: true
-});
+          type: Number,
+          required: false,
+        },
+      },
+    ],
+    specialization: {
+      type: String,
+      required: true,
+      enum: [
+        "luxury",
+        "adventure",
+        "business",
+        "family",
+        "budget-friendly",
+        "other",
+      ],
+    },
+    verificationCode: {
+      type: String,
+      default: "",
+    },
+    isverified: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-export const Guide = mongoose.model('Guide', guideSchema);
+export const Guide = mongoose.model("Guide", guideSchema);

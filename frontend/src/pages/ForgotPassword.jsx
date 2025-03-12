@@ -20,7 +20,7 @@ const ForgotPassword = () => {
         axios.post('http://localhost:5000/forgot-password', {gmail:formData.gmail})
         .then(res => {
             if(res.data.status === "Success") {
-                navigate('/')
+                navigate('/login')
                
             }
         }).catch(err => console.log(err))

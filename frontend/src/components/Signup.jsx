@@ -1,235 +1,430 @@
-import React, { useState } from 'react';
-import './Signup.css'; // Importing the CSS
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Signup = () => {
-    const [formData, setFormData] = useState({
-        username: '',
-        Name: '',
-        phno: '',
-        gmail: '',
-        password: '',
-        role: 'customer', // Default role
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    username: "",
+    Name: "",
+    phno: "",
+    gmail: "",
+    password: "",
+    role: "customer",
+    specialization: "luxury",
+  });
+
+  const [errors, setErrors] = useState({});
+  const [step, setStep] = useState(1);
+
+  // Handle input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
     });
+    validateField(name, value);
+  };
 
-    const [errors, setErrors] = useState({});
+  // Validate individual fields
+  const validateField = (name, value) => {
+    let newErrors = { ...errors };
 
-    // Handle input changes
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
+    switch (name) {
+      case "username":
+        newErrors.username = validateUsername(value);
+        break;
+      case "Name":
+        newErrors.Name = validateName(value);
+        break;
+      case "gmail":
+        newErrors.gmail = validateEmail(value);
+        break;
+      case "password":
+        newErrors.password = validatePassword(value);
+        break;
+      case "phno":
+        newErrors.phno = validatePhoneNumber(value);
+        break;
+      default:
+        break;
+    }
+
+    setErrors(newErrors);
+  };
+
+  // Validation functions (same as before)
+  const validateUsername = (username) => {
+    const usernamePattern = /^[a-zA-Z][a-zA-Z0-9!@#$%^&*()_+-=]*$/;
+    return usernamePattern.test(username)
+      ? ""
+      : "Username must start with an alphabet and can include letters, numbers, and special characters.";
+  };
+
+  const validateName = (name) => {
+    const namePattern = /^[a-zA-Z\s]*$/;
+    return namePattern.test(name)
+      ? ""
+      : "Name must not contain digits or special characters.";
+  };
+
+  const validateEmail = (email) => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailPattern.test(email) ? "" : 'Email must contain "@" and "."';
+  };
+
+  const validatePassword = (password) => {
+    const passwordLength = password.length >= 6;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    if (!passwordLength) {
+      return "Password must be at least 6 characters long";
+    }
+    if (!hasUpperCase) {
+      return "Password must contain at least one uppercase letter";
+    }
+    if (!hasSpecialChar) {
+      return "Password must contain at least one special character";
+    }
+
+    return "";
+  };
+
+  const validatePhoneNumber = (phno) => {
+    const phoneNumberPattern = /^[0-9]{10}$/;
+    return phoneNumberPattern.test(phno)
+      ? ""
+      : "Phone number must be exactly 10 digits";
+  };
+
+  const validateForm = () => {
+    let validationErrors = {};
+
+    if (step === 1) {
+      const usernameError = validateUsername(formData.username);
+      if (usernameError) validationErrors.username = usernameError;
+
+      const nameError = validateName(formData.Name);
+      if (nameError) validationErrors.Name = nameError;
+    }
+
+    if (step === 2) {
+      const phnoError = validatePhoneNumber(formData.phno);
+      if (phnoError) validationErrors.phno = phnoError;
+
+      const emailError = validateEmail(formData.gmail);
+      if (emailError) validationErrors.gmail = emailError;
+    }
+
+    if (step === 3) {
+      const passwordError = validatePassword(formData.password);
+      if (passwordError) validationErrors.password = passwordError;
+    }
+
+    setErrors(validationErrors);
+    return validationErrors;
+  };
+
+  const handleNext = () => {
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length === 0) {
+      setStep(step + 1);
+    } else {
+      console.log("Validation failed:", validationErrors);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      console.log("Form validation failed:", validationErrors);
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:5000/customers/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
         setFormData({
-            ...formData,
-            [name]: value,
+          username: "",
+          Name: "",
+          phno: "",
+          gmail: "",
+          password: "",
+          role: "customer",
+          specialization: "luxury",
         });
-        validateField(name, value); // Validate on input change
-    };
+        setErrors({});
+        toast.success("Signup successful!");
+        navigate("/login");
+        console.log("Signup successful!");
+      } else {
+        const data = await response.json();
+        console.log("Signup failed with error:", data.error);
+        toast.error(`Signup failed with error: ${data.error}`);
+      }
+    } catch (err) {
+      console.error("Error signing up:", err);
+      toast.error(`Error:${err}`);
+    }
+  };
 
-    // Validate individual fields
-    const validateField = (name, value) => {
-        let newErrors = { ...errors };
+  const handlePrevious = () => {
+    if (step > 1) {
+      setStep(step - 1);
+    }
+  };
 
-        switch (name) {
-            case 'gmail':
-                newErrors.gmail = validateEmail(value);
-                break;
-            case 'password':
-                newErrors.password = validatePassword(value);
-                break;
-            case 'phno':
-                newErrors.phno = validatePhoneNumber(value);
-                break;
-            default:
-                break;
-        }
-
-        setErrors(newErrors);
-    };
-
-    // Validate email to include "@" and "."
-    const validateEmail = (email) => {
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailPattern.test(email) ? '' : 'Email must contain "@" and "."';
-    };
-
-    // Validate password with stronger security
-    const validatePassword = (password) => {
-        const passwordLength = password.length >= 6;
-        const hasUpperCase = /[A-Z]/.test(password);
-        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-
-        if (!passwordLength) {
-            return 'Password must be at least 6 characters long';
-        }
-        if (!hasUpperCase) {
-            return 'Password must contain at least one uppercase letter';
-        }
-        if (!hasSpecialChar) {
-            return 'Password must contain at least one special character';
-        }
-
-        return '';
-    };
-
-    // Validate phone number to have exactly 10 digits and no other characters
-    const validatePhoneNumber = (phno) => {
-        const phoneNumberPattern = /^[0-9]{10}$/;
-        return phoneNumberPattern.test(phno) ? '' : 'Phone number must be exactly 10 digits';
-    };
-
-    // Validate the entire form before submission
-    const validateForm = () => {
-        let validationErrors = {};
-
-        // Username validation
-        if (!formData.username) {
-            validationErrors.username = 'Username is required';
-        }
-
-        // Name validation
-        if (!formData.Name) {
-            validationErrors.Name = 'Name is required';
-        }
-
-        // Phone number validation
-        const phnoError = validatePhoneNumber(formData.phno);
-        if (phnoError) {
-            validationErrors.phno = phnoError;
-        }
-
-        // Email validation
-        const emailError = validateEmail(formData.gmail);
-        if (emailError) {
-            validationErrors.gmail = emailError;
-        }
-
-        // Password validation
-        const passwordError = validatePassword(formData.password);
-        if (passwordError) {
-            validationErrors.password = passwordError;
-        }
-
-        setErrors(validationErrors); // Update errors state
-        return validationErrors;
-    };
-
-    // Handle form submission
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        // Validate form
-        const validationErrors = validateForm();
-        if (Object.keys(validationErrors).length > 0) {
-            console.log('Form validation failed:', validationErrors); // Debugging: Log errors
-            return;
-        }
-
-        try {
-            const response = await fetch("http://localhost:5000/customers/signup", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(formData)
-            });
-
-            if (response.ok) {
-                setFormData({
-                    username: '',
-                    Name: '',
-                    phno: '',
-                    gmail: '',
-                    password: '',
-                    role: 'customer'
-                });
-                setErrors({});
-                alert("Signup successful!"); // Display success alert
-                console.log("Signup successful!");
-            } else {
-                const data = await response.json();
-                console.log("Signup failed with error:", data.error); // Debugging: Log error from server
-            }
-        } catch (err) {
-            console.error("Error signing up:", err); // Debugging: Log any caught error
-        }
-    };
-
-    return (
-        <form onSubmit={handleSubmit} className="form-container">
-            <h2 className="form-title">Sign Up</h2>
-            <div className="form-group">
-                <label>Username</label>
-                <input
-                    type="text"
-                    name="username"
-                    value={formData.username}
-                    onChange={handleInputChange}
-                    required
-                    className={errors.username ? 'invalid' : ''}
-                />
-                {errors.username && <p className="error-message">{errors.username}</p>}
+  return (
+    <div
+      className="min-h-screen flex items-center justify-center bg-cover bg-center py-12 px-4 sm:px-6 lg:px-8"
+      style={{
+        backgroundImage: "url('../public/images/travel-background.jpg')",
+      }}
+    >
+      <ToastContainer position="top-right" autoClose={3000} />
+      <div className="max-w-md w-full space-y-8 bg-gray-900 bg-opacity-80 p-10 rounded-xl shadow-2xl">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
+            Create your account
+          </h2>
+          <p className="mt-2 text-center text-sm text-gray-300">
+            Start your journey with us
+          </p>
+        </div>
+        <div className="mt-8 space-y-6">
+          <div className="relative">
+            <div className="flex mb-2 items-center justify-between">
+              <div>
+                <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-indigo-300 bg-indigo-900">
+                  Step {step} of 3
+                </span>
+              </div>
+              <div className="text-right">
+                <span className="text-xs font-semibold inline-block text-indigo-300">
+                  {Math.round((step / 3) * 100)}%
+                </span>
+              </div>
             </div>
-            <div className="form-group">
-                <label>Name</label>
-                <input
-                    type="text"
-                    name="Name"
-                    value={formData.Name}
-                    onChange={handleInputChange}
-                    required
-                />
-                {errors.Name && <p className="error-message">{errors.Name}</p>}
+            <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-indigo-900">
+              <div
+                style={{ width: `${(step / 3) * 100}%` }}
+                className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-indigo-500"
+              ></div>
             </div>
-            <div className="form-group">
-                <label>Phone Number</label>
-                <input
-                    type="text"
-                    name="phno"
-                    value={formData.phno}
-                    onChange={handleInputChange}
-                    required
-                    className={errors.phno ? 'invalid' : ''}
-                />
-                {errors.phno && <p className="error-message">{errors.phno}</p>}
+          </div>
+
+          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+            <input type="hidden" name="remember" defaultValue="true" />
+            <div className="rounded-md shadow-sm -space-y-px">
+              {step === 1 && (
+                <>
+                  <div className="mb-4">
+                    <label htmlFor="username" className="sr-only">
+                      Username
+                    </label>
+                    <input
+                      id="username"
+                      name="username"
+                      type="text"
+                      required
+                      className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
+                        errors.username ? "border-red-500" : "border-gray-700"
+                      } bg-gray-800 text-white placeholder-gray-400 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                      placeholder="Username"
+                      value={formData.username}
+                      onChange={handleInputChange}
+                    />
+                    {errors.username && (
+                      <p className="mt-2 text-sm text-red-400" id="email-error">
+                        {errors.username}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <label htmlFor="Name" className="sr-only">
+                      Name
+                    </label>
+                    <input
+                      id="Name"
+                      name="Name"
+                      type="text"
+                      required
+                      className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
+                        errors.Name ? "border-red-500" : "border-gray-700"
+                      } bg-gray-800 text-white placeholder-gray-400 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                      placeholder="Name"
+                      value={formData.Name}
+                      onChange={handleInputChange}
+                    />
+                    {errors.Name && (
+                      <p className="mt-2 text-sm text-red-400" id="email-error">
+                        {errors.Name}
+                      </p>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {step === 2 && (
+                <>
+                  <div className="mb-4">
+                    <label htmlFor="phno" className="sr-only">
+                      Phone Number
+                    </label>
+                    <input
+                      id="phno"
+                      name="phno"
+                      type="text"
+                      required
+                      className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
+                        errors.phno ? "border-red-500" : "border-gray-700"
+                      } bg-gray-800 text-white placeholder-gray-400 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                      placeholder="Phone Number"
+                      value={formData.phno}
+                      onChange={handleInputChange}
+                    />
+                    {errors.phno && (
+                      <p className="mt-2 text-sm text-red-400" id="email-error">
+                        {errors.phno}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <label htmlFor="gmail" className="sr-only">
+                      Email address
+                    </label>
+                    <input
+                      id="gmail"
+                      name="gmail"
+                      type="email"
+                      autoComplete="email"
+                      required
+                      className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
+                        errors.gmail ? "border-red-500" : "border-gray-700"
+                      } bg-gray-800 text-white placeholder-gray-400 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                      placeholder="Email address"
+                      value={formData.gmail}
+                      onChange={handleInputChange}
+                    />
+                    {errors.gmail && (
+                      <p className="mt-2 text-sm text-red-400" id="email-error">
+                        {errors.gmail}
+                      </p>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {step === 3 && (
+                <>
+                  <div className="mb-4">
+                    <label htmlFor="password" className="sr-only">
+                      Password
+                    </label>
+                    <input
+                      id="password"
+                      name="password"
+                      type="password"
+                      autoComplete="current-password"
+                      required
+                      className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
+                        errors.password ? "border-red-500" : "border-gray-700"
+                      } bg-gray-800 text-white placeholder-gray-400 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                      placeholder="Password"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                    />
+                    {errors.password && (
+                      <p
+                        className="mt-2 text-sm text-red-400"
+                        id="password-error"
+                      >
+                        {errors.password}
+                      </p>
+                    )}
+                  </div>
+                  <div className="mb-4">
+                    <label htmlFor="role" className="sr-only">
+                      Role
+                    </label>
+                    <select
+                      id="role"
+                      name="role"
+                      className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                      value={formData.role}
+                      onChange={handleInputChange}
+                    >
+                      <option value="customer">Customer</option>
+                      <option value="guide">Local Guide</option>
+                      <option value="agency">Travel Agency</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label htmlFor="specialization" className="sr-only">
+                      Specialization
+                    </label>
+                    <select
+                      id="specialization"
+                      name="specialization"
+                      className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white placeholder-gray-400 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                      value={formData.specialization}
+                      onChange={handleInputChange}
+                    >
+                      <option value="luxury">Luxury</option>
+                      <option value="adventure">Adventure</option>
+                      <option value="budget-friendly">Budget-Friendly</option>
+                      <option value="family">Family</option>
+                      <option value="business">Business</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                </>
+              )}
             </div>
-            <div className="form-group">
-                <label>Email</label>
-                <input
-                    type="email"
-                    name="gmail"
-                    value={formData.gmail}
-                    onChange={handleInputChange}
-                    required
-                    className={errors.gmail ? 'invalid' : ''}
-                />
-                {errors.gmail && <p className="error-message">{errors.gmail}</p>}
-            </div>
-            <div className="form-group">
-                <label>Password</label>
-                <input
-                    type="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    required
-                    className={errors.password ? 'invalid' : ''}
-                />
-                {errors.password && <p className="error-message">{errors.password}</p>}
-            </div>
-            <div className="form-group">
-                <label>Role</label>
-                <select
-                    name="role"
-                    value={formData.role}
-                    onChange={handleInputChange}
-                    required
+
+            <div className="flex items-center justify-between">
+              {step > 1 && (
+                <button
+                  type="button"
+                  onClick={handlePrevious}
+                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-indigo-300 bg-indigo-900 hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
-                    <option value="customer">Customer</option>
-                    <option value="travel agency">Travel Agency</option>
-                    <option value="guide">Guide</option>
-                </select>
+                  Previous
+                </button>
+              )}
+              {step < 3 ? (
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  Next
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  Sign up
+                </button>
+              )}
             </div>
-            <button type="submit" className="submit-btn">Sign Up</button>
-        </form>
-    );
+          </form>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Signup;

@@ -3,7 +3,7 @@ import { Agency } from '../models/agencyModel.js'; // Make sure to adjust the pa
 const router = express.Router();
 
 // Save a new agency
-router.post('/', async (req, res) => {
+router.post('/', async (req, res,next) => {
     try {
         const { name, contactInfo, bio, specialization } = req.body;
 
@@ -27,12 +27,13 @@ router.post('/', async (req, res) => {
         return res.status(201).send(agency);
     } catch (error) {
         console.log(error);
+        next(error);
         res.status(500).send({ message: error.message });
     }
 });
 
 // Get all agencies
-router.get('/', async (req, res) => {
+router.get('/', async (req, res,next) => {
     try {
         const agencies = await Agency.find({});
         return res.status(200).json({
@@ -41,12 +42,13 @@ router.get('/', async (req, res) => {
         });
     } catch (error) {
         console.log(error.message);
+        next(error);
         res.status(500).send({ message: error.message });
     }
 });
 
 // Delete an agency
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res,next) => {
     try {
         const { id } = req.params;
         const result = await Agency.findByIdAndDelete(id);
@@ -56,12 +58,13 @@ router.delete('/:id', async (req, res) => {
         return res.status(200).json({ message: "Agency deleted" });
     } catch (error) {
         console.log(error.message);
+        next(error);
         res.status(500).send({ message: error.message });
     }
 });
 
 // Update an agency
-router.put('/:id', async (req, res) => {
+router.put('/:id', async (req, res,next) => {
     try {
         const { id } = req.params;
         const result = await Agency.findByIdAndUpdate(id, req.body, { new: true });
@@ -71,12 +74,13 @@ router.put('/:id', async (req, res) => {
         return res.status(200).json(result);
     } catch (error) {
         console.log(error.message);
+        next(error);
         res.status(500).send({ message: error.message });
     }
 });
 
 // View a single agency
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res,next) => {
     try {
         const { id } = req.params;
         const agency = await Agency.findById(id);
@@ -86,6 +90,7 @@ router.get('/:id', async (req, res) => {
         return res.status(200).json(agency);
     } catch (error) {
         console.log(error.message);
+        next(error);
         res.status(500).send({ message: error.message });
     }
 });

@@ -1,227 +1,215 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useNavigate, useParams } from 'react-router-dom';
-import BackButton from '../components/BackButton';
-import '../assets/css/updateEntity.css'; 
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useNavigate, useParams } from "react-router-dom";
+import BackButton from "../components/BackButton";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const UpdateEntity = () => {
   const [entity, setEntity] = useState({});
-  const { id, entityType } = useParams(); 
+  const [entityType, setEntityType] = useState(""); // Add state for entity type
+
   const navigate = useNavigate();
+  const { id, type } = useParams(); // Assuming you're using useParams for id and type
+  console.log(type)
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/admin/${entityType}/${id}`)
-      .then((res) => {
-        setEntity(res.data);
-      })
-      .catch((error) => {
-        alert('Error occurred while fetching data');
-        console.log(error);
-      });
-  }, [id, entityType]);
+    // Fetch entity data based on id and type
+    const fetchEntity = async () => {
+      try {
+        const response = await axios.get(`/admin/${type}/${id}`); // Replace with your API endpoint
+        console.log(data)
+        setEntity(response.data);
+        setEntityType(type);
+      } catch (error) {
+        console.error("Error fetching entity:", error);
+      }
+    };
 
-  const handleEditEntity = () => {
-    axios.put(`http://localhost:5000/admin/${entityType}/${id}`, entity)
-      .then(() => {
-        navigate(`/admin`);
-      })
-      .catch((error) => {
-        alert('Error occurred while updating');
-        console.log(error);
-      });
-  };
+    if (id && type) {
+      fetchEntity();
+    }
+  }, [id, type]);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setEntity((prevEntity) => ({
-      ...prevEntity,
-      [name]: value,
-    }));
+    setEntity((prevEntity) => {
+      if (name.includes('.')) {
+        const [parentKey, childKey] = name.split('.');
+        return {
+          ...prevEntity,
+          [parentKey]: {
+            ...prevEntity[parentKey],
+            [childKey]: value
+          }
+        };
+      }
+      return {
+        ...prevEntity,
+        [name]: value,
+      };
+    });
+  };
+
+  const handleEditEntity = async () => {
+    try {
+      await axios.put(`/api/${entityType}/${id}`, entity); // Replace with your API endpoint
+      navigate(-1); // Go back to the previous page
+    } catch (error) {
+      console.error("Error editing entity:", error);
+    }
+  };
+
+  const renderFormFields = () => {
+    const inputClass = "w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-primary";
+    const labelClass = "block text-sm font-medium text-muted-foreground mb-1";
+
+    switch (entityType) {
+      case "customers":
+        return (
+          <>
+            <div className="mb-4">
+            <ToastContainer position="top-right" autoClose={3000} />
+              <label htmlFor="name" className={labelClass}>Name</label>
+              <input type="text" id="name" name="name" value={entity.name || ""} onChange={handleChange} className={inputClass} />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="username" className={labelClass}>Username</label>
+              <input type="text" id="username" name="username" value={entity.username || ""} onChange={handleChange} className={inputClass} />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="gmail" className={labelClass}>Gmail</label>
+              <input type="email" id="gmail" name="gmail" value={entity.gmail || ""} onChange={handleChange} className={inputClass} />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="password" className={labelClass}>Password</label>
+              <input type="password" id="password" name="password" value={entity.password || ""} onChange={handleChange} className={inputClass} />
+            </div>
+          </>
+        );
+      case "packages":
+        return (
+          <>
+            <div className="mb-4">
+            <ToastContainer position="top-right" autoClose={3000} />
+              <label htmlFor="name" className={labelClass}>Package Name</label>
+              <input type="text" id="name" name="name" value={entity.name || ""} onChange={handleChange} className={inputClass} />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="description" className={labelClass}>Description</label>
+              <textarea id="description" name="description" value={entity.description || ""} onChange={handleChange} className={`${inputClass} h-24`}></textarea>
+            </div>
+            <div className="mb-4">
+              <label htmlFor="price" className={labelClass}>Price</label>
+              <input type="number" id="price" name="price" value={entity.price || ""} onChange={handleChange} className={inputClass} />
+            </div>
+          </>
+        );
+      case "guides":
+        return (
+          <>
+            <div className="mb-4">
+            <ToastContainer position="top-right" autoClose={3000} />
+              <label htmlFor="name" className={labelClass}>Name</label>
+              <input type="text" id="name" name="name" value={entity.name || ""} onChange={handleChange} className={inputClass} />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="experience" className={labelClass}>Experience</label>
+              <input type="number" id="experience" name="experience" value={entity.experience || ""} onChange={handleChange} className={inputClass} />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="email" className={labelClass}>Email</label>
+              <input type="email" id="email" name="email" value={entity.email || ""} onChange={handleChange} className={inputClass} />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="languages" className={labelClass}>Languages</label>
+              <input type="text" id="languages" name="languages" value={entity.languages || ""} onChange={handleChange} className={inputClass} />
+            </div>
+          </>
+        );
+      case "bookings":
+        return (
+          <div className="mb-4">
+            <ToastContainer position="top-right" autoClose={3000} />
+            <label htmlFor="totalPrice" className={labelClass}>Total Price</label>
+            <input type="number" id="totalPrice" name="totalPrice" value={entity.totalPrice || ""} onChange={handleChange} className={inputClass} />
+          </div>
+        );
+      case "agency":
+        return (
+          <>
+            <div className="mb-4">
+            <ToastContainer position="top-right" autoClose={3000} />
+              <label htmlFor="email" className={labelClass}>Email</label>
+              <input type="email" id="email" name="contactInfo.email" value={entity.contactInfo?.email || ""} onChange={handleChange} className={inputClass} />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="phone" className={labelClass}>Phone</label>
+              <input type="text" id="phone" name="contactInfo.phone" value={entity.contactInfo?.phone || ""} onChange={handleChange} className={inputClass} />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="specialization" className={labelClass}>Specialization</label>
+              <select id="specialization" name="specialization" value={entity.specialization || ""} onChange={handleChange} className={inputClass}>
+                <option value="luxury">Luxury</option>
+                <option value="adventure">Adventure</option>
+                <option value="business">Business</option>
+                <option value="family">Family</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </>
+        );
+      default:
+        return (
+          <>
+            <div className="mb-4">
+            <ToastContainer position="top-right" autoClose={3000} />
+              <label htmlFor="rating" className={labelClass}>Rating</label>
+              <input type="number" id="rating" name="rating" value={entity.rating || ""} onChange={handleChange} min={1} max={5} className={inputClass} />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="comment" className={labelClass}>Comment</label>
+              <textarea id="comment" name="comment" value={entity.comment || ""} onChange={handleChange} className={`${inputClass} h-24`}></textarea>
+            </div>
+            <div className="mb-4">
+              <label htmlFor="status" className={labelClass}>Status</label>
+              <select id="status" name="status" value={entity.status || ""} onChange={handleChange} className={inputClass}>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
+          </>
+        );
+    }
   };
 
   return (
-    <div className="update-container">
-      <BackButton className="back-button" />
-      <h1 className="title">Edit {entityType.charAt(0).toUpperCase() + entityType.slice(1)}</h1>
-      <div className="update-card">
-        {/* Conditionally render form fields based on entityType */}
-        {entityType === 'customers' ? (
-          <>
-            <label>Name</label>
-            <input
-              type="text"
-              name="Name"
-              value={entity.Name || ''}
-              onChange={handleChange}
-              className="input-field"
-            />
-            <label>Username</label>
-            <input
-              type="text"
-              name="username"
-              value={entity.username || ''}
-              onChange={handleChange}
-              className="input-field"
-            />
-            <label>Gmail</label>
-            <input
-              type="text"
-              name="gmail"
-              value={entity.gmail || ''}
-              onChange={handleChange}
-              className="input-field"
-            />
-            <label>Password</label>
-            <input
-              type="password"
-              name="password"
-              value={entity.password || ''}
-              onChange={handleChange}
-              className="input-field"
-            />
-          </>
-        ) : entityType === 'packages' ? (
-          <>
-            <label>Package Name</label>
-            <input
-              type="text"
-              name="name"
-              value={entity.name || ''}
-              onChange={handleChange}
-              className="input-field"
-            />
-            <label>Description</label>
-            <textarea
-              name="description"
-              value={entity.description || ''}
-              onChange={handleChange}
-              className="input-field"
-            />
-            <label>Price</label>
-            <input
-              type="number"
-              name="price"
-              value={entity.price || ''}
-              onChange={handleChange}
-              className="input-field"
-            />
-          </>
-        ) : entityType === 'guides' ? (
-          <>
-            <label>Name</label>
-            <input
-              type="text"
-              name="name"
-              value={entity.name || ''}
-              onChange={handleChange}
-              className="input-field"
-            />
-            <label>Experience</label>
-            <input
-              type="number"
-              name="experience"
-              value={entity.experience || ''}
-              onChange={handleChange}
-              className="input-field"
-            />
-            <label>Email</label>
-            <input
-              type="text"
-              name="email"
-              value={entity.contact?.email || ''}
-              onChange={handleChange}
-              className="input-field"
-            />
-            <label>Languages</label>
-            <input
-              type="text"
-              name="languages"
-              value={entity.languages || ''}
-              onChange={handleChange}
-              className="input-field"
-            />
-          </>
-        ) : entityType === 'bookings' ? (
-          <>
-            <label>Total Price</label>
-            <input
-              type="number"
-              name="totalPrice"
-              value={entity.totalPrice || ''}
-              onChange={handleChange}
-              className="input-field"
-            />
-          </>
-        ) : entityType === 'agency' ? (
-          <>
-            <label>Email</label>
-            <input
-              type="text"
-              name="contactInfo.email"
-              value={entity.contactInfo?.email || ''}
-              onChange={handleChange}
-              className="input-field"
-            />
-            <label>Phone</label>
-            <input
-              type="text"
-              name="contactInfo.phone"
-              value={entity.contactInfo?.phone || ''}
-              onChange={handleChange}
-              className="input-field"
-            />
-            <label>Specialization</label>
-            <select
-              name="specialization"
-              value={entity.specialization || ''}
-              onChange={handleChange}
-              className="input-field"
+    <div className="min-h-screen bg-background p-6">
+      <ToastContainer position="top-right" autoClose={3000} />
+      <div className="max-w-2xl mx-auto">
+        <BackButton className="mb-6 inline-flex items-center px-4 py-2 rounded-md text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition duration-150 ease-in-out" />
+        <div className="bg-card shadow-xl rounded-lg overflow-hidden">
+          <div className="bg-primary px-6 py-4">
+            <h1 className="text-2xl font-bold text-primary-foreground">
+              Edit {entityType.charAt(0).toUpperCase() + entityType.slice(1)}
+            </h1>
+          </div>
+          <div className="px-6 py-4 space-y-4">
+            {renderFormFields()}
+            <button
+              onClick={handleEditEntity}
+              className="w-full px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
             >
-              <option value="luxury">Luxury</option>
-              <option value="adventure">Adventure</option>
-              <option value="business">Business</option>
-              <option value="family">Family</option>
-              <option value="other">Other</option>
-            </select>
-          </>
-        ) : (
-          <>
-            <label>Rating</label>
-            <input
-              type="number"
-              name="rating"
-              value={entity.rating || ''}
-              onChange={handleChange}
-              min={1}
-              max={5}
-              className="input-field"
-            />
-            <label>Comment</label>
-            <textarea
-              name="comment"
-              value={entity.comment || ''}
-              onChange={handleChange}
-              className="input-field"
-            />
-            <label>Status</label>
-            <select
-              name="status"
-              value={entity.status || 'pending'}
-              onChange={handleChange}
-              className="input-field"
-            >
-              <option value="pending">Pending</option>
-              <option value="approved">Approved</option>
-              <option value="rejected">Rejected</option>
-            </select>
-          </>
-        )}
-        <button onClick={handleEditEntity} className="save-button">
-          Save
-        </button>
+              Save
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
 export default UpdateEntity;
+

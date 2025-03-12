@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import Navbar from '../components/Navbar';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const CustomerWishlist = () => {
-    const [wishlist, setWishlist] = useState([]);
-    const [guideWishlist, setGuideWishlist] = useState([]);
+    const [wishlist, setWishlist] = useState({ packages: [], guides: [] });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
@@ -12,63 +13,38 @@ const CustomerWishlist = () => {
     const customerId = token ? jwtDecode(token).id : null;
 
     useEffect(() => {
-        const fetchWishlist = async () => {
+        const fetchWishlistData = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/wishlist/customer/${customerId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
+                const [packageResponse, guideResponse] = await Promise.all([
+                    fetch(`http://localhost:5000/wishlist/customer/${customerId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                        },
+                    }),
+                    fetch(`http://localhost:5000/wishlistGuides/cust/${customerId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                        },
+                    })
+                ]);
+
+                if (!packageResponse.ok || !guideResponse.ok) {
+                    throw new Error('Failed to fetch wishlist data.');
+                }
+
+                const [packageData, guideData] = await Promise.all([
+                    packageResponse.json(),
+                    guideResponse.json()
+                ]);
+
+                setWishlist({
+                    packages: Array.isArray(packageData) ? packageData : [packageData],
+                    guides: Array.isArray(guideData) ? guideData : [guideData]
                 });
-
-                if (!response.ok) {
-                    throw new Error('Failed to fetch wishlist.');
-                }
-
-                const data = await response.json();
-
-                
-                if (Array.isArray(data)) {
-                    setWishlist(data);
-                } else if (data && typeof data === 'object') {
-                    setWishlist([data]); 
-                } else {
-                    setError('Received data is not valid.');
-                }
-
-                setLoading(false);
-            } catch (error) {
-                setError(error.message);
-                setLoading(false);
-            }
-        };
-
-        const fetchGuideWishlist = async () => {
-            try {
-                const response = await fetch(`http://localhost:5000/wishlistGuides/cust/${customerId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                });
-
-                if (!response.ok) {
-                    throw new Error('Failed to fetch guide wishlist.');
-                }
-
-                const data = await response.json();
-
-                
-                if (Array.isArray(data)) {
-                    setGuideWishlist(data);
-                } else if (data && typeof data === 'object') {
-                    setGuideWishlist([data]); 
-                } else {
-                    setError('Received guide data is not valid.');
-                }
-
                 setLoading(false);
             } catch (error) {
                 setError(error.message);
@@ -77,121 +53,127 @@ const CustomerWishlist = () => {
         };
 
         if (customerId) {
-            fetchWishlist();
-            fetchGuideWishlist();
+            fetchWishlistData();
         }
     }, [customerId, token]);
 
-    const handleRemoveItem = async (itemId) => {
+    const handleRemoveItem = async (itemId, type) => {
         try {
-            const response = await fetch(`http://localhost:5000/wishlist/${itemId}`, {
+            const endpoint = type === 'package' ? `http://localhost:5000/wishlist/${itemId}` : `http://localhost:5000/wishlistGuides/${itemId}`;
+            const response = await fetch(endpoint, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
             });
+
             const data = await response.json();
             if (response.ok) {
-                setWishlist((prevWishlist) => prevWishlist.filter(item => item._id !== itemId));
-                alert(data.message);
+                const updateWishlist = type === 'package' ? 
+                    { ...wishlist, packages: wishlist.packages.filter(item => item._id !== itemId) } :
+                    { ...wishlist, guides: wishlist.guides.filter(item => item._id !== itemId) };
+
+                setWishlist(updateWishlist);
+                toast.success(data.message);
             } else {
-                alert(data.message || 'Failed to remove item from wishlist');
+                toast.error(data.message || `Failed to remove ${type} from wishlist`);
             }
         } catch (error) {
             console.error('Error removing item from wishlist:', error);
         }
     };
 
-    const handleRemoveGuide = async (itemId) => {
-        try {
-            const response = await fetch(`http://localhost:5000/wishlistGuides/${itemId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-            const data = await response.json();
-            if (response.ok) {
-                setGuideWishlist((prevGuideWishlist) => prevGuideWishlist.filter(item => item._id !== itemId));
-                alert(data.message);
-            } else {
-                alert(data.message || 'Failed to remove guide from wishlist');
-            }
-        } catch (error) {
-            console.error('Error removing guide from wishlist:', error);
-        }
-    };
-
     if (loading) {
-        return <div>Loading...</div>;
-    }
-
-    if (error) {
-        return <div>Error: {error}</div>;
+        return (
+            <div className="min-h-screen flex flex-col bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700">
+                <Navbar />
+                <div className="flex-grow flex items-center justify-center">
+                    <p className="text-white text-2xl">Loading...</p>
+                </div>
+            </div>
+        );
     }
 
     return (
-        <div>
+        <div className="min-h-screen flex flex-col bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700">
             <Navbar />
-            <h1>My Wishlist</h1>
+            <ToastContainer position="top-right" autoClose={3000} />
+            <main className="flex-grow container mx-auto px-4 py-12">
+                <h1 className="text-5xl font-bold text-center mb-16 text-white">My Wishlist</h1>
 
-            {/* Packages Section */}
-            <h2>Packages</h2>
-            {wishlist.length > 0 ? (
-                <ul>
-                    {wishlist.map((item) => (
-                        <li key={item._id}>
-                            {item.packageId ? (
-                                <>
-                                    <h2>{item.packageId.name}</h2>
-                                    <p>{item.packageId.description}</p>
-                                    <p>Price: {item.packageId.price}</p>
-                                    <p>Duration: {item.packageId.duration} days</p>
-                                    {item.packageId.image && item.packageId.image.length > 0 ? (
-                                        <img
-                                            src={`http://localhost:5000${item.packageId.image[0]}`} 
-                                            alt={item.packageId.name}
-                                            style={{ width: '200px', height: '150px' }}
-                                        />
+                {/* Packages Section */}
+                {wishlist.packages.length > 0 ? (
+                    <div className="mb-12">
+                        <h2 className="text-3xl font-bold mb-6 text-white">Packages</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {wishlist.packages.map((item) => (
+                                <div key={item._id} className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105">
+                                    {item.packageId ? (
+                                        <div className="p-6 bg-gray-800 rounded-b-xl">
+                                        <h3 className="text-2xl font-semibold text-white mb-2">{item.packageId.name}</h3>
+                                        <p className="text-gray-300 mb-4">{item.packageId.description}</p>
+                                        <div className="flex justify-between items-center mb-4">
+                                            <p className="text-lg font-bold text-white">${item.packageId.price}</p>
+                                            <p className="text-sm text-gray-300">{item.packageId.duration} days</p>
+                                        </div>
+                                        <button
+                                            onClick={() => handleRemoveItem(item._id, 'package')}
+                                            className="w-full bg-red-500 text-white font-bold py-2 px-4 rounded-full hover:bg-red-600 transition-colors duration-300"
+                                        >
+                                            Remove
+                                        </button>
+                                    </div>
                                     ) : (
-                                        <p>No image available</p>
+                                        <div className="p-6">
+                                            <p className="text-white">Package details unavailable.</p>
+                                        </div>
                                     )}
-                                </>
-                            ) : (
-                                <p>Package details unavailable.</p>
-                            )}
-                            <button onClick={() => handleRemoveItem(item._id)}>Remove</button>
-                        </li>
-                    ))}
-                </ul>
-            ) : (
-                <p>No packages in your wishlist.</p>
-            )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ) : (
+                    <p className="text-center text-xl text-white">No packages in your wishlist.</p>
+                )}
 
-            {/* Guides Section */}
-            <h2>Guides</h2>
-            {guideWishlist.length > 0 ? (
-                <ul>
-                    {guideWishlist.map((item) => (
-                        <li key={item._id}>
-                            {item.guideId ? (
-                                <>
-                                    <h2>{item.guideId.name}</h2>
-                                    <p>{item.guideId.description}</p>
-                                    <p>Experience: {item.guideId.experience} years</p>
-                                </>
-                            ) : (
-                                <p>Guide details unavailable.</p>
-                            )}
-                            <button onClick={() => handleRemoveGuide(item._id)}>Remove</button>
-                        </li>
-                    ))}
-                </ul>
-            ) : (
-                <p>No guides in your wishlist.</p>
-            )}
+                {/* Guides Section */}
+                {wishlist.guides.length > 0 ? (
+                    <div className="mb-12">
+                        <h2 className="text-3xl font-bold mb-6 text-white">Guides</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {wishlist.guides.map((item) => (
+                                <div key={item._id} className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105">
+                                    {item.guideId ? (
+                                        <div className="p-6">
+                                            <h3 className="text-2xl font-semibold text-white mb-2">{item.guideId.name}</h3>
+                                            <p className="text-gray-300 mb-4">{item.guideId.description}</p>
+                                            <p className="text-sm text-gray-300 mb-4">Experience: {item.guideId.experience} years</p>
+                                            <button
+                                                onClick={() => handleRemoveItem(item._id, 'guide')}
+                                                className="w-full bg-red-500 text-white font-bold py-2 px-4 rounded-full hover:bg-red-600 transition-colors duration-300"
+                                            >
+                                                Remove
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div className="p-6">
+                                            <p className="text-white">Guide details unavailable.</p>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ) : (
+                    <p className="text-center text-xl text-white">No guides in your wishlist.</p>
+                )}
+
+                {/* No Items Message */}
+                {wishlist.packages.length === 0 && wishlist.guides.length === 0 && (
+                    <p className="text-center text-xl text-white">No items in your wishlist.</p>
+                )}
+            </main>
         </div>
     );
 };

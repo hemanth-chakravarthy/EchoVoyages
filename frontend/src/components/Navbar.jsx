@@ -1,20 +1,33 @@
-import React from 'react'
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   return (
-    <div>
-        <nav>
-            <img src="/images/echo_voyage_logo.png" className="nav--icon" />
-            <div className="nav-elements">
-            <Link to={`/home`} className="nav--element--2">Home</Link>
-            <Link to={`/search`} className="nav--element--2">Search</Link>
-            <Link to={`/custProfilePage`} className="nav--element--2">Profile Page</Link>
-            <Link to={`/customerWishlist`} className="nav--element--1">Wishlist</Link>
-            <Link to={`/customerGuide`} className="nav--element--2">Guides</Link>
-            </div>
-        </nav>
+    <div className="navbar bg-base-100">
+      <div className="flex-1">
+        <a className="btn btn-ghost text-xl" href="/realhome">EchoVoyages</a>
+      </div>
+      <div className="flex-none gap-2">
+        <div className="flex space-x-4">
+          <Link to={`/home`} className="btn btn-ghost">
+            Home
+          </Link>
+          <Link to={`/search`} className="btn btn-ghost">
+            Search
+          </Link>
+          <Link to={`/custProfilePage`} className="btn btn-ghost">
+            Profile Page
+          </Link>
+          <Link to={`/customerWishlist`} className="btn btn-ghost">
+            Wishlist
+          </Link>
+          <Link to={`/customerGuide`} className="btn btn-ghost">
+            Guides
+          </Link>
+        </div>
+      </div>
     </div>
-  )
-}
-export default Navbar
+  );
+};
+
+export default Navbar;
