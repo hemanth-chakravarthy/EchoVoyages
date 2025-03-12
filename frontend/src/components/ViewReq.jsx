@@ -229,7 +229,7 @@ const ViewReq = () => {
                 <select
                   value={status}
                   onChange={(e) => handleStatusChange(e.target.value)}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-[#4169E1] focus:ring-2 focus:ring-[#4169E1]/20 transition-all duration-300"
+                  className="w-full bg-gray-50 text-black px-4 py-2 rounded-lg border border-gray-200 focus:border-[#4169E1] focus:ring-2 focus:ring-[#4169E1]/20 transition-all duration-300"
                 >
                   <option value="pending">Pending</option>
                   <option value="approved">Approved</option>

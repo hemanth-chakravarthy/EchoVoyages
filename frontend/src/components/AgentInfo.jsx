@@ -166,7 +166,7 @@ const AgentInfo = () => {
                 name="name"
                 value={agent.name || ""}
                 onChange={handleChange}
-                className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-[#4169E1] focus:ring-1 focus:ring-[#4169E1] transition-all"
+                className="w-full text-black bg-gray-50 px-4 py-2 rounded-lg border border-gray-200 focus:border-[#4169E1] focus:ring-1 focus:ring-[#4169E1] transition-all"
               />
               {errors.name && (
                 <p className="mt-1 text-sm text-red-600">{errors.name}</p>
@@ -181,7 +181,7 @@ const AgentInfo = () => {
                 name="username"
                 value={agent.username || ""}
                 onChange={handleChange}
-                className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-[#4169E1] focus:ring-1 focus:ring-[#4169E1] transition-all"
+                className="w-full px-4  text-black bg-gray-50 py-2 rounded-lg border border-gray-200 focus:border-[#4169E1] focus:ring-1 focus:ring-[#4169E1] transition-all"
               />
               {errors.username && (
                 <p className="mt-1 text-sm text-red-600">{errors.username}</p>
