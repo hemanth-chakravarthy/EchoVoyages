@@ -120,140 +120,137 @@ const AgentInfo = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8">
       <ToastContainer position="top-right" autoClose={3000} />
-      <div className="max-w-4xl mx-auto bg-base-200 rounded-lg shadow-xl overflow-hidden">
-        <div className="px-4 py-5 sm:px-6 bg-base200">
-          <h1 className="text-2xl font-bold text-white">Edit Agent Details</h1>
+      <div className="rounded-lg shadow-xl overflow-hidden bg-white">
+  <div className="px-6 py-5 bg-[#1a365d] border-b border-gray-100">
+    <h1 className="text-3xl font-bold text-white tracking-tight">
+      Edit Agent Details
+    </h1>
+  </div>
+  <div className="px-6 py-8">
+    <div className="flex flex-col md:flex-row gap-8">
+      <div className="md:w-1/3 mb-6 md:mb-0">
+        <div className="text-center">
+          <img
+            src={"./images/empty-profile-pic.png"}
+            alt="Profile"
+            className="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-[#4169E1]/20"
+          />
+          <button
+            onClick={handleLogout}
+            className="px-6 py-2 bg-[#00072D] text-white rounded-full hover:bg-[#1a365d] transition-all duration-300 transform hover:scale-105"
+          >
+            Logout
+          </button>
         </div>
-        <div className="px-4 py-5 sm:p-6">
-          <div className="flex flex-col md:flex-row">
-            <div className="md:w-1/3 mb-6 md:mb-0">
-              <div className="text-center">
-                <img
-                  src={"./images/empty-profile-pic.png"}
-                  alt="Profile"
-                  className="w-32 h-32 rounded-full mx-auto mb-4"
-                />
-                <button
-                  onClick={handleLogout}
-                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition duration-300"
-                >
-                  Logout
-                </button>
-              </div>
-            </div>
-            <div className="md:w-2/3">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold text-white">
-                  Agent Profile
-                </h2>
-                <button
-                  onClick={handleEditToggle}
-                  className="bg-transparent text-transparentw-full text-transparent font-bold py-3 px-6 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
-                >
-                  {editing ? "Cancel" : "Edit Profile"}
-                </button>
-              </div>
-              {editing ? (
-                <div className="space-y-4">
-                  {/* Form fields for editing agent details */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Name
-                    </label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={agent.name || ""}
-                      onChange={handleChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                    />
-                    {errors.name && (
-                      <p className="mt-1 text-sm text-red-600">{errors.name}</p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Username
-                    </label>
-                    <input
-                      type="text"
-                      name="username"
-                      value={agent.username || ""}
-                      onChange={handleChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                    />
-                    {errors.username && (
-                      <p className="mt-1 text-sm text-red-600">
-                        {errors.username}
-                      </p>
-                    )}
-                  </div>
-                  {/* Other form fields... */}
-                  <button
-                    onClick={handleUpdateAgent}
-                    className="w-full px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition duration-300"
-                  >
-                    Save Changes
-                  </button>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {["name", "username", "specialization", "bio"].map(
-                    (field) => (
-                      <div key={field} className="flex">
-                        <span className="font-medium w-1/3">
-                          {field.charAt(0).toUpperCase() + field.slice(1)}:
-                        </span>
-                        <span>{agent[field] || "N/A"}</span>
-                      </div>
-                    )
-                  )}
-                  <div className="flex">
-                    <span className="font-medium w-1/3">Phone:</span>
-                    <span>{agent.contactInfo?.phone || "N/A"}</span>
-                  </div>
-                  <div className="flex">
-                    <span className="font-medium w-1/3">Email:</span>
-                    <span>{agent.contactInfo?.email || "N/A"}</span>
-                  </div>
-                </div>
+      </div>
+      <div className="md:w-2/3">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-[#1a365d]">Agent Profile</h2>
+          <button
+            onClick={handleEditToggle}
+            className="px-6 py-2 bg-[#4169E1] text-white rounded-full hover:bg-[#1a365d] transition-all duration-300 transform hover:scale-105"
+          >
+            {editing ? "Cancel" : "Edit Profile"}
+          </button>
+        </div>
+        {editing ? (
+          <div className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-[#2d3748] mb-1">
+                Name
+              </label>
+              <input
+                type="text"
+                name="name"
+                value={agent.name || ""}
+                onChange={handleChange}
+                className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-[#4169E1] focus:ring-1 focus:ring-[#4169E1] transition-all"
+              />
+              {errors.name && (
+                <p className="mt-1 text-sm text-red-600">{errors.name}</p>
               )}
             </div>
+            <div>
+              <label className="block text-sm font-medium text-[#2d3748] mb-1">
+                Username
+              </label>
+              <input
+                type="text"
+                name="username"
+                value={agent.username || ""}
+                onChange={handleChange}
+                className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-[#4169E1] focus:ring-1 focus:ring-[#4169E1] transition-all"
+              />
+              {errors.username && (
+                <p className="mt-1 text-sm text-red-600">{errors.username}</p>
+              )}
+            </div>
+            <button
+              onClick={handleUpdateAgent}
+              className="w-full px-6 py-3 bg-[#00072D] text-white rounded-full hover:bg-[#1a365d] transition-all duration-300 transform hover:scale-105"
+            >
+              Save Changes
+            </button>
           </div>
-        </div>
+        ) : (
+          <div className="space-y-4">
+            {["name", "username", "specialization", "bio"].map((field) => (
+              <div key={field} className="flex border-b border-gray-100 py-3">
+                <span className="font-medium w-1/3 text-[#1a365d]">
+                  {field.charAt(0).toUpperCase() + field.slice(1)}:
+                </span>
+                <span className="text-[#2d3748]">{agent[field] || "N/A"}</span>
+              </div>
+            ))}
+            <div className="flex border-b border-gray-100 py-3">
+              <span className="font-medium w-1/3 text-[#1a365d]">Phone:</span>
+              <span className="text-[#2d3748]">
+                {agent.contactInfo?.phone || "N/A"}
+              </span>
+            </div>
+            <div className="flex border-b border-gray-100 py-3">
+              <span className="font-medium w-1/3 text-[#1a365d]">Email:</span>
+              <span className="text-[#2d3748]">
+                {agent.contactInfo?.email || "N/A"}
+              </span>
+            </div>
+          </div>
+        )}
       </div>
+    </div>
+  </div>
+</div>
 
       {/* Previous bookings section */}
-      <div className="mt-8 max-w-4xl mx-auto bg-base-200 rounded-lg shadow-xl overflow-hidden">
-        <div className="px-4 py-5 sm:px-6 bg-base-300">
-          <h2 className="text-xl font-semibold text-gray-900">
-            Previous Bookings
-          </h2>
-        </div>
-        <div className="px-4 py-5 sm:p-6">
-          <div className="mb-6">
-            <p className="text-lg font-semibold">
-              Total Amount Earned:{" "}
-              <span className="text-green-600">Rs. {totalAmountEarned}</span>
-            </p>
-          </div>
-          <div className="mb-8">
-            <h3 className="text-lg font-semibold mb-4">Bookings per Package</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="count" fill="#8884d8" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
+      <div className="mt-8 max-w-4xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden border border-gray-100">
+  <div className="px-4 py-5 sm:px-6 bg-[#1a365d]">
+    <h2 className="text-xl font-semibold text-white">Previous Bookings</h2>
+  </div>
+  <div className="px-4 py-5 sm:p-6">
+    <div className="mb-6">
+      <p className="text-lg font-semibold text-[#2d3748]">
+        Total Amount Earned:{" "}
+        <span className="text-green-600">Rs. {totalAmountEarned}</span>
+      </p>
+    </div>
+    <div className="mb-8">
+      <h3 className="text-lg font-semibold text-[#1a365d] mb-4">Bookings per Package</h3>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart data={chartData}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#ccc" />
+          <XAxis dataKey="name" stroke="#2d3748" />
+          <YAxis stroke="#2d3748" />
+          <Tooltip contentStyle={{ backgroundColor: "white", borderRadius: "8px", border: "1px solid #ddd" }} />
+          <Legend wrapperStyle={{ color: "#2d3748" }} />
+          <Bar dataKey="count" fill="#00072D" /> {/* Updated Bar color to match button background */}
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  </div>
+</div>
+
     </div>
   );
 };
