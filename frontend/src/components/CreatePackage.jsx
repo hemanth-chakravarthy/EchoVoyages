@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
-
+  
 const CreatePackage = () => {
   const navigate = useNavigate();
   const AgentId = jwtDecode(localStorage.getItem("token")).id;
@@ -141,226 +141,230 @@ const CreatePackage = () => {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      encType="multipart/form-data"
-      className="space-y-6 max-w-4xl mx-auto"
-    >
-      {/* Progress Bar */}
-      <div className="flex justify-center my-4">
-        <progress
-          className="progress w-56"
-          value={progress}
-          max="100"
-        ></progress>
-      </div>
-
-      {/* Step 1: Package Info */}
-      {currentStep === 1 && (
-        <div>
-          <div>
-            <label htmlFor="name">Package Name</label>
-            <input
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              type="text"
-              placeholder="Enter package name"
-              className="input input-bordered w-full"
-            />
-            {errors.name && <p className="text-red-500">{errors.name}</p>}
-          </div>
-
-          <div>
-            <label htmlFor="description">Description</label>
-            <textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              placeholder="Enter description"
-              className="textarea textarea-bordered w-full"
-            />
-            {errors.description && (
-              <p className="text-red-500">{errors.description}</p>
-            )}
-          </div>
-
-          <div>
-            <label htmlFor="price">Price</label>
-            <input
-              id="price"
-              name="price"
-              value={formData.price}
-              onChange={handleInputChange}
-              type="number"
-              placeholder="Enter price"
-              className="input input-bordered w-full"
-            />
-            {errors.price && <p className="text-red-500">{errors.price}</p>}
-          </div>
-
-          <div>
-            <label htmlFor="duration">Duration</label>
-            <input
-              id="duration"
-              name="duration"
-              value={formData.duration}
-              onChange={handleInputChange}
-              type="number"
-              placeholder="Enter duration"
-              className="input input-bordered w-full"
-            />
-            {errors.duration && (
-              <p className="text-red-500">{errors.duration}</p>
-            )}
-          </div>
-
-          <div>
-            <label htmlFor="location">Location</label>
-            <input
-              id="location"
-              name="location"
-              value={formData.location}
-              onChange={handleInputChange}
-              type="text"
-              placeholder="Enter location"
-              className="input input-bordered w-full"
-            />
-            {errors.location && (
-              <p className="text-red-500">{errors.location}</p>
-            )}
-          </div>
+    <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+      <form
+        onSubmit={handleSubmit}
+        encType="multipart/form-data"
+        className="space-y-6"
+      >
+        {/* Progress Bar */}
+        <div className="flex flex-col items-center gap-2 mb-8">
+          <h2 className="text-2xl font-bold text-[#1a365d]">Create New Package</h2>
+          <progress
+            className="progress w-56"
+            value={progress}
+            max="100"
+          ></progress>
+          <p className="text-sm text-[#2d3748]">Step {currentStep} of 3</p>
         </div>
-      )}
 
-      {/* Step 2: Package Details */}
-      {currentStep === 2 && (
-        <div>
+        {/* Step 1: Package Info */}
+        {currentStep === 1 && (
           <div>
-            <label htmlFor="itinerary">Itinerary</label>
-            <textarea
-              id="itinerary"
-              name="itinerary"
-              value={formData.itinerary}
-              onChange={handleInputChange}
-              placeholder="Enter itinerary"
-              className="textarea textarea-bordered w-full"
-            />
-            {errors.itinerary && (
-              <p className="text-red-500">{errors.itinerary}</p>
-            )}
+            <div>
+              <label htmlFor="name">Package Name</label>
+              <input
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                type="text"
+                placeholder="Enter package name"
+                className="input input-bordered w-full"
+              />
+              {errors.name && <p className="text-red-500">{errors.name}</p>}
+            </div>
+
+            <div>
+              <label htmlFor="description">Description</label>
+              <textarea
+                id="description"
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                placeholder="Enter description"
+                className="textarea textarea-bordered w-full"
+              />
+              {errors.description && (
+                <p className="text-red-500">{errors.description}</p>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="price">Price</label>
+              <input
+                id="price"
+                name="price"
+                value={formData.price}
+                onChange={handleInputChange}
+                type="number"
+                placeholder="Enter price"
+                className="input input-bordered w-full"
+              />
+              {errors.price && <p className="text-red-500">{errors.price}</p>}
+            </div>
+
+            <div>
+              <label htmlFor="duration">Duration</label>
+              <input
+                id="duration"
+                name="duration"
+                value={formData.duration}
+                onChange={handleInputChange}
+                type="number"
+                placeholder="Enter duration"
+                className="input input-bordered w-full"
+              />
+              {errors.duration && (
+                <p className="text-red-500">{errors.duration}</p>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="location">Location</label>
+              <input
+                id="location"
+                name="location"
+                value={formData.location}
+                onChange={handleInputChange}
+                type="text"
+                placeholder="Enter location"
+                className="input input-bordered w-full"
+              />
+              {errors.location && (
+                <p className="text-red-500">{errors.location}</p>
+              )}
+            </div>
           </div>
-
-          <div>
-            <label htmlFor="highlights">Highlights</label>
-            <textarea
-              id="highlights"
-              name="highlights"
-              value={formData.highlights}
-              onChange={handleInputChange}
-              placeholder="Enter highlights"
-              className="textarea textarea-bordered w-full"
-            />
-            {errors.highlights && (
-              <p className="text-red-500">{errors.highlights}</p>
-            )}
-          </div>
-
-          <div>
-            <label htmlFor="availableDates">Available Dates</label>
-            <input
-              id="availableDates"
-              name="availableDates"
-              value={formData.availableDates}
-              onChange={handleInputChange}
-              type="date"
-              className="input input-bordered w-full"
-            />
-            {errors.availableDates && (
-              <p className="text-red-500">{errors.availableDates}</p>
-            )}
-          </div>
-
-          <div>
-            <label htmlFor="maxGroupSize">Max Group Size</label>
-            <input
-              id="maxGroupSize"
-              name="maxGroupSize"
-              value={formData.maxGroupSize}
-              onChange={handleInputChange}
-              type="number"
-              placeholder="Enter max group size"
-              className="input input-bordered w-full"
-            />
-            {errors.maxGroupSize && (
-              <p className="text-red-500">{errors.maxGroupSize}</p>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Step 3: Upload Images */}
-      {currentStep === 3 && (
-        <div>
-          <label htmlFor="images">Upload Images</label>
-          <input
-            id="images"
-            name="images"
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={handleImageChange}
-            className="file-input file-input-bordered w-full"
-          />
-          {errors.images && <p className="text-red-500">{errors.images}</p>}
-        </div>
-      )}
-
-      {/* Navigation Buttons */}
-      <div className="flex justify-between">
-        {currentStep > 1 && (
-          <button
-            type="button"
-            onClick={prevStep}
-            className="bg-transparent text-transparent font-bold py-3 px-6 rounded-[35px] border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
-          >
-            Previous
-          </button>
         )}
-        {currentStep < 3 && (
-          <button
-            type="button"
-            onClick={nextStep}
-            className="bg-transparent text-transparent font-bold py-3 px-6 rounded-[35px] border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
-          >
-            Next
-          </button>
+
+        {/* Step 2: Package Details */}
+        {currentStep === 2 && (
+          <div>
+            <div>
+              <label htmlFor="itinerary">Itinerary</label>
+              <textarea
+                id="itinerary"
+                name="itinerary"
+                value={formData.itinerary}
+                onChange={handleInputChange}
+                placeholder="Enter itinerary"
+                className="textarea textarea-bordered w-full"
+              />
+              {errors.itinerary && (
+                <p className="text-red-500">{errors.itinerary}</p>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="highlights">Highlights</label>
+              <textarea
+                id="highlights"
+                name="highlights"
+                value={formData.highlights}
+                onChange={handleInputChange}
+                placeholder="Enter highlights"
+                className="textarea textarea-bordered w-full"
+              />
+              {errors.highlights && (
+                <p className="text-red-500">{errors.highlights}</p>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="availableDates">Available Dates</label>
+              <input
+                id="availableDates"
+                name="availableDates"
+                value={formData.availableDates}
+                onChange={handleInputChange}
+                type="date"
+                className="input input-bordered w-full"
+              />
+              {errors.availableDates && (
+                <p className="text-red-500">{errors.availableDates}</p>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="maxGroupSize">Max Group Size</label>
+              <input
+                id="maxGroupSize"
+                name="maxGroupSize"
+                value={formData.maxGroupSize}
+                onChange={handleInputChange}
+                type="number"
+                placeholder="Enter max group size"
+                className="input input-bordered w-full"
+              />
+              {errors.maxGroupSize && (
+                <p className="text-red-500">{errors.maxGroupSize}</p>
+              )}
+            </div>
+          </div>
         )}
+
+        {/* Step 3: Upload Images */}
         {currentStep === 3 && (
-          <button
-            type="submit"
-            className="bg-transparent text-transparent font-bold py-3 px-6 rounded-[35px] border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
-          >
-            Submit
-          </button>
+          <div>
+            <label htmlFor="images">Upload Images</label>
+            <input
+              id="images"
+              name="images"
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleImageChange}
+              className="file-input file-input-bordered w-full"
+            />
+            {errors.images && <p className="text-red-500">{errors.images}</p>}
+          </div>
         )}
-      </div>
 
-      {/* Modal */}
-      <dialog id="my_modal_3" className="modal">
-        <div className="modal-box">
-          <form method="dialog">
-            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-              ✕
+        {/* Navigation Buttons */}
+        <div className="flex justify-between">
+          {currentStep > 1 && (
+            <button
+              type="button"
+              onClick={prevStep}
+              className="px-8 py-3 bg-[#00072D] text-white font-medium rounded-full hover:bg-[#1a365d] transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
+            >
+              Previous
             </button>
-          </form>
-          <h3 className="font-bold text-lg">Success!</h3>
-          <p className="py-4">Your package has been successfully created.</p>
+          )}
+          {currentStep < 3 && (
+            <button
+              type="button"
+              onClick={nextStep}
+              className="px-8 py-3 bg-[#4169E1] text-white font-medium rounded-full hover:bg-[#1a365d] transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
+            >
+              Next
+            </button>
+          )}
+          {currentStep === 3 && (
+            <button
+              type="submit"
+              className="px-8 py-3 bg-[#4169E1] text-white font-medium rounded-full hover:bg-[#1a365d] transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
+            >
+              Submit
+            </button>
+          )}
         </div>
-      </dialog>
-    </form>
+
+        {/* Modal */}
+        <dialog id="my_modal_3" className="modal">
+          <div className="modal-box">
+            <form method="dialog">
+              <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                ✕
+              </button>
+            </form>
+            <h3 className="font-bold text-lg">Success!</h3>
+            <p className="py-4">Your package has been successfully created.</p>
+          </div>
+        </dialog>
+      </form>
+    </div>
   );
 };
 

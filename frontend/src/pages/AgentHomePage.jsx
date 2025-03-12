@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import { motion } from "framer-motion";
 
 const AgentHomePage = () => {
   const [requests, setRequests] = useState([]);
@@ -43,68 +44,98 @@ const AgentHomePage = () => {
   }, [agentid]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700">
-      <div className="navbar bg-base-100">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="min-h-screen flex flex-col bg-white"
+      style={{
+        backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0, 0, 0) 1px, transparent 0)`,
+        backgroundSize: '20px 20px',
+        backgroundPosition: '0 0',
+        backgroundColor: 'rgba(255, 255, 255, 0.97)'
+      }}
+    >
+      <div className="navbar bg-white shadow-sm">
         <div className="flex-1">
-          <a className="btn btn-ghost text-xl">EchoVoyages</a>
+          <a className="btn btn-ghost text-xl text-[#1a365d]">EchoVoyages</a>
         </div>
         <div className="flex-none gap-2">
           <div className="flex space-x-4">
-            <Link to="/AgentHome" className="btn btn-ghost">
+            <Link to="/AgentHome" className="btn btn-ghost text-[#2d3748] hover:text-[#1a365d]">
               Home Page
             </Link>
-            <Link to="/mylistings" className="btn btn-ghost">
+            <Link to="/mylistings" className="btn btn-ghost text-[#2d3748] hover:text-[#1a365d]">
               My Listings
             </Link>
-            <Link to="/createPackage" className="btn btn-ghost">
+            <Link to="/createPackage" className="btn btn-ghost text-[#2d3748] hover:text-[#1a365d]">
               Create Package
             </Link>
-            <Link to="/AgentProfilePage" className="btn btn-ghost">
+            <Link to="/AgentProfilePage" className="btn btn-ghost text-[#2d3748] hover:text-[#1a365d]">
               Profile Page
             </Link>
           </div>
         </div>
       </div>
-      <h1 className="text-center font-bold text-4xl m-8 text-white">Booking Requests</h1>
-      {requests.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mx-4">
-          {requests.map((req) => (
-            <div
-              key={req._id}
-              className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:bg-opacity-20"
-            >
-              <div className="p-6">
-                <h2 className="text-2xl font-semibold text-white mb-2">
-                  {req.packageName}
-                </h2>
-                <p className="text-gray-300 mb-4">
-                  <strong>Customer Name:</strong> {req.customerName}
-                </p>
-                <p className="text-gray-300 mb-4">
-                  <strong>Status:</strong> {req.status}
-                </p>
-                <p className="text-gray-300 mb-4">
-                  <strong>Request Date:</strong>{" "}
-                  {new Date(req.date).toLocaleDateString()}
-                </p>
-                <p className="text-gray-300 mb-4">
-                  <strong>Message:</strong> {req.message}
-                </p>
-                <div className="flex justify-end">
-                  <Link to={`/requests/${req._id}`}>
-                    <button className="w-full bg-transparent text-transparent font-bold py-3 px-6 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient">
-                      View Request
-                    </button>
-                  </Link>
+
+      <motion.main 
+        className="flex-grow container mx-auto px-4 py-12 relative z-10"
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <h1 className="text-center font-bold text-5xl mb-12 tracking-tight flex justify-center items-center gap-1">
+          <span className="text-black">Booking</span>
+          <span className="bg-gradient-to-r from-[#1a365d] to-[#00072D] text-transparent bg-clip-text">Re</span>
+          <span className="text-black">quest</span>
+        </h1>
+        
+        {requests.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {requests.map((req) => (
+              <motion.div
+                key={req._id}
+                whileHover={{ 
+                  y: -5, 
+                  scale: 1.01,
+                  boxShadow: "0 22px 45px -12px rgba(26, 54, 93, 0.15)"
+                }}
+                className="bg-white rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100"
+              >
+                <div className="p-6">
+                  <h2 className="text-2xl font-semibold text-[#1a365d] mb-4">
+                    {req.packageName}
+                  </h2>
+                  <p className="text-[#2d3748] mb-3">
+                    <strong>Customer Name:</strong> {req.customerName}
+                  </p>
+                  <p className="text-[#2d3748] mb-3">
+                    <strong>Status:</strong> {req.status}
+                  </p>
+                  <p className="text-[#2d3748] mb-3">
+                    <strong>Request Date:</strong>{" "}
+                    {new Date(req.date).toLocaleDateString()}
+                  </p>
+                  <p className="text-[#2d3748] mb-4">
+                    <strong>Message:</strong> {req.message}
+                  </p>
+                  <div className="flex justify-end">
+                    <Link to={`/requests/${req._id}`}>
+                      <button className="bg-[#00072D] text-white font-bold py-3 px-6 rounded-full hover:bg-[#1a365d] transition-all duration-300 transform hover:scale-105">
+                        View Request
+                      </button>
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p className="text-center text-xl text-gray-300">No requests available for your packages.</p>
-      )}
-    </div>
+              </motion.div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-center text-xl text-[#2d3748]">
+            No requests available for your packages.
+          </p>
+        )}
+      </motion.main>
+    </motion.div>
   );
 };
 
