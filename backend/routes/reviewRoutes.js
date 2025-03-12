@@ -159,7 +159,7 @@ router.get("/guides/:guideId", async (req, res,next) => {
   const { guideId } = req.params; // Extract the packageId properly
 
   if (!guideId) {
-    return res.status(400).json({ message: "Package ID is required" });
+    return res.status(400).json({ message: "Guide ID is required" });
   }
 
   try {
