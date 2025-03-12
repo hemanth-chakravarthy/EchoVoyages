@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import Navbar from '../components/Navbar';
+import { motion } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -86,95 +87,155 @@ const CustomerWishlist = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex flex-col bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700">
+            <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="min-h-screen flex flex-col bg-white"
+                style={{
+                    backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0, 0, 0) 1px, transparent 0)`,
+                    backgroundSize: '20px 20px',
+                    backgroundPosition: '0 0',
+                    backgroundColor: 'rgba(255, 255, 255, 0.97)'
+                }}
+            >
                 <Navbar />
                 <div className="flex-grow flex items-center justify-center">
-                    <p className="text-white text-2xl">Loading...</p>
+                    <div className="w-16 h-16 border-t-4 border-[#4169E1] border-solid rounded-full animate-spin"></div>
                 </div>
-            </div>
+            </motion.div>
         );
     }
 
     return (
-        <div className="min-h-screen flex flex-col bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700">
+        <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="min-h-screen flex flex-col bg-white"
+            style={{
+                backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0, 0, 0) 1px, transparent 0)`,
+                backgroundSize: '20px 20px',
+                backgroundPosition: '0 0',
+                backgroundColor: 'rgba(255, 255, 255, 0.97)'
+            }}
+        >
             <Navbar />
             <ToastContainer position="top-right" autoClose={3000} />
-            <main className="flex-grow container mx-auto px-4 py-12">
-                <h1 className="text-5xl font-bold text-center mb-16 text-white">My Wishlist</h1>
+            <motion.main 
+                initial={{ y: 20 }}
+                animate={{ y: 0 }}
+                className="flex-grow container mx-auto px-4 py-12 relative z-10"
+            >
+                <motion.h1
+                    initial={{ y: -20 }}
+                    animate={{ y: 0 }}
+                    className="text-5xl font-bold text-[#1a365d] tracking-tight text-center mb-16"
+                >
+                    My Wishlist
+                </motion.h1>
 
                 {/* Packages Section */}
-                {wishlist.packages.length > 0 ? (
-                    <div className="mb-12">
-                        <h2 className="text-3xl font-bold mb-6 text-white">Packages</h2>
+                {wishlist.packages.length > 0 && (
+                    <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mb-12"
+                    >
+                        <h2 className="text-3xl font-bold text-[#1a365d] tracking-tight mb-6">Packages</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {wishlist.packages.map((item) => (
-                                <div key={item._id} className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105">
+                                <motion.div
+                                    key={item._id}
+                                    whileHover={{ 
+                                        y: -5, 
+                                        scale: 1.01,
+                                        boxShadow: "0 22px 45px -12px rgba(26, 54, 93, 0.15)"
+                                    }}
+                                    className="bg-white rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100"
+                                >
                                     {item.packageId ? (
-                                        <div className="p-6 bg-gray-800 rounded-b-xl">
-                                        <h3 className="text-2xl font-semibold text-white mb-2">{item.packageId.name}</h3>
-                                        <p className="text-gray-300 mb-4">{item.packageId.description}</p>
-                                        <div className="flex justify-between items-center mb-4">
-                                            <p className="text-lg font-bold text-white">${item.packageId.price}</p>
-                                            <p className="text-sm text-gray-300">{item.packageId.duration} days</p>
+                                        <div className="p-6">
+                                            <h3 className="text-2xl font-bold text-[#1a365d] mb-2">{item.packageId.name}</h3>
+                                            <p className="text-[#2d3748] mb-4 leading-relaxed">{item.packageId.description}</p>
+                                            <div className="flex justify-between items-center mb-4">
+                                                <p className="text-2xl font-bold text-[#1a365d]">₹{item.packageId.price}</p>
+                                                <p className="text-[#2d3748]">{item.packageId.duration} days</p>
+                                            </div>
+                                            <motion.button
+                                                whileHover={{ scale: 1.02, backgroundColor: "#dc2626" }}
+                                                whileTap={{ scale: 0.98 }}
+                                                onClick={() => handleRemoveItem(item._id, 'package')}
+                                                className="w-full bg-red-600 text-white font-semibold py-3 px-6 rounded-md transition-all duration-300 shadow-md hover:shadow-lg"
+                                            >
+                                                Remove
+                                            </motion.button>
                                         </div>
-                                        <button
-                                            onClick={() => handleRemoveItem(item._id, 'package')}
-                                            className="w-full bg-red-500 text-white font-bold py-2 px-4 rounded-full hover:bg-red-600 transition-colors duration-300"
-                                        >
-                                            Remove
-                                        </button>
-                                    </div>
                                     ) : (
                                         <div className="p-6">
-                                            <p className="text-white">Package details unavailable.</p>
+                                            <p className="text-[#2d3748]">Package details unavailable.</p>
                                         </div>
                                     )}
-                                </div>
+                                </motion.div>
                             ))}
                         </div>
-                    </div>
-                ) : (
-                    <p className="text-center text-xl text-white">No packages in your wishlist.</p>
+                    </motion.div>
                 )}
 
                 {/* Guides Section */}
-                {wishlist.guides.length > 0 ? (
-                    <div className="mb-12">
-                        <h2 className="text-3xl font-bold mb-6 text-white">Guides</h2>
+                {wishlist.guides.length > 0 && (
+                    <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mb-12"
+                    >
+                        <h2 className="text-3xl font-bold text-[#1a365d] tracking-tight mb-6">Guides</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {wishlist.guides.map((item) => (
-                                <div key={item._id} className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105">
+                                <motion.div
+                                    key={item._id}
+                                    whileHover={{ 
+                                        y: -5, 
+                                        scale: 1.01,
+                                        boxShadow: "0 22px 45px -12px rgba(26, 54, 93, 0.15)"
+                                    }}
+                                    className="bg-white rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100"
+                                >
                                     {item.guideId ? (
                                         <div className="p-6">
-                                            <h3 className="text-2xl font-semibold text-white mb-2">{item.guideId.name}</h3>
-                                            <p className="text-gray-300 mb-4">{item.guideId.description}</p>
-                                            <p className="text-sm text-gray-300 mb-4">Experience: {item.guideId.experience} years</p>
-                                            <button
+                                            <h3 className="text-2xl font-bold text-[#1a365d] mb-2">{item.guideId.name}</h3>
+                                            <p className="text-[#2d3748] mb-4 leading-relaxed">{item.guideId.description}</p>
+                                            <p className="text-[#2d3748] mb-4">Experience: {item.guideId.experience} years</p>
+                                            <motion.button
+                                                whileHover={{ scale: 1.02, backgroundColor: "#dc2626" }}
+                                                whileTap={{ scale: 0.98 }}
                                                 onClick={() => handleRemoveItem(item._id, 'guide')}
-                                                className="w-full bg-red-500 text-white font-bold py-2 px-4 rounded-full hover:bg-red-600 transition-colors duration-300"
+                                                className="w-full bg-red-600 text-white font-semibold py-3 px-6 rounded-md transition-all duration-300 shadow-md hover:shadow-lg"
                                             >
                                                 Remove
-                                            </button>
+                                            </motion.button>
                                         </div>
                                     ) : (
                                         <div className="p-6">
-                                            <p className="text-white">Guide details unavailable.</p>
+                                            <p className="text-[#2d3748]">Guide details unavailable.</p>
                                         </div>
                                     )}
-                                </div>
+                                </motion.div>
                             ))}
                         </div>
-                    </div>
-                ) : (
-                    <p className="text-center text-xl text-white">No guides in your wishlist.</p>
+                    </motion.div>
                 )}
 
                 {/* No Items Message */}
                 {wishlist.packages.length === 0 && wishlist.guides.length === 0 && (
-                    <p className="text-center text-xl text-white">No items in your wishlist.</p>
+                    <motion.p 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="text-center text-xl text-[#2d3748]"
+                    >
+                        No items in your wishlist.
+                    </motion.p>
                 )}
-            </main>
-        </div>
+            </motion.main>
+        </motion.div>
     );
 };
 

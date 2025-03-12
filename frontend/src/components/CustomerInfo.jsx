@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { motion } from "framer-motion";
 
 
 const CustomerInfo = () => {
@@ -140,167 +141,172 @@ const CustomerInfo = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 text-white">
-      <div className="container mx-auto px-4 py-12">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="min-h-screen flex flex-col bg-white"
+      style={{
+        backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0, 0, 0) 1px, transparent 0)`,
+        backgroundSize: '20px 20px',
+        backgroundPosition: '0 0',
+        backgroundColor: 'rgba(255, 255, 255, 0.97)'
+      }}
+    >
+      <motion.main className="flex-grow container mx-auto px-4 py-12 relative z-10">
         <ToastContainer position="top-right" autoClose={3000} />
-            
-        <h1 className="text-5xl font-bold text-center mb-16">Customer Profile</h1>
-        <div className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl shadow-xl overflow-hidden p-8">
-          <div className="flex flex-col md:flex-row items-center md:items-start mb-8">
-            <img
-              src="./images/empty-profile-pic.png"
-              alt="Profile"
-              className="w-32 h-32 rounded-full mb-4 md:mb-0 md:mr-8"
-            />
-            <div className="flex-grow">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-3xl font-semibold">Customer Details</h2>
-                <div>
-                  <button
-                    onClick={handleEditToggle}
-                    className="bg-transparent text-transparent font-bold py-2 px-4 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
-                  >
-                    {editing ? "Cancel" : "Edit Profile"}
-                  </button>
-                  
-                </div>
-              </div>
+
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="bg-white rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 p-8"
+        >
+          <div className="flex flex-col md:flex-row gap-8">
+            <div className="md:w-1/3">
+              <motion.img
+                whileHover={{ scale: 1.05 }}
+                src="./images/empty-profile-pic.png"
+                alt="Profile"
+                className="w-48 h-48 rounded-full mx-auto shadow-lg border-4 border-white"
+              />
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleEditToggle}
+                className="w-full mt-6 bg-[#00072D] text-white font-semibold py-3 px-6 rounded-md hover:bg-[#1a365d] transition-all duration-300 shadow-md"
+              >
+                {editing ? "Cancel" : "Edit Profile"}
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05, backgroundColor: "#dc2626" }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleLogout}
+                className="w-full mt-4 bg-red-600 text-white font-semibold py-3 px-6 rounded-md shadow-md hover:shadow-lg transition-all duration-300"
+              >
+                Logout
+              </motion.button>
+            </div>
+
+            <div className="md:w-2/3">
+              <h2 className="text-3xl font-bold text-[#1a365d] tracking-tight mb-8">Customer Details</h2>
+              
               {editing ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium mb-1">Name</label>
+                    <label className="block text-sm font-medium text-[#2d3748] mb-2">Name</label>
                     <input
                       type="text"
                       name="name"
                       value={customer.Name || ""}
                       onChange={handleChange}
-                      className="w-full bg-gray-700 rounded-md py-2 px-3"
+                      className="w-full bg-white text-[#2d3748] border border-gray-200 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-[#4169E1] shadow-sm transition-all duration-300"
                     />
                     {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">Username</label>
+                    <label className="block text-sm font-medium text-[#2d3748] mb-2">Username</label>
                     <input
                       type="text"
                       name="username"
                       value={customer.username || ""}
                       onChange={handleChange}
-                      className="w-full bg-gray-700 rounded-md py-2 px-3"
+                      className="w-full bg-white text-[#2d3748] border border-gray-200 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-[#4169E1] shadow-sm transition-all duration-300"
                     />
                     {errors.username && <p className="text-red-500 text-sm mt-1">{errors.username}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">Phone Number</label>
+                    <label className="block text-sm font-medium text-[#2d3748] mb-2">Phone Number</label>
                     <input
                       type="text"
                       name="phno"
                       value={customer.phno || ""}
                       onChange={handleChange}
-                      className="w-full bg-gray-700 rounded-md py-2 px-3"
+                      className="w-full bg-white text-[#2d3748] border border-gray-200 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-[#4169E1] shadow-sm transition-all duration-300"
                     />
                     {errors.phoneNumber && <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">Email</label>
+                    <label className="block text-sm font-medium text-[#2d3748] mb-2">Email</label>
                     <input
                       type="text"
                       name="gmail"
                       value={customer.gmail || ""}
                       onChange={handleChange}
-                      className="w-full bg-gray-700 rounded-md py-2 px-3"
+                      className="w-full bg-white text-[#2d3748] border border-gray-200 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-[#4169E1] shadow-sm transition-all duration-300"
                     />
                     {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
                   </div>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-6 text-[#2d3748]">
                   {["Name", "username", "phno", "gmail"].map((field) => (
-                    <div key={field} className="mb-2">
-                      <span className="font-medium">{field.charAt(0).toUpperCase() + field.slice(1)}:</span>{" "}
-                      <span>{customer[field] || "N/A"}</span>
-                    </div>
+                    <motion.div 
+                      key={field} 
+                      className="flex flex-col p-4 rounded-lg bg-gray-50"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <span className="text-sm text-[#1a365d] font-medium mb-1">
+                        {field.charAt(0).toUpperCase() + field.slice(1)}
+                      </span>
+                      <span className="text-lg">{customer[field] || "N/A"}</span>
+                    </motion.div>
                   ))}
                 </div>
               )}
-              {editing && (
-                <button
-                  onClick={handleUpdateCustomer}
-                  className="bg-transparent text-transparent font-bold py-2 px-4 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
-                >
-                  Save Changes
-                </button>
-              )}
-              {changePassword && (
-                <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Current Password</label>
-                    <input
-                      type="password"
-                      value={currentPassword}
-                      onChange={(e) => setCurrentPassword(e.target.value)}
-                      className="w-full bg-gray-700 rounded-md py-2 px-3"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">New Password</label>
-                    <input
-                      type="password"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      className="w-full bg-gray-700 rounded-md py-2 px-3"
-                    />
-                    {errors.newPassword && <p className="text-red-500 text-sm mt-1">{errors.newPassword}</p>}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Confirm New Password</label>
-                    <input
-                      type="password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full bg-gray-700 rounded-md py-2 px-3"
-                    />
-                    {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
-                  </div>
-                  <div>
-                    <button
-                      onClick={handleUpdatePassword}
-                      className="mt-6 bg-transparent text-transparent font-bold py-2 px-4 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
-                    >
-                      Update Password
-                    </button>
-                  </div>
+
+              {/* Previous Bookings Section */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-12"
+              >
+                <h2 className="text-3xl font-bold text-[#1a365d] tracking-tight mb-6">Previous Bookings</h2>
+                <div className="grid grid-cols-1 gap-4">
+                  {bookings.length > 0 ? (
+                    bookings.map((booking) => (
+                      <motion.div
+                        key={booking._id}
+                        whileHover={{ 
+                          x: 4,
+                          boxShadow: "0 12px 25px -12px rgba(26, 54, 93, 0.15)"
+                        }}
+                        className="bg-gray-50 rounded-lg p-6 border border-gray-100"
+                      >
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h3 className="text-xl font-bold text-[#1a365d] mb-2">
+                              {booking.packageName || "N/A"}
+                            </h3>
+                            <div className="text-[#2d3748] space-y-1">
+                              <p><span className="font-medium">Guide:</span> {booking.guideName || "N/A"}</p>
+                              <p><span className="font-medium">Date:</span> {new Date(booking.bookingDate).toLocaleDateString()}</p>
+                              <p><span className="font-medium">ID:</span> {booking._id}</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-2xl font-bold text-[#1a365d]">₹{booking.totalPrice}</p>
+                            <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
+                              booking.status === 'confirmed' ? 'bg-green-100 text-green-800' : 
+                              booking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
+                              'bg-red-100 text-red-800'
+                            }`}>
+                              {booking.status}
+                            </span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))
+                  ) : (
+                    <p className="text-center text-xl text-[#2d3748]">No previous bookings available.</p>
+                  )}
                 </div>
-              )}
+              </motion.div>
             </div>
           </div>
-          <div className="mt-8">
-            <h2 className="text-3xl font-semibold mb-4">Previous Bookings</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {bookings.length > 0 ? (
-                bookings.map((booking) => (
-                  <div key={booking._id} className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl p-6 transition-all duration-300 hover:scale-105">
-                    <h3 className="text-xl font-semibold mb-2">Package: {booking.packageName || "N/A"}</h3>
-                    <p><strong>Guide Name:</strong> {booking.guideName || "N/A"}</p>
-                    <p><strong>Total Price:</strong> ${booking.totalPrice}</p>
-                    <p><strong>Status:</strong> {booking.status}</p>
-                    <p><strong>Booking Date:</strong> {new Date(booking.bookingDate).toLocaleDateString()}</p>
-                    <p><strong>Booking ID: </strong>{booking._id}</p>
-                  </div>
-                ))
-              ) : (
-                <p className="col-span-full text-center text-xl text-gray-300">No previous bookings available.</p>
-              )}
-            </div>
-          </div>
-        </div>
-        <button
-          onClick={handleLogout}
-          className="mt-8 bg-red-500 text-white font-bold py-2 px-4 rounded-full hover:bg-red-600 transition-colors duration-300"
-        >
-          Logout
-        </button>
-      </div>
-    </div>
+        </motion.div>
+      </motion.main>
+    </motion.div>
   );
 };
 

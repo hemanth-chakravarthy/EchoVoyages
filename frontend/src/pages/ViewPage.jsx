@@ -50,7 +50,7 @@ const ViewPage = () => {
 
   return (
     <div>
-      {role === "customer" && <Navbar />}
+      {/* {role === "customer" && <Navbar />} */}
       {role !== "customer" && (
         <>
           <div className="navbar bg-base-100">
