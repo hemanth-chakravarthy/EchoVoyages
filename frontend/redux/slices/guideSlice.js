@@ -12,7 +12,7 @@ export const bookGuide = createAsyncThunk(
   "guides/bookGuide",
   async (guideId) => {
     const response = await axios.post(
-      `http://localhost:5000/guides/book/${guideId}`
+      `http://localhost:5000/guides/book/${guideId}`   
     );
     return response.data;
   }
