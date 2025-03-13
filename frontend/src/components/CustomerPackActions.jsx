@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { motion } from "framer-motion";
 
 const CustomerPackActions = () => {
   const { id } = useParams(); // `id` is the packageId
@@ -171,224 +172,254 @@ const CustomerPackActions = () => {
   };
 
   return (
-    <div className="p-4 bg-base-300">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="min-h-screen flex flex-col bg-white"
+      style={{
+        backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0, 0, 0) 1px, transparent 0)`,
+        backgroundSize: '20px 20px',
+        backgroundPosition: '0 0',
+        backgroundColor: 'rgba(255, 255, 255, 0.97)'
+      }}
+    >
       <ToastContainer position="top-right" autoClose={3000} />
-
-      <button
-        className="bg-transparent mx-4 text-transparent font-bold py-3 px-6 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
-        onClick={() => setShowRequestModal(true)}
+      <motion.main 
+        initial={{ y: 20 }}
+        animate={{ y: 0 }}
+        className="flex-grow container mx-auto px-4 py-12 relative z-10"
       >
-        Customize / Book
-      </button>
-      <button
-        onClick={handleOpenReviewModal}
-        className="bg-transparent mx-4 text-transparent font-bold py-3 px-6 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
-      >
-        Add Review
-      </button>
-      <button
-        onClick={addToWishlist}
-        className="bg-transparent mx-4 text-transparent font-bold py-3 px-6 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
-      >
-        Add to Wishlist
-      </button>
-
-      {showRequestModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-base-300 bg-opacity-50">
-          <div className="bg-base-100 p-6 rounded-lg shadow-lg w-11/12 max-w-lg">
-            <h2 className="text-2xl font-semibold mb-4 text-base-content">
-              {requestType === "book" ? "Book Package" : "Customize Package"}
-            </h2>
-            {isLoading ? (
-              <p className="text-base-content">Loading package details...</p>
-            ) : (
-              <>
-                <div className="form-control mb-4">
-                  <label className="label">
-                    <span className="label-text">Request Type:</span>
-                  </label>
-                  <select
-                    name="requestType"
-                    value={requestType}
-                    onChange={(e) => setRequestType(e.target.value)}
-                    className="select select-bordered w-full"
-                  >
-                    <option value="book">Book</option>
-                    <option value="customize">Customize</option>
-                  </select>
-                </div>
-
-                <div className="form-control mb-4">
-                  <label className="label">
-                    <span className="label-text">Price:</span>
-                  </label>
-                  <input
-                    name="price"
-                    type="number"
-                    value={customDetails.price}
-                    onChange={(e) =>
-                      handleCustomDetailsChange("price", e.target.value)
-                    }
-                    className="input input-bordered w-full"
-                  />
-                </div>
-
-                <div className="form-control mb-4">
-                  <label className="label">
-                    <span className="label-text">Duration (days):</span>
-                  </label>
-                  <input
-                    name="duration"
-                    type="number"
-                    value={customDetails.duration}
-                    onChange={(e) =>
-                      handleCustomDetailsChange(
-                        "duration",
-                        parseInt(e.target.value, 10)
-                      )
-                    }
-                    className="input input-bordered w-full"
-                  />
-                </div>
-
-                <div className="form-control mb-4">
-                  <label className="label">
-                    <span className="label-text">Itinerary:</span>
-                  </label>
-                  <textarea
-                    name="itinerary"
-                    value={customDetails.itinerary}
-                    onChange={(e) =>
-                      handleCustomDetailsChange("itinerary", e.target.value)
-                    }
-                    className="textarea textarea-bordered w-full"
-                    rows="4"
-                  ></textarea>
-                </div>
-
-                <div className="form-control mb-4">
-                  <label className="label">
-                    <span className="label-text">
-                      Available Dates (comma-separated):
-                    </span>
-                  </label>
-                  <input
-                    name="availableDates"
-                    type="text"
-                    onChange={(e) =>
-                      handleCustomDetailsChange(
-                        "availableDates",
-                        e.target.value
-                          .split(",")
-                          .map((date) => new Date(date.trim()))
-                      )
-                    }
-                    className="input input-bordered w-full"
-                  />
-                </div>
-
-                <div className="form-control mb-4">
-                  <label className="label">
-                    <span className="label-text">Max Group Size:</span>
-                  </label>
-                  <input
-                    name="maxGroupSize"
-                    type="number"
-                    value={customDetails.maxGroupSize}
-                    onChange={(e) =>
-                      handleCustomDetailsChange(
-                        "maxGroupSize",
-                        parseInt(e.target.value, 10)
-                      )
-                    }
-                    className="input input-bordered w-full"
-                  />
-                </div>
-              </>
-            )}
-
-            <div className="flex justify-end space-x-4">
-              <button
-                name="submit"
-                onClick={handleRequestSubmit}
-                className="btn btn-primary"
-              >
-                Submit
-              </button>
-              <button
-                name="cancel"
-                onClick={() => setShowRequestModal(false)}
-                className="btn btn-ghost"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
+        <div className="flex justify-center gap-6 mb-8">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setShowRequestModal(true)}
+            className="bg-[#00072D] text-white font-semibold py-3 px-6 rounded-md hover:bg-[#1a365d] transition-all duration-300 shadow-md"
+          >
+            Customize / Book
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleOpenReviewModal}
+            className="bg-[#00072D] text-white font-semibold py-3 px-6 rounded-md hover:bg-[#1a365d] transition-all duration-300 shadow-md"
+          >
+            Add Review
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={addToWishlist}
+            className="bg-[#00072D] text-white font-semibold py-3 px-6 rounded-md hover:bg-[#1a365d] transition-all duration-300 shadow-md"
+          >
+            Add to Wishlist
+          </motion.button>
         </div>
-      )}
-      {showReviewModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-base-300 bg-opacity-50 z-50">
-          <div className="bg-base-100 p-6 rounded-lg shadow-lg w-11/12 max-w-md">
-            <h2 className="text-2xl font-semibold mb-4 text-center text-base-content">
-              Rate and Review
-            </h2>
 
-            <div className="form-control mb-4">
-              <label className="label">
-                <span className="label-text">Booking ID:</span>
-              </label>
-              <input
-                type="text"
-                value={bookingId}
-                onChange={(e) => setBookingId(e.target.value)}
-                className="input input-bordered w-full"
-              />
-            </div>
+        {/* Modal for Request */}
+        {showRequestModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+          >
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              className="bg-white rounded-lg shadow-lg p-8 w-11/12 max-w-lg"
+            >
+              <h2 className="text-3xl font-bold text-[#1a365d] tracking-tight mb-6">
+                {requestType === "book" ? "Book Package" : "Customize Package"}
+              </h2>
+              {isLoading ? (
+                <p className="text-base-content">Loading package details...</p>
+              ) : (
+                <>
+                  <div className="form-control mb-4">
+                    <label className="label">
+                      <span className="text-black font-medium">Request Type:</span>
+                    </label>
+                    <select
+                      name="requestType"
+                      value={requestType}
+                      onChange={(e) => setRequestType(e.target.value)}
+                      className="w-full text-black p-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-transparent transition-all duration-300"
+                    >
+                      <option value="book">Book</option>
+                      <option value="customize">Customize</option>
+                    </select>
+                  </div>
 
-            <div className="form-control mb-4">
-              <label className="label">
-                <span className="label-text">Rating (1 to 5):</span>
-              </label>
-              <select
-                value={rating}
-                onChange={(e) => setRating(e.target.value)}
-                className="select select-bordered w-full"
-              >
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-              </select>
-            </div>
+                  <div className="form-control mb-4">
+                    <label className="label">
+                      <span className="text-black font-medium">Price:</span>
+                    </label>
+                    <input
+                      name="price"
+                      type="number"
+                      value={customDetails.price}
+                      onChange={(e) => handleCustomDetailsChange("price", e.target.value)}
+                      className="w-full text-black p-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-transparent transition-all duration-300"
+                    />
+                  </div>
 
-            <div className="form-control mb-4">
-              <label className="label">
-                <span className="label-text">Comment:</span>
-              </label>
-              <textarea
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                rows="4"
-                className="textarea textarea-bordered w-full"
-              ></textarea>
-            </div>
+                  <div className="form-control mb-4">
+                    <label className="label">
+                      <span className="text-black font-medium">Duration (days):</span>
+                    </label>
+                    <input
+                      name="duration"
+                      type="number"
+                      value={customDetails.duration}
+                      onChange={(e) => handleCustomDetailsChange("duration", parseInt(e.target.value, 10))}
+                      className="w-full text-black p-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-transparent transition-all duration-300"
+                    />
+                  </div>
 
-            <div className="flex justify-end space-x-4">
-              <button onClick={handleSubmitReview} className="btn btn-primary">
-                Submit
-              </button>
-              <button
-                onClick={handleCloseReviewModal}
-                className="btn btn-ghost"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+                  <div className="form-control mb-4">
+                    <label className="label">
+                      <span className="text-black font-medium">Itinerary:</span>
+                    </label>
+                    <textarea
+                      name="itinerary"
+                      value={customDetails.itinerary}
+                      onChange={(e) => handleCustomDetailsChange("itinerary", e.target.value)}
+                      className="w-full text-black p-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-transparent transition-all duration-300 resize-none"
+                      rows="4"
+                    ></textarea>
+                  </div>
+
+                  <div className="form-control mb-4">
+                    <label className="label">
+                      <span className="text-black font-medium">Available Dates (comma-separated):</span>
+                    </label>
+                    <input
+                      name="availableDates"
+                      type="text"
+                      onChange={(e) => handleCustomDetailsChange("availableDates", e.target.value.split(",").map((date) => new Date(date.trim())))}
+                      className="w-full text-black p-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-transparent transition-all duration-300"
+                    />
+                  </div>
+
+                  <div className="form-control mb-4">
+                    <label className="label">
+                      <span className="text-black font-medium">Max Group Size:</span>
+                    </label>
+                    <input
+                      name="maxGroupSize"
+                      type="number"
+                      value={customDetails.maxGroupSize}
+                      onChange={(e) => handleCustomDetailsChange("maxGroupSize", parseInt(e.target.value, 10))}
+                      className="w-full text-black p-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-transparent transition-all duration-300"
+                    />
+                  </div>
+                </>
+              )}
+
+              <div className="flex justify-end space-x-4">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  name="submit"
+                  onClick={handleRequestSubmit}
+                  className="bg-[#00072D] text-white font-semibold py-2 px-6 rounded-md hover:bg-[#1a365d] transition-all duration-300 shadow-md"
+                >
+                  Submit
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  name="cancel"
+                  onClick={() => setShowRequestModal(false)}
+                  className="bg-gray-200 text-gray-800 font-semibold py-2 px-6 rounded-md hover:bg-gray-300 transition-all duration-300 shadow-md"
+                >
+                  Cancel
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {/* Review Modal with updated styling */}
+        {showReviewModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+          >
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              className="bg-white rounded-lg shadow-lg p-8 w-11/12 max-w-md"
+            >
+              <h2 className="text-3xl font-bold text-[#1a365d] tracking-tight mb-6 text-center">
+                Rate and Review
+              </h2>
+
+              <div className="form-control mb-4">
+                <label className="label">
+                  <span className="text-black font-medium">Booking ID:</span>
+                </label>
+                <input
+                  type="text"
+                  value={bookingId}
+                  onChange={(e) => setBookingId(e.target.value)}
+                  className="w-full text-black p-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-transparent transition-all duration-300"
+                />
+              </div>
+
+              <div className="form-control mb-4">
+                <label className="label">
+                  <span className="text-black font-medium">Rating (1 to 5):</span>
+                </label>
+                <select
+                  value={rating}
+                  onChange={(e) => setRating(e.target.value)}
+                  className="w-full text-black p-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-transparent transition-all duration-300"
+                >
+                  <option className="text-black" value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+              </div>
+
+              <div className="form-control mb-4">
+                <label className="label">
+                  <span className="text-black font-medium">Comment:</span>
+                </label>
+                <textarea
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  rows="4"
+                  className="w-full p-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-transparent transition-all duration-300 resize-none text-black"
+                ></textarea>
+              </div>
+
+              <div className="flex justify-end space-x-4">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleSubmitReview}
+                  className="bg-[#00072D] text-white font-semibold py-2 px-6 rounded-md hover:bg-[#1a365d] transition-all duration-300 shadow-md"
+                >
+                  Submit
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleCloseReviewModal}
+                  className="bg-gray-200 text-gray-800 font-semibold py-2 px-6 rounded-md hover:bg-gray-300 transition-all duration-300 shadow-md"
+                >
+                  Close
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </motion.main>
+    </motion.div>
   );
 };
 export default CustomerPackActions;

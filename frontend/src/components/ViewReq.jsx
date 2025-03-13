@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const ViewReq = () => {
   const { id } = useParams();
@@ -112,161 +113,175 @@ const ViewReq = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-screen bg-base-300">
-        <div className="loading loading-spinner loading-lg text-primary"></div>
-      </div>
-    );
-  }
-
-  if (!requestDetails) {
-    return (
-      <div className="flex justify-center items-center h-screen bg-base-300">
-        <p className="text-lg text-error">No request details found.</p>
+      <div className="min-h-screen flex items-center justify-center">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          className="w-16 h-16 border-4 border-[#4169E1] border-t-transparent rounded-full"
+        />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="min-h-screen flex flex-col bg-white"
+      style={{
+        backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0, 0, 0) 1px, transparent 0)`,
+        backgroundSize: '20px 20px',
+        backgroundPosition: '0 0',
+        backgroundColor: 'rgba(255, 255, 255, 0.97)'
+      }}
+    >
       {/* Navbar */}
-      <div className="navbar bg-base-100 shadow-lg">
-        <div className="flex-1">
-          <a className="btn btn-ghost text-xl">EchoVoyages</a>
-        </div>
-        <div className="flex-none">
-          <ul className="menu menu-horizontal px-1">
-            <li>
-              <Link to="/AgentHome" className="btn btn-ghost">
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link to="/createPackage" className="btn btn-ghost">
-                Create Package
-              </Link>
-            </li>
-            <li>
-              <Link to="/AgentProfilePage" className="btn btn-ghost">
-                Profile
-              </Link>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      {/* Request Details */}
-      <div className="p-6 max-w-4xl mx-auto mt-8">
-        <div className="bg-base-100 shadow-xl rounded-lg overflow-hidden">
-          <div className="p-6">
-            <h1 className="text-3xl font-bold mb-6 text-white">
-              Request Details
-            </h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div className="bg-base-200 p-4 rounded-lg">
-                  <strong className="text-white">Request ID: </strong>
-                  <span className="text-base-content">
-                    {requestDetails._id}
-                  </span>
-                </div>
-                <div className="bg-base-200 p-4 rounded-lg">
-                  <strong className="text-white">Customer Name: </strong>
-                  <span className="text-base-content">
-                    {requestDetails.customerName}
-                  </span>
-                </div>
-                <div className="bg-base-200 p-4 rounded-lg">
-                  <strong className="text-white">Package Name: </strong>
-                  <span className="text-base-content">
-                    {requestDetails.packageName}
-                  </span>
-                </div>
-              </div>
-              <div className="space-y-4">
-                <div className="bg-base-200 p-4 rounded-lg">
-                  <strong className="text-white">Price: </strong>
-                  <span className="text-base-content">
-                    Rs. {requestDetails.price}
-                  </span>
-                </div>
-                <div className="bg-base-200 p-4 rounded-lg">
-                  <strong className="text-white">Duration: </strong>
-                  <span className="text-base-content">
-                    {requestDetails.duration} days
-                  </span>
-                </div>
-                <div className="bg-base-200 p-4 rounded-lg">
-                  <strong className="text-white">Requested Date: </strong>
-                  <span className="text-base-content">
-                    {new Date(requestDetails.requestDate).toLocaleDateString()}
-                  </span>
-                </div>
-              </div>
+      <nav className="bg-white shadow-lg">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex justify-between h-16">
+            <div className="flex items-center">
+              <span className="text-2xl font-bold text-[#1a365d]">EchoVoyages</span>
             </div>
-
-            {/* Status */}
-            <div className="mt-6 bg-base-200 p-4 rounded-lg">
-              <strong className="text-white">Current Status: </strong>
-              <span className="text-base-content">{status}</span>
-            </div>
-
-            {/* Change Status */}
-            <div className="mt-6">
-              <label
-                htmlFor="status"
-                className="block text-sm font-medium mb-2 text-primary"
-              >
-                Change Status:
-              </label>
-              <select
-                id="status"
-                value={status}
-                onChange={(e) => handleStatusChange(e.target.value)}
-                className="select select-bordered w-full max-w-xs"
-              >
-                <option value="pending">Pending</option>
-                <option value="approved">Approved</option>
-                <option value="rejected">Rejected</option>
-              </select>
-            </div>
-
-            {/* Back Button */}
-            <div className="mt-6 flex justify-end">
-              <button
-                onClick={() => navigate("/AgentHome")}
-                className="bg-transparent text-transparent font-bold py-3 px-6 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
-              >
-                Back to Home
-              </button>
+            <div className="flex items-center space-x-4">
+              {[
+                { to: "/AgentHome", text: "Home" },
+                { to: "/createPackage", text: "Create Package" },
+                { to: "/AgentProfilePage", text: "Profile" }
+              ].map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className="px-4 py-2 rounded-full text-[#2d3748] hover:bg-[#4169E1]/10 hover:text-[#4169E1] transition-all duration-300"
+                >
+                  {link.text}
+                </Link>
+              ))}
             </div>
           </div>
         </div>
-      </div>
+      </nav>
+
+      <motion.main 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex-grow container mx-auto px-4 py-12 relative z-10"
+      >
+        <motion.div
+          className="bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden"
+        >
+          <div className="p-8">
+            <h1 className="text-4xl font-bold text-[#1a365d] tracking-tight mb-8">
+              Request Details
+            </h1>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-6">
+                {[
+                  { label: "Request ID", value: requestDetails._id },
+                  { label: "Customer Name", value: requestDetails.customerName },
+                  { label: "Package Name", value: requestDetails.packageName }
+                ].map((item) => (
+                  <motion.div
+                    key={item.label}
+                    whileHover={{ scale: 1.01 }}
+                    className="bg-white rounded-lg shadow p-6 border border-gray-100"
+                  >
+                    <p className="text-[#1a365d] font-medium mb-2">{item.label}</p>
+                    <p className="text-[#2d3748]">{item.value}</p>
+                  </motion.div>
+                ))}
+              </div>
+
+              <div className="space-y-6">
+                {[
+                  { label: "Price", value: `Rs. ${requestDetails.price}` },
+                  { label: "Duration", value: `${requestDetails.duration} days` },
+                  { 
+                    label: "Requested Date", 
+                    value: new Date(requestDetails.requestDate).toLocaleDateString() 
+                  }
+                ].map((item) => (
+                  <motion.div
+                    key={item.label}
+                    whileHover={{ scale: 1.01 }}
+                    className="bg-white rounded-lg shadow p-6 border border-gray-100"
+                  >
+                    <p className="text-[#1a365d] font-medium mb-2">{item.label}</p>
+                    <p className="text-[#2d3748]">{item.value}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-8 space-y-6">
+              <motion.div
+                whileHover={{ scale: 1.01 }}
+                className="bg-white rounded-lg shadow p-6 border border-gray-100"
+              >
+                <p className="text-[#1a365d] font-medium mb-2">Current Status</p>
+                <p className="text-[#2d3748]">{status}</p>
+              </motion.div>
+
+              <div className="bg-white rounded-lg shadow p-6 border border-gray-100">
+                <label className="text-[#1a365d] font-medium mb-4 block">
+                  Change Status
+                </label>
+                <select
+                  value={status}
+                  onChange={(e) => handleStatusChange(e.target.value)}
+                  className="w-full bg-gray-50 text-black px-4 py-2 rounded-lg border border-gray-200 focus:border-[#4169E1] focus:ring-2 focus:ring-[#4169E1]/20 transition-all duration-300"
+                >
+                  <option value="pending">Pending</option>
+                  <option value="approved">Approved</option>
+                  <option value="rejected">Rejected</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="mt-8 flex justify-end">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigate("/AgentHome")}
+                className="px-8 py-3 bg-[#00072D] text-white font-medium rounded-full hover:bg-[#1a365d] transition-all duration-300 shadow-md hover:shadow-lg"
+              >
+                Back to Home
+              </motion.button>
+            </div>
+          </div>
+        </motion.div>
+      </motion.main>
 
       {/* Modal */}
       {showModal && (
-        <div
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
           onClick={() => setShowModal(false)}
         >
-          <div
-            className="bg-base-300 p-6 rounded-lg shadow-lg w-1/3"
+          <motion.div
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="text-xl font-bold">Notification</h2>
-            <p>{modalMessage}</p>
-            <div className="flex justify-end mt-4">
-              <button
-                className="btn bg-transparent text-transparent font-bold py-3 px-6 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient"
+            <h2 className="text-2xl font-bold text-[#1a365d] mb-4">Notification</h2>
+            <p className="text-[#2d3748] mb-6">{modalMessage}</p>
+            <div className="flex justify-end">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-6 py-2 bg-[#4169E1] text-white font-medium rounded-full hover:bg-[#1a365d] transition-all duration-300"
                 onClick={() => setShowModal(false)}
               >
                 Close
-              </button>
+              </motion.button>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 };
 
