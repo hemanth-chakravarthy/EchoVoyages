@@ -10,6 +10,19 @@ const AgentViewAll = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const fetchBookingCount = async (packageId) => {
+      try {
+        const response = await fetch(`http://localhost/bookings/pack/${packageId}`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch booking count for package ${packageId}`);
+        }
+        const bookingCount = await response.json();
+        return bookingCount.length; // Assuming the response is an array of bookings
+      } catch (error) {
+        console.error('Error fetching booking count:', error);
+        return 0; // Default to 0 if there's an error
+      }
+    };
     const fetchPackages = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -31,12 +44,24 @@ const AgentViewAll = () => {
         }
 
         const data = await response.json();
-        setPackages(data);
+        const numbookings = await fetchBookingCount(data._id);
+        // Assuming data includes bookings for each package
+        const packagesWithRevenue = data.map(pkg => ({
+          ...pkg,
+          revenue: pkg.price * numbookings
+        }));
+
+        // Sort packages by revenue
+        const sortedPackages = packagesWithRevenue.sort((a, b) => b.revenue - a.revenue);
+
+        setPackages(sortedPackages);
       } catch (err) {
         setError(err.message);
       } finally {
         setIsLoading(false);
       }
+      
+      
     };
 
     fetchPackages();
@@ -44,6 +69,19 @@ const AgentViewAll = () => {
 
   const handleViewPackage = (packageId) => {
     navigate(`/packages/${packageId}`);
+  };
+  const fetchBookingCount = async (packageId) => {
+    try {
+      const response = await fetch(`http://localhost/bookings/pack/${packageId}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch booking count for package ${packageId}`);
+      }
+      const bookingCount = await response.json();
+      return bookingCount.length; // Assuming the response is an array of bookings
+    } catch (error) {
+      console.error('Error fetching booking count:', error);
+      return 0; // Default to 0 if there's an error
+    }
   };
 
   if (isLoading) {
@@ -65,6 +103,12 @@ const AgentViewAll = () => {
       </div>
     );
   }
+
+  // Display top 3 hero packages
+  const topHeroPackages = packages.slice(0, 3);
+
+  // Display remaining packages
+  const remainingPackages = packages.slice(3);
 
   return (
     <motion.div
@@ -122,37 +166,78 @@ const AgentViewAll = () => {
             No packages found. Start by creating your first package!
           </motion.p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {packages.map((pkg, index) => (
-              <motion.div
-                key={pkg._id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                whileHover={{
-                  y: -5,
-                  scale: 1.01,
-                  boxShadow: "0 22px 45px -12px rgba(26, 54, 93, 0.15)"
-                }}
-                className="bg-white rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100"
-              >
-                <div className="p-6">
-                  <h2 className="text-2xl font-bold text-[#1a365d] mb-4">{pkg.name}</h2>
-                  <p className="text-[#2d3748] leading-relaxed mb-2">Location: {pkg.location}</p>
-                  <p className="text-2xl font-bold text-[#4169E1] mb-4">Rs. {pkg.price}</p>
-                  <p className="text-[#2d3748] leading-relaxed mb-2">Duration: {pkg.duration} days</p>
-                  <p className="text-[#2d3748] leading-relaxed mb-4">{pkg.itinerary}</p>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => handleViewPackage(pkg._id)}
-                    className="w-full px-6 py-3 bg-[#00072D] text-white rounded-full hover:bg-[#1a365d] transition-all duration-300 shadow-md hover:shadow-lg"
-                  >
-                    View Details
-                  </motion.button>
-                </div>
-              </motion.div>
-            ))}
+          <div>
+            <h2 className="text-4xl font-bold text-[#1a365d] tracking-tight text-center mb-8">
+              Top Hero Packages
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {topHeroPackages.map((pkg, index) => (
+                <motion.div
+                  key={pkg._id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  whileHover={{
+                    y: -5,
+                    scale: 1.01,
+                    boxShadow: "0 22px 45px -12px rgba(26, 54, 93, 0.15)"
+                  }}
+                  className="bg-white rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100"
+                >
+                  <div className="p-6">
+                    <h2 className="text-2xl font-bold text-[#1a365d] mb-4">{pkg.name}</h2>
+                    <p className="text-[#2d3748] leading-relaxed mb-2">Location: {pkg.location}</p>
+                    <p className="text-2xl font-bold text-[#4169E1] mb-4">Rs. {pkg.price}</p>
+                    <p className="text-[#2d3748] leading-relaxed mb-2">Duration: {pkg.duration} days</p>
+                    <p className="text-[#2d3748] leading-relaxed mb-4">{pkg.itinerary}</p>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => handleViewPackage(pkg._id)}
+                      className="w-full px-6 py-3 bg-[#00072D] text-white rounded-full hover:bg-[#1a365d] transition-all duration-300 shadow-md hover:shadow-lg"
+                    >
+                      View Details
+                    </motion.button>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            <h2 className="text-4xl font-bold text-[#1a365d] tracking-tight text-center mt-12 mb-8">
+              All Packages
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {remainingPackages.map((pkg, index) => (
+                <motion.div
+                  key={pkg._id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  whileHover={{
+                    y: -5,
+                    scale: 1.01,
+                    boxShadow: "0 22px 45px -12px rgba(26, 54, 93, 0.15)"
+                  }}
+                  className="bg-white rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100"
+                >
+                  <div className="p-6">
+                    <h2 className="text-2xl font-bold text-[#1a365d] mb-4">{pkg.name}</h2>
+                    <p className="text-[#2d3748] leading-relaxed mb-2">Location: {pkg.location}</p>
+                    <p className="text-2xl font-bold text-[#4169E1] mb-4">Rs. {pkg.price}</p>
+                    <p className="text-[#2d3748] leading-relaxed mb-2">Duration: {pkg.duration} days</p>
+                    <p className="text-[#2d3748] leading-relaxed mb-4">{pkg.itinerary}</p>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => handleViewPackage(pkg._id)}
+                      className="w-full px-6 py-3 bg-[#00072D] text-white rounded-full hover:bg-[#1a365d] transition-all duration-300 shadow-md hover:shadow-lg"
+                    >
+                      View Details
+                    </motion.button>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </div>
         )}
       </motion.main>
