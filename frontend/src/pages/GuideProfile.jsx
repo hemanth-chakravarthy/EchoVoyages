@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { ToastContainer, toast } from "react-toastify";
+import { motion } from "framer-motion"; // Add this import
 import "react-toastify/dist/ReactToastify.css";
 
 const GuideProfilePage = () => {
@@ -220,52 +221,75 @@ const GuideProfilePage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700">
-        <span className="loading loading-spinner loading-lg"></span>
-      </div>
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="min-h-screen flex items-center justify-center bg-white"
+        style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0, 0, 0) 1px, transparent 0)`,
+          backgroundSize: '20px 20px',
+          backgroundPosition: '0 0',
+          backgroundColor: 'rgba(255, 255, 255, 0.97)'
+        }}
+      >
+        <span className="loading loading-spinner loading-lg text-[#4169E1]"></span>
+      </motion.div>
     );
   }
 
   if (!guide) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700">
-        <div className="alert alert-error">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="stroke-current shrink-0 h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          <span>Guide not found!</span>
-        </div>
-      </div>
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="min-h-screen flex items-center justify-center bg-white"
+        style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0, 0, 0) 1px, transparent 0)`,
+          backgroundSize: '20px 20px',
+          backgroundPosition: '0 0',
+          backgroundColor: 'rgba(255, 255, 255, 0.97)'
+        }}
+      >
+        <div className="text-[#1a365d] text-xl">Guide not found!</div>
+      </motion.div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700">
-      <nav className="navbar bg-base-100 shadow-lg mb-6">
-        
-      <ToastContainer position="top-right" autoClose={3000} />
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="min-h-screen flex flex-col bg-white"
+      style={{
+        backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0, 0, 0) 1px, transparent 0)`,
+        backgroundSize: '20px 20px',
+        backgroundPosition: '0 0',
+        backgroundColor: 'rgba(255, 255, 255, 0.97)'
+      }}
+    >
+      <nav className="navbar bg-white shadow-lg mb-6">
+        <ToastContainer position="top-right" autoClose={3000} />
         <div className="flex-1">
-          <Link to="/guideHome" className="btn btn-ghost normal-case text-xl">
+          <Link to="/guideHome" className="text-xl font-bold text-[#1a365d]">
             Guide Home
           </Link>
         </div>
         <div className="flex-none">
-          <Link to="/GuideProfilePage" className="btn btn-w-full bg-transparent text-transparent font-bold py-3 px-6 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient">
+          <Link 
+            to="/GuideProfilePage" 
+            className="px-6 py-2 bg-[#00072D] text-white rounded-full hover:bg-[#1a365d] transition-all duration-300"
+          >
             Profile Page
           </Link>
         </div>
       </nav>
-      <div className="container mx-auto px-4">
+
+      <motion.main 
+        className="flex-grow container mx-auto px-4 py-12 relative z-10"
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
         <h1 className="text-4xl font-bold mb-8 text-center text-base-content">
           Guide Profile
         </h1>
@@ -519,24 +543,36 @@ const GuideProfilePage = () => {
         <div className="mt-8 flex justify-between items-center">
           {editing ? (
             <>
-              <button className="btn btn-w-full bg-transparent text-transparent font-bold py-3 px-6 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient" onClick={handleSaveChanges}>
+              <button 
+                className="px-6 py-2 bg-[#00072D] text-white rounded-full hover:bg-[#1a365d] transition-all duration-300"
+                onClick={handleSaveChanges}
+              >
                 Save Changes
               </button>
-              <button className="btn btn-ghost" onClick={handleCancel}>
+              <button 
+                className="px-6 py-2 border border-[#1a365d] text-[#1a365d] rounded-full hover:bg-[#1a365d] hover:text-white transition-all duration-300"
+                onClick={handleCancel}
+              >
                 Cancel
               </button>
             </>
           ) : (
-            <button className="btn btn-w-full bg-transparent text-transparent font-bold py-3 px-6 rounded-full border border-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:border-gray-300 bg-clip-text text-gradient" onClick={handleEditToggle}>
+            <button 
+              className="px-6 py-2 bg-[#00072D] text-white rounded-full hover:bg-[#1a365d] transition-all duration-300"
+              onClick={handleEditToggle}
+            >
               Edit Profile
             </button>
           )}
-          <button className="btn btn-error" onClick={handleLogout}>
+          <button 
+            className="px-6 py-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-all duration-300"
+            onClick={handleLogout}
+          >
             Logout
           </button>
         </div>
-      </div>
-    </div>
+      </motion.main>
+    </motion.div>
   );
 };
 
