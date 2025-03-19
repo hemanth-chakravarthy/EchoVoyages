@@ -40,7 +40,7 @@ export const features = [
     icon: tag,
     title: "Unbeatable Deals",
     content:
-      "Enjoy the best prices on luxurious stays and unforgettable tours, making your travel dreams a reality.",
+      "Enjoy the best prices on luxurious stays and unforgettable tours, where dreams come true.",
   },
 ];
 

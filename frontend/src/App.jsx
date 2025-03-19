@@ -26,6 +26,7 @@ import ViewReq from "./components/ViewReq";
 import RealLandingPage from "./components/RealLandingPage";
 import AgentViewAll from "./pages/AgentViewAll";
 import ActHomePage from "./pages/ActHomePage";
+import PaymentGateway from './pages/PaymentGateway';
 
 const App = () => {
   return (
@@ -112,6 +113,7 @@ const App = () => {
         <Route path="/search" element={<Search />} />{" "}
         {/* <-- Search component */}
       </Route>
+      <Route path="/payment" element={<PaymentGateway />} />
     </Routes>
   );
 };
