@@ -162,7 +162,7 @@ const CreatePackage = () => {
         {currentStep === 1 && (
           <div>
             <div>
-              <label htmlFor="name">Package Name</label>
+              <label className="text-black" htmlFor="name">Package Name</label>
               <input
                 id="name"
                 name="name"
@@ -170,20 +170,20 @@ const CreatePackage = () => {
                 onChange={handleInputChange}
                 type="text"
                 placeholder="Enter package name"
-                className="input input-bordered w-full"
+                className="input input-bordered w-full text-black bg-gray-50"
               />
               {errors.name && <p className="text-red-500">{errors.name}</p>}
             </div>
 
             <div>
-              <label htmlFor="description">Description</label>
+              <label className="text-black" htmlFor="description" >Description</label>
               <textarea
                 id="description"
                 name="description"
                 value={formData.description}
                 onChange={handleInputChange}
                 placeholder="Enter description"
-                className="textarea textarea-bordered w-full"
+                className="textarea textarea-bordered w-full text-black bg-gray-50"
               />
               {errors.description && (
                 <p className="text-red-500">{errors.description}</p>
@@ -191,7 +191,7 @@ const CreatePackage = () => {
             </div>
 
             <div>
-              <label htmlFor="price">Price</label>
+              <label className="text-black" htmlFor="price">Price</label>
               <input
                 id="price"
                 name="price"
@@ -199,13 +199,13 @@ const CreatePackage = () => {
                 onChange={handleInputChange}
                 type="number"
                 placeholder="Enter price"
-                className="input input-bordered w-full"
+                className="input input-bordered w-full text-black bg-gray-50"
               />
               {errors.price && <p className="text-red-500">{errors.price}</p>}
             </div>
 
             <div>
-              <label htmlFor="duration">Duration</label>
+              <label className="text-black" htmlFor="duration">Duration</label>
               <input
                 id="duration"
                 name="duration"
@@ -213,7 +213,7 @@ const CreatePackage = () => {
                 onChange={handleInputChange}
                 type="number"
                 placeholder="Enter duration"
-                className="input input-bordered w-full"
+                className="input input-bordered w-full text-black bg-gray-50"
               />
               {errors.duration && (
                 <p className="text-red-500">{errors.duration}</p>
@@ -221,7 +221,7 @@ const CreatePackage = () => {
             </div>
 
             <div>
-              <label htmlFor="location">Location</label>
+              <label className="text-black" htmlFor="location">Location</label>
               <input
                 id="location"
                 name="location"
@@ -229,7 +229,7 @@ const CreatePackage = () => {
                 onChange={handleInputChange}
                 type="text"
                 placeholder="Enter location"
-                className="input input-bordered w-full"
+                className="input input-bordered w-full text-black bg-gray-50"
               />
               {errors.location && (
                 <p className="text-red-500">{errors.location}</p>
@@ -242,14 +242,14 @@ const CreatePackage = () => {
         {currentStep === 2 && (
           <div>
             <div>
-              <label htmlFor="itinerary">Itinerary</label>
+              <label className="text-black" htmlFor="itinerary">Itinerary</label>
               <textarea
                 id="itinerary"
                 name="itinerary"
                 value={formData.itinerary}
                 onChange={handleInputChange}
                 placeholder="Enter itinerary"
-                className="textarea textarea-bordered w-full"
+                className="textarea textarea-bordered w-full text-black bg-gray-50"
               />
               {errors.itinerary && (
                 <p className="text-red-500">{errors.itinerary}</p>
@@ -257,14 +257,14 @@ const CreatePackage = () => {
             </div>
 
             <div>
-              <label htmlFor="highlights">Highlights</label>
+              <label className="text-black" htmlFor="highlights">Highlights</label>
               <textarea
                 id="highlights"
                 name="highlights"
                 value={formData.highlights}
                 onChange={handleInputChange}
                 placeholder="Enter highlights"
-                className="textarea textarea-bordered w-full"
+                className="textarea textarea-bordered w-full text-black bg-gray-50"
               />
               {errors.highlights && (
                 <p className="text-red-500">{errors.highlights}</p>
@@ -272,14 +272,14 @@ const CreatePackage = () => {
             </div>
 
             <div>
-              <label htmlFor="availableDates">Available Dates</label>
+              <label className="text-black" htmlFor="availableDates">Available Dates</label>
               <input
                 id="availableDates"
                 name="availableDates"
                 value={formData.availableDates}
                 onChange={handleInputChange}
                 type="date"
-                className="input input-bordered w-full"
+                className="input input-bordered w-full text-black bg-gray-50"
               />
               {errors.availableDates && (
                 <p className="text-red-500">{errors.availableDates}</p>
@@ -287,7 +287,7 @@ const CreatePackage = () => {
             </div>
 
             <div>
-              <label htmlFor="maxGroupSize">Max Group Size</label>
+              <label className="text-black" htmlFor="maxGroupSize">Max Group Size</label>
               <input
                 id="maxGroupSize"
                 name="maxGroupSize"
@@ -295,7 +295,7 @@ const CreatePackage = () => {
                 onChange={handleInputChange}
                 type="number"
                 placeholder="Enter max group size"
-                className="input input-bordered w-full"
+                className="input input-bordered w-full text-black bg-gray-50"
               />
               {errors.maxGroupSize && (
                 <p className="text-red-500">{errors.maxGroupSize}</p>
@@ -307,7 +307,7 @@ const CreatePackage = () => {
         {/* Step 3: Upload Images */}
         {currentStep === 3 && (
           <div>
-            <label htmlFor="images">Upload Images</label>
+            <label className="text-black" htmlFor="images">Upload Images</label>
             <input
               id="images"
               name="images"
@@ -315,7 +315,7 @@ const CreatePackage = () => {
               accept="image/*"
               multiple
               onChange={handleImageChange}
-              className="file-input file-input-bordered w-full"
+              className="file-input file-input-bordered w-full text-black bg-gray-50"
             />
             {errors.images && <p className="text-red-500">{errors.images}</p>}
           </div>

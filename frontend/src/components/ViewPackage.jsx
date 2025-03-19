@@ -4,12 +4,16 @@ import axios from "axios";
 import { FaFlag } from "react-icons/fa";
 import { jwtDecode } from "jwt-decode";
 import { motion } from "framer-motion";
+import Navbar from "../components/Navbar";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ViewPackage = () => {
   const { id } = useParams();
   const [packageDetails, setPackageDetails] = useState(null);
   const [revvs, setReviews] = useState([]);
   const [isAgent, setIsAgent] = useState(false);
+  const [reportedReviews, setReportedReviews] = useState({}); // State to track reported reviews
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -60,30 +64,45 @@ const ViewPackage = () => {
   }, [id]);
 
   const handleReportReview = async (reviewId) => {
+    if (reportedReviews[reviewId]) {
+      toast.info("This review has already been reported.");
+      return;
+    }
+
     try {
       const response = await axios.post(
         `http://localhost:5000/reviews/${reviewId}`
       );
       if (response.status === 200) {
-        alert("Review has been reported successfully!");
+        toast.success("Review has been reported successfully!");
+        setReportedReviews((prev) => ({ ...prev, [reviewId]: true }));
       } else {
-        alert("Failed to report the review.");
+        toast.error("Failed to report the review.");
       }
     } catch (error) {
       console.error("Error reporting review:", error);
-      alert("An error occurred while reporting the review.");
+      toast.error("An error occurred while reporting the review.");
     }
   };
 
   if (!packageDetails) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          className="w-16 h-16 border-4 border-[#4169E1] border-t-transparent rounded-full"
-        />
-      </div>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="min-h-screen flex flex-col bg-white"
+        style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0, 0, 0) 1px, transparent 0)`,
+          backgroundSize: '20px 20px',
+          backgroundPosition: '0 0',
+          backgroundColor: 'rgba(255, 255, 255, 0.97)'
+        }}
+      >
+        <Navbar />
+        <div className="flex-grow flex items-center justify-center">
+          <div className="w-16 h-16 border-t-4 border-[#4169E1] border-solid rounded-full animate-spin"></div>
+        </div>
+      </motion.div>
     );
   }
 
@@ -99,164 +118,143 @@ const ViewPackage = () => {
         backgroundColor: 'rgba(255, 255, 255, 0.97)'
       }}
     >
+      <Navbar />
       {isAgent && (
-        <nav className="bg-white border-b border-gray-100 shadow-sm relative z-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between h-16 items-center">
-              <div className="flex items-center space-x-4">
-                {[
-                  { to: "/AgentHome", text: "Home" },
-                  { to: "/mylistings", text: "My Listings" },
-                  { to: "/createPackage", text: "Create Package" },
-                  { to: "/AgentProfilePage", text: "Profile" }
-                ].map((link) => (
-                  <Link
-                    key={link.to}
-                    to={link.to}
-                    className="px-4 py-2 rounded-full text-[#2d3748] hover:bg-[#4169E1]/10 hover:text-[#4169E1] transition-all duration-300"
-                  >
-                    {link.text}
-                  </Link>
-                ))}
-              </div>
-            </div>
+        <motion.div
+          initial={{ y: -20 }}
+          animate={{ y: 0 }}
+          className="container mx-auto px-4 py-4"
+        >
+          <div className="flex gap-4">
+            {["Home Page", "My Listings", "Create Package", "Profile Page"].map((item, index) => (
+              <motion.div
+                key={index}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link
+                  to={["/AgentHome", "/mylistings", "/createPackage", "/AgentProfilePage"][index]}
+                  className="bg-[#00072D] text-white font-semibold py-2 px-6 rounded-md hover:bg-[#1a365d] transition-all duration-300 shadow-md"
+                >
+                  {item}
+                </Link>
+              </motion.div>
+            ))}
           </div>
-        </nav>
+        </motion.div>
       )}
-
-      <motion.main 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+      
+      <ToastContainer position="top-right" autoClose={3000} />
+      <motion.main
+        initial={{ y: 20 }}
+        animate={{ y: 0 }}
         className="flex-grow container mx-auto px-4 py-12 relative z-10"
       >
-        <motion.div className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-100">
-          <div className="p-8">
-            <h1 className="text-5xl font-bold text-[#1a365d] tracking-tight mb-8">
-              {packageDetails.name}
-            </h1>
-            
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-              <motion.div className="space-y-4">
-                {packageDetails.image && packageDetails.image.length > 0 ? (
-                  <div className="grid gap-4">
-                    {packageDetails.image.map((img, index) => (
-                      <motion.div
-                        key={index}
-                        whileHover={{ scale: 1.02 }}
-                        className="overflow-hidden rounded-lg shadow-md"
-                      >
-                        <img
-                          src={img}
-                          alt={`Image of ${packageDetails.name}`}
-                          className="w-full h-auto object-cover"
-                        />
-                      </motion.div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="bg-gray-50 h-64 flex items-center justify-center rounded-lg">
-                    <p className="text-[#2d3748]">No images available</p>
-                  </div>
-                )}
-              </motion.div>
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="bg-white rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 p-8"
+        >
+          <h1 className="text-5xl font-bold text-[#1a365d] tracking-tight mb-8">
+            {packageDetails.name}
+          </h1>
 
-              <div className="space-y-6">
-                <p className="text-[#2d3748] leading-relaxed">
-                  {packageDetails.description}
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <motion.div
-                    whileHover={{
-                      y: -5,
-                      scale: 1.01,
-                      boxShadow: "0 22px 45px -12px rgba(26, 54, 93, 0.15)"
-                    }}
-                    className="bg-white rounded-lg shadow-lg p-4 border border-gray-100"
-                  >
-                    <p className="font-semibold text-[#1a365d]">Price</p>
-                    <p className="text-2xl font-bold text-[#4169E1]">${packageDetails.price}</p>
-                  </motion.div>
-                  
-                  <motion.div
-                    whileHover={{
-                      y: -5,
-                      scale: 1.01,
-                      boxShadow: "0 22px 45px -12px rgba(26, 54, 93, 0.15)"
-                    }}
-                    className="bg-white rounded-lg shadow-lg p-4 border border-gray-100"
-                  >
-                    <p className="font-semibold text-[#1a365d]">Duration</p>
-                    <p className="text-[#2d3748]">{packageDetails.duration} days</p>
-                  </motion.div>
-                  
-                  <motion.div
-                    whileHover={{
-                      y: -5,
-                      scale: 1.01,
-                      boxShadow: "0 22px 45px -12px rgba(26, 54, 93, 0.15)"
-                    }}
-                    className="bg-white rounded-lg shadow-lg p-4 border border-gray-100"
-                  >
-                    <p className="font-semibold text-[#1a365d]">Location</p>
-                    <p className="text-[#2d3748]">{packageDetails.location}</p>
-                  </motion.div>
-                  
-                  <motion.div
-                    whileHover={{
-                      y: -5,
-                      scale: 1.01,
-                      boxShadow: "0 22px 45px -12px rgba(26, 54, 93, 0.15)"
-                    }}
-                    className="bg-white rounded-lg shadow-lg p-4 border border-gray-100"
-                  >
-                    <p className="font-semibold text-[#1a365d]">Highlights</p>
-                    <p className="text-[#2d3748]">{packageDetails.highlights}</p>
-                  </motion.div>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-12">
-              <h2 className="text-3xl font-bold text-[#1a365d] tracking-tight mb-6">Reviews</h2>
-              {revvs && revvs.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {revvs.map((review) => (
+          <div className="flex flex-col lg:flex-row gap-8 mb-8">
+            <div className="lg:w-1/2">
+              {packageDetails.image && packageDetails.image.length > 0 ? (
+                <div className="grid grid-cols-1 gap-4">
+                  {packageDetails.image.map((img, index) => (
                     <motion.div
-                      key={review._id}
-                      whileHover={{
-                        y: -5,
-                        scale: 1.01,
-                        boxShadow: "0 22px 45px -12px rgba(26, 54, 93, 0.15)"
-                      }}
-                      className="bg-white rounded-lg shadow-lg p-6 border border-gray-100"
+                      key={index}
+                      whileHover={{ scale: 1.02 }}
+                      className="overflow-hidden rounded-lg shadow-lg"
                     >
-                      <div className="flex justify-between items-start mb-4">
-                        <div>
-                          <p className="font-semibold text-[#1a365d]">
-                            Rating: <span className="text-[#4169E1]">{review.rating}/5</span>
-                          </p>
-                          <p className="text-sm text-[#2d3748]">
-                            By {review.customerName || "Anonymous"}
-                          </p>
-                        </div>
-                        <motion.button
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => handleReportReview(review._id)}
-                          className="text-[#2d3748] hover:text-[#4169E1] transition-colors"
-                        >
-                          <FaFlag />
-                        </motion.button>
-                      </div>
-                      <p className="text-[#2d3748] leading-relaxed">{review.comment}</p>
+                      <img
+                        src={img}
+                        alt={`Image of ${packageDetails.name}`}
+                        className="w-full h-auto object-cover"
+                      />
                     </motion.div>
                   ))}
                 </div>
               ) : (
-                <p className="text-[#2d3748] italic">No reviews yet</p>
+                <div className="bg-gray-50 h-64 flex items-center justify-center rounded-lg">
+                  <p className="text-[#2d3748] italic">No images available</p>
+                </div>
               )}
             </div>
+
+            <div className="lg:w-1/2 space-y-6">
+              <p className="text-[#2d3748] leading-relaxed">
+                {packageDetails.description}
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {[
+                  { label: "Price", value: `₹${packageDetails.price}` },
+                  { label: "Duration", value: `${packageDetails.duration} days` },
+                  { label: "Location", value: packageDetails.location },
+                  { label: "Highlights", value: packageDetails.highlights }
+                ].map((item, index) => (
+                  <motion.div
+                    key={index}
+                    whileHover={{ y: -2 }}
+                    className="bg-gray-50 p-4 rounded-lg"
+                  >
+                    <p className="font-semibold text-[#1a365d] mb-1">{item.label}</p>
+                    <p className="text-[#2d3748]">{item.value}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
           </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-12"
+          >
+            <h2 className="text-3xl font-bold text-[#1a365d] tracking-tight mb-6">Reviews</h2>
+            {revvs && revvs.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {revvs.map((review) => (
+                  <motion.div
+                    key={review._id}
+                    whileHover={{
+                      y: -5,
+                      boxShadow: "0 22px 45px -12px rgba(26, 54, 93, 0.15)"
+                    }}
+                    className="bg-white rounded-lg shadow-lg p-6 border border-gray-100"
+                  >
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-2xl font-bold text-[#1a365d]">{review.rating}</span>
+                          <span className="text-[#2d3748]">/ 5</span>
+                        </div>
+                        <p className="text-[#2d3748]">
+                          By {review.customerName || "Anonymous"}
+                        </p>
+                      </div>
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handleReportReview(review._id)}
+                        className={`text-red-500 hover:text-red-600 transition-colors ${reportedReviews[review._id] ? "cursor-not-allowed" : ""}`}
+                        title={reportedReviews[review._id] ? "Already reported" : "Report this review"}
+                      >
+                        <FaFlag />
+                      </motion.button>
+                    </div>
+                    <p className="text-[#2d3748] leading-relaxed">{review.comment}</p>
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-center text-[#2d3748] text-lg">
+                No reviews for this package yet.
+              </p>
+            )}
+          </motion.div>
         </motion.div>
       </motion.main>
     </motion.div>
