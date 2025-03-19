@@ -57,11 +57,12 @@ const Signup = () => {
 
   // Validation functions (same as before)
   const validateUsername = (username) => {
-    const usernamePattern = /^[a-zA-Z][a-zA-Z0-9!@#$%^&*()_+-=]*$/;
+    const usernamePattern = /^[a-z][a-z0-9!@#$%^&*()_+-=]*$/;
     return usernamePattern.test(username)
       ? ""
-      : "Username must start with an alphabet and can include letters, numbers, and special characters.";
-  };
+      : "Username must start with a lowercase letter and can include lowercase letters, numbers, and special characters.";
+};
+
 
   const validateName = (name) => {
     const namePattern = /^[a-zA-Z\s]*$/;
@@ -71,9 +72,9 @@ const Signup = () => {
   };
 
   const validateEmail = (email) => {
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailPattern.test(email) ? "" : 'Email must contain "@" and "."';
-  };
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[A-Za-z]+$/;
+    return emailPattern.test(email) ? "" : 'Invalid email format';
+};
 
   const validatePassword = (password) => {
     const passwordLength = password.length >= 6;
