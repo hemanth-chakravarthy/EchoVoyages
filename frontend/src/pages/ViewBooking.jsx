@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const ViewBooking = () => {
   const { bookingId } = useParams();
@@ -94,150 +95,128 @@ const ViewBooking = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-base-200">
-        <div className="loading loading-spinner loading-lg text-primary"></div>
-      </div>
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="min-h-screen flex items-center justify-center bg-white"
+        style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0, 0, 0) 1px, transparent 0)`,
+          backgroundSize: '20px 20px',
+          backgroundPosition: '0 0',
+          backgroundColor: 'rgba(255, 255, 255, 0.97)'
+        }}
+      >
+        <span className="loading loading-spinner loading-lg text-[#4169E1]"></span>
+      </motion.div>
     );
   }
 
-  if (error) {
+  if (error || !booking || !booking.guideId) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-base-200">
-        <div className="alert alert-error">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="stroke-current shrink-0 h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          <span>Error: {error}</span>
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="min-h-screen flex items-center justify-center bg-white"
+        style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0, 0, 0) 1px, transparent 0)`,
+          backgroundSize: '20px 20px',
+          backgroundPosition: '0 0',
+          backgroundColor: 'rgba(255, 255, 255, 0.97)'
+        }}
+      >
+        <div className="text-[#1a365d] text-xl">
+          {error || "No booking found or this booking is not associated with a guide."}
         </div>
-      </div>
-    );
-  }
-
-  if (!booking || !booking.guideId) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-base-200">
-        <div className="alert alert-warning">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="stroke-current shrink-0 h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-            />
-          </svg>
-          <span>
-            No booking found or this booking is not associated with a guide.
-          </span>
-        </div>
-      </div>
+      </motion.div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-base-200 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
-        <div className="bg-base-100 shadow-xl rounded-lg overflow-hidden">
-          <div className="p-6">
-            <h1 className="text-3xl font-bold text-primary mb-4">
-              Booking Details
-            </h1>
-            <h2 className="text-xl font-semibold mb-4">
-              Booking ID: {booking._id}
-            </h2>
-            {successMessage && (
-              <div className="alert alert-success mb-4">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="stroke-current shrink-0 h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                <span>{successMessage}</span>
-              </div>
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="min-h-screen flex flex-col bg-white"
+      style={{
+        backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0, 0, 0) 1px, transparent 0)`,
+        backgroundSize: '20px 20px',
+        backgroundPosition: '0 0',
+        backgroundColor: 'rgba(255, 255, 255, 0.97)'
+      }}
+    >
+      <motion.main 
+        className="flex-grow container mx-auto px-4 py-12 relative z-10"
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <motion.div
+          whileHover={{ 
+            y: -5, 
+            scale: 1.01,
+            boxShadow: "0 22px 45px -12px rgba(26, 54, 93, 0.15)"
+          }}
+          className="bg-white rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 max-w-3xl mx-auto p-6"
+        >
+          <h1 className="text-5xl font-bold text-[#1a365d] tracking-tight mb-8">
+            Booking Details
+          </h1>
+          <h2 className="text-2xl font-bold text-[#2d3748] mb-4">
+            Booking ID: {booking._id}
+          </h2>
+
+          {successMessage && (
+            <div className="bg-green-50 text-green-700 p-4 rounded-lg mb-6">
+              {successMessage}
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <div className="text-[#2d3748] leading-relaxed">
+              <p className="text-sm font-medium opacity-70">Customer Name</p>
+              <p className="text-xl font-semibold">{booking.customerName}</p>
+            </div>
+            <div className="text-[#2d3748] leading-relaxed">
+              <p className="text-sm font-medium opacity-70">Status</p>
+              <span className={`inline-block px-3 py-1 rounded-full text-white ${
+                booking.status === "confirmed" ? "bg-green-500" :
+                booking.status === "pending" ? "bg-yellow-500" :
+                "bg-red-500"
+              }`}>
+                {booking.status}
+              </span>
+            </div>
+            {customer && (
+              <>
+                <div className="text-[#2d3748] leading-relaxed">
+                  <p className="text-sm font-medium opacity-70">Customer Phone</p>
+                  <p className="text-xl font-semibold">{customer.phno}</p>
+                </div>
+                <div className="text-[#2d3748] leading-relaxed">
+                  <p className="text-sm font-medium opacity-70">Customer Email</p>
+                  <p className="text-xl font-semibold">{customer.gmail}</p>
+                </div>
+              </>
             )}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              <div>
-                <p className="text-sm font-medium text-base-content/70">
-                  Customer Name
-                </p>
-                <p className="text-lg font-semibold">{booking.customerName}</p>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-base-content/70">
-                  Status
-                </p>
-                <p className="text-lg font-semibold">
-                  <span
-                    className={`badge ${
-                      booking.status === "confirmed"
-                        ? "badge-success"
-                        : booking.status === "pending"
-                        ? "badge-warning"
-                        : "badge-error"
-                    }`}
-                  >
-                    {booking.status}
-                  </span>
-                </p>
-              </div>
-              {customer && (
-                <>
-                  <div>
-                    <p className="text-sm font-medium text-base-content/70">
-                      Customer Phone
-                    </p>
-                    <p className="text-lg font-semibold">{customer.phno}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-base-content/70">
-                      Customer Email
-                    </p>
-                    <p className="text-lg font-semibold">{customer.gmail}</p>
-                  </div>
-                </>
-              )}
-            </div>
-            <div className="form-control">
-              <label className="label" htmlFor="status">
-                <span className="label-text">Update Status</span>
-              </label>
-              <select
-                id="status"
-                className="select select-bordered w-full max-w-xs"
-                value={status}
-                onChange={handleStatusChange}
-              >
-                <option value="pending">Pending</option>
-                <option value="confirmed">Confirmed</option>
-                <option value="cancelled">Cancelled</option>
-              </select>
-            </div>
           </div>
-        </div>
-      </div>
-    </div>
+
+          <div className="form-control">
+            <label className="label" htmlFor="status">
+              <span className="text-[#2d3748] font-medium">Update Status</span>
+            </label>
+            <select
+              id="status"
+              className="w-full max-w-xs px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#4169E1]"
+              value={status}
+              onChange={handleStatusChange}
+            >
+              <option value="pending">Pending</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+        </motion.div>
+      </motion.main>
+    </motion.div>
   );
 };
 
