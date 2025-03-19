@@ -18,6 +18,7 @@ const AgentViewAll = () => {
         }
         const bookingCount = await response.json();
         return bookingCount.length; // Assuming the response is an array of bookings
+        console.log(bookingCount.length);
       } catch (error) {
         console.error('Error fetching booking count:', error);
         return 0; // Default to 0 if there's an error
@@ -70,19 +71,7 @@ const AgentViewAll = () => {
   const handleViewPackage = (packageId) => {
     navigate(`/packages/${packageId}`);
   };
-  const fetchBookingCount = async (packageId) => {
-    try {
-      const response = await fetch(`http://localhost/bookings/pack/${packageId}`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch booking count for package ${packageId}`);
-      }
-      const bookingCount = await response.json();
-      return bookingCount.length; // Assuming the response is an array of bookings
-    } catch (error) {
-      console.error('Error fetching booking count:', error);
-      return 0; // Default to 0 if there's an error
-    }
-  };
+ 
 
   if (isLoading) {
     return (
