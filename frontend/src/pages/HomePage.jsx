@@ -186,7 +186,7 @@ const HomePage = () => {
                         whileHover={{ scale: 1.05 }}
                         className="text-2xl font-bold text-[#1a365d] bg-blue-50 px-6 py-2 rounded-md"
                       >
-                        ${pack.price}
+                        ₹{pack.price}
                       </motion.p>
                       <p className="text-md text-[#2d3748] bg-gray-50 px-4 py-2 rounded-md border border-gray-100">
                         {pack.duration} days
