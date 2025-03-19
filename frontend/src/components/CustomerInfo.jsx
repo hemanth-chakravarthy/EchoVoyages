@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 const CustomerInfo = () => {
   const [bookings, setBookings] = useState([]);
   const [customer, setCustomer] = useState({});
+  const [statusFilter, setStatusFilter] = useState('all');
   const [editing, setEditing] = useState(false);
   const [changePassword, setChangePassword] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
@@ -141,24 +142,13 @@ const CustomerInfo = () => {
   };
 
   return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="min-h-screen flex flex-col bg-white"
-      style={{
-        backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0, 0, 0) 1px, transparent 0)`,
-        backgroundSize: '20px 20px',
-        backgroundPosition: '0 0',
-        backgroundColor: 'rgba(255, 255, 255, 0.97)'
-      }}
-    >
+
       <motion.main className="flex-grow container mx-auto px-4 py-12 relative z-10">
         <ToastContainer position="top-right" autoClose={3000} />
 
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="bg-white rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 p-8"
         >
           <div className="flex flex-col md:flex-row gap-8">
             <div className="md:w-1/3">
@@ -261,10 +251,25 @@ const CustomerInfo = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className="mt-12"
               >
-                <h2 className="text-3xl font-bold text-[#1a365d] tracking-tight mb-6">Previous Bookings</h2>
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-3xl font-bold text-[#1a365d] tracking-tight">Previous Bookings</h2>
+                  <select
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                    className="px-4 py-2 rounded-lg border border-gray-200 bg-white text-[#1a365d]
+                      shadow-sm focus:outline-none focus:ring-2 focus:ring-[#4169E1] 
+                      hover:border-[#4169E1]/30 transition-all duration-200"
+                  >
+                    <option value="all">All Bookings</option>
+                    <option value="pending">Pending</option>
+                    <option value="confirmed">Confirmed</option>
+                    <option value="rejected">Rejected</option>
+                  </select>
+                </div>
                 <div className="grid grid-cols-1 gap-4">
                   {bookings.length > 0 ? (
-                    bookings.map((booking) => (
+                    bookings
+                      .filter(booking => statusFilter === 'all' || booking.status === statusFilter)
+                      .map((booking) => (
                       <motion.div
                         key={booking._id}
                         whileHover={{ 
@@ -306,7 +311,7 @@ const CustomerInfo = () => {
           </div>
         </motion.div>
       </motion.main>
-    </motion.div>
+
   );
 };
 
