@@ -1,3 +1,6 @@
-// export { default as BookingsChart } from './BookingsChart';
-export { default as UserDistributionChart } from './UserDistributionChart';
-// export { default as RevenueChart } from './RevenueChart';
+/** @format */
+
+export { UserDistributionChart } from "./UserDistributionChart";
+export { BookingStatusChart } from "./BookingStatusChart";
+export { BookingTrendsChart } from "./BookingTrendsChart";
+export { UserTrendsChart } from "./UserTrendsChart";

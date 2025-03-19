@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from "react";
+/** @format */
+
+import { useEffect, useState } from "react";
 import axios from "axios";
 import UsersTable from "../components/UserTable";
 import PackagesTable from "../components/PackagesTable";
@@ -6,7 +8,12 @@ import ReviewsTable from "../components/ReviewsTable";
 import GuidesTable from "../components/GuideTable";
 import BookingsTable from "../components/BookingsTable";
 import AgencyTable from "../components/AgenciesTable";
-import {  UserDistributionChart,  } from "../components/dashboard";
+import {
+  UserDistributionChart,
+  BookingStatusChart,
+  BookingTrendsChart,
+  UserTrendsChart,
+} from "../components/dashboard";
 import DashboardStats from "../components/dashboard/DashboardStats";
 
 const Admin = () => {
@@ -26,26 +33,34 @@ const Admin = () => {
 
   const fetchAllData = async () => {
     try {
-      const endpoints = ['customers', 'packages', 'reviews', 'guides', 'bookings', 'agency'];
+      const endpoints = [
+        "customers",
+        "packages",
+        "reviews",
+        "guides",
+        "bookings",
+        "agency",
+      ];
       const responses = await Promise.all(
-        endpoints.map(endpoint => 
-          axios.get(`http://localhost:5000/admin/${endpoint}`)
-            .catch(error => {
+        endpoints.map((endpoint) =>
+          axios
+            .get(`http://localhost:5000/admin/${endpoint}`)
+            .catch((error) => {
               console.error(`Error fetching ${endpoint}:`, error);
               return { data: { data: [] } };
             })
         )
       );
-    
+
       const newData = {};
       endpoints.forEach((endpoint, index) => {
         const responseData = responses[index]?.data?.data || [];
         console.log(`Fetched ${endpoint} data:`, responseData);
-        newData[endpoint === 'agency' ? 'agencies' : endpoint] = responseData;
+        newData[endpoint === "agency" ? "agencies" : endpoint] = responseData;
       });
-      
+
       setData(newData);
-      console.log('Updated dashboard data:', newData);
+      console.log("Updated dashboard data:", newData);
     } catch (error) {
       console.error("Error fetching data:", error);
       setData({
@@ -66,25 +81,36 @@ const Admin = () => {
   const renderDashboard = () => (
     <div className="space-y-6">
       <DashboardStats data={data} />
-    
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-       
-        <UserDistributionChart data={{
-          customers: data.customers,
-          guides: data.guides,
-          agencies: data.agencies
-        }} />
+        <UserDistributionChart
+          data={{
+            customers: data.customers,
+            guides: data.guides,
+            agencies: data.agencies,
+          }}
+        />
+        <BookingStatusChart data={data} />
       </div>
-    
-      <div className="mt-6">
-       
+
+      <div className="mt-6 grid grid-cols-1 gap-6">
+        <BookingTrendsChart data={data} />
+        <UserTrendsChart
+          data={{
+            customers: data.customers,
+            guides: data.guides,
+            agencies: data.agencies,
+          }}
+        />
       </div>
     </div>
   );
 
   return (
     <div className="min-h-screen bg-background p-6">
-      <h1 className="text-4xl font-bold text-foreground mb-8">Admin Dashboard</h1>
+      <h1 className="text-4xl font-bold text-foreground mb-8">
+        Admin Dashboard
+      </h1>
 
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Sidebar */}
@@ -92,7 +118,9 @@ const Admin = () => {
           <button
             onClick={() => handleEntityChange("dashboard")}
             className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
-              entity === "dashboard" ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+              entity === "dashboard"
+                ? "bg-primary text-primary-foreground"
+                : "hover:bg-muted"
             }`}
           >
             Dashboard
@@ -100,7 +128,9 @@ const Admin = () => {
           <button
             onClick={() => handleEntityChange("customers")}
             className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
-              entity === "customers" ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+              entity === "customers"
+                ? "bg-primary text-primary-foreground"
+                : "hover:bg-muted"
             }`}
           >
             Users
@@ -108,7 +138,9 @@ const Admin = () => {
           <button
             onClick={() => handleEntityChange("packages")}
             className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
-              entity === "packages" ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+              entity === "packages"
+                ? "bg-primary text-primary-foreground"
+                : "hover:bg-muted"
             }`}
           >
             Packages
@@ -116,7 +148,9 @@ const Admin = () => {
           <button
             onClick={() => handleEntityChange("reviews")}
             className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
-              entity === "reviews" ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+              entity === "reviews"
+                ? "bg-primary text-primary-foreground"
+                : "hover:bg-muted"
             }`}
           >
             Reviews
@@ -124,7 +158,9 @@ const Admin = () => {
           <button
             onClick={() => handleEntityChange("guides")}
             className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
-              entity === "guides" ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+              entity === "guides"
+                ? "bg-primary text-primary-foreground"
+                : "hover:bg-muted"
             }`}
           >
             Guides
@@ -132,7 +168,9 @@ const Admin = () => {
           <button
             onClick={() => handleEntityChange("bookings")}
             className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
-              entity === "bookings" ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+              entity === "bookings"
+                ? "bg-primary text-primary-foreground"
+                : "hover:bg-muted"
             }`}
           >
             Bookings
@@ -140,7 +178,9 @@ const Admin = () => {
           <button
             onClick={() => handleEntityChange("agency")}
             className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
-              entity === "agency" ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+              entity === "agency"
+                ? "bg-primary text-primary-foreground"
+                : "hover:bg-muted"
             }`}
           >
             Agencies
