@@ -7,7 +7,7 @@ import PackagesTable from "../components/PackagesTable";
 import ReviewsTable from "../components/ReviewsTable";
 import GuidesTable from "../components/GuideTable";
 import BookingsTable from "../components/BookingsTable";
-import AgencyTable from "../components/AgenciesTable";
+// import AgencyTable from "../components/AgenciesTable";
 import {
   UserDistributionChart,
   BookingStatusChart,
@@ -175,7 +175,7 @@ const Admin = () => {
           >
             Bookings
           </button>
-          <button
+          {/* <button
             onClick={() => handleEntityChange("agency")}
             className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
               entity === "agency"
@@ -184,7 +184,7 @@ const Admin = () => {
             }`}
           >
             Agencies
-          </button>
+          </button> */}
         </div>
 
         {/* Main Content */}
