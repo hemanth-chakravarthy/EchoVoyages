@@ -91,11 +91,13 @@ const agencySchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    profileImage: { 
+      type: String 
+    }
   },
-
   {
     timestamps: true,
   }
+  
 );
-
 export const Agency = mongoose.model("agency", agencySchema);
