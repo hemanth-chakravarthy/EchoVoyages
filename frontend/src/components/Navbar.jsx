@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const Navbar = () => {
   return (
-    <div className="navbar bg-black/5 backdrop-blur-[2px] shadow-sm border-b border-black/10 w-full top-0 z-50">
+    <div className="navbar bg-white shadow-md border-b border-gray-100 w-full top-0 z-50">
       <div className="flex-1">
         <a className="text-xl font-bold text-[#1a365d] hover:text-[#4169E1] transition-colors duration-300" href="/realhome">
           EchoVoyages

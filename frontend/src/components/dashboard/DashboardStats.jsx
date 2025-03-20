@@ -33,11 +33,6 @@ const DashboardStats = ({ data }) => {
         icon="📅"
       />
       <StatCard
-        title="Total Revenue"
-        value={`$${stats.totalRevenue.toLocaleString()}`}
-        icon="💰"
-      />
-      <StatCard
         title="Active Packages"
         value={stats.activePackages}
         icon="🎯"

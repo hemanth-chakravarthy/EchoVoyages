@@ -1,15 +1,62 @@
+/** @format */
+
 import express from "express";
 import { customers } from "../models/customerModel.js";
 import { Agency } from "../models/agencyModel.js";
 import { Guide } from "../models/guideModel.js";
+import { Admin } from "../models/adminModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { Admin } from "../models/adminModel.js";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+
 const router = express.Router();
 const JWT_SECRET = "Voyage_secret";
 
-//save a customer
-router.post("/signup", async (req, res,next) => {
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadDir = "public/uploads/profile-pictures";
+
+    // Create directory if it doesn't exist
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(
+      null,
+      file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
+    );
+  },
+});
+
+// File filter to only allow image files
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith("image/")) {
+    cb(null, true);
+  } else {
+    cb(new Error("Not an image! Please upload only images."), false);
+  }
+};
+
+const upload = multer({
+  storage: storage,
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+});
+
+// Serve static files from the uploads directory
+router.use("public/uploads", express.static("uploads"));
+
+// save a customer
+router.post("/signup", async (req, res, next) => {
   try {
     if (
       !req.body.username ||
@@ -21,15 +68,17 @@ router.post("/signup", async (req, res,next) => {
       !req.body.specialization
     ) {
       return res.status(400).send({
-        message: "Send all required feilds",
+        message: "Send all required fields",
       });
     }
-    console.log("Inside");
+
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
     if (req.body.role == "customer") {
       if (await customers.findOne({ username: req.body.username })) {
         return res.status(404).send({ error: "User already Exists" });
       }
+
       const newCust = {
         username: req.body.username,
         Name: req.body.Name,
@@ -39,13 +88,15 @@ router.post("/signup", async (req, res,next) => {
         role: req.body.role,
         specialization: req.body.specialization,
       };
-      console.log("DON'T KNOW WHWRE I AM");
+
       const customer = await customers.create(newCust);
       return res.status(201).send(customer);
     } else if (req.body.role == "agency") {
+      // Agency creation logic (unchanged)
       if (await Agency.findOne({ username: req.body.username })) {
         return res.status(404).send({ error: "User already Exists" });
       }
+
       const newAgency = {
         username: req.body.username,
         name: req.body.Name,
@@ -54,12 +105,15 @@ router.post("/signup", async (req, res,next) => {
         password: hashedPassword,
         specialization: req.body.specialization,
       };
+
       const agency = await Agency.create(newAgency);
       return res.status(201).send(agency);
     } else if (req.body.role == "guide") {
+      // Guide creation logic (unchanged)
       if (await Guide.findOne({ username: req.body.username })) {
         return res.status(404).send({ error: "User already Exists" });
       }
+
       const newGuide = {
         username: req.body.username,
         name: req.body.Name,
@@ -68,6 +122,7 @@ router.post("/signup", async (req, res,next) => {
         password: hashedPassword,
         specialization: req.body.specialization,
       };
+
       const guide = await Guide.create(newGuide);
       return res.status(201).send(guide);
     }
@@ -77,7 +132,8 @@ router.post("/signup", async (req, res,next) => {
   }
 });
 
-router.post("/login", async (req, res,next) => {
+// Login route (unchanged)
+router.post("/login", async (req, res, next) => {
   const { username, password } = req.body;
 
   try {
@@ -89,6 +145,7 @@ router.post("/login", async (req, res,next) => {
       (await customers.findOne({ username })) ||
       (await Agency.findOne({ username })) ||
       (await Guide.findOne({ username }));
+
     if (!user) {
       return res.status(400).json({ msg: "Invalid username or password" });
     }
@@ -105,41 +162,36 @@ router.post("/login", async (req, res,next) => {
       token,
       msg: `${user.role} logged in successfully`,
       role: user.role,
-    }); // Include role in response
+    });
   } catch (err) {
     console.error(err.message);
     next(err);
-    res.status(500).send("Server error");
   }
 });
 
-router.post("/adminlogin", async (req, res,next) => {
+// Admin login route (unchanged)
+router.post("/adminlogin", async (req, res, next) => {
   const { username, password } = req.body;
 
   try {
-    // Find admin by username
     const admin = await Admin.findOne({ username });
     if (!admin) {
       return res.status(404).json({ error: "Admin not found" });
     }
 
-    // Compare the entered password with the stored hashed password
-
     if (password != admin.password) {
       return res.status(400).json({ error: "Invalid credentials" });
     }
 
-    // If the credentials are valid, you can generate a token or proceed
     res.json({ message: "Admin login successful", token: "someAuthToken" });
   } catch (error) {
     console.error("Admin login error:", error);
     next(error);
-    res.status(500).json({ error: "Server error" });
   }
 });
 
-// get all coustomers
-router.get("/", async (req, res,next) => {
+// Get all customers (unchanged)
+router.get("/", async (req, res, next) => {
   try {
     const custs = await customers.find({});
     return res.status(200).json({
@@ -149,75 +201,85 @@ router.get("/", async (req, res,next) => {
   } catch (error) {
     console.log(error.message);
     next(error);
-    res.status(500).send({ message: error.message });
   }
 });
 
-// delete a customer
-router.delete("/:id", async (req, res,next) => {
+// Delete a customer (unchanged)
+router.delete("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
     const result = await customers.findByIdAndDelete(id);
-    if (!result) {
-      return res.status(404).json({ message: " User not found" });
-    }
-    return res.status(200).json({ message: " User deleted" });
-  } catch (error) {
-    console.log(error.message);
-    next(error);
-    res.status(500).send({ message: error.message });
-  }
-});
-// update customers
-router.put("/:id", async (req, res,next) => {
-  try {
-    const { id } = req.params;
-    const result = await customers.findByIdAndUpdate(id, req.body);
 
     if (!result) {
-      return res.status(404).json({ message: " User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
-    return res.status(200).json({ message: " user updated" });
+
+    return res.status(200).json({ message: "User deleted" });
   } catch (error) {
     console.log(error.message);
     next(error);
-    res.status(500).send({ message: error.message });
   }
 });
-// Update password route
-router.put("/customers/:id/update-password", async (req, res,next) => {
+
+// Update customer with profile picture support
+router.put("/:id", upload.single("profilePicture"), async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const updateData = { ...req.body };
+
+    // If a file was uploaded, add the path to the update data
+    if (req.file) {
+      updateData.profilePicture = req.file.path;
+    }
+
+    const result = await customers.findByIdAndUpdate(id, updateData, {
+      new: true,
+    });
+
+    if (!result) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json({
+      message: "User updated successfully",
+      user: result,
+    });
+  } catch (error) {
+    console.log(error.message);
+    next(error);
+  }
+});
+
+// Update password route (unchanged)
+router.put("/customers/:id/update-password", async (req, res, next) => {
   const { currentPassword, newPassword } = req.body;
   const { id } = req.params;
 
   try {
-    // Find the customer by ID
     const customer = await customers.findById(id);
     if (!customer) {
       return res.status(404).json({ error: "Customer not found" });
     }
 
-    // Check if the current password matches
     const isMatch = await bcrypt.compare(currentPassword, customer.password);
     if (!isMatch) {
       return res.status(400).json({ error: "Incorrect current password" });
     }
 
-    // Hash the new password before updating
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     customer.password = hashedPassword;
     await customer.save();
 
     console.log("Password updated successfully");
-    res.status(200).json({ message: "Password updated successfully" }); // Added success response
+    res.status(200).json({ message: "Password updated successfully" });
   } catch (error) {
     console.error("Error updating password:", error);
     next(error);
-    res.status(500).json({ error: "Server error" });
   }
 });
 
-// view a single customer
-router.get("/:id", async (req, res,next) => {
+// View a single customer (unchanged)
+router.get("/:id", async (req, res, next) => {
   try {
     let { id } = req.params;
     id = id.toString();
@@ -226,7 +288,6 @@ router.get("/:id", async (req, res,next) => {
   } catch (error) {
     console.log(error.message);
     next(error);
-    res.status(500).send({ message: error.message });
   }
 });
 

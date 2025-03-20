@@ -40,6 +40,10 @@ const customerSchema = mongoose.Schema(
         "other",
       ],
     },
+    profilePicture: {
+      type: String,
+      required: false,
+    },
     verificationCode: {
       type: String,
       default: "",
