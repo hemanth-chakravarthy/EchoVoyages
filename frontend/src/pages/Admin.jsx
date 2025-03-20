@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import UsersTable from "../components/UserTable";
 import PackagesTable from "../components/PackagesTable";
 import ReviewsTable from "../components/ReviewsTable";
@@ -17,6 +18,7 @@ import {
 import DashboardStats from "../components/dashboard/DashboardStats";
 
 const Admin = () => {
+  const navigate = useNavigate();
   const [entity, setEntity] = useState("dashboard");
   const [data, setData] = useState({
     customers: [],
@@ -76,6 +78,11 @@ const Admin = () => {
 
   const handleEntityChange = (newEntity) => {
     setEntity(newEntity);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("adminToken");
+    navigate("/login");
   };
 
   const renderDashboard = () => (
@@ -175,16 +182,12 @@ const Admin = () => {
           >
             Bookings
           </button>
-          {/* <button
-            onClick={() => handleEntityChange("agency")}
-            className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
-              entity === "agency"
-                ? "bg-primary text-primary-foreground"
-                : "hover:bg-muted"
-            }`}
+          <button
+            onClick={handleLogout}
+            className="w-full text-left px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700"
           >
-            Agencies
-          </button> */}
+            Logout
+          </button>
         </div>
 
         {/* Main Content */}
