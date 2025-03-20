@@ -64,17 +64,35 @@ const Signup = () => {
 };
 
 
+  // Update the validateName function
   const validateName = (name) => {
-    const namePattern = /^[a-zA-Z\s]*$/;
-    return namePattern.test(name)
-      ? ""
-      : "Name must not contain digits or special characters.";
+    const namePattern = /^[A-Za-z\s]+$/;
+    if (!name) return "Name is required";
+    if (!namePattern.test(name)) return "Name can only contain letters and spaces";
+    if (name.length < 2) return "Name must be at least 2 characters long";
+    return "";
+  };
+  
+  // Add this near the top with other state declarations
+  const [selectedCountryCode, setSelectedCountryCode] = useState('+91');
+  
+  // Update the validatePhoneNumber function
+  const validatePhoneNumber = (phno) => {
+    const phoneNumberPattern = /^[0-9]{10}$/;
+    const allZeros = /^0+$/;
+    
+    if (!phno) return "Phone number is required";
+    if (allZeros.test(phno)) return "Phone number cannot be all zeros";
+    if (!phoneNumberPattern.test(phno)) return "Phone number must be 10 digits";
+    return "";
   };
 
   const validateEmail = (email) => {
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[A-Za-z]+$/;
-    return emailPattern.test(email) ? "" : 'Invalid email format';
-};
+    const emailPattern = /^[A-Za-z][A-Za-z0-9._-]*@[^\s@]+\.[A-Za-z]+$/;
+    if (!email) return "Email is required";
+    if (!emailPattern.test(email)) return "Email must start with a letter and can contain letters, numbers, dots, underscores, or hyphens before @";
+    return "";
+  };
 
   const validatePassword = (password) => {
     const passwordLength = password.length >= 6;
@@ -92,13 +110,6 @@ const Signup = () => {
     }
 
     return "";
-  };
-
-  const validatePhoneNumber = (phno) => {
-    const phoneNumberPattern = /^[0-9]{10}$/;
-    return phoneNumberPattern.test(phno)
-      ? ""
-      : "Phone number must be exactly 10 digits";
   };
 
   const validateForm = () => {
@@ -279,24 +290,33 @@ const Signup = () => {
 
               {step === 2 && (
                 <>
-                  <div className="mb-4">
-                    <label htmlFor="phno" className="sr-only">
-                      Phone Number
-                    </label>
+                  <div className="mb-4 flex">
+                    <select
+                      value={selectedCountryCode}
+                      onChange={(e) => setSelectedCountryCode(e.target.value)}
+                      className="appearance-none rounded-l-md relative w-24 px-3 py-2 border border-r-0 border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                    >
+                      <option value="+91">+91 IN</option>
+                      <option value="+1">+1 US</option>
+                      <option value="+44">+44 UK</option>
+                      <option value="+61">+61 AU</option>
+                      <option value="+86">+86 CN</option>
+                      <option value="+81">+81 JP</option>
+                    </select>
                     <input
                       id="phno"
                       name="phno"
                       type="text"
                       required
-                      className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
+                      className={`appearance-none rounded-r-md relative block w-full px-3 py-2 border ${
                         errors.phno ? "border-red-500" : "border-gray-700"
-                      } bg-gray-800 text-white placeholder-gray-400 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
-                      placeholder="Phone Number"
+                      } bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                      placeholder="Phone Number (e.g., 1234567890)"
                       value={formData.phno}
                       onChange={handleInputChange}
                     />
                     {errors.phno && (
-                      <p className="mt-2 text-sm text-red-400" id="email-error">
+                      <p className="mt-2 text-sm text-red-400" id="phone-error">
                         {errors.phno}
                       </p>
                     )}
@@ -429,3 +449,50 @@ const Signup = () => {
 };
 
 export default Signup;
+
+// Update handleSubmit to include country code
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  const validationErrors = validateForm();
+  if (Object.keys(validationErrors).length > 0) {
+    return;
+  }
+
+  const formDataWithCountryCode = {
+    ...formData,
+    phno: selectedCountryCode + formData.phno
+  };
+
+  try {
+    const response = await fetch("http://localhost:5000/customers/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formDataWithCountryCode),
+    });
+
+      if (response.ok) {
+        setFormData({
+          username: "",
+          Name: "",
+          phno: "",
+          gmail: "",
+          password: "",
+          role: "customer",
+          specialization: "luxury",
+        });
+        setErrors({});
+        toast.success("Signup successful!");
+        navigate("/login");
+        console.log("Signup successful!");
+      } else {
+        const data = await response.json();
+        console.log("Signup failed with error:", data.error);
+        toast.error(`Signup failed with error: ${data.error}`);
+      }
+    } catch (err) {
+      console.error("Error signing up:", err);
+      toast.error(`Error:${err}`);
+    }
+  };
