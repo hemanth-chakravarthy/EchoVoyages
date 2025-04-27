@@ -95,20 +95,18 @@ const App = () => {
       <Route path="/mylistings" element={<PrivateRoute />}>
         <Route path="/mylistings" element={<AgentViewAll />} />
       </Route>
-      {/* For the /admin/:entity/delete/:id route */}
-      {/* <Route path="/admin/:entity/delete/:id" element={<PrivateRoute />}> */}
-      <Route path="/admin/:entity/delete/:id" element={<DeleteEntity />} />
-      {/* </Route> */}
-
-      {/* For the /admin/:entityType/:id route */}
-      {/* <Route path="/admin/:entityType/:id" element={<PrivateRoute />}> */}
+      {/* Routes for admin entity operations */}
+      {/* View entity details */}
       <Route path="/admin/:entityType/:id" element={<ShowEntity />} />
-      {/* </Route> */}
 
-      {/* For the /admin/:entityType/edit/:id route */}
-      {/* <Route path="/admin/:entityType/edit/:id" element={<PrivateRoute />}> */}
+      {/* Edit entity */}
       <Route path="/admin/:entityType/edit/:id" element={<UpdateEntity />} />
-      {/* </Route> */}
+
+      {/* Delete entity */}
+      <Route path="/admin/:entityType/delete/:id" element={<DeleteEntity />} />
+
+      {/* Additional route to handle the case where URLs might be structured differently */}
+      <Route path="/admin/*/edit/:id" element={<UpdateEntity />} />
       <Route path="/search" element={<PrivateRoute />}>
         <Route path="/search" element={<Search />} />{" "}
         {/* <-- Search component */}

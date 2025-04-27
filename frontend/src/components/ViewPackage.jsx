@@ -143,7 +143,7 @@ const ViewPackage = () => {
           </div>
         </motion.div>
       )}
-      
+
       <ToastContainer position="top-right" autoClose={3000} />
       <motion.main
         initial={{ y: 20 }}
@@ -155,9 +155,25 @@ const ViewPackage = () => {
           animate={{ y: 0, opacity: 1 }}
           className="bg-white rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 p-8"
         >
-          <h1 className="text-5xl font-bold text-[#1a365d] tracking-tight mb-8">
-            {packageDetails.name}
-          </h1>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+            <h1 className="text-5xl font-bold text-[#1a365d] tracking-tight">
+              {packageDetails.name}
+            </h1>
+
+            <div className="flex items-center mt-4 md:mt-0">
+              <div className="flex items-center bg-yellow-100 px-3 py-1 rounded-full">
+                <span className="text-yellow-700 font-bold mr-1">
+                  {packageDetails.reviews && packageDetails.reviews.length > 0
+                    ? (packageDetails.reviews.reduce((sum, review) => sum + review.rating, 0) / packageDetails.reviews.length).toFixed(1)
+                    : "0.0"}
+                </span>
+                <span className="text-yellow-700">★</span>
+                <span className="text-gray-600 ml-2 text-sm">
+                  ({packageDetails.reviews ? packageDetails.reviews.length : 0} {packageDetails.reviews && packageDetails.reviews.length === 1 ? "rating" : "ratings"})
+                </span>
+              </div>
+            </div>
+          </div>
 
           <div className="flex flex-col lg:flex-row gap-8 mb-8">
             <div className="lg:w-1/2">
@@ -213,7 +229,28 @@ const ViewPackage = () => {
             animate={{ opacity: 1, y: 0 }}
             className="mt-12"
           >
-            <h2 className="text-3xl font-bold text-[#1a365d] tracking-tight mb-6">Reviews</h2>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-3xl font-bold text-[#1a365d] tracking-tight">Reviews</h2>
+
+              <div className="flex items-center bg-yellow-100 px-4 py-2 rounded-lg">
+                <div className="flex flex-col items-center mr-4">
+                  <span className="text-3xl font-bold text-yellow-700">
+                    {revvs && revvs.length > 0
+                      ? (revvs.reduce((sum, review) => sum + review.rating, 0) / revvs.length).toFixed(1)
+                      : "0.0"}
+                  </span>
+                  <div className="flex">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <span key={star} className="text-yellow-500">★</span>
+                    ))}
+                  </div>
+                </div>
+                <div className="text-gray-700">
+                  <span className="font-semibold">{revvs ? revvs.length : 0}</span> {revvs && revvs.length === 1 ? "rating" : "ratings"}
+                </div>
+              </div>
+            </div>
+
             {revvs && revvs.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {revvs.map((review) => (
@@ -228,8 +265,13 @@ const ViewPackage = () => {
                     <div className="flex justify-between items-start mb-4">
                       <div>
                         <div className="flex items-center gap-2 mb-2">
-                          <span className="text-2xl font-bold text-[#1a365d]">{review.rating}</span>
-                          <span className="text-[#2d3748]">/ 5</span>
+                          <div className="flex text-yellow-500">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <span key={star}>
+                                {star <= review.rating ? '★' : '☆'}
+                              </span>
+                            ))}
+                          </div>
                         </div>
                         <p className="text-[#2d3748]">
                           By {review.customerName || "Anonymous"}

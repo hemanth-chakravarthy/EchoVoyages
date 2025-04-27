@@ -92,7 +92,7 @@ const GuideHome = () => {
   const COLORS = ["#4169E1", "#1a365d", "#2d3748"]; // Updated colors to match style guide
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="min-h-screen flex flex-col bg-white"
@@ -110,8 +110,8 @@ const GuideHome = () => {
           </Link>
         </div>
         <div className="flex-none">
-          <Link 
-            to="/GuideProfilePage" 
+          <Link
+            to="/GuideProfilePage"
             className="px-6 py-2 bg-[#00072D] text-white rounded-full hover:bg-[#1a365d] transition-all duration-300"
           >
             Profile Page
@@ -120,7 +120,7 @@ const GuideHome = () => {
       </nav>
 
       <motion.main className="flex-grow container mx-auto px-4 py-12 relative z-10">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="card bg-white shadow-lg mb-6 border border-gray-100"
@@ -186,7 +186,7 @@ const GuideHome = () => {
           </div>
         </motion.div>
 
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -236,14 +236,28 @@ const GuideHome = () => {
           </div>
         </motion.div>
 
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
           className="card bg-white shadow-lg mt-6 border border-gray-100"
         >
           <div className="card-body">
-            <h2 className="card-title text-2xl mb-4 text-[#1a365d]">Reviews</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="card-title text-2xl text-[#1a365d]">Reviews</h2>
+
+              <div className="flex items-center bg-yellow-100 px-3 py-1 rounded-full">
+                <span className="text-yellow-700 font-bold mr-1">
+                  {guideData && guideData.ratings && guideData.ratings.averageRating > 0
+                    ? guideData.ratings.averageRating.toFixed(1)
+                    : "0.0"}
+                </span>
+                <span className="text-yellow-700">★</span>
+                <span className="text-gray-600 ml-2 text-sm">
+                  ({guideData && guideData.ratings ? guideData.ratings.numberOfReviews : 0} {guideData && guideData.ratings && guideData.ratings.numberOfReviews === 1 ? "rating" : "ratings"})
+                </span>
+              </div>
+            </div>
             {reviews && reviews.length > 0 ? (
               <ul className="space-y-4">
                 {reviews.map((review) => (

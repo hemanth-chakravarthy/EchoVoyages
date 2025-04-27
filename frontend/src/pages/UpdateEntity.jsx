@@ -7,29 +7,49 @@ import "react-toastify/dist/ReactToastify.css";
 
 const UpdateEntity = () => {
   const [entity, setEntity] = useState({});
-  const [entityType, setEntityType] = useState(""); // Add state for entity type
+  const [entityType1, setEntityType] = useState(""); // Add state for entity type
 
   const navigate = useNavigate();
-  const { id, type } = useParams(); // Assuming you're using useParams for id and type
-  console.log(type)
+  const { id, type, entityType } = useParams(); // Get id and type/entityType from URL params
+  const entityTypeValue = entityType || type; // Use entityType if available, otherwise use type
+  console.log("Entity type:", entityTypeValue, "Entity ID:", id);
 
   useEffect(() => {
-    // Fetch entity data based on id and type
+    // Fetch entity data based on id
     const fetchEntity = async () => {
       try {
-        const response = await axios.get(`/admin/${type}/${id}`); // Replace with your API endpoint
-        console.log(data)
+        // Extract the entity type from the URL path
+        const pathname = window.location.pathname;
+        const pathParts = pathname.split('/');
+
+        // The URL format is /admin/[entity_type]/edit/[id]
+        // So the entity type should be at index 2
+        let actualEntityType = pathParts[2];
+
+        console.log("Path parts:", pathParts);
+        console.log("Extracted entity type:", actualEntityType);
+
+        if (!actualEntityType) {
+          throw new Error("Could not determine entity type from URL");
+        }
+
+        // Make the API request
+        console.log(`Making request to: http://localhost:5000/admin/${actualEntityType}/${id}`);
+        const response = await axios.get(`http://localhost:5000/admin/${actualEntityType}/${id}`);
+
+        console.log("Fetched entity data:", response.data);
         setEntity(response.data);
-        setEntityType(type);
+        setEntityType(actualEntityType);
       } catch (error) {
         console.error("Error fetching entity:", error);
+        toast.error(`Failed to fetch entity data: ${error.message}`);
       }
     };
 
-    if (id && type) {
+    if (id) {
       fetchEntity();
     }
-  }, [id, type]);
+  }, [id]);
 
 
   const handleChange = (e) => {
@@ -54,10 +74,21 @@ const UpdateEntity = () => {
 
   const handleEditEntity = async () => {
     try {
-      await axios.put(`/api/${entityType}/${id}`, entity); // Replace with your API endpoint
-      navigate(-1); // Go back to the previous page
+      // Make sure we're using the correct entity type from the state
+      if (!entityType) {
+        throw new Error("Entity type is not defined");
+      }
+
+      console.log("Updating entity:", entity, "with type:", entityType);
+      const response = await axios.put(`http://localhost:5000/admin/${entityType}/${id}`, entity);
+      console.log("Update response:", response.data);
+      toast.success("Entity updated successfully!");
+      setTimeout(() => {
+        navigate(-1); // Go back to the previous page after showing success message
+      }, 2000);
     } catch (error) {
       console.error("Error editing entity:", error);
+      toast.error(`Failed to update: ${error.response?.data?.message || error.message}`);
     }
   };
 
@@ -70,21 +101,25 @@ const UpdateEntity = () => {
         return (
           <>
             <div className="mb-4">
-            <ToastContainer position="top-right" autoClose={3000} />
-              <label htmlFor="name" className={labelClass}>Name</label>
-              <input type="text" id="name" name="name" value={entity.name || ""} onChange={handleChange} className={inputClass} />
+              <ToastContainer position="top-right" autoClose={3000} />
+              <label htmlFor="Name" className={labelClass}>Name</label>
+              <input type="text" id="Name" name="Name" value={entity.Name || ""} onChange={handleChange} className={inputClass} />
             </div>
             <div className="mb-4">
               <label htmlFor="username" className={labelClass}>Username</label>
               <input type="text" id="username" name="username" value={entity.username || ""} onChange={handleChange} className={inputClass} />
             </div>
             <div className="mb-4">
-              <label htmlFor="gmail" className={labelClass}>Gmail</label>
+              <label htmlFor="gmail" className={labelClass}>Email</label>
               <input type="email" id="gmail" name="gmail" value={entity.gmail || ""} onChange={handleChange} className={inputClass} />
             </div>
             <div className="mb-4">
-              <label htmlFor="password" className={labelClass}>Password</label>
-              <input type="password" id="password" name="password" value={entity.password || ""} onChange={handleChange} className={inputClass} />
+              <label htmlFor="phno" className={labelClass}>Phone Number</label>
+              <input type="text" id="phno" name="phno" value={entity.phno || ""} onChange={handleChange} className={inputClass} />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="role" className={labelClass}>Role</label>
+              <input type="text" id="role" name="role" value={entity.role || ""} onChange={handleChange} className={inputClass} readOnly />
             </div>
           </>
         );
@@ -92,7 +127,7 @@ const UpdateEntity = () => {
         return (
           <>
             <div className="mb-4">
-            <ToastContainer position="top-right" autoClose={3000} />
+              <ToastContainer position="top-right" autoClose={3000} />
               <label htmlFor="name" className={labelClass}>Package Name</label>
               <input type="text" id="name" name="name" value={entity.name || ""} onChange={handleChange} className={inputClass} />
             </div>
@@ -104,49 +139,59 @@ const UpdateEntity = () => {
               <label htmlFor="price" className={labelClass}>Price</label>
               <input type="number" id="price" name="price" value={entity.price || ""} onChange={handleChange} className={inputClass} />
             </div>
+            <div className="mb-4">
+              <label htmlFor="duration" className={labelClass}>Duration (days)</label>
+              <input type="number" id="duration" name="duration" value={entity.duration || ""} onChange={handleChange} className={inputClass} />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="location" className={labelClass}>Location</label>
+              <input type="text" id="location" name="location" value={entity.location || ""} onChange={handleChange} className={inputClass} />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="maxGroupSize" className={labelClass}>Max Group Size</label>
+              <input type="number" id="maxGroupSize" name="maxGroupSize" value={entity.maxGroupSize || ""} onChange={handleChange} className={inputClass} />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="isActive" className={labelClass}>Status</label>
+              <select id="isActive" name="isActive" value={entity.isActive || "pending"} onChange={handleChange} className={inputClass}>
+                <option value="pending">Pending</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="canceled">Canceled</option>
+              </select>
+            </div>
           </>
         );
       case "guides":
         return (
           <>
             <div className="mb-4">
-            <ToastContainer position="top-right" autoClose={3000} />
+              <ToastContainer position="top-right" autoClose={3000} />
               <label htmlFor="name" className={labelClass}>Name</label>
               <input type="text" id="name" name="name" value={entity.name || ""} onChange={handleChange} className={inputClass} />
             </div>
             <div className="mb-4">
-              <label htmlFor="experience" className={labelClass}>Experience</label>
-              <input type="number" id="experience" name="experience" value={entity.experience || ""} onChange={handleChange} className={inputClass} />
+              <label htmlFor="username" className={labelClass}>Username</label>
+              <input type="text" id="username" name="username" value={entity.username || ""} onChange={handleChange} className={inputClass} />
             </div>
             <div className="mb-4">
-              <label htmlFor="email" className={labelClass}>Email</label>
-              <input type="email" id="email" name="email" value={entity.email || ""} onChange={handleChange} className={inputClass} />
+              <label htmlFor="gmail" className={labelClass}>Email</label>
+              <input type="email" id="gmail" name="gmail" value={entity.gmail || ""} onChange={handleChange} className={inputClass} />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="phno" className={labelClass}>Phone Number</label>
+              <input type="text" id="phno" name="phno" value={entity.phno || ""} onChange={handleChange} className={inputClass} />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="experience" className={labelClass}>Experience (years)</label>
+              <input type="number" id="experience" name="experience" value={entity.experience || ""} onChange={handleChange} className={inputClass} />
             </div>
             <div className="mb-4">
               <label htmlFor="languages" className={labelClass}>Languages</label>
               <input type="text" id="languages" name="languages" value={entity.languages || ""} onChange={handleChange} className={inputClass} />
             </div>
-          </>
-        );
-      case "bookings":
-        return (
-          <div className="mb-4">
-            <ToastContainer position="top-right" autoClose={3000} />
-            <label htmlFor="totalPrice" className={labelClass}>Total Price</label>
-            <input type="number" id="totalPrice" name="totalPrice" value={entity.totalPrice || ""} onChange={handleChange} className={inputClass} />
-          </div>
-        );
-      case "agency":
-        return (
-          <>
             <div className="mb-4">
-            <ToastContainer position="top-right" autoClose={3000} />
-              <label htmlFor="email" className={labelClass}>Email</label>
-              <input type="email" id="email" name="contactInfo.email" value={entity.contactInfo?.email || ""} onChange={handleChange} className={inputClass} />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="phone" className={labelClass}>Phone</label>
-              <input type="text" id="phone" name="contactInfo.phone" value={entity.contactInfo?.phone || ""} onChange={handleChange} className={inputClass} />
+              <label htmlFor="location" className={labelClass}>Location</label>
+              <input type="text" id="location" name="location" value={entity.location || ""} onChange={handleChange} className={inputClass} />
             </div>
             <div className="mb-4">
               <label htmlFor="specialization" className={labelClass}>Specialization</label>
@@ -155,16 +200,89 @@ const UpdateEntity = () => {
                 <option value="adventure">Adventure</option>
                 <option value="business">Business</option>
                 <option value="family">Family</option>
+                <option value="budget-friendly">Budget-Friendly</option>
                 <option value="other">Other</option>
               </select>
             </div>
           </>
         );
-      default:
+      case "bookings":
         return (
           <>
             <div className="mb-4">
-            <ToastContainer position="top-right" autoClose={3000} />
+              <ToastContainer position="top-right" autoClose={3000} />
+              <label htmlFor="totalPrice" className={labelClass}>Total Price</label>
+              <input type="number" id="totalPrice" name="totalPrice" value={entity.totalPrice || ""} onChange={handleChange} className={inputClass} />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="status" className={labelClass}>Status</label>
+              <select id="status" name="status" value={entity.status || "pending"} onChange={handleChange} className={inputClass}>
+                <option value="pending">Pending</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="canceled">Canceled</option>
+              </select>
+            </div>
+            <div className="mb-4">
+              <label htmlFor="paymentStatus" className={labelClass}>Payment Status</label>
+              <select id="paymentStatus" name="paymentStatus" value={entity.paymentStatus || "pending"} onChange={handleChange} className={inputClass}>
+                <option value="pending">Pending</option>
+                <option value="completed">Completed</option>
+                <option value="failed">Failed</option>
+                <option value="refunded">Refunded</option>
+              </select>
+            </div>
+          </>
+        );
+      case "agency":
+        return (
+          <>
+            <div className="mb-4">
+              <ToastContainer position="top-right" autoClose={3000} />
+              <label htmlFor="name" className={labelClass}>Agency Name</label>
+              <input type="text" id="name" name="name" value={entity.name || ""} onChange={handleChange} className={inputClass} />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="username" className={labelClass}>Username</label>
+              <input type="text" id="username" name="username" value={entity.username || ""} onChange={handleChange} className={inputClass} />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="gmail" className={labelClass}>Email</label>
+              <input type="email" id="gmail" name="gmail" value={entity.gmail || ""} onChange={handleChange} className={inputClass} />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="contactInfo.email" className={labelClass}>Contact Email</label>
+              <input type="email" id="contactInfo.email" name="contactInfo.email" value={entity.contactInfo?.email || ""} onChange={handleChange} className={inputClass} />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="phno" className={labelClass}>Phone Number</label>
+              <input type="text" id="phno" name="phno" value={entity.phno || ""} onChange={handleChange} className={inputClass} />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="contactInfo.phone" className={labelClass}>Contact Phone</label>
+              <input type="text" id="contactInfo.phone" name="contactInfo.phone" value={entity.contactInfo?.phone || ""} onChange={handleChange} className={inputClass} />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="bio" className={labelClass}>Bio</label>
+              <textarea id="bio" name="bio" value={entity.bio || ""} onChange={handleChange} className={`${inputClass} h-24`}></textarea>
+            </div>
+            <div className="mb-4">
+              <label htmlFor="specialization" className={labelClass}>Specialization</label>
+              <select id="specialization" name="specialization" value={entity.specialization || ""} onChange={handleChange} className={inputClass}>
+                <option value="luxury">Luxury</option>
+                <option value="adventure">Adventure</option>
+                <option value="business">Business</option>
+                <option value="family">Family</option>
+                <option value="budget-friendly">Budget-Friendly</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </>
+        );
+      case "reviews":
+        return (
+          <>
+            <div className="mb-4">
+              <ToastContainer position="top-right" autoClose={3000} />
               <label htmlFor="rating" className={labelClass}>Rating</label>
               <input type="number" id="rating" name="rating" value={entity.rating || ""} onChange={handleChange} min={1} max={5} className={inputClass} />
             </div>
@@ -181,6 +299,12 @@ const UpdateEntity = () => {
               </select>
             </div>
           </>
+        );
+      default:
+        return (
+          <div className="p-4 bg-yellow-100 text-yellow-800 rounded-md">
+            <p>No edit form available for this entity type: {entityType}</p>
+          </div>
         );
     }
   };

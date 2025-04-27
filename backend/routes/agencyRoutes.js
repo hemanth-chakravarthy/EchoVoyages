@@ -5,9 +5,9 @@ const router = express.Router();
 // Save a new agency
 router.post('/', async (req, res,next) => {
     try {
-        const { name, contactInfo, bio, specialization } = req.body;
+        const { name, gmail, phno, bio, specialization } = req.body;
 
-        if (!name || !contactInfo || !bio || !specialization) {
+        if (!name || !gmail || !phno || !bio || !specialization) {
             return res.status(400).send({
                 message: "Send all required fields"
             });
@@ -15,9 +15,15 @@ router.post('/', async (req, res,next) => {
 
         const newAgency = {
             name,
-            contactInfo,
+            gmail,
+            phno,
             bio,
             specialization,
+            // Add contactInfo to match existing database schema
+            contactInfo: {
+                email: gmail,
+                phone: phno
+            },
             travelPackages: req.body.travelPackages || [],
             packageName: req.body.packageName || [],
             bookingRequests: req.body.bookingRequests || []
@@ -67,7 +73,24 @@ router.delete('/:id', async (req, res,next) => {
 router.put('/:id', async (req, res,next) => {
     try {
         const { id } = req.params;
-        const result = await Agency.findByIdAndUpdate(id, req.body, { new: true });
+        const updateData = { ...req.body };
+
+        // Handle contactInfo updates
+        if (req.body['contactInfo.email'] || req.body['contactInfo.phone']) {
+            updateData.contactInfo = updateData.contactInfo || {};
+            if (req.body['contactInfo.email']) {
+                updateData.contactInfo.email = req.body['contactInfo.email'];
+                updateData.gmail = req.body['contactInfo.email']; // Update gmail field too
+                delete updateData['contactInfo.email'];
+            }
+            if (req.body['contactInfo.phone']) {
+                updateData.contactInfo.phone = req.body['contactInfo.phone'];
+                updateData.phno = req.body['contactInfo.phone']; // Update phno field too
+                delete updateData['contactInfo.phone'];
+            }
+        }
+
+        const result = await Agency.findByIdAndUpdate(id, updateData, { new: true });
         if (!result) {
             return res.status(404).json({ message: "Agency not found" });
         }

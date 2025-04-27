@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -72,15 +72,15 @@ const Signup = () => {
     if (name.length < 2) return "Name must be at least 2 characters long";
     return "";
   };
-  
+
   // Add this near the top with other state declarations
   const [selectedCountryCode, setSelectedCountryCode] = useState('+91');
-  
+
   // Update the validatePhoneNumber function
   const validatePhoneNumber = (phno) => {
     const phoneNumberPattern = /^[0-9]{10}$/;
     const allZeros = /^0+$/;
-    
+
     if (!phno) return "Phone number is required";
     if (allZeros.test(phno)) return "Phone number cannot be all zeros";
     if (!phoneNumberPattern.test(phno)) return "Phone number must be 10 digits";
@@ -157,13 +157,19 @@ const Signup = () => {
       return;
     }
 
+    // Include country code with phone number
+    const formDataWithCountryCode = {
+      ...formData,
+      phno: selectedCountryCode + formData.phno
+    };
+
     try {
       const response = await fetch("http://localhost:5000/customers/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formDataWithCountryCode),
       });
 
       if (response.ok) {
@@ -407,7 +413,7 @@ const Signup = () => {
                       <option value="budget-friendly">Budget-Friendly</option>
                       <option value="family">Family</option>
                       <option value="business">Business</option>
-                      <option value="Other">Other</option>
+                      <option value="other">Other</option>
                     </select>
                   </div>
                 </>
@@ -441,6 +447,16 @@ const Signup = () => {
                 </button>
               )}
             </div>
+
+            <div className="text-center mt-4">
+              <span className="text-gray-400">Already have an account? </span>
+              <Link
+                to="/login"
+                className="text-sm text-indigo-300 hover:text-indigo-200"
+              >
+                Sign in here
+              </Link>
+            </div>
           </form>
         </div>
       </div>
@@ -449,50 +465,3 @@ const Signup = () => {
 };
 
 export default Signup;
-
-// Update handleSubmit to include country code
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  const validationErrors = validateForm();
-  if (Object.keys(validationErrors).length > 0) {
-    return;
-  }
-
-  const formDataWithCountryCode = {
-    ...formData,
-    phno: selectedCountryCode + formData.phno
-  };
-
-  try {
-    const response = await fetch("http://localhost:5000/customers/signup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formDataWithCountryCode),
-    });
-
-      if (response.ok) {
-        setFormData({
-          username: "",
-          Name: "",
-          phno: "",
-          gmail: "",
-          password: "",
-          role: "customer",
-          specialization: "luxury",
-        });
-        setErrors({});
-        toast.success("Signup successful!");
-        navigate("/login");
-        console.log("Signup successful!");
-      } else {
-        const data = await response.json();
-        console.log("Signup failed with error:", data.error);
-        toast.error(`Signup failed with error: ${data.error}`);
-      }
-    } catch (err) {
-      console.error("Error signing up:", err);
-      toast.error(`Error:${err}`);
-    }
-  };

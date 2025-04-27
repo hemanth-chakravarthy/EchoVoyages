@@ -164,8 +164,10 @@ export default function CustomerProfile() {
                                 ).toLocaleDateString()}
                               </p>
                               <p>
-                                <span className="font-medium">ID:</span>{" "}
-                                {booking._id}
+                                <span className="font-medium">Booking ID:</span>{" "}
+                                <span className=" px-2 py-1 rounded-md  font-bold">
+                                  {booking.bookingId || booking._id}
+                                </span>
                               </p>
                             </div>
                           </div>
@@ -173,7 +175,7 @@ export default function CustomerProfile() {
                             <p className="text-2xl font-bold text-[#1a365d]">
                               ₹{booking.totalPrice}
                             </p>
-                            <span
+                            {/* <span
                               className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
                                 booking.status === "confirmed"
                                   ? "bg-green-100 text-green-800"
@@ -183,7 +185,7 @@ export default function CustomerProfile() {
                               }`}
                             >
                               {booking.status}
-                            </span>
+                            </span> */}
                           </div>
                         </div>
                       </motion.div>

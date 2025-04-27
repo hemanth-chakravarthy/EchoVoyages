@@ -4,6 +4,7 @@ import { jwtDecode } from "jwt-decode";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion } from "framer-motion";
+import axios from "axios";
 
 const CustomerPackActions = () => {
   const { id } = useParams(); // `id` is the packageId
@@ -14,7 +15,7 @@ const CustomerPackActions = () => {
   const [rating, setRating] = useState(1); // Default rating value
   const [comment, setComment] = useState(""); // Comment value
   const [bookingId, setBookingId] = useState(""); // State for booking ID
-  const guideId = ""; // Guide ID, can be empty or used as needed
+  const [customerBookings, setCustomerBookings] = useState([]); // State for customer bookings
   const [customDetails, setCustomDetails] = useState({
     price: 0,
     duration: 0,
@@ -28,7 +29,7 @@ const CustomerPackActions = () => {
   const token = localStorage.getItem("token");
   const customerId = jwtDecode(token).id;
 
-  // Fetch package details
+  // Fetch package details and customer bookings
   useEffect(() => {
     const fetchPackageDetails = async () => {
       if (!showRequestModal) return; // Fetch only when modal is shown
@@ -56,8 +57,34 @@ const CustomerPackActions = () => {
       }
     };
 
+    // Fetch customer bookings for this package
+    const fetchCustomerBookings = async () => {
+      if (customerId && token && showReviewModal) {
+        try {
+          const response = await axios.get(
+            `http://localhost:5000/bookings/cust/${customerId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          // Filter bookings for this package
+          const packageBookings = response.data.filter(
+            booking => booking.packageId === id
+          );
+
+          setCustomerBookings(packageBookings);
+        } catch (error) {
+          console.error("Error fetching customer bookings:", error);
+        }
+      }
+    };
+
     fetchPackageDetails();
-  }, [showRequestModal, id, token]);
+    fetchCustomerBookings();
+  }, [showRequestModal, showReviewModal, id, token, customerId]);
 
   const handleRequestSubmit = async () => {
     try {
@@ -96,7 +123,6 @@ const CustomerPackActions = () => {
   const handleOpenReviewModal = () => {
     setShowReviewModal(true);
   };
-
   // Handle closing the review modal
   const handleCloseReviewModal = () => {
     setShowReviewModal(false);
@@ -172,7 +198,7 @@ const CustomerPackActions = () => {
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="min-h-screen flex flex-col bg-white"
@@ -184,7 +210,7 @@ const CustomerPackActions = () => {
       }}
     >
       <ToastContainer position="top-right" autoClose={3000} />
-      <motion.main 
+      <motion.main
         initial={{ y: 20 }}
         animate={{ y: 0 }}
         className="flex-grow container mx-auto px-4 py-12 relative z-10"
@@ -218,7 +244,7 @@ const CustomerPackActions = () => {
 
         {/* Modal for Request */}
         {showRequestModal && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
@@ -342,7 +368,7 @@ const CustomerPackActions = () => {
 
         {/* Review Modal with updated styling */}
         {showReviewModal && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
@@ -356,16 +382,26 @@ const CustomerPackActions = () => {
                 Rate and Review
               </h2>
 
-              <div className="form-control mb-4">
-                <label className="label">
-                  <span className="text-black font-medium">Booking ID:</span>
-                </label>
-                <input
-                  type="text"
-                  value={bookingId}
-                  onChange={(e) => setBookingId(e.target.value)}
-                  className="w-full text-black p-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-transparent transition-all duration-300"
-                />
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Select Your Booking:</label>
+                {customerBookings.length > 0 ? (
+                  <select
+                    className="w-full border border-gray-300 rounded-md py-2 px-3"
+                    value={bookingId}
+                    onChange={(e) => setBookingId(e.target.value)}
+                  >
+                    <option value="">Select a booking</option>
+                    {customerBookings.map((booking) => (
+                      <option key={booking._id} value={booking._id}>
+                        {booking.bookingId || booking._id} - {new Date(booking.bookingDate).toLocaleDateString()}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <div className="text-red-500 p-2 bg-red-50 rounded-md">
+                    <p>You haven't booked this package yet. Please book the package before leaving a review.</p>
+                  </div>
+                )}
               </div>
 
               <div className="form-control mb-4">
@@ -399,10 +435,15 @@ const CustomerPackActions = () => {
 
               <div className="flex justify-end space-x-4">
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={bookingId ? { scale: 1.05 } : {}}
+                  whileTap={bookingId ? { scale: 0.95 } : {}}
                   onClick={handleSubmitReview}
-                  className="bg-[#00072D] text-white font-semibold py-2 px-6 rounded-md hover:bg-[#1a365d] transition-all duration-300 shadow-md"
+                  disabled={!bookingId || customerBookings.length === 0}
+                  className={`font-semibold py-2 px-6 rounded-md transition-all duration-300 shadow-md ${
+                    bookingId && customerBookings.length > 0
+                      ? "bg-[#00072D] text-white hover:bg-[#1a365d]"
+                      : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  }`}
                 >
                   Submit
                 </motion.button>

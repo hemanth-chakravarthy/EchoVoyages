@@ -24,7 +24,7 @@ const HomePage = () => {
     return packages.filter(pack => {
       const locationMatch = filters.location === "All" || pack.location === filters.location;
       const priceMatch = filters.price === "All" || pack.priceCategory === filters.price;
-      const durationMatch = filters.duration === "All" || 
+      const durationMatch = filters.duration === "All" ||
         (filters.duration === "Short (1-3 days)" && pack.duration <= 3) ||
         (filters.duration === "Medium (4-7 days)" && pack.duration > 3 && pack.duration <= 7) ||
         (filters.duration === "Long (8+ days)" && pack.duration > 7);
@@ -106,7 +106,7 @@ const HomePage = () => {
           animate={{ opacity: 1, y: 0 }}
           className="mb-12 flex justify-center"
         >
-          <div className="bg-gradient-to-r from-[#1a365d]/5 to-[#4169E1]/5 backdrop-blur-sm 
+          <div className="bg-gradient-to-r from-[#1a365d]/5 to-[#4169E1]/5 backdrop-blur-sm
             px-8 py-4 rounded-xl border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300">
             <div className="flex items-center gap-4">
               <span className="font-semibold text-[#1a365d] text-lg tracking-wide">Sort by:</span>
@@ -180,6 +180,21 @@ const HomePage = () => {
                     transition={{ delay: 0.2 }}
                   >
                     <h2 className="text-2xl font-bold text-[#1a365d] mb-3 tracking-tight">{pack.name}</h2>
+
+                    <div className="flex items-center mb-3">
+                      <div className="flex items-center bg-yellow-100 px-3 py-1 rounded-full">
+                        <span className="text-yellow-700 font-bold mr-1">
+                          {pack.reviews && pack.reviews.length > 0
+                            ? (pack.reviews.reduce((sum, review) => sum + review.rating, 0) / pack.reviews.length).toFixed(1)
+                            : "0.0"}
+                        </span>
+                        <span className="text-yellow-700">★</span>
+                        <span className="text-gray-600 ml-2 text-sm">
+                          ({pack.reviews ? pack.reviews.length : 0} {pack.reviews && pack.reviews.length === 1 ? "rating" : "ratings"})
+                        </span>
+                      </div>
+                    </div>
+
                     <p className="text-[#2d3748] mb-6 leading-relaxed line-clamp-3">{pack.description}</p>
                     <div className="flex justify-between items-center mb-6">
                       <motion.p

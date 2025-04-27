@@ -95,7 +95,7 @@ const ViewBooking = () => {
 
   if (loading) {
     return (
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="min-h-screen flex items-center justify-center bg-white"
@@ -113,7 +113,7 @@ const ViewBooking = () => {
 
   if (error || !booking || !booking.guideId) {
     return (
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="min-h-screen flex items-center justify-center bg-white"
@@ -132,7 +132,7 @@ const ViewBooking = () => {
   }
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="min-h-screen flex flex-col bg-white"
@@ -143,15 +143,15 @@ const ViewBooking = () => {
         backgroundColor: 'rgba(255, 255, 255, 0.97)'
       }}
     >
-      <motion.main 
+      <motion.main
         className="flex-grow container mx-auto px-4 py-12 relative z-10"
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
         <motion.div
-          whileHover={{ 
-            y: -5, 
+          whileHover={{
+            y: -5,
             scale: 1.01,
             boxShadow: "0 22px 45px -12px rgba(26, 54, 93, 0.15)"
           }}
@@ -161,7 +161,7 @@ const ViewBooking = () => {
             Booking Details
           </h1>
           <h2 className="text-2xl font-bold text-[#2d3748] mb-4">
-            Booking ID: {booking._id}
+            Booking ID: <span className="bg-yellow-100 px-2 py-1 rounded-md text-yellow-800">{booking.bookingId || booking._id}</span>
           </h2>
 
           {successMessage && (

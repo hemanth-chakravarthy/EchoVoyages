@@ -5,7 +5,7 @@ import moment from 'moment';
 
 const router = express.Router();
 
-// Update the main search route to handle filtering by availability and languages
+// Update the main search route to handle filtering by availability, languages, and text search
 router.get('/', async (req, res) => {
     try {
         const {
@@ -20,33 +20,61 @@ router.get('/', async (req, res) => {
             minPrice,
             maxPrice,
             availableDates,
+            searchTerm
         } = req.query;
 
-        if (!location || !entityType) {
-            return res.status(400).json({ message: 'Location and entity type are required' });
+        if (!entityType) {
+            return res.status(400).json({ message: 'Entity type is required' });
         }
 
         let results;
 
         if (entityType === 'Guide') {
-            const query = {
-                location: { $regex: location, $options: 'i' },
-            };
+            const query = {};
+
+            // Add text search if searchTerm is provided
+            if (searchTerm && searchTerm.trim() !== '') {
+                const searchRegex = { $regex: searchTerm, $options: 'i' };
+                query.$or = [
+                    { username: searchRegex },
+                    { name: searchRegex },
+                    { specialization: searchRegex }
+                ];
+            }
+
+            // Add location filter if provided
+            if (location && location !== '') {
+                query.location = { $regex: location, $options: 'i' };
+            }
 
             // Only add the availability filter when explicitly set to true or false.
             if (availability === 'true') {
                 query.availability = true;
-             } 
-            
+            }
+
             if (language) {
                 query.languages = { $regex: language, $options: 'i' };
             }
 
             results = await Guide.find(query);
         } else if (entityType === 'Package') {
-            const query = {
-                location: { $regex: location, $options: 'i' },
-            };
+            const query = {};
+
+            // Add text search if searchTerm is provided
+            if (searchTerm && searchTerm.trim() !== '') {
+                const searchRegex = { $regex: searchTerm, $options: 'i' };
+                query.$or = [
+                    { name: searchRegex },
+                    { description: searchRegex },
+                    { highlights: searchRegex },
+                    { location: searchRegex }
+                ];
+            }
+
+            // Add location filter if provided
+            if (location && location !== '') {
+                query.location = { $regex: location, $options: 'i' };
+            }
 
             // Apply filters for packages as per the existing code
             if (minDuration || maxDuration) {

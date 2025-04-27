@@ -4,6 +4,7 @@ import axios from "axios";
 import moment from "moment";
 import Navbar from "../components/Navbar";
 import { motion } from "framer-motion";
+import { FaSearch } from "react-icons/fa";
 
 const Search = () => {
   const [locations, setLocations] = useState([]);
@@ -19,6 +20,7 @@ const Search = () => {
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [availableDates, setAvailableDates] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
 
   useEffect(() => {
@@ -48,7 +50,7 @@ const Search = () => {
   }, []);
 
   const handleSearch = async () => {
-    if (selectedLocation && entityType) {
+    if (entityType) {
       try {
         const res = await axios.get("http://localhost:5000/search", {
           params: {
@@ -63,17 +65,20 @@ const Search = () => {
             minPrice,
             maxPrice,
             availableDates,
+            searchTerm,
           },
         });
         setSearchResults(res.data || []);
       } catch (error) {
         console.error("Error searching:", error);
       }
+    } else {
+      alert("Please select a type (Guide or Package)");
     }
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="min-h-screen flex flex-col bg-white"
@@ -84,7 +89,7 @@ const Search = () => {
       }}
     >
       <Navbar />
-      <motion.main 
+      <motion.main
         initial={{ y: 20 }}
         animate={{ y: 0 }}
         className="flex-grow container mx-auto px-4 py-12 relative"
@@ -92,13 +97,32 @@ const Search = () => {
         <h1 className="text-5xl font-bold text-center mb-12 text-[#1a365d]">Search Packages and Guides</h1>
 
         <motion.div className="bg-white rounded-lg shadow-lg p-8 mb-8">
+          {/* Search input field */}
+          <div className="relative mb-6">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <FaSearch className="h-5 w-5 text-gray-400" />
+            </div>
+            <input
+              type="text"
+              placeholder="Search for packages or guides..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleSearch();
+                }
+              }}
+              className="w-full bg-white text-[#2d3748] border border-gray-200 rounded-md pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-[#4169E1] shadow-sm transition-all duration-300"
+            />
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <select
               className="w-full bg-white text-[#2d3748] border border-gray-200 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-[#4169E1] shadow-sm transition-all duration-300"
               value={selectedLocation}
               onChange={(e) => setSelectedLocation(e.target.value)}
             >
-              <option value="">Select Location</option>
+              <option value="">Select Location (Optional)</option>
               {locations.map((loc, index) => (
                 <option key={index} value={loc}>{loc}</option>
               ))}
@@ -144,18 +168,18 @@ const Search = () => {
               <div className="space-y-2">
                 <label className="text-sm text-[#2d3748]">Duration (days)</label>
                 <div className="flex gap-4">
-                  <input 
-                    type="number" 
-                    placeholder="Min" 
-                    value={minDuration} 
-                    onChange={(e) => setMinDuration(e.target.value)} 
+                  <input
+                    type="number"
+                    placeholder="Min"
+                    value={minDuration}
+                    onChange={(e) => setMinDuration(e.target.value)}
                     className="w-full bg-white text-[#2d3748] border border-gray-200 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-[#4169E1] shadow-sm transition-all duration-300"
                   />
-                  <input 
-                    type="number" 
-                    placeholder="Max" 
-                    value={maxDuration} 
-                    onChange={(e) => setMaxDuration(e.target.value)} 
+                  <input
+                    type="number"
+                    placeholder="Max"
+                    value={maxDuration}
+                    onChange={(e) => setMaxDuration(e.target.value)}
                     className="w-full bg-white text-[#2d3748] border border-gray-200 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-[#4169E1] shadow-sm transition-all duration-300"
                   />
                 </div>
@@ -164,18 +188,18 @@ const Search = () => {
               <div className="space-y-2">
                 <label className="text-sm text-[#2d3748]">Price Range</label>
                 <div className="flex gap-4">
-                  <input 
-                    type="number" 
-                    placeholder="Min Price" 
-                    value={minPrice} 
-                    onChange={(e) => setMinPrice(e.target.value)} 
+                  <input
+                    type="number"
+                    placeholder="Min Price"
+                    value={minPrice}
+                    onChange={(e) => setMinPrice(e.target.value)}
                     className="w-full bg-white text-[#2d3748] border border-gray-200 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-[#4169E1] shadow-sm transition-all duration-300"
                   />
-                  <input 
-                    type="number" 
-                    placeholder="Max Price" 
-                    value={maxPrice} 
-                    onChange={(e) => setMaxPrice(e.target.value)} 
+                  <input
+                    type="number"
+                    placeholder="Max Price"
+                    value={maxPrice}
+                    onChange={(e) => setMaxPrice(e.target.value)}
                     className="w-full bg-white text-[#2d3748] border border-gray-200 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-[#4169E1] shadow-sm transition-all duration-300"
                   />
                 </div>
@@ -183,9 +207,9 @@ const Search = () => {
 
               <div className="space-y-2">
                 <label className="text-sm text-[#2d3748]">Available Date</label>
-                <input 
-                  type="date" 
-                  onChange={(e) => setAvailableDates([...availableDates, moment(e.target.value).format("YYYY-MM-DD")])} 
+                <input
+                  type="date"
+                  onChange={(e) => setAvailableDates([...availableDates, moment(e.target.value).format("YYYY-MM-DD")])}
                   className="w-full bg-white text-[#2d3748] border border-gray-200 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-[#4169E1] shadow-sm transition-all duration-300"
                 />
               </div>
@@ -195,31 +219,48 @@ const Search = () => {
           <motion.button
             whileHover={{ scale: 1.02, backgroundColor: "#1a365d" }}
             whileTap={{ scale: 0.98 }}
-            className="mt-8 w-full bg-[#00072D] text-white font-semibold py-4 px-6 rounded-md transition-all duration-300 shadow-md hover:shadow-lg"
+            className="mt-8 w-full bg-[#00072D] text-white font-semibold py-4 px-6 rounded-md transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center"
             onClick={handleSearch}
-            disabled={!selectedLocation || !entityType}
+            disabled={!entityType}
           >
+            <FaSearch className="mr-2" />
             Search
           </motion.button>
+          <p className="text-center text-gray-500 mt-2 text-sm">Press Enter to search</p>
         </motion.div>
+
+        {searchResults.length > 0 && (
+          <div className="mb-6">
+            <p className="text-[#2d3748] text-lg">
+              Found <span className="font-bold">{searchResults.length}</span> results
+              {searchTerm && <span> for "<span className="font-bold text-[#4169E1]">{searchTerm}</span>"</span>}
+            </p>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" >
           {searchResults.length > 0 ? (
             searchResults.map((result, index) => (
-              <div key={index} className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:bg-opacity-20">
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100"
+              >
                 <div className="p-6">
-                  <h3 className="text-2xl font-semibold text-white mb-2">
-                    {result.name || result.title}
+                  <h3 className="text-2xl font-semibold text-[#1a365d] mb-2">
+                    {result.name || result.username || "Unnamed"}
                   </h3>
                   {entityType === "Guide" ? (
-                    <div className="text-gray-300">
-                      <p><span className="font-semibold">Experience:</span> {result.experience}</p>
-                      <p><span className="font-semibold">Availability:</span> {result.availability ? "Available" : "Unavailable"}</p>
-                      <p><span className="font-semibold">Languages:</span> {result.languages.join(", ")}</p>
-                      <p><span className="font-semibold">Location:</span> {result.location}</p>
+                    <div className="text-[#2d3748]">
+                      <p className="mb-2"><span className="font-semibold">Experience:</span> {result.experience ? `${result.experience} years` : "Not specified"}</p>
+                      <p className="mb-2"><span className="font-semibold">Availability:</span> {result.availability ? "Available" : "Unavailable"}</p>
+                      <p className="mb-2"><span className="font-semibold">Languages:</span> {result.languages && Array.isArray(result.languages) ? result.languages.join(", ") : result.languages || "Not specified"}</p>
+                      <p className="mb-4"><span className="font-semibold">Location:</span> {result.location || "Not specified"}</p>
                       <Link
                         to={`/guides/${result._id}`}
-                        className="mt-4 inline-block w-full bg-[#81c3d2] text-white font-bold py-2 px-4 rounded-full hover:bg-[#2c494b] transition-colors duration-300 text-center"
+                        className="mt-4 inline-block w-full bg-[#00072D] text-white font-bold py-2 px-4 rounded-md hover:bg-[#1a365d] transition-colors duration-300 text-center"
                       >
                         View Guide
                       </Link>
@@ -252,26 +293,37 @@ const Search = () => {
                         )}
                       </div>
                       {/* <p className="mb-2">{result.description}</p> */}
-                      <p><span className="font-semibold">Duration:</span> {result.duration} days</p>
-                      <p><span className="font-semibold">Max Group Size:</span> {result.maxGroupSize}</p>
-                      <p><span className="font-semibold ">Price:</span> Rs.{result.price}</p>
-                      <p><span className="font-semibold">Available Dates:</span> {result.availableDates.map((date) => moment(date).format("YYYY-MM-DD")).join(", ")}</p>
-                      <p><span className="font-semibold">Location:</span> {result.location}</p>
+                      <p className="mb-2"><span className="font-semibold">Duration:</span> {result.duration ? `${result.duration} days` : "Not specified"}</p>
+                      <p className="mb-2"><span className="font-semibold">Max Group Size:</span> {result.maxGroupSize || "Not specified"}</p>
+                      <p className="mb-2"><span className="font-semibold ">Price:</span> {result.price ? `Rs.${result.price}` : "Not specified"}</p>
+                      <p className="mb-2"><span className="font-semibold">Available Dates:</span> {result.availableDates && Array.isArray(result.availableDates) && result.availableDates.length > 0
+                        ? result.availableDates.map((date) => moment(date).format("YYYY-MM-DD")).join(", ")
+                        : "Not specified"}</p>
+                      <p className="mb-4"><span className="font-semibold">Location:</span> {result.location || "Not specified"}</p>
                       <Link
                         to={`/packages/${result._id}`}
-                        className="mt-4 inline-block w-full bg-[#00072D] text-white font-bold py-2 px-4 rounded-full hover:bg-[#2c494b] transition-colors duration-300 text-center"
+                        className="mt-4 inline-block w-full bg-[#00072D] text-white font-bold py-2 px-4 rounded-md hover:bg-[#1a365d] transition-colors duration-300 text-center"
                       >
                         View Package
                       </Link>
                     </div>
                   )}
                 </div>
-              </div>
+              </motion.div>
             ))
           ) : (
-            <p className="col-span-full text-center text-gray-300 text-lg">
-              No results found
-            </p>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="col-span-full text-center p-8 bg-white rounded-lg shadow-md"
+            >
+              <p className="text-[#2d3748] text-xl mb-2">No results found</p>
+              {searchTerm && (
+                <p className="text-gray-500">
+                  No matches found for "<span className="font-semibold">{searchTerm}</span>". Try different keywords or filters.
+                </p>
+              )}
+            </motion.div>
           )}
         </div>
       </motion.main>

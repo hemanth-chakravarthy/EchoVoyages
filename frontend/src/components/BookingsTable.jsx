@@ -28,25 +28,25 @@ const BookingsTable = ({ bookings }) => {
             {bookings.map((booking, index) => (
               <tr key={booking._id}>
                 <td>{index + 1}</td>
-                <td>{booking._id}</td>
+                <td><span className="bg-yellow-100 px-2 py-1 rounded-md text-yellow-800 font-medium">{booking.bookingId || booking._id}</span></td>
                 <td>{booking.bookingDate}</td>
                 <td>{booking.totalPrice}</td>
                 <td>
                   <div className="flex flex-col sm:flex-row gap-2">
-                    <Link 
-                      className="btn btn-neutral btn-xs" 
+                    <Link
+                      className="btn btn-neutral btn-xs"
                       to={`/admin/bookings/${booking._id}`}
                     >
                       Show
                     </Link>
-                    <Link 
-                      className="btn btn-dark btn-xs" 
+                    <Link
+                      className="btn btn-dark btn-xs"
                       to={`/admin/bookings/edit/${booking._id}`}
                     >
                       Update
                     </Link>
-                    <Link 
-                      className="btn btn-error btn-xs" 
+                    <Link
+                      className="btn btn-error btn-xs"
                       to={`/admin/bookings/delete/${booking._id}`}
                     >
                       Delete

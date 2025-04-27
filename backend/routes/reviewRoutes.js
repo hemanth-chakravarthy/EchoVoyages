@@ -37,8 +37,12 @@ router.post("/", async (req, res,next) => {
         });
     }
 
-    // Ensure that the booking matches the customer and package IDs
-    
+    // Ensure that the booking matches the customer ID
+    if (bookingData.customerId.toString() !== customerId) {
+      return res.status(403).send({
+        message: "You can only review items that you have booked.",
+      });
+    }
 
     // Check for the package if packageId is provided
     let packageData;
@@ -47,17 +51,12 @@ router.post("/", async (req, res,next) => {
       if (!packageData) {
         return res.status(404).send({ message: "Package not found" });
       }
-    }
-    if(packageData!=null){
-      if (
-        bookingData.customerId.toString() !== customerId ||
-        bookingData.packageId.toString() !== packageId
-      ) {
-        return res
-          .status(403)
-          .send({
-            message: "You can only review packages that you have booked.",
-          });
+
+      // Ensure the booking matches the package ID
+      if (bookingData.packageId && bookingData.packageId.toString() !== packageId) {
+        return res.status(403).send({
+          message: "You can only review packages that you have booked.",
+        });
       }
     }
 
@@ -67,6 +66,13 @@ router.post("/", async (req, res,next) => {
       guideData = await Guide.findById(guideId);
       if (!guideData) {
         return res.status(404).send({ message: "Guide not found" });
+      }
+
+      // Ensure the booking matches the guide ID
+      if (bookingData.guideId && bookingData.guideId.toString() !== guideId) {
+        return res.status(403).send({
+          message: "You can only review guides that you have booked.",
+        });
       }
     }
 
@@ -84,7 +90,53 @@ router.post("/", async (req, res,next) => {
       bookingId, // Store the booking ID in the review for future reference
     };
 
+    // Create the review in the reviews collection
     const review = await reviews.create(newReview);
+
+    // If this is a package review, also add it to the package's reviews array
+    if (packageId && packageData) {
+      // Add the review to the package's reviews array
+      await packages.findByIdAndUpdate(
+        packageId,
+        {
+          $push: {
+            reviews: {
+              customer: customerId,
+              rating: rating,
+              comment: comment,
+              date: new Date()
+            }
+          }
+        },
+        { new: true }
+      );
+      console.log(`Review added to package ${packageId}`);
+    }
+
+    // If this is a guide review, also add it to the guide's reviews array
+    if (guideId && guideData) {
+      // Add the review to the guide's reviews array
+      await Guide.findByIdAndUpdate(
+        guideId,
+        {
+          $push: {
+            reviews: {
+              customer: customerId,
+              rating: rating,
+              comment: comment,
+              date: new Date()
+            }
+          },
+          $set: {
+            'ratings.averageRating': (guideData.ratings.averageRating * guideData.ratings.numberOfReviews + rating) / (guideData.ratings.numberOfReviews + 1),
+            'ratings.numberOfReviews': guideData.ratings.numberOfReviews + 1
+          }
+        },
+        { new: true }
+      );
+      console.log(`Review added to guide ${guideId}`);
+    }
+
     return res
       .status(201)
       .send({ message: "Review submitted successfully", review });

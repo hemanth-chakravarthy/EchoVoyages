@@ -1,6 +1,11 @@
 import mongoose from 'mongoose';
 
 const bookingSchema = new mongoose.Schema({
+    bookingId: {
+        type: String,
+        unique: true,
+        required: false // Making it optional for backward compatibility
+    },
     customerName: {
         type: String,
         required: true

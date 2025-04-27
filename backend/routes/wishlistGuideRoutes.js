@@ -31,8 +31,9 @@ router.get('/cust/:customerId', async (req, res,next) => {
         // Fetch wishlist for the customer and populate guide details
         const wishlist = await wishlistGuide.find({ customerId }).populate('guideId');
 
+        // Return empty array instead of 404 when no wishlist is found
         if (!wishlist || wishlist.length === 0) {
-            return res.status(404).json({ message: 'No wishlist found' });
+            return res.status(200).json([]);
         }
 
         res.status(200).json(wishlist);

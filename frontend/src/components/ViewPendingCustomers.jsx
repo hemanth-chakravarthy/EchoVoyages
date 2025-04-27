@@ -59,6 +59,7 @@ const ViewPendingCustomers = () => {
           {bookings.map((booking) => (
             <li key={booking._id}>
               <h2>{booking.customerName}</h2>
+              <p>Booking ID: <span className="bg-yellow-100 px-2 py-1 rounded-md text-yellow-800 font-medium">{booking.bookingId || booking._id}</span></p>
               <p>Status: {booking.status}</p>
               <Link to={`/bookings/${booking._id}`}>
                 <button>View</button>

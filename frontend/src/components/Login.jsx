@@ -142,12 +142,24 @@ const Login = () => {
               Sign in
             </button>
 
-            <Link
-              to="/forgot-password"
-              className="text-sm text-indigo-300 hover:text-indigo-200 text-center"
-            >
-              Forgot your password?
-            </Link>
+            <div className="flex flex-col space-y-2">
+              <Link
+                to="/forgot-password"
+                className="text-sm text-indigo-300 hover:text-indigo-200 text-center"
+              >
+                Forgot your password?
+              </Link>
+
+              <div className="text-center mt-2">
+                <span className="text-gray-400">Don't have an account? </span>
+                <Link
+                  to="/signup"
+                  className="text-sm text-indigo-300 hover:text-indigo-200"
+                >
+                  Sign up here
+                </Link>
+              </div>
+            </div>
 
             <button
               type="button"

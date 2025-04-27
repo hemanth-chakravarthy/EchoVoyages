@@ -1,6 +1,7 @@
 /** @format */
 
 import express from "express";
+import mongoose from "mongoose";
 import { customers } from "../models/customerModel.js";
 import { Agency } from "../models/agencyModel.js";
 import { Guide } from "../models/guideModel.js";
@@ -17,7 +18,7 @@ const JWT_SECRET = "Voyage_secret";
 // Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadDir = "public/uploads/profile-pictures";
+    const uploadDir = "public/customerProfiles";
 
     // Create directory if it doesn't exist
     if (!fs.existsSync(uploadDir)) {
@@ -30,7 +31,7 @@ const storage = multer.diskStorage({
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     cb(
       null,
-      file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
+      "profile-" + uniqueSuffix + path.extname(file.originalname)
     );
   },
 });
@@ -52,8 +53,8 @@ const upload = multer({
   },
 });
 
-// Serve static files from the uploads directory
-router.use("public/uploads", express.static("uploads"));
+// Serve static files from the public directory
+router.use("/public", express.static("public"));
 
 // save a customer
 router.post("/signup", async (req, res, next) => {
@@ -92,22 +93,43 @@ router.post("/signup", async (req, res, next) => {
       const customer = await customers.create(newCust);
       return res.status(201).send(customer);
     } else if (req.body.role == "agency") {
-      // Agency creation logic (unchanged)
-      if (await Agency.findOne({ username: req.body.username })) {
-        return res.status(404).send({ error: "User already Exists" });
+      try {
+        // Check if username already exists
+        if (await Agency.findOne({ username: req.body.username })) {
+          return res.status(404).send({ error: "User already Exists" });
+        }
+
+        // Check if email already exists
+        if (await Agency.findOne({ gmail: req.body.gmail })) {
+          return res.status(404).send({ error: "Email already in use" });
+        }
+
+        // Create a new agency using the Mongoose model
+        const newAgency = new Agency({
+          username: req.body.username,
+          name: req.body.Name,
+          phno: req.body.phno,
+          gmail: req.body.gmail,
+          password: hashedPassword,
+          role: req.body.role,
+          specialization: req.body.specialization
+          // contactInfo will be set by the pre-save hook
+        });
+
+        // Save the agency
+        const agency = await newAgency.save();
+
+        // Return the created agency
+        return res.status(201).send(agency);
+      } catch (error) {
+        console.error("Error creating agency:", error);
+        return res.status(500).send({
+          error: "Failed to create agency account",
+          details: error.message,
+          code: error.code,
+          stack: error.stack
+        });
       }
-
-      const newAgency = {
-        username: req.body.username,
-        name: req.body.Name,
-        phno: req.body.phno,
-        gmail: req.body.gmail,
-        password: hashedPassword,
-        specialization: req.body.specialization,
-      };
-
-      const agency = await Agency.create(newAgency);
-      return res.status(201).send(agency);
     } else if (req.body.role == "guide") {
       // Guide creation logic (unchanged)
       if (await Guide.findOne({ username: req.body.username })) {
@@ -120,6 +142,7 @@ router.post("/signup", async (req, res, next) => {
         phno: req.body.phno,
         gmail: req.body.gmail,
         password: hashedPassword,
+        role: req.body.role,
         specialization: req.body.specialization,
       };
 

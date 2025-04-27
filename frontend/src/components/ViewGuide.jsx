@@ -17,7 +17,8 @@ const ViewGuide = () => {
   const [comment, setComment] = useState("");
   const [bookingStatus, setBookingStatus] = useState("");
   const token = localStorage.getItem("token");
-  const [bookingId, setBookingId] = useState("")
+  const [bookingId, setBookingId] = useState("");
+  const [customerBookings, setCustomerBookings] = useState([]);
   const customerId = token ? jwtDecode(token).id : null;
 
   useEffect(() => {
@@ -29,6 +30,7 @@ const ViewGuide = () => {
         console.error("Error fetching guide details:", error);
       }
     };
+
     const fetchReviews = async () => {
       try {
         const res = await fetch(`http://localhost:5000/reviews/guides/${id}`);
@@ -39,9 +41,34 @@ const ViewGuide = () => {
       }
     };
 
+    const fetchCustomerBookings = async () => {
+      if (customerId && token) {
+        try {
+          const response = await axios.get(
+            `http://localhost:5000/bookings/cust/${customerId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          // Filter bookings for this guide
+          const guideBookings = response.data.filter(
+            booking => booking.guideId === id
+          );
+
+          setCustomerBookings(guideBookings);
+        } catch (error) {
+          console.error("Error fetching customer bookings:", error);
+        }
+      }
+    };
+
     fetchReviews();
     fetchGuideDetails();
-  }, [id]);
+    fetchCustomerBookings();
+  }, [id, customerId, token]);
 
   const handleBooking = async () => {
     try {
@@ -146,7 +173,7 @@ const ViewGuide = () => {
 
   if (!guideDetails) {
     return (
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="min-h-screen flex flex-col bg-white"
@@ -166,7 +193,7 @@ const ViewGuide = () => {
   }
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="min-h-screen flex flex-col bg-white"
@@ -179,8 +206,8 @@ const ViewGuide = () => {
     >
       <Navbar />
       <ToastContainer position="top-right" autoClose={3000} />
-      
-      <motion.main 
+
+      <motion.main
         initial={{ y: 20 }}
         animate={{ y: 0 }}
         className="flex-grow container mx-auto px-4 py-12 relative z-10"
@@ -190,9 +217,23 @@ const ViewGuide = () => {
           animate={{ y: 0, opacity: 1 }}
           className="bg-white rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 p-8"
         >
-          <h1 className="text-5xl font-bold text-[#1a365d] tracking-tight mb-8">{guideDetails.username}</h1>
+          <h1 className="text-5xl font-bold text-[#1a365d] tracking-tight mb-4">{guideDetails.username}</h1>
+
+          {/* Rating summary */}
+          <div className="rating-summary mb-6" style={{ display: 'inline-flex', alignItems: 'center', margin: '10px 0', backgroundColor: '#FEF9C3', padding: '5px 10px', borderRadius: '20px' }}>
+            <span style={{ fontWeight: 'bold', color: '#A16207', marginRight: '5px' }}>
+              {guideDetails.ratings && guideDetails.ratings.averageRating > 0
+                ? guideDetails.ratings.averageRating.toFixed(1)
+                : "0.0"}
+            </span>
+            <span style={{ color: '#A16207' }}>★</span>
+            <span style={{ color: '#4B5563', marginLeft: '5px', fontSize: '0.875rem' }}>
+              ({guideDetails.ratings ? guideDetails.ratings.numberOfReviews : 0} {guideDetails.ratings && guideDetails.ratings.numberOfReviews === 1 ? "rating" : "ratings"})
+            </span>
+          </div>
+
           <p className="text-[#2d3748] leading-relaxed mb-6">{guideDetails.description}</p>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             {[
               { label: "Experience", value: `${guideDetails.experience} years` },
@@ -222,7 +263,7 @@ const ViewGuide = () => {
                 {revvs.map((review) => (
                   <motion.div
                     key={review._id}
-                    whileHover={{ 
+                    whileHover={{
                       y: -5,
                       boxShadow: "0 22px 45px -12px rgba(26, 54, 93, 0.15)"
                     }}
@@ -290,7 +331,7 @@ const ViewGuide = () => {
 
       {/* Review Modal with updated styling */}
       {showReviewModal && (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
@@ -302,13 +343,25 @@ const ViewGuide = () => {
           >
             <h2 className="text-3xl font-bold text-[#1a365d] tracking-tight mb-6">Rate and Review</h2>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Booking ID:</label>
-              <input
-                type="text"
-                className="w-full border border-gray-300 rounded-md py-2 px-3"
-                value={bookingId}
-                onChange={(e) => setBookingId(e.target.value)}
-              />
+              <label className="block text-sm font-medium text-gray-700 mb-1">Select Your Booking:</label>
+              {customerBookings.length > 0 ? (
+                <select
+                  className="w-full border border-gray-300 rounded-md py-2 px-3"
+                  value={bookingId}
+                  onChange={(e) => setBookingId(e.target.value)}
+                >
+                  <option value="">Select a booking</option>
+                  {customerBookings.map((booking) => (
+                    <option key={booking._id} value={booking._id}>
+                      {booking.bookingId || booking._id} - {new Date(booking.bookingDate).toLocaleDateString()}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <div className="text-red-500 p-2 bg-red-50 rounded-md">
+                  <p>You haven't booked this guide yet. Please book the guide before leaving a review.</p>
+                </div>
+              )}
             </div>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">Rating:</label>

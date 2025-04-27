@@ -15,13 +15,29 @@ const agencySchema = mongoose.Schema(
       gmail: {
         type: String,
         required: true,
-        unique: true,
         trim: true,
       },
       phno: {
         type: String,
         required: true,
         trim: true,
+      },
+      // Add contactInfo field to match existing database schema
+      contactInfo: {
+        email: {
+          type: String,
+          trim: true,
+          default: function() {
+            return this.gmail || '';
+          }
+        },
+        phone: {
+          type: String,
+          trim: true,
+          default: function() {
+            return this.phno || '';
+          }
+        }
       },
     password: {
       type: String,
@@ -91,13 +107,34 @@ const agencySchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    profileImage: { 
-      type: String 
+    profileImage: {
+      type: String
     }
   },
   {
     timestamps: true,
   }
-  
+
 );
+
+// Add a pre-save hook to ensure contactInfo is properly set
+agencySchema.pre('save', function(next) {
+  // If contactInfo doesn't exist or email is not set, initialize it
+  if (!this.contactInfo) {
+    this.contactInfo = {};
+  }
+
+  // Set contactInfo.email to gmail if not already set
+  if (!this.contactInfo.email) {
+    this.contactInfo.email = this.gmail;
+  }
+
+  // Set contactInfo.phone to phno if not already set
+  if (!this.contactInfo.phone) {
+    this.contactInfo.phone = this.phno;
+  }
+
+  next();
+});
+
 export const Agency = mongoose.model("agency", agencySchema);

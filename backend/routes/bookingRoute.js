@@ -2,13 +2,31 @@ import express from 'express'
 import { bookings } from '../models/bookingModel.js';
 import { packages } from '../models/packageModel.js';
 import { customers } from '../models/customerModel.js';
-
 import {Guide} from '../models/guideModel.js'
+
 const router = express.Router();
+
+// Function to generate a custom booking ID
+const generateBookingId = (customerName) => {
+    // Get the first 3 letters of the customer name (uppercase)
+    const namePrefix = customerName.substring(0, 3).toUpperCase();
+
+    // Generate a random 4-digit number
+    const randomNum = Math.floor(1000 + Math.random() * 9000);
+
+    // Get current date in YYMMDD format
+    const date = new Date();
+    const dateStr = date.getFullYear().toString().substr(-2) +
+                   (date.getMonth() + 1).toString().padStart(2, '0') +
+                   date.getDate().toString().padStart(2, '0');
+
+    // Combine to create the booking ID: XXX-1234-YYMMDD
+    return `${namePrefix}-${randomNum}-${dateStr}`;
+};
 
 
 router.post('/', async (req, res,next) => {
-    console.log('Booking request received:', req.body); 
+    console.log('Booking request received:', req.body);
     try {
         const { customerId, packageId, guideId } = req.body;
 
@@ -47,8 +65,23 @@ router.post('/', async (req, res,next) => {
             }
         }
 
+        // Generate a unique custom booking ID
+        let bookingId;
+        let isUnique = false;
+
+        // Keep generating IDs until we find a unique one
+        while (!isUnique) {
+            bookingId = generateBookingId(customerName);
+            // Check if this ID already exists in the database
+            const existingBooking = await bookings.findOne({ bookingId });
+            if (!existingBooking) {
+                isUnique = true;
+            }
+        }
+
         // Create the booking
         const newBooking = new bookings({
+            bookingId,
             customerName,
             customerId,
             packageId: packageId || null, // Only include package if provided
@@ -154,7 +187,7 @@ router.get('/guides/:guideId',async (req, res,next) => {
         next(error);
         res.status(500).json({ message: 'Error fetching bookings' });
     }
-    
+
 })
 
 // delete a booking
@@ -173,7 +206,7 @@ router.delete('/:id', async (req,res,next) => {
         next(error);
         res.status(500).send({message: error.message})
     }
-    
+
 })
 // update booking
 router.put('/:id',async (req,res,next) => {
@@ -191,7 +224,7 @@ router.put('/:id',async (req,res,next) => {
         next(error);
         res.status(500).send({message: error.message})
     }
-    
+
 })
 // view a single booking
 router.get('/:id',async (req,res,next) => {
@@ -205,11 +238,11 @@ router.get('/:id',async (req,res,next) => {
         next(error);
         res.status(500).send({message: error.message})
     }
-    
+
 })
 router.get('/verifyBooking', async (req, res,next) => {
     const { customerId, packageId } = req.query;
-  
+
     try {
       const booking = await Booking.findOne({ customerId, packageId });
       res.status(200).json({ hasBooking: !!booking });
@@ -218,6 +251,6 @@ router.get('/verifyBooking', async (req, res,next) => {
       res.status(500).json({ message: 'Error verifying booking', error });
     }
   });
-  
+
 export default router
 

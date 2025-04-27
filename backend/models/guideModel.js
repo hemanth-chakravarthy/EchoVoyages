@@ -55,6 +55,14 @@ const guideSchema = new mongoose.Schema(
         default: 0,
       },
     },
+    reviews: [
+      {
+        customer: { type: mongoose.Schema.Types.ObjectId, ref: 'customers' },
+        rating: { type: Number, min: 1, max: 5 },
+        comment: String,
+        date: { type: Date, default: Date.now }
+      }
+    ],
     availability: {
       type: Boolean,
       default: false,

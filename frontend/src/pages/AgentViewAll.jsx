@@ -61,8 +61,8 @@ const AgentViewAll = () => {
       } finally {
         setIsLoading(false);
       }
-      
-      
+
+
     };
 
     fetchPackages();
@@ -71,7 +71,7 @@ const AgentViewAll = () => {
   const handleViewPackage = (packageId) => {
     navigate(`/packages/${packageId}`);
   };
- 
+
 
   if (isLoading) {
     return (
@@ -137,7 +137,7 @@ const AgentViewAll = () => {
         </div>
       </nav>
 
-      <motion.main 
+      <motion.main
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex-grow container mx-auto px-4 py-12 relative z-10"
@@ -147,7 +147,7 @@ const AgentViewAll = () => {
         </h1>
 
         {packages.length === 0 ? (
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="text-xl text-[#2d3748] text-center"
@@ -179,6 +179,19 @@ const AgentViewAll = () => {
                     <p className="text-2xl font-bold text-[#4169E1] mb-4">Rs. {pkg.price}</p>
                     <p className="text-[#2d3748] leading-relaxed mb-2">Duration: {pkg.duration} days</p>
                     <p className="text-[#2d3748] leading-relaxed mb-4">{pkg.itinerary}</p>
+                    <div className="flex items-center mb-4">
+                      <div className="flex items-center bg-yellow-100 px-3 py-1 rounded-full">
+                        <span className="text-yellow-700 font-bold mr-1">
+                          {pkg.reviews && pkg.reviews.length > 0
+                            ? (pkg.reviews.reduce((sum, review) => sum + review.rating, 0) / pkg.reviews.length).toFixed(1)
+                            : "0.0"}
+                        </span>
+                        <span className="text-yellow-700">★</span>
+                        <span className="text-gray-600 ml-2 text-sm">
+                          ({pkg.reviews ? pkg.reviews.length : 0} {pkg.reviews && pkg.reviews.length === 1 ? "rating" : "ratings"})
+                        </span>
+                      </div>
+                    </div>
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
@@ -215,6 +228,19 @@ const AgentViewAll = () => {
                     <p className="text-2xl font-bold text-[#4169E1] mb-4">Rs. {pkg.price}</p>
                     <p className="text-[#2d3748] leading-relaxed mb-2">Duration: {pkg.duration} days</p>
                     <p className="text-[#2d3748] leading-relaxed mb-4">{pkg.itinerary}</p>
+                    <div className="flex items-center mb-4">
+                      <div className="flex items-center bg-yellow-100 px-3 py-1 rounded-full">
+                        <span className="text-yellow-700 font-bold mr-1">
+                          {pkg.reviews && pkg.reviews.length > 0
+                            ? (pkg.reviews.reduce((sum, review) => sum + review.rating, 0) / pkg.reviews.length).toFixed(1)
+                            : "0.0"}
+                        </span>
+                        <span className="text-yellow-700">★</span>
+                        <span className="text-gray-600 ml-2 text-sm">
+                          ({pkg.reviews ? pkg.reviews.length : 0} {pkg.reviews && pkg.reviews.length === 1 ? "rating" : "ratings"})
+                        </span>
+                      </div>
+                    </div>
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}

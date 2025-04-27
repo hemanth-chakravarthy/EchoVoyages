@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom'; 
+import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { motion } from 'framer-motion';
 
@@ -28,7 +28,7 @@ const CustomerGuide = () => {
 
     if (loading) {
         return (
-            <motion.div 
+            <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 className="min-h-screen flex flex-col bg-white"
@@ -48,7 +48,7 @@ const CustomerGuide = () => {
     }
 
     return (
-        <motion.div 
+        <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="min-h-screen flex flex-col bg-white"
@@ -60,7 +60,7 @@ const CustomerGuide = () => {
             }}
         >
             <Navbar />
-            <motion.main 
+            <motion.main
                 initial={{ y: 20 }}
                 animate={{ y: 0 }}
                 className="flex-grow container mx-auto px-4 py-12 relative z-10"
@@ -78,8 +78,8 @@ const CustomerGuide = () => {
                         {guides.map((guide) => (
                             <motion.div
                                 key={guide._id}
-                                whileHover={{ 
-                                    y: -5, 
+                                whileHover={{
+                                    y: -5,
                                     scale: 1.01,
                                     boxShadow: "0 22px 45px -12px rgba(26, 54, 93, 0.15)"
                                 }}
@@ -87,6 +87,22 @@ const CustomerGuide = () => {
                             >
                                 <div className="p-6">
                                     <h2 className="text-2xl font-bold text-[#1a365d] mb-2">{guide.username}</h2>
+
+                                    {/* Rating display */}
+                                    <div className="flex items-center mb-3">
+                                      <div className="flex items-center bg-yellow-100 px-3 py-1 rounded-full">
+                                        <span className="text-yellow-700 font-bold mr-1">
+                                          {guide.ratings && guide.ratings.averageRating > 0
+                                            ? guide.ratings.averageRating.toFixed(1)
+                                            : "0.0"}
+                                        </span>
+                                        <span className="text-yellow-700">★</span>
+                                        <span className="text-gray-600 ml-2 text-sm">
+                                          ({guide.ratings ? guide.ratings.numberOfReviews : 0} {guide.ratings && guide.ratings.numberOfReviews === 1 ? "rating" : "ratings"})
+                                        </span>
+                                      </div>
+                                    </div>
+
                                     <p className="text-[#2d3748] mb-4 leading-relaxed">{guide.description}</p>
                                     <div className="flex justify-between items-center mb-4">
                                         <p className="text-[#2d3748]">
@@ -110,7 +126,7 @@ const CustomerGuide = () => {
                         ))}
                     </div>
                 ) : (
-                    <motion.p 
+                    <motion.p
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         className="text-center text-xl text-[#2d3748]"
