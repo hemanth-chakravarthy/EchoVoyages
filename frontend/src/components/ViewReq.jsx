@@ -61,14 +61,23 @@ const ViewReq = () => {
         setStatus(newStatus);
         if (newStatus === "approved") {
           // First check if there's an existing booking for this request
-          const bookingUpdated = await updateExistingBooking();
+          const bookingUpdated = await updateExistingBooking("confirmed");
 
           // If no existing booking was found, create a new one
           if (!bookingUpdated) {
-            await addRequestToBookings();
+            await addRequestToBookings("confirmed");
           }
 
           setModalMessage("Request approved and booking status updated to confirmed.");
+        } else if (newStatus === "rejected") {
+          // Update any existing booking to canceled status
+          const bookingUpdated = await updateExistingBooking("canceled");
+
+          if (bookingUpdated) {
+            setModalMessage("Request rejected and booking status updated to canceled.");
+          } else {
+            setModalMessage("Request rejected. No associated booking found.");
+          }
         } else {
           setModalMessage("Status updated successfully.");
         }
@@ -87,7 +96,7 @@ const ViewReq = () => {
   };
 
   // Function to update existing booking if one exists
-  const updateExistingBooking = async () => {
+  const updateExistingBooking = async (newStatus = "confirmed") => {
     try {
       // Check if there's an existing booking for this customer and package
       const response = await fetch(`http://localhost:5000/bookings/cust/${requestDetails.customerId}`);
@@ -97,24 +106,25 @@ const ViewReq = () => {
 
         // Find a booking that matches this package
         const matchingBooking = bookings.find(
-          booking => booking.packageId === requestDetails.packageId && booking.status === "pending"
+          booking => booking.packageId === requestDetails.packageId &&
+                    (booking.status === "pending" || booking.status === "confirmed")
         );
 
         if (matchingBooking) {
-          // Update the existing booking to confirmed status
+          // Update the existing booking to the new status
           const updateResponse = await fetch(`http://localhost:5000/bookings/${matchingBooking._id}`, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              status: "confirmed",
+              status: newStatus,
               totalPrice: requestDetails.price // Update price if it changed in the request
             }),
           });
 
           if (updateResponse.ok) {
-            console.log("Existing booking updated to confirmed status");
+            console.log(`Existing booking updated to ${newStatus} status`);
             return true; // Return true to indicate a booking was updated
           }
         }
@@ -127,7 +137,7 @@ const ViewReq = () => {
     }
   };
 
-  const addRequestToBookings = async () => {
+  const addRequestToBookings = async (status = "confirmed") => {
     try {
       // Check if a booking already exists for this customer and package
       const checkResponse = await fetch(`http://localhost:5000/bookings/cust/${requestDetails.customerId}`);
@@ -141,54 +151,56 @@ const ViewReq = () => {
         );
 
         if (existingBooking) {
-          // If a booking already exists, update its status to confirmed
+          // If a booking already exists, update its status
           const updateResponse = await fetch(`http://localhost:5000/bookings/${existingBooking._id}`, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              status: "confirmed",
+              status: status,
               totalPrice: requestDetails.price // Update price if it changed in the request
             }),
           });
 
           if (updateResponse.ok) {
-            console.log("Existing booking updated to confirmed status");
-            setModalMessage("Existing booking updated to confirmed status.");
+            console.log(`Existing booking updated to ${status} status`);
+            setModalMessage(`Existing booking updated to ${status} status.`);
             setShowModal(true);
           } else {
-            console.error("Failed to update existing booking status");
+            console.error(`Failed to update existing booking status to ${status}`);
           }
           return;
         }
       }
 
-      // If no booking exists, create a new one
-      const response = await fetch("http://localhost:5000/bookings", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          customerName: requestDetails.customerName,
-          customerId: requestDetails.customerId,
-          packageName: requestDetails.packageName,
-          packageId: requestDetails.packageId,
-          guideName: requestDetails.guideName || "",
-          guideId: requestDetails.guideId || null,
-          totalPrice: requestDetails.price,
-          status: "confirmed", // Set status to confirmed immediately
-        }),
-      });
+      // If no booking exists and status is confirmed, create a new one
+      if (status === "confirmed") {
+        const response = await fetch("http://localhost:5000/bookings", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            customerName: requestDetails.customerName,
+            customerId: requestDetails.customerId,
+            packageName: requestDetails.packageName,
+            packageId: requestDetails.packageId,
+            guideName: requestDetails.guideName || "",
+            guideId: requestDetails.guideId || null,
+            totalPrice: requestDetails.price,
+            status: status, // Set status as specified
+          }),
+        });
 
-      if (response.ok) {
-        setModalMessage("Request successfully added to bookings with confirmed status.");
-        setShowModal(true);
-      } else {
-        const errorData = await response.json();
-        setModalMessage(`Failed to add to bookings: ${errorData.message}`);
-        setShowModal(true);
+        if (response.ok) {
+          setModalMessage(`Request successfully added to bookings with ${status} status.`);
+          setShowModal(true);
+        } else {
+          const errorData = await response.json();
+          setModalMessage(`Failed to add to bookings: ${errorData.message}`);
+          setShowModal(true);
+        }
       }
     } catch (error) {
       console.error("Error adding to bookings:", error);
@@ -222,30 +234,7 @@ const ViewReq = () => {
       }}
     >
       {/* Navbar */}
-      <nav className="bg-white shadow-lg">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <span className="text-2xl font-bold text-[#1a365d]">EchoVoyages</span>
-            </div>
-            <div className="flex items-center space-x-4">
-              {[
-                { to: "/AgentHome", text: "Home" },
-                { to: "/createPackage", text: "Create Package" },
-                { to: "/AgentProfilePage", text: "Profile" }
-              ].map((link) => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  className="px-4 py-2 rounded-full text-[#2d3748] hover:bg-[#4169E1]/10 hover:text-[#4169E1] transition-all duration-300"
-                >
-                  {link.text}
-                </Link>
-              ))}
-            </div>
-          </div>
-        </div>
-      </nav>
+
 
       <motion.main
         initial={{ opacity: 0, y: 20 }}

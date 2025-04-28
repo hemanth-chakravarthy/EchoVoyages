@@ -120,14 +120,15 @@ const RoleBasedNavbar = () => {
                 {link.text}
               </Link>
             ))}
-            {/* {userRole !== 'guest' && (
-              <button
-                onClick={handleLogout}
-                className="px-3 py-2 rounded-md text-sm font-medium text-red-600 hover:bg-red-50 hover:text-red-800 transition-colors duration-200"
-              >
-                Logout
-              </button>
-            )} */}
+            {userRole !== 'guest' && (
+              <>
+                {userName && (
+                  <div className="px-3 py-2 text-sm font-medium text-[#1a365d]">
+                    Welcome, {userName}
+                  </div>
+                )}
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -178,12 +179,19 @@ const RoleBasedNavbar = () => {
               </Link>
             ))}
             {userRole !== 'guest' && (
-              <button
-                onClick={handleLogout}
-                className="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-red-600 hover:bg-red-50 hover:text-red-800"
-              >
-                Logout
-              </button>
+              <>
+                {userName && (
+                  <div className="px-3 py-2 text-base font-medium text-[#1a365d] border-t border-gray-200 mt-2 pt-2">
+                    Welcome, {userName}
+                  </div>
+                )}
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left block px-3 py-2 mt-2 rounded-md text-base font-medium bg-red-600 text-white hover:bg-red-700 transition-all duration-300 shadow-sm"
+                >
+                  Logout
+                </button>
+              </>
             )}
           </div>
         </motion.div>

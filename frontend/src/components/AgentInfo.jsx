@@ -30,7 +30,12 @@ const AgentInfo = () => {
         const response = await axios.get(`http://localhost:5000/agency/${id}`)
         setAgent(response.data)
         if (response.data.profileImage) {
-          setPreviewImage(`http://localhost:5000/${response.data.profileImage}`)
+          // Make sure the URL is properly formatted
+          const profileImageUrl = response.data.profileImage.startsWith('http')
+            ? response.data.profileImage
+            : `http://localhost:5000/${response.data.profileImage}`
+          console.log("Profile image URL:", profileImageUrl)
+          setPreviewImage(profileImageUrl)
         }
       } catch (error) {
         toast.error("Error fetching agent details")
@@ -97,6 +102,18 @@ const AgentInfo = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0]
     if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast.error('Please select an image file (JPEG, PNG, etc.)')
+        return
+      }
+
+      // Validate file size (5MB max)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Image size should be less than 5MB')
+        return
+      }
+
       setProfileImage(file)
       const reader = new FileReader()
       reader.onloadend = () => {
@@ -120,14 +137,33 @@ const AgentInfo = () => {
   const handleUpdateAgent = async () => {
     if (validateForm()) {
       try {
+        // Show loading toast
+        const loadingToastId = toast.loading("Updating profile...")
+
         const formData = new FormData()
 
         // Append agent data
         Object.keys(agent).forEach((key) => {
-          if (key !== "contactInfo") {
-            formData.append(key, agent[key])
+          if (key !== "contactInfo" && key !== "profileImage" && key !== "travelPackages") {
+            // Skip empty arrays or convert arrays to JSON strings
+            if (Array.isArray(agent[key])) {
+              if (agent[key].length > 0) {
+                formData.append(key, JSON.stringify(agent[key]))
+              }
+            } else {
+              formData.append(key, agent[key])
+            }
           }
         })
+
+        // Handle travelPackages separately to avoid casting errors
+        if (agent.travelPackages && agent.travelPackages.length > 0) {
+          // Only include non-empty package IDs
+          const validPackages = agent.travelPackages.filter(pkg => pkg && pkg.trim() !== '')
+          if (validPackages.length > 0) {
+            formData.append('travelPackages', JSON.stringify(validPackages))
+          }
+        }
 
         // Append contact info
         formData.append("contactInfo.phone", agent.contactInfo.phone || "")
@@ -136,20 +172,42 @@ const AgentInfo = () => {
         // Append profile image if exists
         if (profileImage) {
           formData.append("profileImage", profileImage)
+          console.log("Appending profile image to form data:", profileImage.name)
         }
 
-        await axios.put(`http://localhost:5000/agency/${id}`, formData, {
+        const response = await axios.put(`http://localhost:5000/agency/${id}`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         })
 
-        toast.success("Agent details updated successfully")
+        // Update loading toast to success
+        toast.update(loadingToastId, {
+          render: "Profile updated successfully!",
+          type: "success",
+          isLoading: false,
+          autoClose: 3000
+        })
+
+        console.log("Update response:", response.data)
+
+        // Update local state with the response data
+        setAgent(response.data)
+        if (response.data.profileImage) {
+          const profileImageUrl = response.data.profileImage.startsWith('http')
+            ? response.data.profileImage
+            : `http://localhost:5000/${response.data.profileImage}`
+          setPreviewImage(profileImageUrl)
+        }
+
         setEditing(false)
-        navigate("/AgentProfilePage")
+        setProfileImage(null)
       } catch (error) {
         toast.error("Error occurred while updating agent details")
-        console.log(error)
+        console.error("Update error:", error)
+        if (error.response) {
+          console.error("Error response:", error.response.data)
+        }
       }
     }
   }
@@ -173,7 +231,7 @@ const AgentInfo = () => {
               <div className="text-center">
                 <div className="relative inline-block">
                   <div
-                    className={`w-32 h-32 rounded-full mx-auto mb-4 border-4 border-[#4169E1]/20 overflow-hidden ${editing ? "cursor-pointer hover:opacity-80" : ""}`}
+                    className={`w-40 h-40 rounded-full mx-auto mb-4 border-4 border-[#4169E1]/20 overflow-hidden shadow-lg ${editing ? "cursor-pointer hover:opacity-80" : ""}`}
                     onClick={handleImageClick}
                   >
                     <img
@@ -183,7 +241,7 @@ const AgentInfo = () => {
                     />
                     {editing && (
                       <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity">
-                        <span className="text-white text-sm font-medium">Change Photo</span>
+                        <span className="text-white text-sm font-medium px-3 py-1 bg-[#1a365d] rounded-full">Change Photo</span>
                       </div>
                     )}
                   </div>
@@ -195,14 +253,17 @@ const AgentInfo = () => {
                     className="hidden"
                   />
                   {editing && previewImage && (
-                    <button onClick={removeProfileImage} className="mt-2 text-sm text-red-600 hover:text-red-800">
+                    <button
+                      onClick={removeProfileImage}
+                      className="mt-2 text-sm text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded-full transition-all duration-300 shadow-sm"
+                    >
                       Remove Photo
                     </button>
                   )}
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="px-6 py-2 bg-[#00072D] text-white rounded-full hover:bg-[#1a365d] transition-all duration-300 transform hover:scale-105"
+                  className="px-6 py-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-all duration-300 transform hover:scale-105 shadow-md"
                 >
                   Logout
                 </button>

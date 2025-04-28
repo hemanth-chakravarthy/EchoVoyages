@@ -1,6 +1,48 @@
 import express from 'express';
-import { Agency } from '../models/agencyModel.js'; // Make sure to adjust the path as needed
+import { Agency } from '../models/agencyModel.js';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+
 const router = express.Router();
+
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const uploadDir = "public/agencyProfiles";
+
+        // Create directory if it doesn't exist
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+        }
+
+        cb(null, uploadDir);
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+        cb(
+            null,
+            "profile-" + uniqueSuffix + path.extname(file.originalname)
+        );
+    },
+});
+
+// File filter to only allow image files
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) {
+        cb(null, true);
+    } else {
+        cb(new Error("Not an image! Please upload only images."), false);
+    }
+};
+
+const upload = multer({
+    storage: storage,
+    fileFilter: fileFilter,
+    limits: {
+        fileSize: 5 * 1024 * 1024, // 5MB limit
+    },
+});
 
 // Save a new agency
 router.post('/', async (req, res,next) => {
@@ -69,11 +111,31 @@ router.delete('/:id', async (req, res,next) => {
     }
 });
 
-// Update an agency
-router.put('/:id', async (req, res,next) => {
+// Update an agency with profile image support
+router.put('/:id', upload.single('profileImage'), async (req, res, next) => {
     try {
         const { id } = req.params;
         const updateData = { ...req.body };
+
+        // If a file was uploaded, add the path to the update data
+        if (req.file) {
+            // Use forward slashes for path consistency across platforms
+            updateData.profileImage = req.file.path.replace(/\\/g, '/');
+            console.log('Profile image uploaded:', updateData.profileImage);
+        }
+
+        // Handle array fields that might be sent as JSON strings
+        ['travelPackages', 'packageName', 'bookingRequests'].forEach(field => {
+            if (updateData[field] && typeof updateData[field] === 'string') {
+                try {
+                    updateData[field] = JSON.parse(updateData[field]);
+                    console.log(`Parsed ${field} as JSON:`, updateData[field]);
+                } catch (e) {
+                    console.error(`Error parsing ${field} as JSON:`, e);
+                    delete updateData[field]; // Remove invalid field to prevent errors
+                }
+            }
+        });
 
         // Handle contactInfo updates
         if (req.body['contactInfo.email'] || req.body['contactInfo.phone']) {
@@ -98,7 +160,6 @@ router.put('/:id', async (req, res,next) => {
     } catch (error) {
         console.log(error.message);
         next(error);
-        res.status(500).send({ message: error.message });
     }
 });
 

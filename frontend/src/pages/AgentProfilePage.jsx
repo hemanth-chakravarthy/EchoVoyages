@@ -16,7 +16,7 @@ const AgentProfilePage = () => {
         backgroundColor: 'rgba(255, 255, 255, 0.97)'
       }}
     >
-      {/* Navbar removed - now using RoleBasedNavbar from Layout component */}
+      
 
       <motion.main
         className="flex-grow container mx-auto px-4 py-12 relative z-10"
