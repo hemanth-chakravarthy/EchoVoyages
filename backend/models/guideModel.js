@@ -43,6 +43,10 @@ const guideSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    profilePicture: {
+      type: String,
+      required: false,
+    },
     ratings: {
       averageRating: {
         type: Number,

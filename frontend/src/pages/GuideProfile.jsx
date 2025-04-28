@@ -15,6 +15,8 @@ const GuideProfilePage = () => {
   const [updatedGuide, setUpdatedGuide] = useState(null);
   const navigate = useNavigate();
   const [validationErrors, setValidationErrors] = useState({});
+  const [profileImage, setProfileImage] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
 
   useEffect(() => {
     const fetchGuideDetails = async () => {
@@ -34,32 +36,15 @@ const GuideProfilePage = () => {
     const fetchReviewsAndCalculateRating = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/reviews/guides/${guideId}`
+          `http://localhost:5000/reviews/guides/${guideId}/details`
         );
-        const reviewsData = response.data.review;
-        setReviews(reviewsData);
+        setReviews(response.data.review || []);
 
-        if (reviewsData.length > 0) {
-          const totalRating = reviewsData.reduce(
-            (sum, review) => sum + review.rating,
-            0
-          );
-          const averageRating = totalRating / reviewsData.length;
-
-          await axios.put(`http://localhost:5000/guides/${guideId}`, {
-            ...updatedGuide,
-            ratings: {
-              averageRating: averageRating.toFixed(1),
-              numberOfReviews: reviewsData.length,
-            },
-          });
-
-          setGuide((prevGuide) => ({
+        // The guide data already has updated ratings from the backend
+        if (response.data.guide) {
+          setGuide(prevGuide => ({
             ...prevGuide,
-            ratings: {
-              averageRating: averageRating.toFixed(1),
-              numberOfReviews: reviewsData.length,
-            },
+            ratings: response.data.guide.ratings
           }));
         }
       } catch (error) {
@@ -72,7 +57,21 @@ const GuideProfilePage = () => {
   }, [guideId]);
 
   const handleEditToggle = () => {
-    setEditing(!editing);
+    // Create a deep copy of the guide object with proper handling of arrays and nested objects
+    const guideCopy = {
+      ...guide,
+      languages: Array.isArray(guide.languages) ? [...guide.languages] : [],
+      availableDates: Array.isArray(guide.availableDates) ? [...guide.availableDates] : [],
+      ratings: guide.ratings ? { ...guide.ratings } : { averageRating: 0, numberOfReviews: 0 }
+    };
+
+    setUpdatedGuide(guideCopy);
+    setEditing(true);
+
+    // Set preview URL if guide has a profile picture
+    if (guide.profilePicture) {
+      setPreviewUrl(`http://localhost:5000/${guide.profilePicture}`);
+    }
   };
 
   const handleChange = (e) => {
@@ -89,6 +88,20 @@ const GuideProfilePage = () => {
         ...updatedGuide,
         [name]: value,
       });
+    }
+  };
+
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setProfileImage(file);
+
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -203,11 +216,49 @@ const GuideProfilePage = () => {
     }
 
     try {
-      await axios.put(`http://localhost:5000/guides/${guideId}`, updatedGuide);
+      // Create FormData object for file upload
+      const formData = new FormData();
+
+      // Add all guide data to FormData
+      Object.keys(updatedGuide).forEach(key => {
+        if (key === 'languages') {
+          // Handle languages array
+          formData.append(key, JSON.stringify(updatedGuide[key] || []));
+        } else if (key === 'availableDates') {
+          // Handle availableDates array - ensure it's a valid array
+          const dates = Array.isArray(updatedGuide[key]) ? updatedGuide[key] : [];
+          formData.append(key, JSON.stringify(dates));
+        } else if (key === 'ratings') {
+          // Handle nested ratings object
+          formData.append('ratings', JSON.stringify(updatedGuide.ratings || {}));
+        } else {
+          // Handle other fields
+          formData.append(key, updatedGuide[key] || '');
+        }
+      });
+
+      // Add profile image if selected
+      if (profileImage) {
+        formData.append('profilePicture', profileImage);
+      }
+
+      // Send the request
+      const response = await axios.put(
+        `http://localhost:5000/guides/${guideId}`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
+
       toast.success("Guide details updated successfully");
-      setGuide(updatedGuide);
+      setGuide(response.data);
       setEditing(false);
-      navigate("/GuideProfilePage");
+      setProfileImage(null);
+      setPreviewUrl(null);
+      navigate("/GuideProfile");
     } catch (error) {
       console.error("Error updating guide details:", error);
       toast.error("Error occurred while saving guide details");
@@ -217,6 +268,8 @@ const GuideProfilePage = () => {
   const handleCancel = () => {
     setUpdatedGuide(guide);
     setEditing(false);
+    setProfileImage(null);
+    setPreviewUrl(null);
   };
 
   if (loading) {
@@ -284,6 +337,50 @@ const GuideProfilePage = () => {
           <div className="space-y-8">
             <div className="card bg-base-100 shadow-xl">
               <div className="card-body">
+                {/* Profile Picture */}
+                <div className="flex flex-col items-center mb-6">
+                  <div className="w-32 h-32 rounded-full overflow-hidden mb-4 border-2 border-gray-200">
+                    {editing && previewUrl ? (
+                      <img
+                        src={previewUrl}
+                        alt="Profile Preview"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : guide.profilePicture ? (
+                      <img
+                        src={`http://localhost:5000/${guide.profilePicture}`}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                        <span className="text-gray-500 text-4xl">
+                          {guide.name.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {editing && (
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Profile Picture
+                      </label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        className="block w-full text-sm text-gray-500
+                          file:mr-4 file:py-2 file:px-4
+                          file:rounded-full file:border-0
+                          file:text-sm file:font-semibold
+                          file:bg-blue-50 file:text-blue-700
+                          hover:file:bg-blue-100"
+                      />
+                    </div>
+                  )}
+                </div>
+
                 <h2 className="card-title text-2xl mb-4">
                   {editing ? (
                     <>

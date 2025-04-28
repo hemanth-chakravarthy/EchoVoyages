@@ -33,7 +33,7 @@ const ViewGuide = () => {
 
     const fetchReviews = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/reviews/guides/${id}`);
+        const res = await fetch(`http://localhost:5000/reviews/guides/${id}/reviews`);
         const data = await res.json();
         setRevDetails(data);
       } catch (error) {

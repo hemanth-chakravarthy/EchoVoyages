@@ -30,8 +30,8 @@ import PaymentGateway from './pages/PaymentGateway';
 import GuideRequests from './pages/GuideRequests';
 import AgencyGuideRequests from './pages/AgencyGuideRequests';
 import AgencyGuideDirectory from './pages/AgencyGuideDirectory';
+import AgencyAnalytics from './pages/AgencyAnalytics';
 import Layout from './components/Layout';
-import RoleBasedNavbar from './components/RoleBasedNavbar';
 
 const App = () => {
   return (
@@ -98,6 +98,10 @@ const App = () => {
 
         <Route path="/agency-guide-directory" element={<PrivateRoute />}>
           <Route path="/agency-guide-directory" element={<AgencyGuideDirectory />} />
+        </Route>
+
+        <Route path="/agency-analytics" element={<PrivateRoute />}>
+          <Route path="/agency-analytics" element={<AgencyAnalytics />} />
         </Route>
 
         <Route path="/AgentProfilePage" element={<PrivateRoute />}>

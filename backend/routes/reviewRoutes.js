@@ -207,22 +207,22 @@ router.get("/package/:packageId", async (req, res,next) => {
     res.status(500).json({ message: "Error fetching reviews" });
   }
 });
-router.get("/guides/:guideId", async (req, res,next) => {
-  const { guideId } = req.params; // Extract the packageId properly
+router.get("/guides/:guideId/reviews", async (req, res,next) => {
+  const { guideId } = req.params; // Extract the guideId properly
 
   if (!guideId) {
     return res.status(400).json({ message: "Guide ID is required" });
   }
 
   try {
-    // Find reviews associated with the specific packageId
+    // Find reviews associated with the specific guideId
     const revs = await reviews.find({ guideId });
 
     // If no reviews are found
     if (revs.length === 0) {
       return res
-        .status(404)
-        .json({ message: "No reviews found for this guide" });
+        .status(200)
+        .json([]); // Return empty array instead of 404 for easier frontend handling
     }
 
     // Send the found reviews as a response
@@ -288,19 +288,38 @@ router.delete("/:id", async (req, res,next) => {
     res.status(500).send({ message: "Internal Server Error" });
   }
 });
-router.get("/guides/:guideID", async (req, res,next) => {
-  const { guideID } = req.params;
+router.get("/guides/:guideId/details", async (req, res,next) => {
+  const { guideId } = req.params;
 
   try {
     // Find the guide by ID
-    const guide = await Guide.findById(guideID);
+    const guide = await Guide.findById(guideId);
 
     if (!guide) {
       return res.status(404).json({ message: "Guide not found" });
     }
 
     // Fetch reviews for the guide separately based on guideId
-    const review = await reviews.find({ guideId: guideID });
+    const review = await reviews.find({ guideId });
+
+    // Calculate average rating
+    let averageRating = 0;
+    if (review && review.length > 0) {
+      const totalRating = review.reduce((sum, r) => sum + r.rating, 0);
+      averageRating = totalRating / review.length;
+
+      // Update guide's ratings in the database
+      await Guide.findByIdAndUpdate(guideId, {
+        'ratings.averageRating': averageRating,
+        'ratings.numberOfReviews': review.length
+      });
+
+      // Update the guide object for the response
+      guide.ratings = {
+        averageRating,
+        numberOfReviews: review.length
+      };
+    }
 
     // Return the guide and its reviews
     return res.status(200).json({ guide, review });

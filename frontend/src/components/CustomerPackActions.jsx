@@ -5,6 +5,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion } from "framer-motion";
 import axios from "axios";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const CustomerPackActions = () => {
   const { id } = useParams(); // `id` is the packageId
@@ -23,6 +25,7 @@ const CustomerPackActions = () => {
     availableDates: [],
     maxGroupSize: 1,
   });
+  const [selectedDate, setSelectedDate] = useState(null);
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -317,12 +320,17 @@ const CustomerPackActions = () => {
 
                   <div className="form-control mb-4">
                     <label className="label">
-                      <span className="text-black font-medium">Available Dates (comma-separated):</span>
+                      <span className="text-black font-medium">Select Date:</span>
                     </label>
-                    <input
-                      name="availableDates"
-                      type="text"
-                      onChange={(e) => handleCustomDetailsChange("availableDates", e.target.value.split(",").map((date) => new Date(date.trim())))}
+                    <DatePicker
+                      selected={selectedDate}
+                      onChange={(date) => {
+                        setSelectedDate(date);
+                        handleCustomDetailsChange("availableDates", [date]);
+                      }}
+                      minDate={new Date()} // Disable past dates
+                      dateFormat="MMMM d, yyyy"
+                      placeholderText="Click to select a date"
                       className="w-full text-black p-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-transparent transition-all duration-300"
                     />
                   </div>
@@ -338,6 +346,20 @@ const CustomerPackActions = () => {
                       onChange={(e) => handleCustomDetailsChange("maxGroupSize", parseInt(e.target.value, 10))}
                       className="w-full text-black p-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-transparent transition-all duration-300"
                     />
+                  </div>
+
+                  <div className="form-control mb-4">
+                    <label className="label">
+                      <span className="text-black font-medium">Message:</span>
+                    </label>
+                    <textarea
+                      name="message"
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      className="w-full text-black p-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-transparent transition-all duration-300 resize-none"
+                      rows="3"
+                      placeholder="Any special requests or additional information..."
+                    ></textarea>
                   </div>
                 </>
               )}

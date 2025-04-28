@@ -83,7 +83,6 @@ const HomePage = () => {
         backgroundColor: "rgba(255, 255, 255, 0.97)",
       }}
     >
-      {/* Navbar removed - now using RoleBasedNavbar from Layout component */}
 
       <motion.main
         initial={{ y: 20 }}
