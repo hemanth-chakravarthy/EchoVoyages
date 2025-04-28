@@ -4,7 +4,6 @@ import axios from "axios";
 import { FaFlag } from "react-icons/fa";
 import { jwtDecode } from "jwt-decode";
 import { motion } from "framer-motion";
-import Navbar from "../components/Navbar";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -64,6 +63,12 @@ const ViewPackage = () => {
   }, [id]);
 
   const handleReportReview = async (reviewId) => {
+    // Check if toast is available before using it
+    if (!toast || typeof toast.info !== 'function') {
+      console.error('Toast functionality is not available');
+      return;
+    }
+
     if (reportedReviews[reviewId]) {
       toast.info("This review has already been reported.");
       return;
@@ -98,7 +103,6 @@ const ViewPackage = () => {
           backgroundColor: 'rgba(255, 255, 255, 0.97)'
         }}
       >
-        <Navbar />
         <div className="flex-grow flex items-center justify-center">
           <div className="w-16 h-16 border-t-4 border-[#4169E1] border-solid rounded-full animate-spin"></div>
         </div>
@@ -118,33 +122,8 @@ const ViewPackage = () => {
         backgroundColor: 'rgba(255, 255, 255, 0.97)'
       }}
     >
-      <Navbar />
-      {isAgent && (
-        <motion.div
-          initial={{ y: -20 }}
-          animate={{ y: 0 }}
-          className="container mx-auto px-4 py-4"
-        >
-          <div className="flex gap-4">
-            {["Home Page", "My Listings", "Create Package", "Profile Page"].map((item, index) => (
-              <motion.div
-                key={index}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Link
-                  to={["/AgentHome", "/mylistings", "/createPackage", "/AgentProfilePage"][index]}
-                  className="bg-[#00072D] text-white font-semibold py-2 px-6 rounded-md hover:bg-[#1a365d] transition-all duration-300 shadow-md"
-                >
-                  {item}
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      )}
 
-      <ToastContainer position="top-right" autoClose={3000} />
+      {/* ToastContainer is now in the Layout component */}
       <motion.main
         initial={{ y: 20 }}
         animate={{ y: 0 }}

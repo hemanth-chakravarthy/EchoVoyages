@@ -12,6 +12,7 @@ import guideRoute from "./routes/guideRoutes.js";
 import agencyRoutes from "./routes/agencyRoutes.js";
 import wishlistRoutes from "./routes/wishlistRoutes.js";
 import wishlistGuideRoutes from "./routes/wishlistGuideRoutes.js";
+import guideRequestRoutes from "./routes/guideRequestRoutes.js";
 import { customers } from "./models/customerModel.js";
 import { Agency } from "./models/agencyModel.js";
 import { Guide } from "./models/guideModel.js";
@@ -54,7 +55,8 @@ app.use("/agency", agencyRoutes);
 app.use("/wishlist", wishlistRoutes);
 app.use("/search", searchRoutes);
 app.use("/wishlistGuides", wishlistGuideRoutes);
-app.use('/requests',requests)
+app.use('/requests',requests);
+app.use('/guide-requests', guideRequestRoutes);
 app.use("/public", express.static("public"));
 app.use(ErrorHandler)
 

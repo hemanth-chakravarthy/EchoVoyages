@@ -42,11 +42,17 @@ const packageSchema = mongoose.Schema(
             required: true,
             min: 1
         },
+        // Single guide field (keeping for backward compatibility)
         guide: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'guides',
+            ref: 'Guide',
             required: false
         },
+        // Multiple guides can be assigned to a package
+        guides: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Guide'
+        }],
         AgentID: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'agencies',

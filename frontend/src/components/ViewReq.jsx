@@ -60,10 +60,19 @@ const ViewReq = () => {
       if (response.ok) {
         setStatus(newStatus);
         if (newStatus === "approved") {
-          await addRequestToBookings();
+          // First check if there's an existing booking for this request
+          const bookingUpdated = await updateExistingBooking();
+
+          // If no existing booking was found, create a new one
+          if (!bookingUpdated) {
+            await addRequestToBookings();
+          }
+
+          setModalMessage("Request approved and booking status updated to confirmed.");
+        } else {
+          setModalMessage("Status updated successfully.");
         }
 
-        setModalMessage("Status updated successfully.");
         setShowModal(true);
       } else {
         const errorData = await response.json();
@@ -77,8 +86,85 @@ const ViewReq = () => {
     }
   };
 
+  // Function to update existing booking if one exists
+  const updateExistingBooking = async () => {
+    try {
+      // Check if there's an existing booking for this customer and package
+      const response = await fetch(`http://localhost:5000/bookings/cust/${requestDetails.customerId}`);
+
+      if (response.ok) {
+        const bookings = await response.json();
+
+        // Find a booking that matches this package
+        const matchingBooking = bookings.find(
+          booking => booking.packageId === requestDetails.packageId && booking.status === "pending"
+        );
+
+        if (matchingBooking) {
+          // Update the existing booking to confirmed status
+          const updateResponse = await fetch(`http://localhost:5000/bookings/${matchingBooking._id}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              status: "confirmed",
+              totalPrice: requestDetails.price // Update price if it changed in the request
+            }),
+          });
+
+          if (updateResponse.ok) {
+            console.log("Existing booking updated to confirmed status");
+            return true; // Return true to indicate a booking was updated
+          }
+        }
+      }
+
+      return false; // Return false if no booking was updated
+    } catch (error) {
+      console.error("Error updating existing booking:", error);
+      return false;
+    }
+  };
+
   const addRequestToBookings = async () => {
     try {
+      // Check if a booking already exists for this customer and package
+      const checkResponse = await fetch(`http://localhost:5000/bookings/cust/${requestDetails.customerId}`);
+
+      if (checkResponse.ok) {
+        const existingBookings = await checkResponse.json();
+
+        // Check if there's already a booking for this package
+        const existingBooking = existingBookings.find(
+          booking => booking.packageId === requestDetails.packageId
+        );
+
+        if (existingBooking) {
+          // If a booking already exists, update its status to confirmed
+          const updateResponse = await fetch(`http://localhost:5000/bookings/${existingBooking._id}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              status: "confirmed",
+              totalPrice: requestDetails.price // Update price if it changed in the request
+            }),
+          });
+
+          if (updateResponse.ok) {
+            console.log("Existing booking updated to confirmed status");
+            setModalMessage("Existing booking updated to confirmed status.");
+            setShowModal(true);
+          } else {
+            console.error("Failed to update existing booking status");
+          }
+          return;
+        }
+      }
+
+      // If no booking exists, create a new one
       const response = await fetch("http://localhost:5000/bookings", {
         method: "POST",
         headers: {
@@ -92,12 +178,12 @@ const ViewReq = () => {
           guideName: requestDetails.guideName || "",
           guideId: requestDetails.guideId || null,
           totalPrice: requestDetails.price,
-          status: "confirmed",
+          status: "confirmed", // Set status to confirmed immediately
         }),
       });
 
       if (response.ok) {
-        setModalMessage("Request successfully added to bookings.");
+        setModalMessage("Request successfully added to bookings with confirmed status.");
         setShowModal(true);
       } else {
         const errorData = await response.json();
@@ -161,7 +247,7 @@ const ViewReq = () => {
         </div>
       </nav>
 
-      <motion.main 
+      <motion.main
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex-grow container mx-auto px-4 py-12 relative z-10"
@@ -173,7 +259,7 @@ const ViewReq = () => {
             <h1 className="text-4xl font-bold text-[#1a365d] tracking-tight mb-8">
               Request Details
             </h1>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-6">
                 {[
@@ -196,9 +282,9 @@ const ViewReq = () => {
                 {[
                   { label: "Price", value: `Rs. ${requestDetails.price}` },
                   { label: "Duration", value: `${requestDetails.duration} days` },
-                  { 
-                    label: "Requested Date", 
-                    value: new Date(requestDetails.requestDate).toLocaleDateString() 
+                  {
+                    label: "Requested Date",
+                    value: new Date(requestDetails.requestDate).toLocaleDateString()
                   }
                 ].map((item) => (
                   <motion.div

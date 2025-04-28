@@ -133,19 +133,55 @@ router.get('/:id', async (req, res,next) => {
 router.put('/:id',async (req,res,next) => {
   try {
       const {id} = req.params;
-      const result = await requests.findByIdAndUpdate(id, req.body);
+      const { status } = req.body;
 
-      if(!result){
-          return res.status(404).json({message:" Booking not found"})
+      // Find the request first to get details
+      const requestData = await requests.findById(id);
+      if (!requestData) {
+          return res.status(404).json({message: "Request not found"});
       }
-      return res.status(200).json({message:" Booking updated"})
+
+      // Update the request
+      const result = await requests.findByIdAndUpdate(id, req.body, { new: true });
+
+      // If the request is being approved, update any related bookings
+      if (status === "approved") {
+          try {
+              // Import the bookings model
+              const { bookings } = await import('../models/bookingModel.js');
+
+              // Find any bookings for this customer and package
+              const relatedBookings = await bookings.find({
+                  customerId: requestData.customerId,
+                  packageId: requestData.packageId
+              });
+
+              // Update all related bookings to confirmed status
+              if (relatedBookings && relatedBookings.length > 0) {
+                  for (const booking of relatedBookings) {
+                      await bookings.findByIdAndUpdate(booking._id, {
+                          status: "confirmed",
+                          totalPrice: requestData.price // Update price if it changed in the request
+                      });
+                  }
+                  console.log(`Updated ${relatedBookings.length} bookings to confirmed status`);
+              }
+          } catch (bookingError) {
+              console.error("Error updating related bookings:", bookingError);
+              // Continue with the request update even if booking update fails
+          }
+      }
+
+      return res.status(200).json({
+          message: "Request updated successfully",
+          data: result
+      });
 
   } catch (error) {
       console.log(error.message);
       next(error);
       res.status(500).send({message: error.message})
   }
-  
 })
 
 export default router;

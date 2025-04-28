@@ -221,7 +221,7 @@ const GuideProfilePage = () => {
 
   if (loading) {
     return (
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="min-h-screen flex items-center justify-center bg-white"
@@ -239,7 +239,7 @@ const GuideProfilePage = () => {
 
   if (!guide) {
     return (
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="min-h-screen flex items-center justify-center bg-white"
@@ -256,7 +256,7 @@ const GuideProfilePage = () => {
   }
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="min-h-screen flex flex-col bg-white"
@@ -267,24 +267,10 @@ const GuideProfilePage = () => {
         backgroundColor: 'rgba(255, 255, 255, 0.97)'
       }}
     >
-      <nav className="navbar bg-white shadow-lg mb-6">
-        <ToastContainer position="top-right" autoClose={3000} />
-        <div className="flex-1">
-          <Link to="/guideHome" className="text-xl font-bold text-[#1a365d]">
-            Guide Home
-          </Link>
-        </div>
-        <div className="flex-none">
-          <Link 
-            to="/GuideProfilePage" 
-            className="px-6 py-2 bg-[#00072D] text-white rounded-full hover:bg-[#1a365d] transition-all duration-300"
-          >
-            Profile Page
-          </Link>
-        </div>
-      </nav>
+      <ToastContainer position="top-right" autoClose={3000} />
+      {/* Navbar removed - now using RoleBasedNavbar from Layout component */}
 
-      <motion.main 
+      <motion.main
         className="flex-grow container mx-auto px-4 py-12 relative z-10"
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
@@ -543,13 +529,13 @@ const GuideProfilePage = () => {
         <div className="mt-8 flex justify-between items-center">
           {editing ? (
             <>
-              <button 
+              <button
                 className="px-6 py-2 bg-[#00072D] text-white rounded-full hover:bg-[#1a365d] transition-all duration-300"
                 onClick={handleSaveChanges}
               >
                 Save Changes
               </button>
-              <button 
+              <button
                 className="px-6 py-2 border border-[#1a365d] text-[#1a365d] rounded-full hover:bg-[#1a365d] hover:text-white transition-all duration-300"
                 onClick={handleCancel}
               >
@@ -557,14 +543,14 @@ const GuideProfilePage = () => {
               </button>
             </>
           ) : (
-            <button 
+            <button
               className="px-6 py-2 bg-[#00072D] text-white rounded-full hover:bg-[#1a365d] transition-all duration-300"
               onClick={handleEditToggle}
             >
               Edit Profile
             </button>
           )}
-          <button 
+          <button
             className="px-6 py-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-all duration-300"
             onClick={handleLogout}
           >

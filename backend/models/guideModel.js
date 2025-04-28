@@ -85,10 +85,27 @@ const guideSchema = new mongoose.Schema(
           type: mongoose.Schema.Types.ObjectId,
           ref: "packages",
         },
+        packageName: {
+          type: String,
+          required: false,
+        },
         price: {
           type: Number,
           required: false,
         },
+        startDate: {
+          type: Date,
+          required: false,
+        },
+        endDate: {
+          type: Date,
+          required: false,
+        },
+        status: {
+          type: String,
+          enum: ['pending', 'confirmed', 'completed', 'canceled'],
+          default: 'pending'
+        }
       },
     ],
     specialization: {

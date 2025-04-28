@@ -13,6 +13,8 @@ const AgentPackActions = () => {
   const [isActive, setIsActive] = useState("pending");
   const { id } = useParams();
 
+  console.log("AgentPackActions: Rendering with package ID:", id);
+
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
 
@@ -59,7 +61,7 @@ const AgentPackActions = () => {
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="p-6 bg-white rounded-lg shadow-lg border border-gray-100"
@@ -85,7 +87,7 @@ const AgentPackActions = () => {
       </div>
 
       <dialog id="my_modal_3" className="modal" open={showModal}>
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           className="modal-box bg-white rounded-lg shadow-xl p-6 max-w-2xl mx-auto"

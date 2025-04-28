@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import Navbar from "../components/Navbar";
 
 const HomePage = () => {
   const [packages, setPackages] = useState([]);
@@ -84,7 +83,7 @@ const HomePage = () => {
         backgroundColor: "rgba(255, 255, 255, 0.97)",
       }}
     >
-      <Navbar />
+      {/* Navbar removed - now using RoleBasedNavbar from Layout component */}
 
       <motion.main
         initial={{ y: 20 }}

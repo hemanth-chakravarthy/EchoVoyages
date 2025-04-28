@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import moment from "moment";
-import Navbar from "../components/Navbar";
 import { motion } from "framer-motion";
 import { FaSearch } from "react-icons/fa";
 
@@ -88,7 +87,7 @@ const Search = () => {
         backgroundColor: "#fff",
       }}
     >
-      <Navbar />
+      {/* Navbar removed - now using RoleBasedNavbar from Layout component */}
       <motion.main
         initial={{ y: 20 }}
         animate={{ y: 0 }}

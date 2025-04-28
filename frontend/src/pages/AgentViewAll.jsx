@@ -12,13 +12,12 @@ const AgentViewAll = () => {
   useEffect(() => {
     const fetchBookingCount = async (packageId) => {
       try {
-        const response = await fetch(`http://localhost/bookings/pack/${packageId}`);
+        const response = await fetch(`http://localhost:5000/bookings/pack/${packageId}`);
         if (!response.ok) {
           throw new Error(`Failed to fetch booking count for package ${packageId}`);
         }
         const bookingCount = await response.json();
         return bookingCount.length; // Assuming the response is an array of bookings
-        console.log(bookingCount.length);
       } catch (error) {
         console.error('Error fetching booking count:', error);
         return 0; // Default to 0 if there's an error
@@ -45,11 +44,15 @@ const AgentViewAll = () => {
         }
 
         const data = await response.json();
-        const numbookings = await fetchBookingCount(data._id);
-        // Assuming data includes bookings for each package
-        const packagesWithRevenue = data.map(pkg => ({
-          ...pkg,
-          revenue: pkg.price * numbookings
+
+        // Calculate revenue for each package
+        const packagesWithRevenue = await Promise.all(data.map(async pkg => {
+          // Fetch booking count for each package individually
+          const numbookings = await fetchBookingCount(pkg._id);
+          return {
+            ...pkg,
+            revenue: pkg.price * numbookings
+          };
         }));
 
         // Sort packages by revenue
@@ -111,7 +114,7 @@ const AgentViewAll = () => {
         backgroundColor: 'rgba(255, 255, 255, 0.97)'
       }}
     >
-      <nav className="bg-white border-b border-gray-100 shadow-sm relative z-20">
+      {/* <nav className="bg-white border-b border-gray-100 shadow-sm relative z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <Link to="/AgentHome" className="text-2xl font-bold text-[#1a365d]">
@@ -135,7 +138,7 @@ const AgentViewAll = () => {
             </div>
           </div>
         </div>
-      </nav>
+      </nav> */}
 
       <motion.main
         initial={{ opacity: 0, y: 20 }}

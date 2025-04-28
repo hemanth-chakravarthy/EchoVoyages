@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
-import Navbar from '../components/Navbar';
 import { motion } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -119,7 +118,7 @@ const CustomerWishlist = () => {
                     backgroundColor: 'rgba(255, 255, 255, 0.97)'
                 }}
             >
-                <Navbar />
+                {/* Navbar removed - now using RoleBasedNavbar from Layout component */}
                 <div className="flex-grow flex items-center justify-center flex-col">
                     <div className="w-16 h-16 border-t-4 border-[#4169E1] border-solid rounded-full animate-spin mb-4"></div>
                     <p className="text-[#1a365d] text-xl font-medium">Loading your wishlist...</p>
@@ -141,7 +140,7 @@ const CustomerWishlist = () => {
                     backgroundColor: 'rgba(255, 255, 255, 0.97)'
                 }}
             >
-                <Navbar />
+                {/* Navbar removed - now using RoleBasedNavbar from Layout component */}
                 <div className="flex-grow flex items-center justify-center">
                     <div className="bg-white p-8 rounded-lg shadow-md border border-gray-100 max-w-md text-center">
                         <svg className="w-16 h-16 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -173,7 +172,7 @@ const CustomerWishlist = () => {
                 backgroundColor: 'rgba(255, 255, 255, 0.97)'
             }}
         >
-            <Navbar />
+            {/* Navbar removed - now using RoleBasedNavbar from Layout component */}
             <ToastContainer position="top-right" autoClose={3000} />
             <motion.main
                 initial={{ y: 20 }}

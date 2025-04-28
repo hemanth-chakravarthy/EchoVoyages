@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
-import Navbar from "../components/Navbar";
 import { jwtDecode } from "jwt-decode";
 import ProfileEditor from "../components/CustomerInfo";
 import { ToastContainer } from "react-toastify";
@@ -73,7 +72,7 @@ export default function CustomerProfile() {
         backgroundColor: "rgba(255, 255, 255, 0.97)",
       }}
     >
-      <Navbar />
+      {/* Navbar removed - now using RoleBasedNavbar from Layout component */}
       <ToastContainer position="top-right" autoClose={3000} />
 
       <motion.main

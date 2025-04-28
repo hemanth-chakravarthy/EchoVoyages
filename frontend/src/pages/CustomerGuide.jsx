@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import Navbar from '../components/Navbar';
 import { motion } from 'framer-motion';
 
 const CustomerGuide = () => {
@@ -39,7 +38,7 @@ const CustomerGuide = () => {
                     backgroundColor: 'rgba(255, 255, 255, 0.97)'
                 }}
             >
-                <Navbar />
+                {/* Navbar removed - now using RoleBasedNavbar from Layout component */}
                 <div className="flex-grow flex items-center justify-center">
                     <div className="w-16 h-16 border-t-4 border-[#4169E1] border-solid rounded-full animate-spin"></div>
                 </div>
@@ -59,7 +58,7 @@ const CustomerGuide = () => {
                 backgroundColor: 'rgba(255, 255, 255, 0.97)'
             }}
         >
-            <Navbar />
+            {/* Navbar removed - now using RoleBasedNavbar from Layout component */}
             <motion.main
                 initial={{ y: 20 }}
                 animate={{ y: 0 }}

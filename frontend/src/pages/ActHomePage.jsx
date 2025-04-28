@@ -1,5 +1,4 @@
 import React, { useRef } from "react";
-import Navbar from "../components/Navbar";
 import HeroSection from "../components/sections/HeroSection";
 import FeatureStatsSection from "../components/sections/FeatureStatsSection";
 import MakeYourChoiceSection from "../components/sections/MakeYourChoiceSection";
@@ -12,7 +11,7 @@ const ActHomePage = () => {
   const makeYourChoiceRef = useRef(null);
   return (
     <>
-      <Navbar />
+      {/* Navbar removed - now using RoleBasedNavbar from Layout component */}
       <HeroSection />
       <section ref={makeYourChoiceRef}>
         <FeatureStatsSection />

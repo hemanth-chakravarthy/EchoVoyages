@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { FaFlag, FaStar } from "react-icons/fa";
-import Navbar from '../components/Navbar';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion } from "framer-motion";
@@ -19,7 +18,8 @@ const ViewGuide = () => {
   const token = localStorage.getItem("token");
   const [bookingId, setBookingId] = useState("");
   const [customerBookings, setCustomerBookings] = useState([]);
-  const customerId = token ? jwtDecode(token).id : null;
+  const [userRole, setUserRole] = useState(""); // "customer", "agency", or "guide"
+  const userId = token ? jwtDecode(token).id : null;
 
   useEffect(() => {
     const fetchGuideDetails = async () => {
@@ -41,11 +41,60 @@ const ViewGuide = () => {
       }
     };
 
+    const determineUserRole = async () => {
+      if (!token || !userId) {
+        setUserRole("guest");
+        return;
+      }
+
+      try {
+        // Check if user is a customer
+        const customerResponse = await axios.get(`http://localhost:5000/customers/${userId}`);
+        if (customerResponse.data) {
+          setUserRole("customer");
+          return;
+        }
+      } catch (error) {
+        // Not a customer, continue checking
+      }
+
+      try {
+        // Check if user is an agency
+        const agencyResponse = await axios.get(`http://localhost:5000/agency/${userId}`);
+        if (agencyResponse.data) {
+          setUserRole("agency");
+          return;
+        }
+      } catch (error) {
+        // Not an agency, continue checking
+      }
+
+      try {
+        // Check if user is a guide
+        const guideResponse = await axios.get(`http://localhost:5000/guides/${userId}`);
+        if (guideResponse.data) {
+          setUserRole("guide");
+          return;
+        }
+      } catch (error) {
+        // Not a guide either
+        console.error("Could not determine user role:", error);
+        setUserRole("guest");
+      }
+    };
+
+    fetchReviews();
+    fetchGuideDetails();
+    determineUserRole();
+  }, [id, userId, token]);
+
+  // Fetch customer bookings when userRole is determined
+  useEffect(() => {
     const fetchCustomerBookings = async () => {
-      if (customerId && token) {
+      if (userId && token && userRole === "customer") {
         try {
           const response = await axios.get(
-            `http://localhost:5000/bookings/cust/${customerId}`,
+            `http://localhost:5000/bookings/cust/${userId}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -65,20 +114,20 @@ const ViewGuide = () => {
       }
     };
 
-    fetchReviews();
-    fetchGuideDetails();
-    fetchCustomerBookings();
-  }, [id, customerId, token]);
+    if (userRole) {
+      fetchCustomerBookings();
+    }
+  }, [id, userId, token, userRole]);
 
   const handleBooking = async () => {
     try {
-      if (!customerId) {
-        setBookingStatus("Customer is not authenticated. Please log in.");
+      if (!userId || userRole !== "customer") {
+        setBookingStatus("You must be logged in as a customer to book a guide.");
         return;
       }
       const packageId = null;
       const bookingData = {
-        customerId,
+        customerId: userId,
         guideId: guideDetails._id,
         packageId: packageId || null,
       };
@@ -112,6 +161,11 @@ const ViewGuide = () => {
   };
   const handleSubmitReview = async () => {
     try {
+      if (!userId || userRole !== "customer") {
+        toast.error("You must be logged in as a customer to submit a review.");
+        return;
+      }
+
       const response = await fetch("http://localhost:5000/reviews", {
         method: "POST",
         headers: {
@@ -119,7 +173,7 @@ const ViewGuide = () => {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          customerId,
+          customerId: userId,
           guideId: id,
           bookingId, // Include bookingId in the payload
           rating,
@@ -143,12 +197,12 @@ const ViewGuide = () => {
   };
   const handleAddToWishlist = async () => {
     try {
-      if (!customerId) {
-        setBookingStatus("Customer is not authenticated. Please log in.");
+      if (!userId || userRole !== "customer") {
+        toast.error("You must be logged in as a customer to add a guide to your wishlist.");
         return;
       }
       const wishlistData = {
-        customerId,
+        customerId: userId,
         guideId: guideDetails._id,
       };
       const response = await axios.post(
@@ -184,7 +238,7 @@ const ViewGuide = () => {
           backgroundColor: 'rgba(255, 255, 255, 0.97)'
         }}
       >
-        <Navbar />
+        {/* Navbar removed - now using RoleBasedNavbar from Layout component */}
         <div className="flex-grow flex items-center justify-center">
           <div className="w-16 h-16 border-t-4 border-[#4169E1] border-solid rounded-full animate-spin"></div>
         </div>
@@ -204,7 +258,7 @@ const ViewGuide = () => {
         backgroundColor: 'rgba(255, 255, 255, 0.97)'
       }}
     >
-      <Navbar />
+      {/* Navbar removed - now using RoleBasedNavbar from Layout component */}
       <ToastContainer position="top-right" autoClose={3000} />
 
       <motion.main
@@ -304,17 +358,74 @@ const ViewGuide = () => {
           </motion.div>
 
           <div className="flex gap-4 mt-8">
-            {["Book Guide", "Add Review", "Add to Wishlist"].map((text, index) => (
+            {/* Customer-specific actions */}
+            {userRole === "customer" && (
+              <>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleBooking}
+                  className="bg-[#00072D] text-white font-semibold py-3 px-6 rounded-md hover:bg-[#1a365d] transition-all duration-300 shadow-md"
+                >
+                  Book Guide
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleOpenReviewModal}
+                  className="bg-[#00072D] text-white font-semibold py-3 px-6 rounded-md hover:bg-[#1a365d] transition-all duration-300 shadow-md"
+                >
+                  Add Review
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleAddToWishlist}
+                  className="bg-[#00072D] text-white font-semibold py-3 px-6 rounded-md hover:bg-[#1a365d] transition-all duration-300 shadow-md"
+                >
+                  Add to Wishlist
+                </motion.button>
+              </>
+            )}
+
+            {/* Agency-specific actions */}
+            {userRole === "agency" && (
+              <>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => window.location.href = `/agency-guide-directory`}
+                  className="bg-[#4169E1] text-white font-semibold py-3 px-6 rounded-md hover:bg-[#2d4a7e] transition-all duration-300 shadow-md"
+                >
+                  Back to Guide Directory
+                </motion.button>
+
+              </>
+            )}
+
+            {/* Guide-specific actions */}
+            {userRole === "guide" && (
               <motion.button
-                key={index}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={[handleBooking, handleOpenReviewModal, handleAddToWishlist][index]}
+                onClick={() => window.location.href = `/GuideHome`}
+                className="bg-[#4169E1] text-white font-semibold py-3 px-6 rounded-md hover:bg-[#2d4a7e] transition-all duration-300 shadow-md"
+              >
+                Back to Dashboard
+              </motion.button>
+            )}
+
+            {/* Guest actions (not logged in) */}
+            {(userRole === "guest" || !userRole) && (
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => window.location.href = `/login`}
                 className="bg-[#00072D] text-white font-semibold py-3 px-6 rounded-md hover:bg-[#1a365d] transition-all duration-300 shadow-md"
               >
-                {text}
+                Login to Book
               </motion.button>
-            ))}
+            )}
           </div>
 
           {bookingStatus && (
