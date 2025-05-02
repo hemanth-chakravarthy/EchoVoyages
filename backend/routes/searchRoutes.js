@@ -2,11 +2,12 @@ import express from 'express';
 import { Guide } from '../models/guideModel.js';
 import { packages } from '../models/packageModel.js';
 import moment from 'moment';
+import { cacheMiddleware } from '../middleware/cacheMiddleware.js';
 
 const router = express.Router();
 
 // Update the main search route to handle filtering by availability, languages, and text search
-router.get('/', async (req, res) => {
+router.get('/', cacheMiddleware(120), async (req, res) => {
     try {
         const {
             location,
@@ -109,7 +110,7 @@ router.get('/', async (req, res) => {
 });
 
 // Endpoint to fetch all unique languages
-router.get('/guide-languages', async (req, res) => {
+router.get('/guide-languages', cacheMiddleware(3600), async (req, res) => {
     try {
         const languages = await Guide.distinct('languages');
         res.json(languages);
@@ -118,7 +119,7 @@ router.get('/guide-languages', async (req, res) => {
     }
 });
 // Fetch unique guide locations
-router.get('/guide-locations', async (req, res) => {
+router.get('/guide-locations', cacheMiddleware(3600), async (req, res) => {
     try {
         const locations = await Guide.distinct('location');
         res.json({ locations: locations });
@@ -128,7 +129,7 @@ router.get('/guide-locations', async (req, res) => {
 });
 
 // Fetch unique package locations
-router.get('/package-locations', async (req, res) => {
+router.get('/package-locations', cacheMiddleware(3600), async (req, res) => {
     try {
         const locations = await packages.distinct('location');
         res.json(locations);

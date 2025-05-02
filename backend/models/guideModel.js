@@ -132,6 +132,51 @@ const guideSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    earnings: {
+      total: {
+        type: Number,
+        default: 0
+      },
+      pending: {
+        type: Number,
+        default: 0
+      },
+      received: {
+        type: Number,
+        default: 0
+      },
+      monthly: [
+        {
+          month: Number,
+          year: Number,
+          amount: Number
+        }
+      ],
+      history: [
+        {
+          bookingId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Bookings'
+          },
+          packageId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'packages'
+          },
+          packageName: String,
+          customerName: String,
+          amount: Number,
+          date: {
+            type: Date,
+            default: Date.now
+          },
+          status: {
+            type: String,
+            enum: ['pending', 'paid'],
+            default: 'pending'
+          }
+        }
+      ]
+    },
   },
   {
     timestamps: true,

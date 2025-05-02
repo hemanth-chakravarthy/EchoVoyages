@@ -5,6 +5,7 @@ import {Agency} from '../models/agencyModel.js'
 import { customers } from '../models/customerModel.js';
 import { Guide } from '../models/guideModel.js'; // Import Guide model
 import path from 'path';
+import { cacheMiddleware, clearCacheMiddleware } from '../middleware/cacheMiddleware.js';
 const router = express.Router();
 
 // Multer setup for handling file uploads
@@ -20,7 +21,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // Save a new package with image upload handling
-router.post('/', upload.array('images'), async (req, res, next) => {
+router.post('/', upload.array('images'), clearCacheMiddleware('/packages'), async (req, res, next) => {
     try {
         // Check if all required fields are provided
         const {
@@ -105,7 +106,7 @@ router.post('/', upload.array('images'), async (req, res, next) => {
 });
 
 // view all packages
-router.get('/', async (req, res, next) => {
+router.get('/', cacheMiddleware(300), async (req, res, next) => {
     try {
         // Find all packages and populate guide details
         const packs = await packages.find({})
@@ -129,7 +130,7 @@ router.get('/', async (req, res, next) => {
     }
 })
 // view a single package
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', cacheMiddleware(300), async (req, res, next) => {
     try {
         let { id } = req.params;
         id = id.toString();
@@ -157,7 +158,7 @@ router.get('/:id', async (req, res, next) => {
     }
 })
 // update package
-router.put('/:id', async (req, res, next) => {
+router.put('/:id', clearCacheMiddleware('/packages'), async (req, res, next) => {
     try {
         const { id } = req.params;
 
@@ -214,7 +215,7 @@ router.put('/:id', async (req, res, next) => {
     }
 })
 // delete a package
-router.delete('/:id', async (req,res,next) => {
+router.delete('/:id', clearCacheMiddleware('/packages'), async (req,res,next) => {
     try {
         const {id} = req.params;
         const result = await packages.findByIdAndDelete(id)
@@ -231,7 +232,7 @@ router.delete('/:id', async (req,res,next) => {
     }
 
 })
-router.get('/agents/:AgentID', async (req, res, next) => {
+router.get('/agents/:AgentID', cacheMiddleware(300), async (req, res, next) => {
     const { AgentID } = req.params;
     // This check might not be needed since AgentID is expected in the route
     if (!AgentID) {
@@ -266,7 +267,7 @@ router.get('/agents/:AgentID', async (req, res, next) => {
 
 
 // Endpoint to assign guides to a package
-router.post('/:id/guides', async (req, res, next) => {
+router.post('/:id/guides', clearCacheMiddleware('/packages'), async (req, res, next) => {
     try {
         const { id } = req.params;
         const { guideIds } = req.body;
@@ -344,7 +345,7 @@ router.post('/:id/guides', async (req, res, next) => {
 });
 
 // Endpoint to get packages by guide ID
-router.get('/guides/:guideId', async (req, res, next) => {
+router.get('/guides/:guideId', cacheMiddleware(300), async (req, res, next) => {
     try {
         const { guideId } = req.params;
 
@@ -381,7 +382,7 @@ router.get('/guides/:guideId', async (req, res, next) => {
 });
 
 // Endpoint to remove a guide from a package
-router.delete('/:packageId/guides/:guideId', async (req, res, next) => {
+router.delete('/:packageId/guides/:guideId', clearCacheMiddleware('/packages'), async (req, res, next) => {
     try {
         const { packageId, guideId } = req.params;
 

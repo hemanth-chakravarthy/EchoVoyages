@@ -55,6 +55,7 @@ const RoleBasedNavbar = () => {
       { to: "/createPackage", text: "Create Package" },
       { to: "/agency-guide-requests", text: "Guide Requests" },
       { to: "/agency-guide-directory", text: "Guide Directory" },
+      { to: "/agency-payments", text: "Guide Payments" },
       // { to: "/agency-analytics", text: "Analytics" },
       { to: "/AgentProfilePage", text: "Profile" }
     ],

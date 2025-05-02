@@ -147,8 +147,9 @@ router.put('/:id',async (req,res,next) => {
       // If the request is being approved, update any related bookings
       if (status === "approved") {
           try {
-              // Import the bookings model
+              // Import the bookings model and Guide model
               const { bookings } = await import('../models/bookingModel.js');
+              const { Guide } = await import('../models/guideModel.js');
 
               // Find any bookings for this customer and package
               const relatedBookings = await bookings.find({
@@ -159,10 +160,70 @@ router.put('/:id',async (req,res,next) => {
               // Update all related bookings to confirmed status
               if (relatedBookings && relatedBookings.length > 0) {
                   for (const booking of relatedBookings) {
-                      await bookings.findByIdAndUpdate(booking._id, {
-                          status: "confirmed",
-                          totalPrice: requestData.price // Update price if it changed in the request
-                      });
+                      const updatedBooking = await bookings.findByIdAndUpdate(
+                          booking._id,
+                          {
+                              status: "confirmed",
+                              totalPrice: requestData.price // Update price if it changed in the request
+                          },
+                          { new: true }
+                      );
+
+                      // If the booking has a guide, update guide earnings
+                      if (updatedBooking.guideId) {
+                          try {
+                              // Calculate guide's share (70% of package price)
+                              const guideShare = updatedBooking.totalPrice * 0.7;
+
+                              // Get current date info for monthly tracking
+                              const now = new Date();
+                              const month = now.getMonth() + 1; // JavaScript months are 0-indexed
+                              const year = now.getFullYear();
+
+                              // Update guide's earnings
+                              const guide = await Guide.findById(updatedBooking.guideId);
+                              if (guide) {
+                                  // Add to total and pending earnings
+                                  guide.earnings.total += guideShare;
+                                  guide.earnings.pending += guideShare;
+
+                                  // Add to earnings history
+                                  guide.earnings.history.push({
+                                      bookingId: updatedBooking._id,
+                                      packageId: updatedBooking.packageId,
+                                      packageName: updatedBooking.packageName,
+                                      customerName: updatedBooking.customerName,
+                                      amount: guideShare,
+                                      date: now,
+                                      status: 'pending'
+                                  });
+
+                                  // Check if entry for this month exists
+                                  const monthlyEntryIndex = guide.earnings.monthly.findIndex(
+                                      entry => entry.month === month && entry.year === year
+                                  );
+
+                                  if (monthlyEntryIndex !== -1) {
+                                      // Update existing monthly entry
+                                      guide.earnings.monthly[monthlyEntryIndex].amount += guideShare;
+                                  } else {
+                                      // Create new monthly entry
+                                      guide.earnings.monthly.push({
+                                          month,
+                                          year,
+                                          amount: guideShare
+                                      });
+                                  }
+
+                                  // Save the updated guide
+                                  await guide.save();
+                                  console.log(`Updated guide earnings for booking ${updatedBooking._id}`);
+                              }
+                          } catch (error) {
+                              console.error('Error updating guide earnings:', error);
+                              // Continue with the process even if earnings update fails
+                          }
+                      }
                   }
                   console.log(`Updated ${relatedBookings.length} bookings to confirmed status`);
               }

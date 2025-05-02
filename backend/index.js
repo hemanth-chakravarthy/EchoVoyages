@@ -22,6 +22,7 @@ import path from "path";
 import jwt from "jsonwebtoken";
 import searchRoutes from "./routes/searchRoutes.js";
 import requests from './routes/requestRoutes.js'
+import cacheRoutes from './routes/cacheRoutes.js';
 import nodemailer from "nodemailer";
 import ErrorHandler from "./ErrorHandler.js";
 mongoose
@@ -57,6 +58,7 @@ app.use("/search", searchRoutes);
 app.use("/wishlistGuides", wishlistGuideRoutes);
 app.use('/requests',requests);
 app.use('/guide-requests', guideRequestRoutes);
+app.use('/cache', cacheRoutes);
 app.use("/public", express.static("public"));
 app.use(ErrorHandler)
 

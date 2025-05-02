@@ -31,6 +31,7 @@ import GuideRequests from './pages/GuideRequests';
 import AgencyGuideRequests from './pages/AgencyGuideRequests';
 import AgencyGuideDirectory from './pages/AgencyGuideDirectory';
 import AgencyAnalytics from './pages/AgencyAnalytics';
+import AgencyPayments from './pages/AgencyPayments';
 import Layout from './components/Layout';
 
 const App = () => {
@@ -102,6 +103,10 @@ const App = () => {
 
         <Route path="/agency-analytics" element={<PrivateRoute />}>
           <Route path="/agency-analytics" element={<AgencyAnalytics />} />
+        </Route>
+
+        <Route path="/agency-payments" element={<PrivateRoute />}>
+          <Route path="/agency-payments" element={<AgencyPayments />} />
         </Route>
 
         <Route path="/AgentProfilePage" element={<PrivateRoute />}>

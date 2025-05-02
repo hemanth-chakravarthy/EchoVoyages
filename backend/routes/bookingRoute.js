@@ -212,19 +212,86 @@ router.delete('/:id', async (req,res,next) => {
 router.put('/:id',async (req,res,next) => {
     try {
         const {id} = req.params;
-        const result = await bookings.findByIdAndUpdate(id, req.body);
+        const { status } = req.body;
 
-        if(!result){
-            return res.status(404).json({message:" Booking not found"})
+        // Find the booking before updating
+        const booking = await bookings.findById(id);
+        if(!booking){
+            return res.status(404).json({message:"Booking not found"})
         }
-        return res.status(200).json({message:" Booking updated"})
+
+        // Update the booking
+        const result = await bookings.findByIdAndUpdate(id, req.body, { new: true });
+
+        // If status is being changed to confirmed and there's a guide, update guide earnings
+        if (status === 'confirmed' && booking.status !== 'confirmed' && booking.guideId) {
+            try {
+                // Import the Guide model
+                const { Guide } = await import('../models/guideModel.js');
+
+                // Calculate guide's share (70% of package price)
+                const guideShare = booking.totalPrice * 0.7;
+
+                // Get current date info for monthly tracking
+                const now = new Date();
+                const month = now.getMonth() + 1; // JavaScript months are 0-indexed
+                const year = now.getFullYear();
+
+                // Update guide's earnings
+                const guide = await Guide.findById(booking.guideId);
+                if (guide) {
+                    // Add to total and pending earnings
+                    guide.earnings.total += guideShare;
+                    guide.earnings.pending += guideShare;
+
+                    // Add to earnings history
+                    guide.earnings.history.push({
+                        bookingId: booking._id,
+                        packageId: booking.packageId,
+                        packageName: booking.packageName,
+                        customerName: booking.customerName,
+                        amount: guideShare,
+                        date: now,
+                        status: 'pending'
+                    });
+
+                    // Check if entry for this month exists
+                    const monthlyEntryIndex = guide.earnings.monthly.findIndex(
+                        entry => entry.month === month && entry.year === year
+                    );
+
+                    if (monthlyEntryIndex !== -1) {
+                        // Update existing monthly entry
+                        guide.earnings.monthly[monthlyEntryIndex].amount += guideShare;
+                    } else {
+                        // Create new monthly entry
+                        guide.earnings.monthly.push({
+                            month,
+                            year,
+                            amount: guideShare
+                        });
+                    }
+
+                    // Save the updated guide
+                    await guide.save();
+                    console.log(`Updated guide earnings for booking ${id}`);
+                }
+            } catch (error) {
+                console.error('Error updating guide earnings:', error);
+                // Continue with the response even if earnings update fails
+            }
+        }
+
+        return res.status(200).json({
+            message: "Booking updated successfully",
+            booking: result
+        });
 
     } catch (error) {
         console.log(error.message);
         next(error);
         res.status(500).send({message: error.message})
     }
-
 })
 // view a single booking
 router.get('/:id',async (req,res,next) => {

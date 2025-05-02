@@ -279,4 +279,111 @@ router.get('/:id/assigned-packages', async (req, res, next) => {
         return next(error);
     }
 });
+// Get guide earnings
+router.get('/:id/earnings', async (req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        const guide = await Guide.findById(id)
+            .select('earnings')
+            .populate({
+                path: 'earnings.history.bookingId',
+                select: 'customerName bookingDate status'
+            })
+            .populate({
+                path: 'earnings.history.packageId',
+                select: 'name price'
+            });
+
+        if (!guide) {
+            return res.status(404).json({ message: 'Guide not found' });
+        }
+
+        return res.status(200).json(guide.earnings);
+    } catch (error) {
+        console.error('Error fetching guide earnings:', error);
+        return next(error);
+    }
+});
+
+// Get monthly earnings for charts
+router.get('/:id/monthly-earnings', async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { year } = req.query;
+
+        const guide = await Guide.findById(id).select('earnings.monthly');
+
+        if (!guide) {
+            return res.status(404).json({ message: 'Guide not found' });
+        }
+
+        // Filter by year if provided
+        let monthlyData = guide.earnings.monthly || [];
+        if (year) {
+            monthlyData = monthlyData.filter(item => item.year === parseInt(year));
+        }
+
+        // Format data for charts - create array with 12 months
+        const formattedData = Array(12).fill(0);
+        monthlyData.forEach(item => {
+            if (item.month >= 1 && item.month <= 12) {
+                formattedData[item.month - 1] = item.amount;
+            }
+        });
+
+        return res.status(200).json(formattedData);
+    } catch (error) {
+        console.error('Error fetching monthly earnings:', error);
+        return next(error);
+    }
+});
+
+// Mark earnings as paid
+router.put('/:id/earnings/:earningId/paid', async (req, res, next) => {
+    try {
+        const { id, earningId } = req.params;
+
+        // Find the guide
+        const guide = await Guide.findById(id);
+        if (!guide) {
+            return res.status(404).json({ message: 'Guide not found' });
+        }
+
+        // Find the specific earning in the history array
+        const earningIndex = guide.earnings.history.findIndex(
+            item => item._id.toString() === earningId
+        );
+
+        if (earningIndex === -1) {
+            return res.status(404).json({ message: 'Earning record not found' });
+        }
+
+        const earning = guide.earnings.history[earningIndex];
+
+        // Check if already paid
+        if (earning.status === 'paid') {
+            return res.status(400).json({ message: 'Payment already marked as paid' });
+        }
+
+        // Update status and move amount from pending to received
+        const amountToMove = earning.amount;
+        earning.status = 'paid';
+
+        guide.earnings.pending -= amountToMove;
+        guide.earnings.received += amountToMove;
+
+        // Save the updated guide
+        await guide.save();
+
+        return res.status(200).json({
+            message: 'Payment marked as received',
+            earnings: guide.earnings
+        });
+    } catch (error) {
+        console.error('Error updating payment status:', error);
+        return next(error);
+    }
+});
+
 export default router;

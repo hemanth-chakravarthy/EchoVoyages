@@ -16,6 +16,7 @@ import {
   Pie,
   Cell,
 } from "recharts";
+import GuideEarnings from "../components/GuideEarnings";
 
 const GuideHome = () => {
   const [guideData, setGuide] = useState(null);
@@ -308,7 +309,7 @@ const GuideHome = () => {
                   You haven't been assigned to any packages yet. Browse available packages and send requests to agencies.
                 </p>
                 <Link
-                  to="/guide-packages"
+                  to="/home"
                   className="mt-4 inline-block px-4 py-2 bg-[#4169E1] text-white rounded-md hover:bg-[#1a365d] transition-colors"
                 >
                   Browse Packages
@@ -318,11 +319,14 @@ const GuideHome = () => {
           </div>
         </motion.div>
 
+        {/* Earnings Section */}
+        {/* <GuideEarnings /> */}
+
         {/* Reviews Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
+          transition={{ delay: 0.5 }}
           className="card bg-white shadow-lg mt-6 border border-gray-100"
         >
           <div className="card-body">
