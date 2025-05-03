@@ -266,7 +266,36 @@ router.get('/', async (req, res,next) => {
     }
 });
 
-// Delete an agency
+/**
+ * @swagger
+ * /agencies/{id}:
+ *   delete:
+ *     summary: Delete an agency
+ *     tags: [Agencies]
+ *     description: Delete a specific agency by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the agency to delete
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Agency deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Agency deleted
+ *       404:
+ *         description: Agency not found
+ *       500:
+ *         description: Server error
+ */
 router.delete('/:id', async (req, res,next) => {
     try {
         const { id } = req.params;
@@ -282,7 +311,75 @@ router.delete('/:id', async (req, res,next) => {
     }
 });
 
-// Update an agency with profile image support
+/**
+ * @swagger
+ * /agencies/{id}:
+ *   put:
+ *     summary: Update an agency
+ *     tags: [Agencies]
+ *     description: Update a specific agency by ID, with support for profile image upload
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the agency to update
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Name of the agency
+ *               gmail:
+ *                 type: string
+ *                 description: Email address of the agency
+ *               phno:
+ *                 type: string
+ *                 description: Phone number of the agency
+ *               bio:
+ *                 type: string
+ *                 description: Biography or description of the agency
+ *               specialization:
+ *                 type: string
+ *                 description: Specialization of the agency
+ *               'contactInfo.email':
+ *                 type: string
+ *                 description: Contact email of the agency
+ *               'contactInfo.phone':
+ *                 type: string
+ *                 description: Contact phone number of the agency
+ *               travelPackages:
+ *                 type: string
+ *                 format: json
+ *                 description: JSON string of travel package IDs
+ *               packageName:
+ *                 type: string
+ *                 format: json
+ *                 description: JSON string of package names
+ *               bookingRequests:
+ *                 type: string
+ *                 format: json
+ *                 description: JSON string of booking request IDs
+ *               profileImage:
+ *                 type: string
+ *                 format: binary
+ *                 description: Profile image file
+ *     responses:
+ *       200:
+ *         description: Agency updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Agency'
+ *       404:
+ *         description: Agency not found
+ *       500:
+ *         description: Server error
+ */
 router.put('/:id', upload.single('profileImage'), async (req, res, next) => {
     try {
         const { id } = req.params;

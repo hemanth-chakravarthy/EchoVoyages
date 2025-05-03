@@ -413,7 +413,86 @@ router.get('/:id', cacheMiddleware(300), async (req, res, next) => {
         res.status(500).send({ message: error.message });
     }
 })
-// update package
+/**
+ * @swagger
+ * /packages/{id}:
+ *   put:
+ *     summary: Update a package
+ *     tags: [Packages]
+ *     description: Update a specific travel package by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the package to update
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Name of the travel package
+ *               description:
+ *                 type: string
+ *                 description: Detailed description of the package
+ *               price:
+ *                 type: number
+ *                 description: Price of the package
+ *               duration:
+ *                 type: number
+ *                 description: Duration of the package in days
+ *               location:
+ *                 type: string
+ *                 description: Location of the package
+ *               itinerary:
+ *                 type: string
+ *                 description: Detailed itinerary of the package
+ *               highlights:
+ *                 type: string
+ *                 description: Highlights of the package
+ *               availableDates:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: date
+ *                 description: Available dates for the package
+ *               maxGroupSize:
+ *                 type: number
+ *                 description: Maximum group size for the package
+ *               guides:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Array of guide IDs assigned to the package
+ *               isActive:
+ *                 type: string
+ *                 enum: [pending, confirmed, canceled]
+ *                 description: Status of the package
+ *     responses:
+ *       200:
+ *         description: Package updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Package updated successfully
+ *                 data:
+ *                   $ref: '#/components/schemas/Package'
+ *       400:
+ *         description: Invalid guide ID
+ *       404:
+ *         description: Package not found
+ *       500:
+ *         description: Server error
+ */
 router.put('/:id', clearCacheMiddleware('/packages'), async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -470,7 +549,36 @@ router.put('/:id', clearCacheMiddleware('/packages'), async (req, res, next) => 
         res.status(500).send({ message: error.message });
     }
 })
-// delete a package
+/**
+ * @swagger
+ * /packages/{id}:
+ *   delete:
+ *     summary: Delete a package
+ *     tags: [Packages]
+ *     description: Delete a specific travel package by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the package to delete
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Package deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: package deleted
+ *       404:
+ *         description: Package not found
+ *       500:
+ *         description: Server error
+ */
 router.delete('/:id', clearCacheMiddleware('/packages'), async (req,res,next) => {
     try {
         const {id} = req.params;
@@ -488,6 +596,36 @@ router.delete('/:id', clearCacheMiddleware('/packages'), async (req,res,next) =>
     }
 
 })
+/**
+ * @swagger
+ * /packages/agents/{AgentID}:
+ *   get:
+ *     summary: Get packages by agent ID
+ *     tags: [Packages]
+ *     description: Retrieve all packages created by a specific agent
+ *     parameters:
+ *       - in: path
+ *         name: AgentID
+ *         required: true
+ *         description: ID of the agent to get packages for
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of packages for the agent
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Package'
+ *       400:
+ *         description: Agent ID is required
+ *       404:
+ *         description: No packages found for this agent
+ *       500:
+ *         description: Server error
+ */
 router.get('/agents/:AgentID', cacheMiddleware(300), async (req, res, next) => {
     const { AgentID } = req.params;
     // This check might not be needed since AgentID is expected in the route
@@ -522,7 +660,54 @@ router.get('/agents/:AgentID', cacheMiddleware(300), async (req, res, next) => {
 });
 
 
-// Endpoint to assign guides to a package
+/**
+ * @swagger
+ * /packages/{id}/guides:
+ *   post:
+ *     summary: Assign guides to a package
+ *     tags: [Packages]
+ *     description: Assign multiple guides to a specific package
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the package to assign guides to
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - guideIds
+ *             properties:
+ *               guideIds:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Array of guide IDs to assign to the package
+ *     responses:
+ *       200:
+ *         description: Guides assigned successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Guides assigned to package successfully
+ *                 data:
+ *                   $ref: '#/components/schemas/Package'
+ *       400:
+ *         description: Invalid input or guide ID
+ *       404:
+ *         description: Package not found
+ *       500:
+ *         description: Server error
+ */
 router.post('/:id/guides', clearCacheMiddleware('/packages'), async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -600,7 +785,40 @@ router.post('/:id/guides', clearCacheMiddleware('/packages'), async (req, res, n
     }
 });
 
-// Endpoint to get packages by guide ID
+/**
+ * @swagger
+ * /packages/guides/{guideId}:
+ *   get:
+ *     summary: Get packages by guide ID
+ *     tags: [Packages]
+ *     description: Retrieve all packages assigned to a specific guide
+ *     parameters:
+ *       - in: path
+ *         name: guideId
+ *         required: true
+ *         description: ID of the guide to get packages for
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of packages for the guide
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: integer
+ *                   description: Number of packages returned
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Package'
+ *       404:
+ *         description: Guide not found or no packages found for this guide
+ *       500:
+ *         description: Server error
+ */
 router.get('/guides/:guideId', cacheMiddleware(300), async (req, res, next) => {
     try {
         const { guideId } = req.params;
@@ -637,7 +855,44 @@ router.get('/guides/:guideId', cacheMiddleware(300), async (req, res, next) => {
     }
 });
 
-// Endpoint to remove a guide from a package
+/**
+ * @swagger
+ * /packages/{packageId}/guides/{guideId}:
+ *   delete:
+ *     summary: Remove a guide from a package
+ *     tags: [Packages]
+ *     description: Remove a specific guide from a package
+ *     parameters:
+ *       - in: path
+ *         name: packageId
+ *         required: true
+ *         description: ID of the package
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: guideId
+ *         required: true
+ *         description: ID of the guide to remove from the package
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Guide removed from package successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Guide removed from package successfully
+ *                 data:
+ *                   $ref: '#/components/schemas/Package'
+ *       404:
+ *         description: Package or guide not found
+ *       500:
+ *         description: Server error
+ */
 router.delete('/:packageId/guides/:guideId', clearCacheMiddleware('/packages'), async (req, res, next) => {
     try {
         const { packageId, guideId } = req.params;

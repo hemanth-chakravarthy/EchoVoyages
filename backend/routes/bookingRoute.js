@@ -345,6 +345,36 @@ router.get('/cust/:customerId', async (req, res,next) => {
         res.status(500).json({ message: 'Error fetching bookings' });
     }
 });
+/**
+ * @swagger
+ * /bookings/pack/{packageId}:
+ *   get:
+ *     summary: Get bookings by package ID
+ *     tags: [Bookings]
+ *     description: Retrieve all bookings for a specific package
+ *     parameters:
+ *       - in: path
+ *         name: packageId
+ *         required: true
+ *         description: ID of the package to get bookings for
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of bookings for the package
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Booking'
+ *       400:
+ *         description: Package ID is required
+ *       404:
+ *         description: No bookings found for this package
+ *       500:
+ *         description: Server error
+ */
 router.get('/pack/:packageId', async (req, res,next) => {
     const { packageId } = req.params; // Extract customerId from the URL
 
@@ -369,6 +399,36 @@ router.get('/pack/:packageId', async (req, res,next) => {
         res.status(500).json({ message: 'Error fetching bookings' });
     }
 });
+/**
+ * @swagger
+ * /bookings/guides/{guideId}:
+ *   get:
+ *     summary: Get bookings by guide ID
+ *     tags: [Bookings]
+ *     description: Retrieve all bookings for a specific guide
+ *     parameters:
+ *       - in: path
+ *         name: guideId
+ *         required: true
+ *         description: ID of the guide to get bookings for
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of bookings for the guide
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Booking'
+ *       400:
+ *         description: Guide ID is required
+ *       404:
+ *         description: No bookings found for this guide
+ *       500:
+ *         description: Server error
+ */
 router.get('/guides/:guideId',async (req, res,next) => {
     const { guideId } = req.params; // Extract customerId from the URL
 
@@ -395,7 +455,36 @@ router.get('/guides/:guideId',async (req, res,next) => {
 
 })
 
-// delete a booking
+/**
+ * @swagger
+ * /bookings/{id}:
+ *   delete:
+ *     summary: Delete a booking
+ *     tags: [Bookings]
+ *     description: Delete a specific booking by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the booking to delete
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Booking deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Booking deleted
+ *       404:
+ *         description: Booking not found
+ *       500:
+ *         description: Server error
+ */
 router.delete('/:id', async (req,res,next) => {
     try {
         const {id} = req.params;
@@ -413,7 +502,63 @@ router.delete('/:id', async (req,res,next) => {
     }
 
 })
-// update booking
+/**
+ * @swagger
+ * /bookings/{id}:
+ *   put:
+ *     summary: Update a booking
+ *     tags: [Bookings]
+ *     description: Update a specific booking by ID, with special handling for status changes to 'confirmed'
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the booking to update
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [pending, confirmed, canceled, completed]
+ *                 description: New status for the booking
+ *               startDate:
+ *                 type: string
+ *                 format: date
+ *                 description: Start date of the booking
+ *               endDate:
+ *                 type: string
+ *                 format: date
+ *                 description: End date of the booking
+ *               totalPrice:
+ *                 type: number
+ *                 description: Total price of the booking
+ *               specialRequests:
+ *                 type: string
+ *                 description: Special requests for the booking
+ *     responses:
+ *       200:
+ *         description: Booking updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Booking updated successfully
+ *                 booking:
+ *                   $ref: '#/components/schemas/Booking'
+ *       404:
+ *         description: Booking not found
+ *       500:
+ *         description: Server error
+ */
 router.put('/:id',async (req,res,next) => {
     try {
         const {id} = req.params;
@@ -534,7 +679,32 @@ router.put('/:id',async (req,res,next) => {
         res.status(500).send({message: error.message})
     }
 })
-// view a single booking
+/**
+ * @swagger
+ * /bookings/{id}:
+ *   get:
+ *     summary: Get a booking by ID
+ *     tags: [Bookings]
+ *     description: Retrieve a specific booking by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the booking to retrieve
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Booking details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Booking'
+ *       404:
+ *         description: Booking not found
+ *       500:
+ *         description: Server error
+ */
 router.get('/:id',async (req,res,next) => {
     try {
         let {id} = req.params

@@ -379,6 +379,85 @@ router.get('/',async (req,res, next) => {
         res.status(500).send({message: error.message})
     }
 })
+/**
+ * @swagger
+ * /guides/{id}:
+ *   put:
+ *     summary: Update a guide
+ *     tags: [Guides]
+ *     description: Update a specific guide by ID, with support for profile picture upload
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the guide to update
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Name of the guide
+ *               experience:
+ *                 type: number
+ *                 description: Years of experience
+ *               languages:
+ *                 type: string
+ *                 format: json
+ *                 description: JSON string of languages spoken by the guide
+ *               location:
+ *                 type: string
+ *                 description: Location of the guide
+ *               contact:
+ *                 type: object
+ *                 properties:
+ *                   phone:
+ *                     type: string
+ *                     description: Phone number of the guide
+ *                   email:
+ *                     type: string
+ *                     description: Email address of the guide
+ *               availability:
+ *                 type: boolean
+ *                 description: Whether the guide is available
+ *               specializations:
+ *                 type: string
+ *                 description: Specializations of the guide
+ *               pricing:
+ *                 type: string
+ *                 format: json
+ *                 description: JSON string of pricing information
+ *               bio:
+ *                 type: string
+ *                 description: Biography of the guide
+ *               availableDates:
+ *                 type: string
+ *                 format: json
+ *                 description: JSON string of available dates
+ *               ratings:
+ *                 type: string
+ *                 format: json
+ *                 description: JSON string of ratings information
+ *               profilePicture:
+ *                 type: string
+ *                 format: binary
+ *                 description: Profile picture file
+ *     responses:
+ *       200:
+ *         description: Guide updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Guide'
+ *       404:
+ *         description: Guide not found
+ *       500:
+ *         description: Server error
+ */
 router.put('/:id', upload.single('profilePicture'), async (req, res, next) => {
     try {
         const {
@@ -516,6 +595,36 @@ router.get('/:id', async (req, res, next) => {
     }
 });
 
+/**
+ * @swagger
+ * /guides/{id}:
+ *   delete:
+ *     summary: Delete a guide
+ *     tags: [Guides]
+ *     description: Delete a specific guide by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the guide to delete
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Guide deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Guide deleted successfully
+ *       404:
+ *         description: Guide not found
+ *       500:
+ *         description: Server error
+ */
 router.delete('/:id', async (req, res, next) => {
     try {
         const guide = await Guide.findByIdAndDelete(req.params.id);
@@ -530,7 +639,84 @@ router.delete('/:id', async (req, res, next) => {
     }
 });
 
-// Get assigned packages for a guide
+/**
+ * @swagger
+ * /guides/{id}/assigned-packages:
+ *   get:
+ *     summary: Get assigned packages for a guide
+ *     tags: [Guides]
+ *     description: Retrieve all packages assigned to a specific guide
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the guide to get assigned packages for
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of assigned packages
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: integer
+ *                   description: Number of assigned packages
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         description: ID of the package
+ *                       name:
+ *                         type: string
+ *                         description: Name of the package
+ *                       description:
+ *                         type: string
+ *                         description: Description of the package
+ *                       price:
+ *                         type: number
+ *                         description: Price of the package
+ *                       duration:
+ *                         type: number
+ *                         description: Duration of the package in days
+ *                       location:
+ *                         type: string
+ *                         description: Location of the package
+ *                       image:
+ *                         type: array
+ *                         items:
+ *                           type: string
+ *                         description: Images of the package
+ *                       status:
+ *                         type: string
+ *                         description: Status of the assignment
+ *                       startDate:
+ *                         type: string
+ *                         format: date-time
+ *                         description: Start date of the assignment
+ *                       endDate:
+ *                         type: string
+ *                         format: date-time
+ *                         description: End date of the assignment
+ *                       avgRating:
+ *                         type: number
+ *                         description: Average rating of the package
+ *                       reviewCount:
+ *                         type: integer
+ *                         description: Number of reviews for the package
+ *                       bookingCount:
+ *                         type: integer
+ *                         description: Number of bookings for the package
+ *       404:
+ *         description: Guide not found
+ *       500:
+ *         description: Server error
+ */
 router.get('/:id/assigned-packages', async (req, res, next) => {
     try {
         const { id } = req.params;

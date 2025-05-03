@@ -356,7 +356,50 @@ router.post("/login", async (req, res, next) => {
   }
 });
 
-// Admin login route (unchanged)
+/**
+ * @swagger
+ * /customers/adminlogin:
+ *   post:
+ *     summary: Admin login
+ *     tags: [Authentication]
+ *     description: Authenticate an admin user
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - password
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 description: Username of the admin
+ *               password:
+ *                 type: string
+ *                 description: Password of the admin
+ *     responses:
+ *       200:
+ *         description: Admin login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Admin login successful
+ *                 token:
+ *                   type: string
+ *                   description: Authentication token
+ *       400:
+ *         description: Invalid credentials
+ *       404:
+ *         description: Admin not found
+ *       500:
+ *         description: Server error
+ */
 router.post("/adminlogin", async (req, res, next) => {
   const { username, password } = req.body;
 
@@ -415,7 +458,36 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-// Delete a customer (unchanged)
+/**
+ * @swagger
+ * /customers/{id}:
+ *   delete:
+ *     summary: Delete a customer
+ *     tags: [Customers]
+ *     description: Delete a specific customer by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the customer to delete
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Customer deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User deleted
+ *       404:
+ *         description: Customer not found
+ *       500:
+ *         description: Server error
+ */
 router.delete("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -432,7 +504,63 @@ router.delete("/:id", async (req, res, next) => {
   }
 });
 
-// Update customer with profile picture support
+/**
+ * @swagger
+ * /customers/{id}:
+ *   put:
+ *     summary: Update a customer
+ *     tags: [Customers]
+ *     description: Update a specific customer by ID, with support for profile picture upload
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the customer to update
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 description: Username of the customer
+ *               Name:
+ *                 type: string
+ *                 description: Full name of the customer
+ *               phno:
+ *                 type: string
+ *                 description: Phone number of the customer
+ *               gmail:
+ *                 type: string
+ *                 description: Email address of the customer
+ *               specialization:
+ *                 type: string
+ *                 description: Travel preference of the customer
+ *               profilePicture:
+ *                 type: string
+ *                 format: binary
+ *                 description: Profile picture file
+ *     responses:
+ *       200:
+ *         description: Customer updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User updated successfully
+ *                 user:
+ *                   $ref: '#/components/schemas/Customer'
+ *       404:
+ *         description: Customer not found
+ *       500:
+ *         description: Server error
+ */
 router.put("/:id", upload.single("profilePicture"), async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -461,7 +589,54 @@ router.put("/:id", upload.single("profilePicture"), async (req, res, next) => {
   }
 });
 
-// Update password route (unchanged)
+/**
+ * @swagger
+ * /customers/customers/{id}/update-password:
+ *   put:
+ *     summary: Update customer password
+ *     tags: [Customers]
+ *     description: Update a customer's password after verifying the current password
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the customer to update password for
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - currentPassword
+ *               - newPassword
+ *             properties:
+ *               currentPassword:
+ *                 type: string
+ *                 description: Current password of the customer
+ *               newPassword:
+ *                 type: string
+ *                 description: New password to set
+ *     responses:
+ *       200:
+ *         description: Password updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Password updated successfully
+ *       400:
+ *         description: Incorrect current password
+ *       404:
+ *         description: Customer not found
+ *       500:
+ *         description: Server error
+ */
 router.put("/customers/:id/update-password", async (req, res, next) => {
   const { currentPassword, newPassword } = req.body;
   const { id } = req.params;
