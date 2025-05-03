@@ -8,6 +8,130 @@ import path from 'path';
 import { cacheMiddleware, clearCacheMiddleware } from '../middleware/cacheMiddleware.js';
 const router = express.Router();
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Package:
+ *       type: object
+ *       required:
+ *         - name
+ *         - description
+ *         - price
+ *         - duration
+ *         - location
+ *         - highlights
+ *         - maxGroupSize
+ *         - AgentID
+ *         - image
+ *       properties:
+ *         _id:
+ *           type: string
+ *           description: Auto-generated ID of the package
+ *         name:
+ *           type: string
+ *           description: Name of the travel package
+ *         description:
+ *           type: string
+ *           description: Detailed description of the package
+ *         price:
+ *           type: number
+ *           description: Price of the package
+ *         duration:
+ *           type: number
+ *           description: Duration of the package in days
+ *         location:
+ *           type: string
+ *           description: Location of the package
+ *         itinerary:
+ *           type: string
+ *           description: Detailed itinerary of the package
+ *         highlights:
+ *           type: string
+ *           description: Highlights of the package
+ *         availableDates:
+ *           type: array
+ *           items:
+ *             type: string
+ *             format: date
+ *           description: List of available dates for the package
+ *         maxGroupSize:
+ *           type: number
+ *           description: Maximum group size for the package
+ *         guide:
+ *           type: string
+ *           description: ID of the primary guide (for backward compatibility)
+ *         guides:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: List of guide IDs assigned to the package
+ *         AgentID:
+ *           type: string
+ *           description: ID of the agency that created the package
+ *         AgentName:
+ *           type: string
+ *           description: Name of the agency that created the package
+ *         reviews:
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               customer:
+ *                 type: string
+ *                 description: ID of the customer who left the review
+ *               rating:
+ *                 type: number
+ *                 minimum: 1
+ *                 maximum: 5
+ *                 description: Rating from 1 to 5
+ *               comment:
+ *                 type: string
+ *                 description: Review comment
+ *               date:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Date when the review was submitted
+ *           description: List of reviews for the package
+ *         image:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: List of image paths for the package
+ *         totalBookings:
+ *           type: number
+ *           description: Total number of bookings for the package
+ *         isActive:
+ *           type: string
+ *           enum: [pending, confirmed, canceled]
+ *           description: Status of the package
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *           description: Date when the package was created
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *           description: Date when the package was last updated
+ *       example:
+ *         _id: "60d21b4667d0d8992e610c85"
+ *         name: "Adventure in the Alps"
+ *         description: "Experience the thrill of the Alps with this adventure package"
+ *         price: 1200
+ *         duration: 7
+ *         location: "Swiss Alps"
+ *         itinerary: "Day 1: Arrival, Day 2: Hiking, Day 3: Skiing..."
+ *         highlights: "Breathtaking views, Professional guides, All equipment included"
+ *         availableDates: ["2023-07-15", "2023-08-01"]
+ *         maxGroupSize: 10
+ *         guides: ["60d21b4667d0d8992e610c86", "60d21b4667d0d8992e610c87"]
+ *         AgentID: "60d21b4667d0d8992e610c88"
+ *         AgentName: "Alpine Adventures"
+ *         image: ["/public/packageImage/1624276806-alps1.jpg", "/public/packageImage/1624276806-alps2.jpg"]
+ *         totalBookings: 5
+ *         isActive: "confirmed"
+ */
+
 // Multer setup for handling file uploads
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -20,7 +144,90 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// Save a new package with image upload handling
+/**
+ * @swagger
+ * /packages:
+ *   post:
+ *     summary: Create a new travel package
+ *     tags: [Packages]
+ *     description: Create a new travel package with images and optional guide assignments
+ *     consumes:
+ *       - multipart/form-data
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - description
+ *               - price
+ *               - duration
+ *               - location
+ *               - itinerary
+ *               - highlights
+ *               - availableDates
+ *               - maxGroupSize
+ *               - AgentID
+ *               - images
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Name of the travel package
+ *               description:
+ *                 type: string
+ *                 description: Detailed description of the package
+ *               price:
+ *                 type: number
+ *                 description: Price of the package
+ *               duration:
+ *                 type: number
+ *                 description: Duration of the package in days
+ *               location:
+ *                 type: string
+ *                 description: Location of the package
+ *               itinerary:
+ *                 type: string
+ *                 description: Detailed itinerary of the package
+ *               highlights:
+ *                 type: string
+ *                 description: Highlights of the package
+ *               availableDates:
+ *                 type: string
+ *                 description: Comma-separated list of available dates
+ *               maxGroupSize:
+ *                 type: number
+ *                 description: Maximum group size for the package
+ *               guide:
+ *                 type: string
+ *                 description: ID of the primary guide (optional)
+ *               guides:
+ *                 type: string
+ *                 description: Comma-separated list or JSON array of guide IDs (optional)
+ *               AgentID:
+ *                 type: string
+ *                 description: ID of the agency creating the package
+ *               images:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *                 description: Images for the package
+ *     responses:
+ *       201:
+ *         description: Package created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Package'
+ *       400:
+ *         description: Missing required fields or invalid guide ID
+ *       404:
+ *         description: Agent not found
+ *       500:
+ *         description: Internal server error
+ */
 router.post('/', upload.array('images'), clearCacheMiddleware('/packages'), async (req, res, next) => {
     try {
         // Check if all required fields are provided
@@ -105,7 +312,31 @@ router.post('/', upload.array('images'), clearCacheMiddleware('/packages'), asyn
     }
 });
 
-// view all packages
+/**
+ * @swagger
+ * /packages:
+ *   get:
+ *     summary: Get all travel packages
+ *     tags: [Packages]
+ *     description: Retrieve a list of all travel packages with guide details
+ *     responses:
+ *       200:
+ *         description: A list of packages
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: integer
+ *                   description: Number of packages returned
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Package'
+ *       500:
+ *         description: Server error
+ */
 router.get('/', cacheMiddleware(300), async (req, res, next) => {
     try {
         // Find all packages and populate guide details
@@ -129,7 +360,32 @@ router.get('/', cacheMiddleware(300), async (req, res, next) => {
         res.status(500).send({ message: error.message });
     }
 })
-// view a single package
+/**
+ * @swagger
+ * /packages/{id}:
+ *   get:
+ *     summary: Get a specific travel package by ID
+ *     tags: [Packages]
+ *     description: Retrieve detailed information about a specific travel package by its ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the package to retrieve
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Package details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Package'
+ *       404:
+ *         description: Package not found
+ *       500:
+ *         description: Server error
+ */
 router.get('/:id', cacheMiddleware(300), async (req, res, next) => {
     try {
         let { id } = req.params;

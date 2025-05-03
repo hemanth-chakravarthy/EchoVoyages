@@ -6,6 +6,201 @@ import fs from 'fs';
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Guide:
+ *       type: object
+ *       required:
+ *         - username
+ *         - name
+ *         - phno
+ *         - gmail
+ *         - password
+ *         - specialization
+ *       properties:
+ *         _id:
+ *           type: string
+ *           description: Auto-generated ID of the guide
+ *         username:
+ *           type: string
+ *           description: Username of the guide
+ *         name:
+ *           type: string
+ *           description: Full name of the guide
+ *         experience:
+ *           type: number
+ *           description: Years of experience
+ *         languages:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: Languages spoken by the guide
+ *         location:
+ *           type: string
+ *           description: Location of the guide
+ *         phno:
+ *           type: string
+ *           description: Phone number of the guide
+ *         gmail:
+ *           type: string
+ *           description: Email address of the guide
+ *         role:
+ *           type: string
+ *           default: guide
+ *           description: Role of the user
+ *         password:
+ *           type: string
+ *           description: Hashed password of the guide
+ *         profilePicture:
+ *           type: string
+ *           description: Path to the guide's profile picture
+ *         ratings:
+ *           type: object
+ *           properties:
+ *             averageRating:
+ *               type: number
+ *               description: Average rating of the guide
+ *             numberOfReviews:
+ *               type: number
+ *               description: Number of reviews for the guide
+ *         reviews:
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               customer:
+ *                 type: string
+ *                 description: ID of the customer who left the review
+ *               rating:
+ *                 type: number
+ *                 description: Rating from 1 to 5
+ *               comment:
+ *                 type: string
+ *                 description: Review comment
+ *               date:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Date when the review was submitted
+ *         availability:
+ *           type: boolean
+ *           description: Whether the guide is available
+ *         availableDates:
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               startDate:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Start date of availability
+ *               endDate:
+ *                 type: string
+ *                 format: date-time
+ *                 description: End date of availability
+ *         assignedPackages:
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               packageId:
+ *                 type: string
+ *                 description: ID of the assigned package
+ *               packageName:
+ *                 type: string
+ *                 description: Name of the assigned package
+ *               price:
+ *                 type: number
+ *                 description: Price of the package
+ *               startDate:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Start date of the assignment
+ *               endDate:
+ *                 type: string
+ *                 format: date-time
+ *                 description: End date of the assignment
+ *               status:
+ *                 type: string
+ *                 enum: [pending, confirmed, completed, canceled]
+ *                 description: Status of the assignment
+ *         specialization:
+ *           type: string
+ *           enum: [luxury, adventure, business, family, budget-friendly, other]
+ *           description: Specialization of the guide
+ *         earnings:
+ *           type: object
+ *           properties:
+ *             total:
+ *               type: number
+ *               description: Total earnings of the guide
+ *             pending:
+ *               type: number
+ *               description: Pending earnings of the guide
+ *             received:
+ *               type: number
+ *               description: Received earnings of the guide
+ *             monthly:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   month:
+ *                     type: number
+ *                     description: Month number (1-12)
+ *                   year:
+ *                     type: number
+ *                     description: Year
+ *                   amount:
+ *                     type: number
+ *                     description: Amount earned in that month
+ *             history:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   bookingId:
+ *                     type: string
+ *                     description: ID of the booking
+ *                   packageId:
+ *                     type: string
+ *                     description: ID of the package
+ *                   packageName:
+ *                     type: string
+ *                     description: Name of the package
+ *                   customerName:
+ *                     type: string
+ *                     description: Name of the customer
+ *                   amount:
+ *                     type: number
+ *                     description: Amount earned from this booking
+ *                   date:
+ *                     type: string
+ *                     format: date-time
+ *                     description: Date of the earning
+ *                   status:
+ *                     type: string
+ *                     enum: [pending, paid]
+ *                     description: Payment status
+ *       example:
+ *         _id: "60d21b4667d0d8992e610c93"
+ *         username: "janesmith"
+ *         name: "Jane Smith"
+ *         experience: 5
+ *         languages: ["English", "French", "Spanish"]
+ *         location: "Paris, France"
+ *         phno: "+33123456789"
+ *         gmail: "jane.smith@example.com"
+ *         role: "guide"
+ *         profilePicture: "/public/guideProfiles/profile-1624276806-123456.jpg"
+ *         ratings:
+ *           averageRating: 4.8
+ *           numberOfReviews: 25
+ *         availability: true
+ *         specialization: "luxury"
+ */
+
 // Configure multer for file uploads
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -44,7 +239,78 @@ const upload = multer({
     },
 });
 
-// Save a guide
+/**
+ * @swagger
+ * /guides:
+ *   post:
+ *     summary: Create a new guide
+ *     tags: [Guides]
+ *     description: Create a new guide with basic information
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - experience
+ *               - languages
+ *               - location
+ *               - contact
+ *               - availableDates
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Full name of the guide
+ *               experience:
+ *                 type: number
+ *                 description: Years of experience
+ *               languages:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Languages spoken by the guide
+ *               location:
+ *                 type: string
+ *                 description: Location of the guide
+ *               contact:
+ *                 type: object
+ *                 properties:
+ *                   phone:
+ *                     type: string
+ *                     description: Phone number of the guide
+ *                   email:
+ *                     type: string
+ *                     description: Email address of the guide
+ *               availability:
+ *                 type: boolean
+ *                 description: Whether the guide is available
+ *               availableDates:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     startDate:
+ *                       type: string
+ *                       format: date-time
+ *                       description: Start date of availability
+ *                     endDate:
+ *                       type: string
+ *                       format: date-time
+ *                       description: End date of availability
+ *     responses:
+ *       201:
+ *         description: Guide created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Guide'
+ *       400:
+ *         description: Missing required fields
+ *       500:
+ *         description: Internal server error
+ */
 router.post('/', async (req, res, next) => {
     try {
         const { name, experience, languages, location, contact, availability, availableDates } = req.body;
@@ -75,6 +341,31 @@ router.post('/', async (req, res, next) => {
     }
 });
 
+/**
+ * @swagger
+ * /guides:
+ *   get:
+ *     summary: Get all guides
+ *     tags: [Guides]
+ *     description: Retrieve a list of all guides
+ *     responses:
+ *       200:
+ *         description: A list of guides
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: integer
+ *                   description: Number of guides returned
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Guide'
+ *       500:
+ *         description: Server error
+ */
 router.get('/',async (req,res, next) => {
     try {
         const guides = await Guide.find({});
@@ -185,6 +476,32 @@ router.put('/:id', upload.single('profilePicture'), async (req, res, next) => {
 });
 
 
+/**
+ * @swagger
+ * /guides/{id}:
+ *   get:
+ *     summary: Get a guide by ID
+ *     tags: [Guides]
+ *     description: Retrieve a specific guide by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the guide to retrieve
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Guide details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Guide'
+ *       404:
+ *         description: Guide not found
+ *       500:
+ *         description: Server error
+ */
 router.get('/:id', async (req, res, next) => {
     try {
         const guide = await Guide.findById(req.params.id)

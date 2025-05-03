@@ -15,6 +15,66 @@ import fs from "fs";
 const router = express.Router();
 const JWT_SECRET = "Voyage_secret";
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Customer:
+ *       type: object
+ *       required:
+ *         - username
+ *         - Name
+ *         - phno
+ *         - gmail
+ *         - password
+ *         - specialization
+ *       properties:
+ *         _id:
+ *           type: string
+ *           description: Auto-generated ID of the customer
+ *         username:
+ *           type: string
+ *           description: Username of the customer
+ *         Name:
+ *           type: string
+ *           description: Full name of the customer
+ *         phno:
+ *           type: string
+ *           description: Phone number of the customer
+ *         gmail:
+ *           type: string
+ *           description: Email address of the customer
+ *         password:
+ *           type: string
+ *           description: Hashed password of the customer
+ *         role:
+ *           type: string
+ *           default: customer
+ *           description: Role of the user
+ *         specialization:
+ *           type: string
+ *           enum: [luxury, adventure, business, family, budget-friendly, other]
+ *           description: Travel preference of the customer
+ *         profilePicture:
+ *           type: string
+ *           description: Path to the customer's profile picture
+ *         verificationCode:
+ *           type: string
+ *           description: Code for email verification
+ *         isverified:
+ *           type: boolean
+ *           description: Whether the customer's email is verified
+ *       example:
+ *         _id: "60d21b4667d0d8992e610c91"
+ *         username: "johndoe"
+ *         Name: "John Doe"
+ *         phno: "+1234567890"
+ *         gmail: "john.doe@example.com"
+ *         role: "customer"
+ *         specialization: "adventure"
+ *         profilePicture: "/public/customerProfiles/profile-1624276806-123456.jpg"
+ */
+
 // Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -56,7 +116,67 @@ const upload = multer({
 // Serve static files from the public directory
 router.use("/public", express.static("public"));
 
-// save a customer
+/**
+ * @swagger
+ * /customers/signup:
+ *   post:
+ *     summary: Register a new user (customer, guide, or agency)
+ *     tags: [Customers]
+ *     description: Create a new user account based on the role specified
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - Name
+ *               - phno
+ *               - gmail
+ *               - password
+ *               - role
+ *               - specialization
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 description: Username for the account
+ *               Name:
+ *                 type: string
+ *                 description: Full name of the user
+ *               phno:
+ *                 type: string
+ *                 description: Phone number
+ *               gmail:
+ *                 type: string
+ *                 description: Email address
+ *               password:
+ *                 type: string
+ *                 description: Password (will be hashed)
+ *               role:
+ *                 type: string
+ *                 enum: [customer, guide, agency]
+ *                 description: Role of the user
+ *               specialization:
+ *                 type: string
+ *                 enum: [luxury, adventure, business, family, budget-friendly, other]
+ *                 description: Specialization or preference
+ *     responses:
+ *       201:
+ *         description: User created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               oneOf:
+ *                 - $ref: '#/components/schemas/Customer'
+ *                 - $ref: '#/components/schemas/Guide'
+ *       400:
+ *         description: Missing required fields
+ *       404:
+ *         description: User already exists
+ *       500:
+ *         description: Internal server error
+ */
 router.post("/signup", async (req, res, next) => {
   try {
     if (
@@ -155,7 +275,51 @@ router.post("/signup", async (req, res, next) => {
   }
 });
 
-// Login route (unchanged)
+/**
+ * @swagger
+ * /customers/login:
+ *   post:
+ *     summary: Login for customers, guides, and agencies
+ *     tags: [Authentication]
+ *     description: Authenticate a user and return a JWT token
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - password
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 description: Username of the user
+ *               password:
+ *                 type: string
+ *                 description: Password of the user
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                   description: JWT token for authentication
+ *                 msg:
+ *                   type: string
+ *                   description: Success message
+ *                 role:
+ *                   type: string
+ *                   description: Role of the authenticated user
+ *       400:
+ *         description: Invalid credentials or missing fields
+ *       500:
+ *         description: Server error
+ */
 router.post("/login", async (req, res, next) => {
   const { username, password } = req.body;
 
@@ -213,7 +377,31 @@ router.post("/adminlogin", async (req, res, next) => {
   }
 });
 
-// Get all customers (unchanged)
+/**
+ * @swagger
+ * /customers:
+ *   get:
+ *     summary: Get all customers
+ *     tags: [Customers]
+ *     description: Retrieve a list of all customers
+ *     responses:
+ *       200:
+ *         description: A list of customers
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: integer
+ *                   description: Number of customers returned
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Customer'
+ *       500:
+ *         description: Server error
+ */
 router.get("/", async (req, res, next) => {
   try {
     const custs = await customers.find({});
@@ -301,7 +489,32 @@ router.put("/customers/:id/update-password", async (req, res, next) => {
   }
 });
 
-// View a single customer (unchanged)
+/**
+ * @swagger
+ * /customers/{id}:
+ *   get:
+ *     summary: Get a customer by ID
+ *     tags: [Customers]
+ *     description: Retrieve a specific customer by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the customer to retrieve
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Customer details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       404:
+ *         description: Customer not found
+ *       500:
+ *         description: Server error
+ */
 router.get("/:id", async (req, res, next) => {
   try {
     let { id } = req.params;

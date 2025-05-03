@@ -144,12 +144,13 @@ router.put('/:id',async (req,res,next) => {
       // Update the request
       const result = await requests.findByIdAndUpdate(id, req.body, { new: true });
 
-      // If the request is being approved, update any related bookings
+      // If the request is being approved, update any related bookings and attach guide to package
       if (status === "approved") {
           try {
-              // Import the bookings model and Guide model
+              // Import the bookings model, Guide model, and Package model
               const { bookings } = await import('../models/bookingModel.js');
               const { Guide } = await import('../models/guideModel.js');
+              const { packages } = await import('../models/packageModel.js');
 
               // Find any bookings for this customer and package
               const relatedBookings = await bookings.find({
@@ -169,7 +170,7 @@ router.put('/:id',async (req,res,next) => {
                           { new: true }
                       );
 
-                      // If the booking has a guide, update guide earnings
+                      // If the booking has a guide, update guide earnings and attach guide to package
                       if (updatedBooking.guideId) {
                           try {
                               // Calculate guide's share (70% of package price)
@@ -218,9 +219,42 @@ router.put('/:id',async (req,res,next) => {
                                   // Save the updated guide
                                   await guide.save();
                                   console.log(`Updated guide earnings for booking ${updatedBooking._id}`);
+
+                                  // Attach guide to package if not already attached
+                                  const packageData = await packages.findById(updatedBooking.packageId);
+                                  if (packageData) {
+                                      // Check if guide is already in the guides array
+                                      const guideExists = packageData.guides.some(
+                                          g => g.toString() === updatedBooking.guideId.toString()
+                                      );
+
+                                      if (!guideExists) {
+                                          // Add guide to the package's guides array
+                                          packageData.guides.push(updatedBooking.guideId);
+                                          await packageData.save();
+                                          console.log(`Attached guide ${updatedBooking.guideId} to package ${updatedBooking.packageId}`);
+                                      }
+
+                                      // Check if package is already in guide's assignedPackages
+                                      const packageExists = guide.assignedPackages.some(
+                                          pkg => pkg.packageId.toString() === updatedBooking.packageId.toString()
+                                      );
+
+                                      if (!packageExists) {
+                                          // Add package to guide's assignedPackages
+                                          guide.assignedPackages.push({
+                                              packageId: updatedBooking.packageId,
+                                              packageName: packageData.name,
+                                              price: packageData.price,
+                                              status: 'confirmed'
+                                          });
+                                          await guide.save();
+                                          console.log(`Added package ${updatedBooking.packageId} to guide's assigned packages`);
+                                      }
+                                  }
                               }
                           } catch (error) {
-                              console.error('Error updating guide earnings:', error);
+                              console.error('Error updating guide earnings or attaching guide to package:', error);
                               // Continue with the process even if earnings update fails
                           }
                       }
