@@ -8,6 +8,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { Link } from "react-router-dom";
 import GuideIncomingRequests from "../components/guideincomingrequests";
+import ConfirmationModal from "../components/ConfirmationModal";
 
 const GuideRequests = () => {
   const [requests, setRequests] = useState([]);
@@ -15,6 +16,14 @@ const GuideRequests = () => {
   const [error, setError] = useState(null);
   const [activeSection, setActiveSection] = useState("incoming");
   const [incomingCount, setIncomingCount] = useState(0);
+
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalData, setModalData] = useState({
+    title: "",
+    message: "",
+    onConfirm: () => {},
+  });
 
   const token = localStorage.getItem("token");
   const guideId = token ? jwtDecode(token).id : null;
@@ -46,40 +55,53 @@ const GuideRequests = () => {
     fetchRequests();
   }, [token, guideId]);
 
-  const handleCancelRequest = async (requestId) => {
-    // Show confirmation dialog
-    if (!window.confirm("Are you sure you want to cancel this request?")) {
-      return; // User cancelled the operation
-    }
-    try {
-      // Show loading toast
-      const loadingToastId = toast.loading("Cancelling request...");
-      await axios.delete(`http://localhost:5000/guide-requests/${requestId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      // Remove the request from the list
-      setRequests((prevRequests) =>
-        prevRequests.filter((req) => req._id !== requestId)
-      );
-      // Update loading toast to success
-      toast.update(loadingToastId, {
-        render: "Request cancelled successfully",
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
-      });
-    } catch (err) {
-      console.error("Error cancelling guide request:", err);
-      toast.error(
-        "Failed to cancel request: " +
-          (err.response?.data?.message || err.message)
-      );
-    }
+  const handleCancelRequest = (requestId) => {
+    // Open confirmation modal
+    setModalData({
+      title: "Cancel Request",
+      message: "Are you sure you want to cancel this request?",
+      onConfirm: async () => {
+        try {
+          // Show loading toast
+          const loadingToastId = toast.loading("Cancelling request...");
+          await axios.delete(`http://localhost:5000/guide-requests/${requestId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          // Remove the request from the list
+          setRequests((prevRequests) =>
+            prevRequests.filter((req) => req._id !== requestId)
+          );
+          // Update loading toast to success
+          toast.update(loadingToastId, {
+            render: "Request cancelled successfully",
+            type: "success",
+            isLoading: false,
+            autoClose: 3000,
+          });
+        } catch (err) {
+          console.error("Error cancelling guide request:", err);
+          toast.error(
+            "Failed to cancel request: " +
+              (err.response?.data?.message || err.message)
+          );
+        }
+      },
+    });
+    setIsModalOpen(true);
   };
 
   return (
     <div className="min-h-screen font-sans bg-[#f3f6f8]">
       <ToastContainer />
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={modalData.onConfirm}
+        title={modalData.title}
+        message={modalData.message}
+      />
 
       <main className="max-w-4xl mx-auto py-8 px-4">
         <h1 className="text-2xl font-bold text-[#0a66c2] mb-6">

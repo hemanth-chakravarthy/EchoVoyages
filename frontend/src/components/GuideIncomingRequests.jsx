@@ -5,12 +5,21 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { Link } from 'react-router-dom';
+import ConfirmationModal from './ConfirmationModal';
 
 const GuideIncomingRequests = ({ onCountChange }) => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('pending');
+
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalData, setModalData] = useState({
+    title: "",
+    message: "",
+    onConfirm: () => {},
+  });
 
   const token = localStorage.getItem('token');
   const guideId = token ? jwtDecode(token).id : null;
@@ -55,31 +64,42 @@ const GuideIncomingRequests = ({ onCountChange }) => {
     fetchRequests();
   }, [token, guideId]);
 
-  const handleStatusUpdate = async (requestId, newStatus) => {
-    try {
-      await axios.put(
-        `http://localhost:5000/guide-requests/${requestId}`,
-        { status: newStatus },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
-          }
+  const showStatusUpdateModal = (requestId, newStatus) => {
+    const action = newStatus === 'approved' ? 'accept' : 'decline';
+    const title = newStatus === 'approved' ? 'Accept Request' : 'Decline Request';
+
+    setModalData({
+      title: title,
+      message: `Are you sure you want to ${action} this request?`,
+      onConfirm: async () => {
+        try {
+          await axios.put(
+            `http://localhost:5000/guide-requests/${requestId}`,
+            { status: newStatus },
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+              }
+            }
+          );
+
+          // Update the local state
+          setRequests(prevRequests =>
+            prevRequests.map(req =>
+              req._id === requestId ? { ...req, status: newStatus } : req
+            )
+          );
+
+          toast.success(`Request ${newStatus} successfully`);
+        } catch (err) {
+          console.error(`Error ${newStatus} request:`, err);
+          toast.error(`Failed to ${newStatus} request`);
         }
-      );
+      }
+    });
 
-      // Update the local state
-      setRequests(prevRequests =>
-        prevRequests.map(req =>
-          req._id === requestId ? { ...req, status: newStatus } : req
-        )
-      );
-
-      toast.success(`Request ${newStatus} successfully`);
-    } catch (err) {
-      console.error(`Error ${newStatus} request:`, err);
-      toast.error(`Failed to ${newStatus} request`);
-    }
+    setIsModalOpen(true);
   };
 
   // Filter requests based on active tab
@@ -101,7 +121,16 @@ const GuideIncomingRequests = ({ onCountChange }) => {
   return (
     <div className="bg-white rounded-lg shadow-sm">
       <ToastContainer position="top-right" autoClose={3000} />
-    
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={modalData.onConfirm}
+        title={modalData.title}
+        message={modalData.message}
+      />
+
       {/* Tabs remain the same */}
       <div className="flex border-b border-gray-200">
         <button
@@ -206,7 +235,7 @@ const GuideIncomingRequests = ({ onCountChange }) => {
                         <motion.button
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          onClick={() => handleStatusUpdate(request._id, 'approved')}
+                          onClick={() => showStatusUpdateModal(request._id, 'approved')}
                           className="px-4 py-1.5 bg-[#0a66c2] text-white text-sm font-medium rounded-full hover:bg-[#084e96] transition-all duration-300"
                         >
                           Accept
@@ -214,7 +243,7 @@ const GuideIncomingRequests = ({ onCountChange }) => {
                         <motion.button
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          onClick={() => handleStatusUpdate(request._id, 'rejected')}
+                          onClick={() => showStatusUpdateModal(request._id, 'rejected')}
                           className="px-4 py-1.5 border border-[#d93025] text-[#d93025] text-sm font-medium rounded-full hover:bg-[#ffeaea] transition-all duration-300"
                         >
                           Decline

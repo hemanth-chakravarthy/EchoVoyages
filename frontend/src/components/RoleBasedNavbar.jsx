@@ -109,7 +109,7 @@ const RoleBasedNavbar = () => {
       { to: "/all-bookings", text: "All Bookings", icon: <FaCalendarCheck /> },
     ],
     customer: [
-      { to: "/realhome", text: "Home", icon: <FaHome /> },
+      { to: "/home", text: "Home", icon: <FaHome /> },
       { to: "/search", text: "Search", icon: <FaCompass /> },
       { to: "/wishlist", text: "Wishlist", icon: <FaHeart /> },
       { to: "/customerGuide", text: "Guides", icon: <FaUsers /> },
