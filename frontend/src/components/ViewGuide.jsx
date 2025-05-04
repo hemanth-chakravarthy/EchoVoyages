@@ -436,7 +436,7 @@ const ViewGuide = () => {
                 {
                   icon: <FaEnvelope className="text-[#0a66c2]" />,
                   label: "Email",
-                  value: guideDetails.email,
+                  value: guideDetails.gmail,
                 },
               ].map((item, index) => (
                 <div
