@@ -84,7 +84,6 @@ const RoleBasedNavbar = () => {
     agency: [
       { to: "/AgentHome", text: "Booking Requests", icon: <FaClipboardList /> },
       { to: "/mylistings", text: "My Packages", icon: <FaBox /> },
-      { to: "/createPackage", text: "Create Package", icon: <FaUserPlus /> },
       {
         to: "/agency-guide-requests",
         text: "Guide Requests",

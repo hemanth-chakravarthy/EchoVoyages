@@ -6,7 +6,17 @@ import { useNavigate, Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { ToastContainer, toast } from "react-toastify";
 import { motion } from "framer-motion";
-import { FaUser, FaLanguage, FaMapMarkerAlt, FaPhone, FaEnvelope, FaCalendarAlt, FaStar, FaEdit, FaSignOutAlt } from "react-icons/fa";
+import {
+  FaUser,
+  FaLanguage,
+  FaMapMarkerAlt,
+  FaPhone,
+  FaEnvelope,
+  FaCalendarAlt,
+  FaStar,
+  FaEdit,
+  FaSignOutAlt,
+} from "react-icons/fa";
 import "react-toastify/dist/ReactToastify.css";
 
 const GuideProfilePage = () => {
@@ -341,9 +351,17 @@ const GuideProfilePage = () => {
               <div className="flex flex-col items-center">
                 <div className="w-40 h-40 rounded-full overflow-hidden mb-4 border-4 border-[#0a66c2]/10">
                   {editing && previewUrl ? (
-                    <img src={previewUrl} alt="Profile Preview" className="w-full h-full object-cover" />
+                    <img
+                      src={previewUrl}
+                      alt="Profile Preview"
+                      className="w-full h-full object-cover"
+                    />
                   ) : guide.profilePicture ? (
-                    <img src={`http://localhost:5000/${guide.profilePicture}`} alt="Profile" className="w-full h-full object-cover" />
+                    <img
+                      src={`http://localhost:5000/${guide.profilePicture}`}
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
                     <div className="w-full h-full bg-[#0a66c2]/5 flex items-center justify-center">
                       <FaUser className="text-[#0a66c2] text-5xl" />
@@ -463,7 +481,8 @@ const GuideProfilePage = () => {
                   <div>
                     <p className="text-sm text-gray-500">Rating</p>
                     <p className="font-medium">
-                      {guide.ratings.averageRating.toFixed(1)} / 5.0 ({guide.ratings.numberOfReviews} reviews)
+                      {guide.ratings.averageRating.toFixed(1)} / 5.0 (
+                      {guide.ratings.numberOfReviews} reviews)
                     </p>
                   </div>
                 </div>
@@ -491,7 +510,9 @@ const GuideProfilePage = () => {
 
               {/* Contact Information */}
               <div className="border-t pt-6">
-                <h3 className="text-lg font-semibold mb-4">Contact Information</h3>
+                <h3 className="text-lg font-semibold mb-4">
+                  Contact Information
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex items-center gap-3">
                     <FaPhone className="text-[#0a66c2] text-xl" />
@@ -544,31 +565,50 @@ const GuideProfilePage = () => {
             <FaCalendarAlt className="text-[#0a66c2]" />
             Available Dates
           </h3>
-          
+
           {editing ? (
             <div className="space-y-4">
               {updatedGuide.availableDates.map((dateRange, index) => (
-                <div key={index} className="flex flex-wrap items-end gap-4 p-4 bg-[#f3f6f8] rounded-lg">
+                <div
+                  key={index}
+                  className="flex flex-wrap items-end gap-4 p-4 bg-[#f3f6f8] rounded-lg"
+                >
                   <div className="flex-1">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Start Date
+                    </label>
                     <input
                       type="date"
                       className="w-full px-4 py-2 rounded-lg bg-white border border-[#0a66c2]/20 
                       focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2] focus:outline-none
                       text-gray-700 transition-all duration-300"
                       value={dateRange.startDate}
-                      onChange={(e) => handleAvailabilityDateChange(index, "startDate", e.target.value)}
+                      onChange={(e) =>
+                        handleAvailabilityDateChange(
+                          index,
+                          "startDate",
+                          e.target.value
+                        )
+                      }
                     />
                   </div>
                   <div className="flex-1">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      End Date
+                    </label>
                     <input
                       type="date"
                       className="w-full px-4 py-2 rounded-lg bg-white border border-[#0a66c2]/20 
                       focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2] focus:outline-none
                       text-gray-700 transition-all duration-300"
                       value={dateRange.endDate}
-                      onChange={(e) => handleAvailabilityDateChange(index, "endDate", e.target.value)}
+                      onChange={(e) =>
+                        handleAvailabilityDateChange(
+                          index,
+                          "endDate",
+                          e.target.value
+                        )
+                      }
                     />
                   </div>
                   <button
@@ -590,9 +630,12 @@ const GuideProfilePage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {guide.availableDates.map((dateRange, index) => (
                 <div key={index} className="p-4 bg-gray-50 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">Date Range {index + 1}</p>
+                  <p className="text-sm text-gray-500 mb-1">
+                    Date Range {index + 1}
+                  </p>
                   <p className="font-medium">
-                    {new Date(dateRange.startDate).toLocaleDateString()} - {new Date(dateRange.endDate).toLocaleDateString()}
+                    {new Date(dateRange.startDate).toLocaleDateString()} -{" "}
+                    {new Date(dateRange.endDate).toLocaleDateString()}
                   </p>
                 </div>
               ))}
