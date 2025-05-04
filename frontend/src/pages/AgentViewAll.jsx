@@ -1,6 +1,3 @@
-/** @format */
-
-/** @format */
 import React, { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import { Link, useNavigate } from "react-router-dom";

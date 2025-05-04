@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  # MongoDB service
+  mongodb:
+    image: mongo:latest
+    container_name: echovoyages-mongodb
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - echovoyages-network
+
+  
+  # Backend service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: echovoyages-backend
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=mongodb://admin:password@mongodb:27017/EchoVoyages2?authSource=admin
+      - JWT_SECRET=Voyage_secret
+      - NODE_ENV=production
+      - SOLR_HOST=solr
+      - SOLR_PORT=8983
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+      - ./public:/app/public
+    depends_on:
+      - mongodb
+      - solr
+    networks:
+      - echovoyages-network
+
+  # Frontend service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: echovoyages-frontend
+    restart: always
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - echovoyages-network
+
+networks:
+  echovoyages-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+  solr_data:
