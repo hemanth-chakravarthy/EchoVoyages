@@ -1,3 +1,5 @@
+/** @format */
+
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
@@ -61,20 +63,20 @@ const Signup = () => {
     return usernamePattern.test(username)
       ? ""
       : "Username must start with a lowercase letter and can include lowercase letters, numbers, and special characters.";
-};
-
+  };
 
   // Update the validateName function
   const validateName = (name) => {
     const namePattern = /^[A-Za-z\s]+$/;
     if (!name) return "Name is required";
-    if (!namePattern.test(name)) return "Name can only contain letters and spaces";
+    if (!namePattern.test(name))
+      return "Name can only contain letters and spaces";
     if (name.length < 2) return "Name must be at least 2 characters long";
     return "";
   };
 
   // Add this near the top with other state declarations
-  const [selectedCountryCode, setSelectedCountryCode] = useState('+91');
+  const [selectedCountryCode, setSelectedCountryCode] = useState("+91");
 
   // Update the validatePhoneNumber function
   const validatePhoneNumber = (phno) => {
@@ -90,7 +92,8 @@ const Signup = () => {
   const validateEmail = (email) => {
     const emailPattern = /^[A-Za-z][A-Za-z0-9._-]*@[^\s@]+\.[A-Za-z]+$/;
     if (!email) return "Email is required";
-    if (!emailPattern.test(email)) return "Email must start with a letter and can contain letters, numbers, dots, underscores, or hyphens before @";
+    if (!emailPattern.test(email))
+      return "Email must start with a letter and can contain letters, numbers, dots, underscores, or hyphens before @";
     return "";
   };
 
@@ -160,7 +163,7 @@ const Signup = () => {
     // Include country code with phone number
     const formDataWithCountryCode = {
       ...formData,
-      phno: selectedCountryCode + formData.phno
+      phno: selectedCountryCode + formData.phno,
     };
 
     try {
@@ -207,7 +210,7 @@ const Signup = () => {
     <div
       className="min-h-screen flex items-center justify-center bg-cover bg-center py-12 px-4 sm:px-6 lg:px-8"
       style={{
-        backgroundImage: "url('../public/images/travel-background.jpg')",
+        backgroundImage: "url('/images/travel-background.jpg')",
       }}
     >
       <ToastContainer position="top-right" autoClose={3000} />

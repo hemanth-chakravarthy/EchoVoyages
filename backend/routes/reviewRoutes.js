@@ -1,9 +1,15 @@
+/** @format */
+
 import express from "express";
 import { reviews } from "../models/customerReviewModel.js";
 import { packages } from "../models/packageModel.js";
 import { customers } from "../models/customerModel.js";
 import { Guide } from "../models/guideModel.js";
 import { bookings } from "../models/bookingModel.js";
+import {
+  cacheMiddleware,
+  clearCacheMiddleware,
+} from "../middleware/cacheMiddleware.js";
 const router = express.Router();
 
 /**
@@ -146,7 +152,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.post("/", async (req, res,next) => {
+router.post("/", clearCacheMiddleware("reviews"), async (req, res, next) => {
   try {
     const { customerId, packageId, guideId, rating, comment, bookingId } =
       req.body;
@@ -168,12 +174,10 @@ router.post("/", async (req, res,next) => {
     // Check if the booking is valid
     const bookingData = await bookings.findById(bookingId);
     if (!bookingData) {
-      return res
-        .status(404)
-        .send({
-          message:
-            "Invalid booking ID. Please provide a valid booking for this package.",
-        });
+      return res.status(404).send({
+        message:
+          "Invalid booking ID. Please provide a valid booking for this package.",
+      });
     }
 
     // Ensure that the booking matches the customer ID
@@ -192,7 +196,10 @@ router.post("/", async (req, res,next) => {
       }
 
       // Ensure the booking matches the package ID
-      if (bookingData.packageId && bookingData.packageId.toString() !== packageId) {
+      if (
+        bookingData.packageId &&
+        bookingData.packageId.toString() !== packageId
+      ) {
         return res.status(403).send({
           message: "You can only review packages that you have booked.",
         });
@@ -243,9 +250,9 @@ router.post("/", async (req, res,next) => {
               customer: customerId,
               rating: rating,
               comment: comment,
-              date: new Date()
-            }
-          }
+              date: new Date(),
+            },
+          },
         },
         { new: true }
       );
@@ -263,13 +270,17 @@ router.post("/", async (req, res,next) => {
               customer: customerId,
               rating: rating,
               comment: comment,
-              date: new Date()
-            }
+              date: new Date(),
+            },
           },
           $set: {
-            'ratings.averageRating': (guideData.ratings.averageRating * guideData.ratings.numberOfReviews + rating) / (guideData.ratings.numberOfReviews + 1),
-            'ratings.numberOfReviews': guideData.ratings.numberOfReviews + 1
-          }
+            "ratings.averageRating":
+              (guideData.ratings.averageRating *
+                guideData.ratings.numberOfReviews +
+                rating) /
+              (guideData.ratings.numberOfReviews + 1),
+            "ratings.numberOfReviews": guideData.ratings.numberOfReviews + 1,
+          },
         },
         { new: true }
       );
@@ -317,7 +328,7 @@ router.post("/", async (req, res,next) => {
  *       500:
  *         description: Server error
  */
-router.post("/:reviewId", async (req, res,next) => {
+router.post("/:reviewId", async (req, res, next) => {
   const { reviewId } = req.params;
 
   try {
@@ -358,7 +369,7 @@ router.post("/:reviewId", async (req, res,next) => {
  *       500:
  *         description: Server error
  */
-router.get("/", async (req, res,next) => {
+router.get("/", async (req, res, next) => {
   try {
     const revs = await reviews
       .find()
@@ -400,7 +411,7 @@ router.get("/", async (req, res,next) => {
  *       500:
  *         description: Server error
  */
-router.get("/package/:packageId", async (req, res,next) => {
+router.get("/package/:packageId", async (req, res, next) => {
   const { packageId } = req.params; // Extract the packageId properly
 
   if (!packageId) {
@@ -410,7 +421,7 @@ router.get("/package/:packageId", async (req, res,next) => {
   try {
     // Find reviews associated with the specific packageId
     const revs = await reviews.find({ packageId });
-    console.log(revs.length)
+    console.log(revs.length);
     // If no reviews are found
     if (revs.length === 0) {
       return res
@@ -454,7 +465,7 @@ router.get("/package/:packageId", async (req, res,next) => {
  *       500:
  *         description: Server error
  */
-router.get("/guides/:guideId/reviews", async (req, res,next) => {
+router.get("/guides/:guideId/reviews", async (req, res, next) => {
   const { guideId } = req.params; // Extract the guideId properly
 
   if (!guideId) {
@@ -467,9 +478,7 @@ router.get("/guides/:guideId/reviews", async (req, res,next) => {
 
     // If no reviews are found
     if (revs.length === 0) {
-      return res
-        .status(200)
-        .json([]); // Return empty array instead of 404 for easier frontend handling
+      return res.status(200).json([]); // Return empty array instead of 404 for easier frontend handling
     }
 
     // Send the found reviews as a response
@@ -507,7 +516,7 @@ router.get("/guides/:guideId/reviews", async (req, res,next) => {
  *       500:
  *         description: Server error
  */
-router.get("/:id", async (req, res,next) => {
+router.get("/:id", async (req, res, next) => {
   try {
     const review = await reviews
       .findById(req.params.id)
@@ -569,7 +578,7 @@ router.get("/:id", async (req, res,next) => {
  *       500:
  *         description: Server error
  */
-router.put("/:id", async (req, res,next) => {
+router.put("/:id", clearCacheMiddleware("reviews"), async (req, res, next) => {
   try {
     const { rating, comment, status } = req.body;
 
@@ -620,19 +629,23 @@ router.put("/:id", async (req, res,next) => {
  *       500:
  *         description: Server error
  */
-router.delete("/:id", async (req, res,next) => {
-  try {
-    const review = await reviews.findByIdAndDelete(req.params.id);
-    if (!review) {
-      return res.status(404).send({ message: "Review not found" });
+router.delete(
+  "/:id",
+  clearCacheMiddleware("reviews"),
+  async (req, res, next) => {
+    try {
+      const review = await reviews.findByIdAndDelete(req.params.id);
+      if (!review) {
+        return res.status(404).send({ message: "Review not found" });
+      }
+      return res.status(200).send({ message: "Review deleted successfully" });
+    } catch (error) {
+      console.log(error);
+      next(error);
+      res.status(500).send({ message: "Internal Server Error" });
     }
-    return res.status(200).send({ message: "Review deleted successfully" });
-  } catch (error) {
-    console.log(error);
-    next(error);
-    res.status(500).send({ message: "Internal Server Error" });
   }
-});
+);
 /**
  * @swagger
  * /reviews/guides/{guideId}/details:
@@ -666,7 +679,7 @@ router.delete("/:id", async (req, res,next) => {
  *       500:
  *         description: Server error
  */
-router.get("/guides/:guideId/details", async (req, res,next) => {
+router.get("/guides/:guideId/details", async (req, res, next) => {
   const { guideId } = req.params;
 
   try {
@@ -688,14 +701,14 @@ router.get("/guides/:guideId/details", async (req, res,next) => {
 
       // Update guide's ratings in the database
       await Guide.findByIdAndUpdate(guideId, {
-        'ratings.averageRating': averageRating,
-        'ratings.numberOfReviews': review.length
+        "ratings.averageRating": averageRating,
+        "ratings.numberOfReviews": review.length,
       });
 
       // Update the guide object for the response
       guide.ratings = {
         averageRating,
-        numberOfReviews: review.length
+        numberOfReviews: review.length,
       };
     }
 
@@ -711,3 +724,236 @@ router.get("/guides/:guideId/details", async (req, res,next) => {
 });
 
 export default router;
+/**
+ * @swagger
+ * /reviews/package/{packageId}/summary:
+ * get:
+ *   summary: Get rating summary for a package
+ *   tags: [Reviews]
+ *   description: Retrieve aggregated rating data for a specific package
+ *   parameters:
+ *     - in: path
+ *       name: packageId
+ *       required: true
+ *       description: ID of the package to get rating summary for
+ *       schema:
+ *         type: string
+ *   responses:
+ *     200:
+ *       description: Package rating summary
+ */
+router.get(
+  "/package/:packageId/summary",
+  cacheMiddleware(600),
+  async (req, res, next) => {
+    const { packageId } = req.params;
+
+    try {
+      // Use aggregation pipeline for efficient calculation
+      const summary = await reviews.aggregate([
+        {
+          $match: {
+            packageId: new mongoose.Types.ObjectId(packageId),
+            status: "approved",
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            averageRating: { $avg: "$rating" },
+            totalReviews: { $sum: 1 },
+            ratings: {
+              $push: "$rating",
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            averageRating: { $round: ["$averageRating", 1] },
+            totalReviews: 1,
+            ratingDistribution: {
+              5: {
+                $size: {
+                  $filter: {
+                    input: "$ratings",
+                    as: "r",
+                    cond: { $eq: ["$$r", 5] },
+                  },
+                },
+              },
+              4: {
+                $size: {
+                  $filter: {
+                    input: "$ratings",
+                    as: "r",
+                    cond: { $eq: ["$$r", 4] },
+                  },
+                },
+              },
+              3: {
+                $size: {
+                  $filter: {
+                    input: "$ratings",
+                    as: "r",
+                    cond: { $eq: ["$$r", 3] },
+                  },
+                },
+              },
+              2: {
+                $size: {
+                  $filter: {
+                    input: "$ratings",
+                    as: "r",
+                    cond: { $eq: ["$$r", 2] },
+                  },
+                },
+              },
+              1: {
+                $size: {
+                  $filter: {
+                    input: "$ratings",
+                    as: "r",
+                    cond: { $eq: ["$$r", 1] },
+                  },
+                },
+              },
+            },
+          },
+        },
+      ]);
+
+      // If no reviews found, return default structure
+      if (summary.length === 0) {
+        return res.status(200).json({
+          averageRating: 0,
+          totalReviews: 0,
+          ratingDistribution: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 },
+        });
+      }
+
+      res.status(200).json(summary[0]);
+    } catch (error) {
+      console.error("Error fetching package rating summary:", error);
+      next(error);
+      res.status(500).json({ message: "Error fetching rating summary" });
+    }
+  }
+);
+
+/**
+ * @swagger
+ * /reviews/guide/{guideId}/summary:
+ * get:
+ *   summary: Get rating summary for a guide
+ *   tags: [Reviews]
+ *   description: Retrieve aggregated rating data for a specific guide
+ *   parameters:
+ *     - in: path
+ *       name: guideId
+ *       required: true
+ *       description: ID of the guide to get rating summary for
+ *       schema:
+ *         type: string
+ *   responses:
+ *     200:
+ *       description: Guide rating summary
+ */
+router.get(
+  "/guide/:guideId/summary",
+  cacheMiddleware(600),
+  async (req, res, next) => {
+    const { guideId } = req.params;
+
+    try {
+      // Use aggregation pipeline for efficient calculation
+      const summary = await reviews.aggregate([
+        {
+          $match: {
+            guideId: new mongoose.Types.ObjectId(guideId),
+            status: "approved",
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            averageRating: { $avg: "$rating" },
+            totalReviews: { $sum: 1 },
+            ratings: {
+              $push: "$rating",
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            averageRating: { $round: ["$averageRating", 1] },
+            totalReviews: 1,
+            ratingDistribution: {
+              5: {
+                $size: {
+                  $filter: {
+                    input: "$ratings",
+                    as: "r",
+                    cond: { $eq: ["$$r", 5] },
+                  },
+                },
+              },
+              4: {
+                $size: {
+                  $filter: {
+                    input: "$ratings",
+                    as: "r",
+                    cond: { $eq: ["$$r", 4] },
+                  },
+                },
+              },
+              3: {
+                $size: {
+                  $filter: {
+                    input: "$ratings",
+                    as: "r",
+                    cond: { $eq: ["$$r", 3] },
+                  },
+                },
+              },
+              2: {
+                $size: {
+                  $filter: {
+                    input: "$ratings",
+                    as: "r",
+                    cond: { $eq: ["$$r", 2] },
+                  },
+                },
+              },
+              1: {
+                $size: {
+                  $filter: {
+                    input: "$ratings",
+                    as: "r",
+                    cond: { $eq: ["$$r", 1] },
+                  },
+                },
+              },
+            },
+          },
+        },
+      ]);
+
+      // If no reviews found, return default structure
+      if (summary.length === 0) {
+        return res.status(200).json({
+          averageRating: 0,
+          totalReviews: 0,
+          ratingDistribution: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 },
+        });
+      }
+
+      res.status(200).json(summary[0]);
+    } catch (error) {
+      console.error("Error fetching guide rating summary:", error);
+      next(error);
+      res.status(500).json({ message: "Error fetching rating summary" });
+    }
+  }
+);

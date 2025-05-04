@@ -1,8 +1,10 @@
-import express from 'express';
-import { Guide } from '../models/guideModel.js';
-import { packages } from '../models/packageModel.js';
-import moment from 'moment';
-import { cacheMiddleware } from '../middleware/cacheMiddleware.js';
+/** @format */
+
+import express from "express";
+import { Guide } from "../models/guideModel.js";
+import { packages } from "../models/packageModel.js";
+import moment from "moment";
+import { cacheMiddleware } from "../middleware/cacheMiddleware.js";
 
 const router = express.Router();
 
@@ -103,106 +105,175 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.get('/', cacheMiddleware(120), async (req, res) => {
-    try {
-        const {
-            location,
-            entityType,
-            availability,
-            language,
-            minDuration,
-            maxDuration,
-            minGroupSize,
-            maxGroupSize,
-            minPrice,
-            maxPrice,
-            availableDates,
-            searchTerm
-        } = req.query;
+router.get("/", cacheMiddleware(120), async (req, res) => {
+  try {
+    const {
+      location,
+      entityType,
+      availability,
+      language,
+      minDuration,
+      maxDuration,
+      minGroupSize,
+      maxGroupSize,
+      minPrice,
+      maxPrice,
+      availableDates,
+      searchTerm,
+      sortBy,
+      sortOrder,
+    } = req.query;
 
-        if (!entityType) {
-            return res.status(400).json({ message: 'Entity type is required' });
-        }
-
-        let results;
-
-        if (entityType === 'Guide') {
-            const query = {};
-
-            // Add text search if searchTerm is provided
-            if (searchTerm && searchTerm.trim() !== '') {
-                const searchRegex = { $regex: searchTerm, $options: 'i' };
-                query.$or = [
-                    { username: searchRegex },
-                    { name: searchRegex },
-                    { specialization: searchRegex }
-                ];
-            }
-
-            // Add location filter if provided
-            if (location && location !== '') {
-                query.location = { $regex: location, $options: 'i' };
-            }
-
-            // Only add the availability filter when explicitly set to true or false.
-            if (availability === 'true') {
-                query.availability = true;
-            }
-
-            if (language) {
-                query.languages = { $regex: language, $options: 'i' };
-            }
-
-            results = await Guide.find(query);
-        } else if (entityType === 'Package') {
-            const query = {};
-
-            // Add text search if searchTerm is provided
-            if (searchTerm && searchTerm.trim() !== '') {
-                const searchRegex = { $regex: searchTerm, $options: 'i' };
-                query.$or = [
-                    { name: searchRegex },
-                    { description: searchRegex },
-                    { highlights: searchRegex },
-                    { location: searchRegex }
-                ];
-            }
-
-            // Add location filter if provided
-            if (location && location !== '') {
-                query.location = { $regex: location, $options: 'i' };
-            }
-
-            // Apply filters for packages as per the existing code
-            if (minDuration || maxDuration) {
-                query.duration = {};
-                if (minDuration) query.duration.$gte = parseInt(minDuration);
-                if (maxDuration) query.duration.$lte = parseInt(maxDuration);
-            }
-            if (minGroupSize || maxGroupSize) {
-                query.maxGroupSize = {};
-                if (minGroupSize) query.maxGroupSize.$gte = parseInt(minGroupSize);
-                if (maxGroupSize) query.maxGroupSize.$lte = parseInt(maxGroupSize);
-            }
-            if (minPrice || maxPrice) {
-                query.price = {};
-                if (minPrice) query.price.$gte = parseFloat(minPrice);
-                if (maxPrice) query.price.$lte = parseFloat(maxPrice);
-            }
-            if (availableDates) {
-                const dateArray = Array.isArray(availableDates) ? availableDates : [availableDates];
-                query.availableDates = { $in: dateArray.map(date => moment(date).toDate()) };
-            }
-
-            results = await packages.find(query);
-        } else {
-            return res.status(400).json({ message: 'Invalid entity type' });
-        }
-
-        res.json(results);
-    } catch (error) {
-        res.status(500).json({ message: 'Error searching', error: error.message });
+    if (!entityType) {
+      return res.status(400).json({ message: "Entity type is required" });
     }
+
+    let results;
+    const sortDirection = sortOrder === "asc" ? 1 : -1;
+
+    if (entityType === "Guide") {
+      // Optimize Guide search
+      const query = {};
+
+      // Text search optimization
+      if (searchTerm && searchTerm.trim() !== "") {
+        const searchRegex = { $regex: searchTerm, $options: "i" };
+        query.$or = [
+          { username: searchRegex },
+          { name: searchRegex },
+          { specialization: searchRegex },
+        ];
+      }
+
+      // Location filter optimization
+      if (location && location !== "") {
+        query.location = { $regex: location, $options: "i" };
+      }
+
+      // Availability filter
+      if (availability === "true") {
+        query.availability = true;
+      }
+
+      // Language filter optimization
+      if (language) {
+        query.languages = { $regex: language, $options: "i" };
+      }
+
+      // Create a base query
+      let guideQuery = Guide.find(query);
+
+      // Apply sorting based on user preference
+      if (sortBy) {
+        const sortOptions = {};
+
+        switch (sortBy) {
+          case "rating":
+            sortOptions["ratings.averageRating"] = sortDirection;
+            break;
+          case "experience":
+            sortOptions.experience = sortDirection;
+            break;
+          default:
+            sortOptions["ratings.averageRating"] = -1; // Default sort by rating
+        }
+
+        guideQuery = guideQuery.sort(sortOptions);
+      } else {
+        // Default sorting by rating
+        guideQuery = guideQuery.sort({ "ratings.averageRating": -1 });
+      }
+
+      // Execute the optimized query
+      results = await guideQuery.exec();
+    } else if (entityType === "Package") {
+      // Optimize Package search
+      const query = {};
+
+      // Text search optimization
+      if (searchTerm && searchTerm.trim() !== "") {
+        const searchRegex = { $regex: searchTerm, $options: "i" };
+        query.$or = [
+          { name: searchRegex },
+          { description: searchRegex },
+          { highlights: searchRegex },
+          { location: searchRegex },
+        ];
+      }
+
+      // Location filter optimization
+      if (location && location !== "") {
+        query.location = { $regex: location, $options: "i" };
+      }
+
+      // Duration filter optimization
+      if (minDuration || maxDuration) {
+        query.duration = {};
+        if (minDuration) query.duration.$gte = parseInt(minDuration);
+        if (maxDuration) query.duration.$lte = parseInt(maxDuration);
+      }
+
+      // Group size filter optimization
+      if (minGroupSize || maxGroupSize) {
+        query.maxGroupSize = {};
+        if (minGroupSize) query.maxGroupSize.$gte = parseInt(minGroupSize);
+        if (maxGroupSize) query.maxGroupSize.$lte = parseInt(maxGroupSize);
+      }
+
+      // Price filter optimization
+      if (minPrice || maxPrice) {
+        query.price = {};
+        if (minPrice) query.price.$gte = parseFloat(minPrice);
+        if (maxPrice) query.price.$lte = parseFloat(maxPrice);
+      }
+
+      // Available dates filter optimization
+      if (availableDates) {
+        const dateArray = Array.isArray(availableDates)
+          ? availableDates
+          : [availableDates];
+        query.availableDates = {
+          $in: dateArray.map((date) => moment(date).toDate()),
+        };
+      }
+
+      // Create a base query
+      let packageQuery = packages.find(query);
+
+      // Apply sorting based on user preference
+      if (sortBy) {
+        const sortOptions = {};
+
+        switch (sortBy) {
+          case "price":
+            sortOptions.price = sortDirection;
+            break;
+          case "duration":
+            sortOptions.duration = sortDirection;
+            break;
+          case "popularity":
+            sortOptions.totalBookings = sortDirection;
+            break;
+          default:
+            sortOptions.price = 1; // Default sort by price low to high
+        }
+
+        packageQuery = packageQuery.sort(sortOptions);
+      } else {
+        // Default sorting by price
+        packageQuery = packageQuery.sort({ price: 1 });
+      }
+
+      // Execute the optimized query
+      results = await packageQuery.exec();
+    } else {
+      return res.status(400).json({ message: "Invalid entity type" });
+    }
+
+    res.json(results);
+  } catch (error) {
+    res.status(500).json({ message: "Error searching", error: error.message });
+  }
 });
 
 /**
@@ -225,13 +296,15 @@ router.get('/', cacheMiddleware(120), async (req, res) => {
  *       500:
  *         description: Server error
  */
-router.get('/guide-languages', cacheMiddleware(3600), async (req, res) => {
-    try {
-        const languages = await Guide.distinct('languages');
-        res.json(languages);
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching languages', error: error.message });
-    }
+router.get("/guide-languages", cacheMiddleware(3600), async (req, res) => {
+  try {
+    const languages = await Guide.distinct("languages");
+    res.json(languages);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error fetching languages", error: error.message });
+  }
 });
 /**
  * @swagger
@@ -256,13 +329,18 @@ router.get('/guide-languages', cacheMiddleware(3600), async (req, res) => {
  *       500:
  *         description: Server error
  */
-router.get('/guide-locations', cacheMiddleware(3600), async (req, res) => {
-    try {
-        const locations = await Guide.distinct('location');
-        res.json({ locations: locations });
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching guide locations', error: error.message });
-    }
+router.get("/guide-locations", cacheMiddleware(3600), async (req, res) => {
+  try {
+    const locations = await Guide.distinct("location");
+    res.json({ locations: locations });
+  } catch (error) {
+    res
+      .status(500)
+      .json({
+        message: "Error fetching guide locations",
+        error: error.message,
+      });
+  }
 });
 
 /**
@@ -285,13 +363,18 @@ router.get('/guide-locations', cacheMiddleware(3600), async (req, res) => {
  *       500:
  *         description: Server error
  */
-router.get('/package-locations', cacheMiddleware(3600), async (req, res) => {
-    try {
-        const locations = await packages.distinct('location');
-        res.json(locations);
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching package locations', error: error.message });
-    }
+router.get("/package-locations", cacheMiddleware(3600), async (req, res) => {
+  try {
+    const locations = await packages.distinct("location");
+    res.json(locations);
+  } catch (error) {
+    res
+      .status(500)
+      .json({
+        message: "Error fetching package locations",
+        error: error.message,
+      });
+  }
 });
 
 export default router;

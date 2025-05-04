@@ -96,37 +96,6 @@ export default function CustomerProfile() {
     fetchData();
   }, [id]);
 
-  const getStatusBadge = (status) => {
-    switch (status) {
-      case "pending":
-        return (
-          <span className="flex items-center px-3 py-1 text-sm rounded-full bg-[#f5efd9] text-[#e7a33e]">
-            <FaHourglass className="mr-1" /> Pending
-          </span>
-        );
-      case "confirmed":
-        return (
-          <span className="flex items-center px-3 py-1 text-sm rounded-full bg-[#eaf5ea] text-[#44712e]">
-            <FaCheckCircle className="mr-1" /> Confirmed
-          </span>
-        );
-      case "rejected":
-      case "canceled":
-        return (
-          <span className="flex items-center px-3 py-1 text-sm rounded-full bg-[#f5e9e5] text-[#b24020]">
-            <FaTimesCircle className="mr-1" />{" "}
-            {status === "rejected" ? "Rejected" : "Canceled"}
-          </span>
-        );
-      default:
-        return (
-          <span className="flex items-center px-3 py-1 text-sm rounded-full bg-[#f3f6f8] text-[#56687a]">
-            {status}
-          </span>
-        );
-    }
-  };
-
   // Profile editing functions
   const validateForm = () => {
     const formErrors = {};
@@ -595,20 +564,6 @@ export default function CustomerProfile() {
                     <FaSuitcase className="mr-2 text-[#0a66c2]" /> Your Travel
                     Bookings
                   </h2>
-
-                  <div className="mt-4 md:mt-0 flex items-center">
-                    <FaFilter className="text-[#56687a] mr-2" />
-                    <select
-                      value={statusFilter}
-                      onChange={(e) => setStatusFilter(e.target.value)}
-                      className="px-4 py-2 rounded-lg border border-[#dce6f1] bg-white text-[#38434f] shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0a66c2] hover:border-[#0a66c2]/30 transition-all duration-200"
-                    >
-                      <option value="all">All Bookings</option>
-                      <option value="pending">Pending</option>
-                      <option value="confirmed">Confirmed</option>
-                      <option value="rejected">Rejected</option>
-                    </select>
-                  </div>
                 </div>
 
                 {bookings.length > 0 ? (
@@ -663,7 +618,6 @@ export default function CustomerProfile() {
                                 </div>
                               </div>
                             </div>
-                            <div>{getStatusBadge(booking.status)}</div>
                           </div>
                         </motion.div>
                       ))}

@@ -1,3 +1,5 @@
+/** @format */
+
 import mongoose from "mongoose";
 
 const guideSchema = new mongoose.Schema(
@@ -61,11 +63,11 @@ const guideSchema = new mongoose.Schema(
     },
     reviews: [
       {
-        customer: { type: mongoose.Schema.Types.ObjectId, ref: 'customers' },
+        customer: { type: mongoose.Schema.Types.ObjectId, ref: "customers" },
         rating: { type: Number, min: 1, max: 5 },
         comment: String,
-        date: { type: Date, default: Date.now }
-      }
+        date: { type: Date, default: Date.now },
+      },
     ],
     availability: {
       type: Boolean,
@@ -107,9 +109,9 @@ const guideSchema = new mongoose.Schema(
         },
         status: {
           type: String,
-          enum: ['pending', 'confirmed', 'completed', 'canceled'],
-          default: 'pending'
-        }
+          enum: ["pending", "confirmed", "completed", "canceled"],
+          default: "pending",
+        },
       },
     ],
     specialization: {
@@ -135,52 +137,62 @@ const guideSchema = new mongoose.Schema(
     earnings: {
       total: {
         type: Number,
-        default: 0
+        default: 0,
       },
       pending: {
         type: Number,
-        default: 0
+        default: 0,
       },
       received: {
         type: Number,
-        default: 0
+        default: 0,
       },
       monthly: [
         {
           month: Number,
           year: Number,
-          amount: Number
-        }
+          amount: Number,
+        },
       ],
       history: [
         {
           bookingId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Bookings'
+            ref: "Bookings",
           },
           packageId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'packages'
+            ref: "packages",
           },
           packageName: String,
           customerName: String,
           amount: Number,
           date: {
             type: Date,
-            default: Date.now
+            default: Date.now,
           },
           status: {
             type: String,
-            enum: ['pending', 'paid'],
-            default: 'pending'
-          }
-        }
-      ]
+            enum: ["pending", "paid"],
+            default: "pending",
+          },
+        },
+      ],
     },
   },
   {
     timestamps: true,
   }
 );
+// Add strategic indexes for frequently queried fields
+guideSchema.index({ location: 1 });
+guideSchema.index({ specialization: 1 });
+guideSchema.index({ "ratings.averageRating": -1 });
+guideSchema.index({ languages: 1 });
 
+// Add compound indexes for multi-criteria searches
+guideSchema.index({ location: 1, "ratings.averageRating": -1 });
+guideSchema.index({ specialization: 1, "ratings.averageRating": -1 });
+guideSchema.index({ location: 1, specialization: 1 });
+guideSchema.index({ availability: 1, location: 1 });
 export const Guide = mongoose.model("Guide", guideSchema);

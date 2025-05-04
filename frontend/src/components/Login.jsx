@@ -1,3 +1,5 @@
+/** @format */
+
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
@@ -66,13 +68,16 @@ const Login = () => {
 
   const handleAdminLogin = async () => {
     try {
-      const response = await fetch("http://localhost:5000/customers/adminlogin", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(adminCredentials),
-      });
+      const response = await fetch(
+        "http://localhost:5000/customers/adminlogin",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(adminCredentials),
+        }
+      );
 
       const data = await response.json();
 
@@ -89,17 +94,25 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-cover bg-center py-12 px-4 sm:px-6 lg:px-8" style={{ backgroundImage: "url('../public/images/travel-background.jpg')" }}>
+    <div
+      className="min-h-screen flex items-center justify-center bg-cover bg-center py-12 px-4 sm:px-6 lg:px-8"
+      style={{ backgroundImage: "url('/images/travel-background.jpg')" }}
+    >
       <div className="max-w-md w-full space-y-8 bg-gray-900 bg-opacity-80 p-10 rounded-xl shadow-2xl">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-white">Welcome back</h2>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
+            Welcome back
+          </h2>
           <p className="mt-2 text-center text-sm text-gray-300">
             Continue your journey with us
           </p>
         </div>
 
         {errors.login && (
-          <div className="bg-red-500 bg-opacity-10 border border-red-400 text-red-300 px-4 py-3 rounded relative" role="alert">
+          <div
+            className="bg-red-500 bg-opacity-10 border border-red-400 text-red-300 px-4 py-3 rounded relative"
+            role="alert"
+          >
             <span className="block sm:inline">{errors.login}</span>
           </div>
         )}
@@ -107,7 +120,9 @@ const Login = () => {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div className="mb-4">
-              <label htmlFor="username" className="sr-only">Username</label>
+              <label htmlFor="username" className="sr-only">
+                Username
+              </label>
               <input
                 id="username"
                 name="username"
@@ -120,7 +135,9 @@ const Login = () => {
               />
             </div>
             <div>
-              <label htmlFor="password" className="sr-only">Password</label>
+              <label htmlFor="password" className="sr-only">
+                Password
+              </label>
               <input
                 id="password"
                 name="password"
@@ -174,7 +191,9 @@ const Login = () => {
         {isAdminModalOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
             <div className="bg-gray-900 rounded-xl shadow-2xl p-8 w-full max-w-md">
-              <h2 className="text-2xl font-bold text-white mb-6">Admin Login</h2>
+              <h2 className="text-2xl font-bold text-white mb-6">
+                Admin Login
+              </h2>
               {adminError && (
                 <div className="bg-red-500 bg-opacity-10 border border-red-400 text-red-300 px-4 py-3 rounded relative mb-4">
                   <span className="block sm:inline">{adminError}</span>
