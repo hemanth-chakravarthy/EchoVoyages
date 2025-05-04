@@ -5,6 +5,18 @@ import { jwtDecode } from "jwt-decode";
 import { motion } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import {
+  FaBookmark,
+  FaMapMarkedAlt,
+  FaUserTie,
+  FaCalendarAlt,
+  FaMoneyBillWave,
+  FaTrashAlt,
+  FaExclamationCircle,
+  FaHeart,
+  FaSpinner,
+  FaCompass
+} from "react-icons/fa";
 
 const CustomerWishlist = () => {
   const [wishlist, setWishlist] = useState({ packages: [], guides: [] });
@@ -130,20 +142,15 @@ const CustomerWishlist = () => {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="min-h-screen flex flex-col bg-white"
-        style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0, 0, 0) 1px, transparent 0)`,
-          backgroundSize: "20px 20px",
-          backgroundPosition: "0 0",
-          backgroundColor: "rgba(255, 255, 255, 0.97)",
-        }}
+        className="min-h-screen flex flex-col bg-[#f3f6f8] font-['Source Sans', 'Segoe UI', Arial, sans-serif]"
       >
-        {/* Navbar removed - now using RoleBasedNavbar from Layout component */}
         <div className="flex-grow flex items-center justify-center flex-col">
-          <div className="w-16 h-16 border-t-4 border-[#4169E1] border-solid rounded-full animate-spin mb-4"></div>
-          <p className="text-[#1a365d] text-xl font-medium">
-            Loading your wishlist...
-          </p>
+          <div className="bg-white p-8 rounded-lg shadow-sm">
+            <div className="flex items-center space-x-4">
+              <FaSpinner className="w-8 h-8 text-[#0a66c2] animate-spin" />
+              <p className="text-[#38434f] font-medium">Loading your wishlist...</p>
+            </div>
+          </div>
         </div>
       </motion.div>
     );
@@ -154,40 +161,20 @@ const CustomerWishlist = () => {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="min-h-screen flex flex-col bg-white"
-        style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0, 0, 0) 1px, transparent 0)`,
-          backgroundSize: "20px 20px",
-          backgroundPosition: "0 0",
-          backgroundColor: "rgba(255, 255, 255, 0.97)",
-        }}
+        className="min-h-screen flex flex-col bg-[#f3f6f8] font-['Source Sans', 'Segoe UI', Arial, sans-serif]"
       >
-        {/* Navbar removed - now using RoleBasedNavbar from Layout component */}
         <div className="flex-grow flex items-center justify-center">
-          <div className="bg-white p-8 rounded-lg shadow-md border border-gray-100 max-w-md text-center">
-            <svg
-              className="w-16 h-16 text-red-500 mx-auto mb-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              ></path>
-            </svg>
-            <h2 className="text-2xl font-bold text-[#1a365d] mb-2">
+          <div className="bg-white p-8 rounded-lg shadow-sm max-w-md text-center">
+            <FaExclamationCircle className="w-16 h-16 text-[#b24020] mx-auto mb-4" />
+            <h2 className="text-xl font-bold text-[#38434f] mb-2">
               Something went wrong
             </h2>
-            <p className="text-[#2d3748] mb-6">
+            <p className="text-[#56687a] mb-6">
               We couldn't load your wishlist. Please try again later.
             </p>
             <button
               onClick={() => window.location.reload()}
-              className="bg-[#00072D] text-white font-semibold py-3 px-6 rounded-md hover:bg-[#1a365d] transition-all duration-300 shadow-md"
+              className="bg-[#0a66c2] text-white px-4 py-2 rounded hover:bg-[#004182] transition-colors"
             >
               Refresh Page
             </button>
@@ -201,111 +188,135 @@ const CustomerWishlist = () => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-screen flex flex-col bg-white"
-      style={{
-        backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0, 0, 0) 1px, transparent 0)`,
-        backgroundSize: "20px 20px",
-        backgroundPosition: "0 0",
-        backgroundColor: "rgba(255, 255, 255, 0.97)",
-      }}
+      className="min-h-screen flex flex-col bg-[#f3f6f8] font-['Source Sans', 'Segoe UI', Arial, sans-serif]"
     >
       {/* Navbar removed - now using RoleBasedNavbar from Layout component */}
       <ToastContainer position="top-right" autoClose={3000} />
       <motion.main
         initial={{ y: 20 }}
         animate={{ y: 0 }}
-        className="flex-grow container mx-auto px-4 py-12 relative z-10"
+        className="flex-grow container mx-auto px-4 py-6 relative z-10"
       >
-        <motion.h1
-          initial={{ y: -20 }}
-          animate={{ y: 0 }}
-          className="text-5xl font-bold text-[#1a365d] tracking-tight text-center mb-16"
-        >
-          My Wishlist
-        </motion.h1>
+        <div className="bg-white rounded-lg shadow-sm p-6 mb-4">
+          <div className="flex items-center mb-2">
+            <FaBookmark className="text-[#0a66c2] mr-2 text-xl" />
+            <h1 className="text-2xl font-bold text-[#38434f]">
+              My Wishlist
+            </h1>
+          </div>
+          <p className="text-[#56687a]">Items you've saved for future reference</p>
+        </div>
 
         {/* Packages Section */}
         {wishlist.packages.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-12"
+            className="mb-6"
           >
-            <h2 className="text-3xl font-bold text-[#1a365d] tracking-tight mb-6">
-              Packages
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {wishlist.packages.map((item) => (
-                <motion.div
-                  key={item._id}
-                  whileHover={{
-                    y: -5,
-                    scale: 1.01,
-                    boxShadow: "0 22px 45px -12px rgba(26, 54, 93, 0.15)",
-                  }}
-                  className="bg-white rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100"
-                >
-                  {item.packageId ? (
-                    <div className="p-6">
-                      <h3 className="text-2xl font-bold text-[#1a365d] mb-2">
-                        {item.packageId.name}
-                      </h3>
-                      <p className="text-[#2d3748] mb-4 leading-relaxed">
-                        {item.packageId.description}
-                      </p>
-                      <div className="flex justify-between items-center mb-4">
-                        <p className="text-2xl font-bold text-[#1a365d]">
-                          ₹{item.packageId.price}
-                        </p>
-                        <p className="text-[#2d3748]">
-                          {item.packageId.duration} days
-                        </p>
+            <div className="bg-white rounded-lg shadow-sm p-6 mb-4">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center">
+                  <FaMapMarkedAlt className="text-[#0a66c2] mr-2" />
+                  <h2 className="text-lg font-bold text-[#38434f]">
+                    Travel Packages
+                  </h2>
+                </div>
+                <span className="bg-[#dce6f1] text-[#0a66c2] px-2 py-1 rounded-full text-sm font-medium">
+                  {wishlist.packages.length} saved
+                </span>
+              </div>
+
+              <div className="space-y-4">
+                {wishlist.packages.map((item) => (
+                  <motion.div
+                    key={item._id}
+                    whileHover={{ backgroundColor: "#f3f6f8" }}
+                    className="border border-[#dce6f1] rounded-lg overflow-hidden hover:shadow-sm transition-all duration-300"
+                  >
+                    {item.packageId ? (
+                      <div className="p-4">
+                        <div className="flex flex-col md:flex-row">
+                          <div className="w-full md:w-1/4 h-32 md:h-auto rounded-lg overflow-hidden mb-3 md:mb-0 md:mr-4 flex-shrink-0 border border-[#dce6f1]">
+                            {item.packageId.image && item.packageId.image.length > 0 ? (
+                              <img
+                                src={item.packageId.image[0].startsWith('http')
+                                  ? item.packageId.image[0]
+                                  : `http://localhost:5000${item.packageId.image[0]}`}
+                                alt={item.packageId.name}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-[#dce6f1] flex items-center justify-center">
+                                <FaMapMarkedAlt className="text-[#56687a] text-2xl" />
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="text-lg font-bold text-[#38434f] mb-2">
+                              {item.packageId.name}
+                            </h3>
+                            <p className="text-[#56687a] mb-3 text-sm line-clamp-2">
+                              {item.packageId.description}
+                            </p>
+                            <div className="flex flex-wrap gap-4 mb-3">
+                              <div className="flex items-center text-[#56687a]">
+                                <FaMoneyBillWave className="mr-1 text-[#0a66c2]" />
+                                <span className="font-medium">₹{item.packageId.price.toLocaleString()}</span>
+                              </div>
+                              <div className="flex items-center text-[#56687a]">
+                                <FaCalendarAlt className="mr-1 text-[#0a66c2]" />
+                                <span>{item.packageId.duration} days</span>
+                              </div>
+                              {item.packageId.location && (
+                                <div className="flex items-center text-[#56687a]">
+                                  <FaMapMarkedAlt className="mr-1 text-[#0a66c2]" />
+                                  <span>{item.packageId.location}</span>
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex justify-end">
+                              <button
+                                onClick={() => handleRemoveItem(item._id, "package")}
+                                className="flex items-center text-[#b24020] hover:text-[#dc2626] transition-colors"
+                              >
+                                <FaTrashAlt className="mr-1" /> Remove
+                              </button>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <motion.button
-                        whileHover={{ scale: 1.02, backgroundColor: "#dc2626" }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => handleRemoveItem(item._id, "package")}
-                        className="w-full bg-red-600 text-white font-semibold py-3 px-6 rounded-md transition-all duration-300 shadow-md hover:shadow-lg"
-                      >
-                        Remove
-                      </motion.button>
-                    </div>
-                  ) : (
-                    <div className="p-6 bg-red-50">
-                      <div className="flex items-center mb-4">
-                        <svg
-                          className="w-6 h-6 text-red-500 mr-2"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                          ></path>
-                        </svg>
-                        <h3 className="text-xl font-bold text-red-700">
-                          Package Unavailable
-                        </h3>
+                    ) : (
+                      <div className="p-4 bg-[#f9f5f2]">
+                        <div className="flex flex-col md:flex-row">
+                          <div className="w-full md:w-1/4 h-32 md:h-auto rounded-lg overflow-hidden mb-3 md:mb-0 md:mr-4 flex-shrink-0 bg-[#f3e9e5] flex items-center justify-center">
+                            <FaExclamationCircle className="text-[#b24020] text-2xl" />
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center mb-2">
+                              <FaExclamationCircle className="text-[#b24020] mr-2" />
+                              <h3 className="text-lg font-medium text-[#b24020]">
+                                Package Unavailable
+                              </h3>
+                            </div>
+                            <p className="text-[#b24020] text-sm mb-3">
+                              This package has been removed or is no longer available.
+                            </p>
+                            <div className="flex justify-end">
+                              <button
+                                onClick={() => handleRemoveItem(item._id, "package")}
+                                className="flex items-center text-[#b24020] hover:text-[#dc2626] transition-colors"
+                              >
+                                <FaTrashAlt className="mr-1" /> Remove from Wishlist
+                              </button>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <p className="text-red-600 mb-4">
-                        This package has been removed or is no longer available.
-                      </p>
-                      <motion.button
-                        whileHover={{ scale: 1.02, backgroundColor: "#dc2626" }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => handleRemoveItem(item._id, "package")}
-                        className="w-full bg-red-600 text-white font-semibold py-3 px-6 rounded-md transition-all duration-300 shadow-md hover:shadow-lg"
-                      >
-                        Remove from Wishlist
-                      </motion.button>
-                    </div>
-                  )}
-                </motion.div>
-              ))}
+                    )}
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </motion.div>
         )}
@@ -315,78 +326,110 @@ const CustomerWishlist = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-12"
+            className="mb-6"
           >
-            <h2 className="text-3xl font-bold text-[#1a365d] tracking-tight mb-6">
-              Guides
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {wishlist.guides.map((item) => (
-                <motion.div
-                  key={item._id}
-                  whileHover={{
-                    y: -5,
-                    scale: 1.01,
-                    boxShadow: "0 22px 45px -12px rgba(26, 54, 93, 0.15)",
-                  }}
-                  className="bg-white rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100"
-                >
-                  {item.guideId ? (
-                    <div className="p-6">
-                      <h3 className="text-2xl font-bold text-[#1a365d] mb-2">
-                        {item.guideId.name}
-                      </h3>
-                      <p className="text-[#2d3748] mb-4 leading-relaxed">
-                        {item.guideId.description}
-                      </p>
-                      <p className="text-[#2d3748] mb-4">
-                        Experience: {item.guideId.experience} years
-                      </p>
-                      <motion.button
-                        whileHover={{ scale: 1.02, backgroundColor: "#dc2626" }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => handleRemoveItem(item._id, "guide")}
-                        className="w-full bg-red-600 text-white font-semibold py-3 px-6 rounded-md transition-all duration-300 shadow-md hover:shadow-lg"
-                      >
-                        Remove
-                      </motion.button>
-                    </div>
-                  ) : (
-                    <div className="p-6 bg-red-50">
-                      <div className="flex items-center mb-4">
-                        <svg
-                          className="w-6 h-6 text-red-500 mr-2"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                          ></path>
-                        </svg>
-                        <h3 className="text-xl font-bold text-red-700">
-                          Guide Unavailable
-                        </h3>
+            <div className="bg-white rounded-lg shadow-sm p-6 mb-4">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center">
+                  <FaUserTie className="text-[#0a66c2] mr-2" />
+                  <h2 className="text-lg font-bold text-[#38434f]">
+                    Travel Guides
+                  </h2>
+                </div>
+                <span className="bg-[#dce6f1] text-[#0a66c2] px-2 py-1 rounded-full text-sm font-medium">
+                  {wishlist.guides.length} saved
+                </span>
+              </div>
+
+              <div className="space-y-4">
+                {wishlist.guides.map((item) => (
+                  <motion.div
+                    key={item._id}
+                    whileHover={{ backgroundColor: "#f3f6f8" }}
+                    className="border border-[#dce6f1] rounded-lg overflow-hidden hover:shadow-sm transition-all duration-300"
+                  >
+                    {item.guideId ? (
+                      <div className="p-4">
+                        <div className="flex items-start">
+                          <div className="w-12 h-12 rounded-full overflow-hidden mr-3 flex-shrink-0 border border-[#dce6f1]">
+                            {item.guideId.profilePicture ? (
+                              <img
+                                src={`http://localhost:5000/${item.guideId.profilePicture}`}
+                                alt={item.guideId.name}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-[#dce6f1] flex items-center justify-center">
+                                <FaUserTie className="text-[#56687a]" />
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="text-lg font-bold text-[#38434f] mb-1">
+                              {item.guideId.name}
+                            </h3>
+                            <p className="text-[#56687a] mb-3 text-sm line-clamp-2">
+                              {item.guideId.description}
+                            </p>
+                            <div className="flex flex-wrap gap-2 mb-3">
+                              <span className="bg-[#dce6f1] text-[#0a66c2] px-2 py-1 rounded-full text-xs font-medium">
+                                {item.guideId.experience} years experience
+                              </span>
+                              {item.guideId.languages && (
+                                <span className="bg-[#dce6f1] text-[#0a66c2] px-2 py-1 rounded-full text-xs font-medium">
+                                  {Array.isArray(item.guideId.languages)
+                                    ? item.guideId.languages.join(', ')
+                                    : item.guideId.languages}
+                                </span>
+                              )}
+                              {item.guideId.location && (
+                                <span className="bg-[#dce6f1] text-[#0a66c2] px-2 py-1 rounded-full text-xs font-medium flex items-center">
+                                  <FaMapMarkedAlt className="mr-1 text-xs" /> {item.guideId.location}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex justify-end mt-2">
+                          <button
+                            onClick={() => handleRemoveItem(item._id, "guide")}
+                            className="flex items-center text-[#b24020] hover:text-[#dc2626] transition-colors"
+                          >
+                            <FaTrashAlt className="mr-1" /> Remove
+                          </button>
+                        </div>
                       </div>
-                      <p className="text-red-600 mb-4">
-                        This guide has been removed or is no longer available.
-                      </p>
-                      <motion.button
-                        whileHover={{ scale: 1.02, backgroundColor: "#dc2626" }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => handleRemoveItem(item._id, "guide")}
-                        className="w-full bg-red-600 text-white font-semibold py-3 px-6 rounded-md transition-all duration-300 shadow-md hover:shadow-lg"
-                      >
-                        Remove from Wishlist
-                      </motion.button>
-                    </div>
-                  )}
-                </motion.div>
-              ))}
+                    ) : (
+                      <div className="p-4 bg-[#f9f5f2]">
+                        <div className="flex items-start">
+                          <div className="w-12 h-12 rounded-full overflow-hidden mr-3 flex-shrink-0 bg-[#f3e9e5] flex items-center justify-center">
+                            <FaExclamationCircle className="text-[#b24020]" />
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center mb-2">
+                              <FaExclamationCircle className="text-[#b24020] mr-2" />
+                              <h3 className="text-lg font-medium text-[#b24020]">
+                                Guide Unavailable
+                              </h3>
+                            </div>
+                            <p className="text-[#b24020] text-sm mb-3">
+                              This guide has been removed or is no longer available.
+                            </p>
+                            <div className="flex justify-end">
+                              <button
+                                onClick={() => handleRemoveItem(item._id, "guide")}
+                                className="flex items-center text-[#b24020] hover:text-[#dc2626] transition-colors"
+                              >
+                                <FaTrashAlt className="mr-1" /> Remove from Wishlist
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </motion.div>
         )}
@@ -396,33 +439,20 @@ const CustomerWishlist = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center p-12 bg-white rounded-lg shadow-md border border-gray-100"
+            className="bg-white rounded-lg shadow-sm p-8 text-center"
           >
-            <svg
-              className="w-24 h-24 mx-auto mb-6 text-gray-300"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-              ></path>
-            </svg>
-            <h3 className="text-2xl font-bold text-[#1a365d] mb-2">
+            <FaHeart className="w-16 h-16 mx-auto mb-4 text-[#dce6f1]" />
+            <h3 className="text-xl font-bold text-[#38434f] mb-2">
               Your wishlist is empty
             </h3>
-            <p className="text-[#2d3748] mb-6">
-              Explore packages and guides to add items to your wishlist.
+            <p className="text-[#56687a] mb-6 max-w-md mx-auto">
+              Explore packages and guides to add items to your wishlist for future reference.
             </p>
             <a
               href="/home"
-              className="inline-block bg-[#00072D] text-white font-semibold py-3 px-6 rounded-md hover:bg-[#1a365d] transition-all duration-300 shadow-md"
+              className="inline-flex items-center bg-[#0a66c2] text-white px-4 py-2 rounded hover:bg-[#004182] transition-colors"
             >
-              Explore Packages
+              <FaCompass className="mr-2" /> Explore Packages
             </a>
           </motion.div>
         )}
