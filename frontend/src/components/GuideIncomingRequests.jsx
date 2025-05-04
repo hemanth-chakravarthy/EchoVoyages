@@ -86,28 +86,29 @@ const GuideIncomingRequests = ({ onCountChange }) => {
   const filteredRequests = requests.filter(request => request.status === activeTab);
 
   if (loading) {
-    return <div className="text-center py-4">Loading incoming requests...</div>;
+    return (
+      <div className="text-center py-4">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#0a66c2] mx-auto"></div>
+        <p className="mt-4 text-gray-600">Loading incoming requests...</p>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="text-red-500 text-center py-4">{error}</div>;
+    return <div className="bg-[#ffeaea] text-[#d93025] p-4 rounded-lg">{error}</div>;
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="bg-white rounded-lg shadow-sm">
       <ToastContainer position="top-right" autoClose={3000} />
-
-      <h3 className="text-xl font-bold text-[#1a365d] mb-4">
-        Incoming Requests from Agencies
-      </h3>
-
-      {/* Tabs */}
-      <div className="flex border-b mb-6">
+    
+      {/* Tabs remain the same */}
+      <div className="flex border-b border-gray-200">
         <button
-          className={`px-4 py-2 font-medium ${
+          className={`px-6 py-3 font-medium text-base ${
             activeTab === 'pending'
-              ? 'border-b-2 border-[#1a365d] text-[#1a365d]'
-              : 'text-gray-500 hover:text-[#1a365d]'
+              ? 'border-b-2 border-[#0a66c2] text-[#0a66c2] font-semibold'
+              : 'text-gray-600 hover:text-[#0a66c2]'
           }`}
           onClick={() => setActiveTab('pending')}
         >
@@ -140,102 +141,105 @@ const GuideIncomingRequests = ({ onCountChange }) => {
         </button>
       </div>
 
-      {requests.length === 0 ? (
-        <div className="bg-gray-50 rounded-lg p-6 text-center">
-          <p className="text-gray-600">No incoming requests from agencies.</p>
-        </div>
-      ) : filteredRequests.length === 0 ? (
-        <div className="bg-gray-50 rounded-lg p-6 text-center">
-          <p className="text-gray-600">
-            No {activeTab} requests at the moment.
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {filteredRequests.map((request) => (
-            <div
-              key={request._id}
-              className="border rounded-lg p-4 hover:shadow-md transition-shadow duration-300"
-            >
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <h4 className="font-semibold text-lg">
-                    {request.agencyName || 'Agency'}
-                  </h4>
-                  {request.type === 'package_assignment' && (
-                    <p className="text-sm text-gray-600">
-                      Package: {request.packageName || 'Unknown Package'}
-                    </p>
+      <div className="p-6">
+        {requests.length === 0 ? (
+          <div className="bg-[#f3f2ef] rounded-lg p-8 text-center">
+            <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+            </svg>
+            <p className="text-gray-600">No incoming requests from agencies.</p>
+          </div>
+        ) : filteredRequests.length === 0 ? (
+          <div className="bg-[#f3f2ef] rounded-lg p-8 text-center">
+            <p className="text-gray-600">No {activeTab} requests at the moment.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredRequests.map((request) => (
+              <div
+                key={request._id}
+                className="bg-white border border-gray-100 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 max-w-sm"
+              >
+                <div className="p-4">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h4 className="text-lg font-semibold text-gray-900">
+                        {request.agencyName || 'Agency'}
+                      </h4>
+                      {request.type === 'package_assignment' && (
+                        <p className="text-sm text-gray-600 mt-1">
+                          Package: {request.packageName || 'Unknown Package'}
+                        </p>
+                      )}
+                      {request.type === 'general_collaboration' && (
+                        <p className="text-sm text-gray-600 mt-1">
+                          Type: General Collaboration Request
+                        </p>
+                      )}
+                    </div>
+                    <span
+                      className={`px-3 py-1 text-xs rounded-full ${
+                        request.status === 'pending'
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : request.status === 'approved'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-red-100 text-red-800'
+                      }`}
+                    >
+                      {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
+                    </span>
+                  </div>
+
+                  {request.message && (
+                    <div className="bg-[#f3f2ef] p-4 rounded-lg mb-4">
+                      <p className="text-sm text-gray-700">{request.message}</p>
+                    </div>
                   )}
-                  {request.type === 'general_collaboration' && (
-                    <p className="text-sm text-gray-600">
-                      Type: General Collaboration Request
-                    </p>
-                  )}
-                </div>
-                <div className="flex items-center">
-                  <span
-                    className={`px-2 py-1 text-xs rounded-full ${
-                      request.status === 'pending'
-                        ? 'bg-yellow-100 text-yellow-800'
-                        : request.status === 'approved'
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-red-100 text-red-800'
-                    }`}
-                  >
-                    {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
-                  </span>
+
+                  <div className="text-xs text-gray-500 mb-4">
+                    Requested on: {new Date(request.createdAt).toLocaleDateString()}
+                  </div>
+
+                  <div className="flex items-center space-x-3">
+                    {request.status === 'pending' && (
+                      <>
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => handleStatusUpdate(request._id, 'approved')}
+                          className="px-4 py-1.5 bg-[#0a66c2] text-white text-sm font-medium rounded-full hover:bg-[#084e96] transition-all duration-300"
+                        >
+                          Accept
+                        </motion.button>
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => handleStatusUpdate(request._id, 'rejected')}
+                          className="px-4 py-1.5 border border-[#d93025] text-[#d93025] text-sm font-medium rounded-full hover:bg-[#ffeaea] transition-all duration-300"
+                        >
+                          Decline
+                        </motion.button>
+                      </>
+                    )}
+
+                    {request.type === 'package_assignment' && request.packageId && (
+                      <Link to={`/packages/${request.packageId._id || request.packageId}`}>
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          className="px-4 py-1.5 bg-[#0a66c2] text-white text-sm rounded-full hover:bg-[#084e96] transition-colors duration-300"
+                        >
+                          View Package
+                        </motion.button>
+                      </Link>
+                    )}
+                  </div>
                 </div>
               </div>
-
-              {request.message && (
-                <div className="bg-gray-50 p-3 rounded-md mb-3">
-                  <p className="text-sm text-gray-700">{request.message}</p>
-                </div>
-              )}
-
-              <p className="text-xs text-gray-500 mb-3">
-                Requested on: {new Date(request.createdAt).toLocaleDateString()}
-              </p>
-
-              {request.status === 'pending' && (
-                <div className="flex space-x-2 mt-2">
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => handleStatusUpdate(request._id, 'approved')}
-                    className="px-3 py-1 bg-green-600 text-white text-sm rounded-md hover:bg-green-700 transition-colors duration-300"
-                  >
-                    Accept
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => handleStatusUpdate(request._id, 'rejected')}
-                    className="px-3 py-1 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 transition-colors duration-300"
-                  >
-                    Decline
-                  </motion.button>
-                </div>
-              )}
-
-              {request.type === 'package_assignment' && request.packageId && (
-                <div className="mt-3">
-                  <Link to={`/packages/${request.packageId._id || request.packageId}`}>
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="px-3 py-1 bg-[#1a365d] text-white text-sm rounded-md hover:bg-[#2d4a7e] transition-colors duration-300"
-                    >
-                      View Package
-                    </motion.button>
-                  </Link>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

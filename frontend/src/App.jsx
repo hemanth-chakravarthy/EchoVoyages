@@ -1,3 +1,5 @@
+/** @format */
+
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/HomePage";
@@ -26,13 +28,14 @@ import ViewReq from "./components/ViewReq";
 import RealLandingPage from "./components/RealLandingPage";
 import AgentViewAll from "./pages/AgentViewAll";
 import ActHomePage from "./pages/ActHomePage";
-import PaymentGateway from './pages/PaymentGateway';
-import GuideRequests from './pages/GuideRequests';
-import AgencyGuideRequests from './pages/AgencyGuideRequests';
-import AgencyGuideDirectory from './pages/AgencyGuideDirectory';
-import AgencyAnalytics from './pages/AgencyAnalytics';
-import AgencyPayments from './pages/AgencyPayments';
-import Layout from './components/Layout';
+import PaymentGateway from "./pages/PaymentGateway";
+import GuideRequests from "./pages/GuideRequests";
+import AgencyGuideRequests from "./pages/AgencyGuideRequests";
+import AgencyGuideDirectory from "./pages/AgencyGuideDirectory";
+import AgencyAnalytics from "./pages/AgencyAnalytics";
+import AgencyPayments from "./pages/AgencyPayments";
+import Layout from "./components/Layout";
+import AllBookings from "./pages/AllBookings";
 
 const App = () => {
   return (
@@ -52,7 +55,10 @@ const App = () => {
         <Route path="/admin" element={<Admin />} />
         <Route path="/admin/:entityType/:id" element={<ShowEntity />} />
         <Route path="/admin/:entityType/edit/:id" element={<UpdateEntity />} />
-        <Route path="/admin/:entityType/delete/:id" element={<DeleteEntity />} />
+        <Route
+          path="/admin/:entityType/delete/:id"
+          element={<DeleteEntity />}
+        />
         <Route path="/admin/*/edit/:id" element={<UpdateEntity />} />
         <Route path="/payment" element={<PaymentGateway />} />
 
@@ -63,6 +69,9 @@ const App = () => {
 
         <Route path="/bookings/:bookingId" element={<PrivateRoute />}>
           <Route path="/bookings/:bookingId" element={<ViewBooking />} />
+        </Route>
+        <Route path="/all-bookings" element={<PrivateRoute />}>
+          <Route path="/all-bookings" element={<AllBookings />} />
         </Route>
 
         <Route path="/home" element={<PrivateRoute />}>
@@ -94,11 +103,17 @@ const App = () => {
         </Route>
 
         <Route path="/agency-guide-requests" element={<PrivateRoute />}>
-          <Route path="/agency-guide-requests" element={<AgencyGuideRequests />} />
+          <Route
+            path="/agency-guide-requests"
+            element={<AgencyGuideRequests />}
+          />
         </Route>
 
         <Route path="/agency-guide-directory" element={<PrivateRoute />}>
-          <Route path="/agency-guide-directory" element={<AgencyGuideDirectory />} />
+          <Route
+            path="/agency-guide-directory"
+            element={<AgencyGuideDirectory />}
+          />
         </Route>
 
         <Route path="/agency-analytics" element={<PrivateRoute />}>
