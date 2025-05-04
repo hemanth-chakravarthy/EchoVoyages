@@ -6,6 +6,74 @@ import {Guide} from '../models/guideModel.js'
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Booking:
+ *       type: object
+ *       required:
+ *         - customerName
+ *         - customerId
+ *         - totalPrice
+ *       properties:
+ *         _id:
+ *           type: string
+ *           description: Auto-generated ID of the booking
+ *         bookingId:
+ *           type: string
+ *           description: Custom generated booking ID (format XXX-1234-YYMMDD)
+ *         customerName:
+ *           type: string
+ *           description: Name of the customer who made the booking
+ *         customerId:
+ *           type: string
+ *           description: ID of the customer who made the booking
+ *         packageName:
+ *           type: string
+ *           description: Name of the booked package
+ *         packageId:
+ *           type: string
+ *           description: ID of the booked package
+ *         guideName:
+ *           type: string
+ *           description: Name of the assigned guide
+ *         guideId:
+ *           type: string
+ *           description: ID of the assigned guide
+ *         totalPrice:
+ *           type: number
+ *           description: Total price of the booking
+ *         bookingDate:
+ *           type: string
+ *           format: date-time
+ *           description: Date when the booking was made
+ *         status:
+ *           type: string
+ *           enum: [pending, confirmed, canceled]
+ *           description: Status of the booking
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *           description: Date when the booking was created
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *           description: Date when the booking was last updated
+ *       example:
+ *         _id: "60d21b4667d0d8992e610c90"
+ *         bookingId: "JOH-1234-230515"
+ *         customerName: "John Doe"
+ *         customerId: "60d21b4667d0d8992e610c91"
+ *         packageName: "Adventure in the Alps"
+ *         packageId: "60d21b4667d0d8992e610c92"
+ *         guideName: "Jane Smith"
+ *         guideId: "60d21b4667d0d8992e610c93"
+ *         totalPrice: 1200
+ *         bookingDate: "2023-05-15T10:30:00Z"
+ *         status: "confirmed"
+ */
+
 // Function to generate a custom booking ID
 const generateBookingId = (customerName) => {
     // Get the first 3 letters of the customer name (uppercase)
@@ -25,6 +93,48 @@ const generateBookingId = (customerName) => {
 };
 
 
+/**
+ * @swagger
+ * /bookings:
+ *   post:
+ *     summary: Create a new booking
+ *     tags: [Bookings]
+ *     description: Create a new booking for a customer, optionally with a package and guide
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - customerId
+ *             properties:
+ *               customerId:
+ *                 type: string
+ *                 description: ID of the customer making the booking
+ *               packageId:
+ *                 type: string
+ *                 description: ID of the package being booked (optional)
+ *               guideId:
+ *                 type: string
+ *                 description: ID of the guide for the booking (optional)
+ *               totalPrice:
+ *                 type: number
+ *                 description: Total price of the booking (optional, will be set from package if provided)
+ *     responses:
+ *       201:
+ *         description: Booking created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Booking'
+ *       400:
+ *         description: Missing required fields
+ *       404:
+ *         description: Customer, package, or guide not found
+ *       500:
+ *         description: Internal server error
+ */
 router.post('/', async (req, res,next) => {
     console.log('Booking request received:', req.body);
     try {
@@ -94,6 +204,47 @@ router.post('/', async (req, res,next) => {
 
         // Save the booking to the database
         const savedBooking = await newBooking.save();
+
+        // If the booking has both a package and a guide, attach the guide to the package
+        if (packageId && guideId) {
+            try {
+                const packageData = await packages.findById(packageId);
+                if (packageData) {
+                    // Check if guide is already in the guides array
+                    const guideExists = packageData.guides.some(
+                        g => g.toString() === guideId.toString()
+                    );
+
+                    if (!guideExists) {
+                        // Add guide to the package's guides array
+                        packageData.guides.push(guideId);
+                        await packageData.save();
+                        console.log(`Attached guide ${guideId} to package ${packageId}`);
+                    }
+
+                    // Check if package is already in guide's assignedPackages
+                    const packageExists = guideData.assignedPackages.some(
+                        pkg => pkg.packageId.toString() === packageId.toString()
+                    );
+
+                    if (!packageExists) {
+                        // Add package to guide's assignedPackages
+                        guideData.assignedPackages.push({
+                            packageId: packageId,
+                            packageName: packageName,
+                            price: totalPrice,
+                            status: savedBooking.status === 'confirmed' ? 'confirmed' : 'pending'
+                        });
+                        await guideData.save();
+                        console.log(`Added package ${packageId} to guide's assigned packages`);
+                    }
+                }
+            } catch (error) {
+                console.error('Error attaching guide to package:', error);
+                // Continue with the response even if attachment fails
+            }
+        }
+
         return res.status(201).send(savedBooking);
 
     } catch (error) {
@@ -103,7 +254,31 @@ router.post('/', async (req, res,next) => {
     }
 });
 
-// get all bookings
+/**
+ * @swagger
+ * /bookings:
+ *   get:
+ *     summary: Get all bookings
+ *     tags: [Bookings]
+ *     description: Retrieve a list of all bookings
+ *     responses:
+ *       200:
+ *         description: A list of bookings
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: integer
+ *                   description: Number of bookings returned
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Booking'
+ *       500:
+ *         description: Server error
+ */
 router.get('/',async (req,res,next) => {
     try {
         const book = await bookings.find({});
@@ -117,6 +292,36 @@ router.get('/',async (req,res,next) => {
         res.status(500).send({message: error.message})
     }
 })
+/**
+ * @swagger
+ * /bookings/cust/{customerId}:
+ *   get:
+ *     summary: Get bookings by customer ID
+ *     tags: [Bookings]
+ *     description: Retrieve all bookings for a specific customer
+ *     parameters:
+ *       - in: path
+ *         name: customerId
+ *         required: true
+ *         description: ID of the customer to get bookings for
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of bookings for the customer
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Booking'
+ *       400:
+ *         description: Customer ID is required
+ *       404:
+ *         description: No bookings found for this customer
+ *       500:
+ *         description: Server error
+ */
 router.get('/cust/:customerId', async (req, res,next) => {
     const { customerId } = req.params; // Extract customerId from the URL
 
@@ -140,6 +345,36 @@ router.get('/cust/:customerId', async (req, res,next) => {
         res.status(500).json({ message: 'Error fetching bookings' });
     }
 });
+/**
+ * @swagger
+ * /bookings/pack/{packageId}:
+ *   get:
+ *     summary: Get bookings by package ID
+ *     tags: [Bookings]
+ *     description: Retrieve all bookings for a specific package
+ *     parameters:
+ *       - in: path
+ *         name: packageId
+ *         required: true
+ *         description: ID of the package to get bookings for
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of bookings for the package
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Booking'
+ *       400:
+ *         description: Package ID is required
+ *       404:
+ *         description: No bookings found for this package
+ *       500:
+ *         description: Server error
+ */
 router.get('/pack/:packageId', async (req, res,next) => {
     const { packageId } = req.params; // Extract customerId from the URL
 
@@ -164,6 +399,36 @@ router.get('/pack/:packageId', async (req, res,next) => {
         res.status(500).json({ message: 'Error fetching bookings' });
     }
 });
+/**
+ * @swagger
+ * /bookings/guides/{guideId}:
+ *   get:
+ *     summary: Get bookings by guide ID
+ *     tags: [Bookings]
+ *     description: Retrieve all bookings for a specific guide
+ *     parameters:
+ *       - in: path
+ *         name: guideId
+ *         required: true
+ *         description: ID of the guide to get bookings for
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of bookings for the guide
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Booking'
+ *       400:
+ *         description: Guide ID is required
+ *       404:
+ *         description: No bookings found for this guide
+ *       500:
+ *         description: Server error
+ */
 router.get('/guides/:guideId',async (req, res,next) => {
     const { guideId } = req.params; // Extract customerId from the URL
 
@@ -190,7 +455,36 @@ router.get('/guides/:guideId',async (req, res,next) => {
 
 })
 
-// delete a booking
+/**
+ * @swagger
+ * /bookings/{id}:
+ *   delete:
+ *     summary: Delete a booking
+ *     tags: [Bookings]
+ *     description: Delete a specific booking by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the booking to delete
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Booking deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Booking deleted
+ *       404:
+ *         description: Booking not found
+ *       500:
+ *         description: Server error
+ */
 router.delete('/:id', async (req,res,next) => {
     try {
         const {id} = req.params;
@@ -208,7 +502,63 @@ router.delete('/:id', async (req,res,next) => {
     }
 
 })
-// update booking
+/**
+ * @swagger
+ * /bookings/{id}:
+ *   put:
+ *     summary: Update a booking
+ *     tags: [Bookings]
+ *     description: Update a specific booking by ID, with special handling for status changes to 'confirmed'
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the booking to update
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [pending, confirmed, canceled, completed]
+ *                 description: New status for the booking
+ *               startDate:
+ *                 type: string
+ *                 format: date
+ *                 description: Start date of the booking
+ *               endDate:
+ *                 type: string
+ *                 format: date
+ *                 description: End date of the booking
+ *               totalPrice:
+ *                 type: number
+ *                 description: Total price of the booking
+ *               specialRequests:
+ *                 type: string
+ *                 description: Special requests for the booking
+ *     responses:
+ *       200:
+ *         description: Booking updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Booking updated successfully
+ *                 booking:
+ *                   $ref: '#/components/schemas/Booking'
+ *       404:
+ *         description: Booking not found
+ *       500:
+ *         description: Server error
+ */
 router.put('/:id',async (req,res,next) => {
     try {
         const {id} = req.params;
@@ -223,11 +573,12 @@ router.put('/:id',async (req,res,next) => {
         // Update the booking
         const result = await bookings.findByIdAndUpdate(id, req.body, { new: true });
 
-        // If status is being changed to confirmed and there's a guide, update guide earnings
+        // If status is being changed to confirmed and there's a guide, update guide earnings and attach guide to package
         if (status === 'confirmed' && booking.status !== 'confirmed' && booking.guideId) {
             try {
-                // Import the Guide model
+                // Import the Guide model and Package model
                 const { Guide } = await import('../models/guideModel.js');
+                const { packages } = await import('../models/packageModel.js');
 
                 // Calculate guide's share (70% of package price)
                 const guideShare = booking.totalPrice * 0.7;
@@ -275,9 +626,44 @@ router.put('/:id',async (req,res,next) => {
                     // Save the updated guide
                     await guide.save();
                     console.log(`Updated guide earnings for booking ${id}`);
+
+                    // If there's a package, attach the guide to the package
+                    if (booking.packageId) {
+                        const packageData = await packages.findById(booking.packageId);
+                        if (packageData) {
+                            // Check if guide is already in the guides array
+                            const guideExists = packageData.guides.some(
+                                g => g.toString() === booking.guideId.toString()
+                            );
+
+                            if (!guideExists) {
+                                // Add guide to the package's guides array
+                                packageData.guides.push(booking.guideId);
+                                await packageData.save();
+                                console.log(`Attached guide ${booking.guideId} to package ${booking.packageId}`);
+                            }
+
+                            // Check if package is already in guide's assignedPackages
+                            const packageExists = guide.assignedPackages.some(
+                                pkg => pkg.packageId.toString() === booking.packageId.toString()
+                            );
+
+                            if (!packageExists) {
+                                // Add package to guide's assignedPackages
+                                guide.assignedPackages.push({
+                                    packageId: booking.packageId,
+                                    packageName: booking.packageName,
+                                    price: booking.totalPrice,
+                                    status: 'confirmed'
+                                });
+                                await guide.save();
+                                console.log(`Added package ${booking.packageId} to guide's assigned packages`);
+                            }
+                        }
+                    }
                 }
             } catch (error) {
-                console.error('Error updating guide earnings:', error);
+                console.error('Error updating guide earnings or attaching guide to package:', error);
                 // Continue with the response even if earnings update fails
             }
         }
@@ -293,7 +679,32 @@ router.put('/:id',async (req,res,next) => {
         res.status(500).send({message: error.message})
     }
 })
-// view a single booking
+/**
+ * @swagger
+ * /bookings/{id}:
+ *   get:
+ *     summary: Get a booking by ID
+ *     tags: [Bookings]
+ *     description: Retrieve a specific booking by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the booking to retrieve
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Booking details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Booking'
+ *       404:
+ *         description: Booking not found
+ *       500:
+ *         description: Server error
+ */
 router.get('/:id',async (req,res,next) => {
     try {
         let {id} = req.params
@@ -307,11 +718,45 @@ router.get('/:id',async (req,res,next) => {
     }
 
 })
+/**
+ * @swagger
+ * /bookings/verifyBooking:
+ *   get:
+ *     summary: Verify if a booking exists
+ *     tags: [Bookings]
+ *     description: Check if a booking exists for a specific customer and package
+ *     parameters:
+ *       - in: query
+ *         name: customerId
+ *         required: true
+ *         description: ID of the customer
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: packageId
+ *         required: true
+ *         description: ID of the package
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Booking verification result
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 hasBooking:
+ *                   type: boolean
+ *                   description: Whether a booking exists for the customer and package
+ *       500:
+ *         description: Server error
+ */
 router.get('/verifyBooking', async (req, res,next) => {
     const { customerId, packageId } = req.query;
 
     try {
-      const booking = await Booking.findOne({ customerId, packageId });
+      const booking = await bookings.findOne({ customerId, packageId });
       res.status(200).json({ hasBooking: !!booking });
     } catch (error) {
         next(error);

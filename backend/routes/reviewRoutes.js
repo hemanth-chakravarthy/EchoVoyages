@@ -6,7 +6,146 @@ import { Guide } from "../models/guideModel.js";
 import { bookings } from "../models/bookingModel.js";
 const router = express.Router();
 
-// Save a review
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Review:
+ *       type: object
+ *       required:
+ *         - customerName
+ *         - customerId
+ *         - rating
+ *         - comment
+ *         - bookingId
+ *       properties:
+ *         _id:
+ *           type: string
+ *           description: Auto-generated ID of the review
+ *         customerName:
+ *           type: string
+ *           description: Name of the customer who submitted the review
+ *         customerId:
+ *           type: string
+ *           description: ID of the customer who submitted the review
+ *         packageId:
+ *           type: string
+ *           description: ID of the package being reviewed (optional)
+ *         packageName:
+ *           type: string
+ *           description: Name of the package being reviewed (optional)
+ *         guideId:
+ *           type: string
+ *           description: ID of the guide being reviewed (optional)
+ *         guideName:
+ *           type: string
+ *           description: Name of the guide being reviewed (optional)
+ *         rating:
+ *           type: number
+ *           minimum: 1
+ *           maximum: 5
+ *           description: Rating from 1 to 5
+ *         comment:
+ *           type: string
+ *           description: Review comment
+ *         status:
+ *           type: string
+ *           enum: [pending, approved, rejected]
+ *           default: approved
+ *           description: Status of the review
+ *         bookingId:
+ *           type: string
+ *           description: ID of the booking associated with this review
+ *         reports:
+ *           type: number
+ *           default: 0
+ *           description: Number of times this review has been reported
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *           description: Date when the review was created
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *           description: Date when the review was last updated
+ *       example:
+ *         _id: "60d21b4667d0d8992e610c97"
+ *         customerName: "John Doe"
+ *         customerId: "60d21b4667d0d8992e610c91"
+ *         packageId: "60d21b4667d0d8992e610c85"
+ *         packageName: "Adventure in the Alps"
+ *         guideId: "60d21b4667d0d8992e610c93"
+ *         guideName: "Jane Smith"
+ *         rating: 4.5
+ *         comment: "Great experience! The guide was very knowledgeable and the views were amazing."
+ *         status: "approved"
+ *         bookingId: "60d21b4667d0d8992e610c90"
+ *         reports: 0
+ *         createdAt: "2023-05-15T10:30:00Z"
+ *         updatedAt: "2023-05-15T10:30:00Z"
+ */
+
+/**
+ * @swagger
+ * /reviews:
+ *   post:
+ *     summary: Create a new review
+ *     tags: [Reviews]
+ *     description: Submit a review for a package, guide, or both
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - customerId
+ *               - rating
+ *               - comment
+ *               - bookingId
+ *             properties:
+ *               customerId:
+ *                 type: string
+ *                 description: ID of the customer submitting the review
+ *               packageId:
+ *                 type: string
+ *                 description: ID of the package being reviewed (optional)
+ *               guideId:
+ *                 type: string
+ *                 description: ID of the guide being reviewed (optional)
+ *               rating:
+ *                 type: number
+ *                 minimum: 1
+ *                 maximum: 5
+ *                 description: Rating from 1 to 5
+ *               comment:
+ *                 type: string
+ *                 description: Review comment
+ *               bookingId:
+ *                 type: string
+ *                 description: ID of the booking associated with this review
+ *     responses:
+ *       201:
+ *         description: Review submitted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Review submitted successfully
+ *                 review:
+ *                   $ref: '#/components/schemas/Review'
+ *       400:
+ *         description: Missing required fields
+ *       403:
+ *         description: You can only review items that you have booked
+ *       404:
+ *         description: Customer, package, guide, or booking not found
+ *       500:
+ *         description: Server error
+ */
 router.post("/", async (req, res,next) => {
   try {
     const { customerId, packageId, guideId, rating, comment, bookingId } =
@@ -146,6 +285,38 @@ router.post("/", async (req, res,next) => {
   }
 });
 
+/**
+ * @swagger
+ * /reviews/{reviewId}:
+ *   post:
+ *     summary: Report a review
+ *     tags: [Reviews]
+ *     description: Report an inappropriate review
+ *     parameters:
+ *       - in: path
+ *         name: reviewId
+ *         required: true
+ *         description: ID of the review to report
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Review has been reported
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Review has been reported
+ *                 review:
+ *                   $ref: '#/components/schemas/Review'
+ *       404:
+ *         description: Review not found
+ *       500:
+ *         description: Server error
+ */
 router.post("/:reviewId", async (req, res,next) => {
   const { reviewId } = req.params;
 
@@ -168,7 +339,25 @@ router.post("/:reviewId", async (req, res,next) => {
   }
 });
 
-// Get all reviews (for admin panel or other purposes)
+/**
+ * @swagger
+ * /reviews:
+ *   get:
+ *     summary: Get all reviews
+ *     tags: [Reviews]
+ *     description: Retrieve all reviews with populated customer and package details
+ *     responses:
+ *       200:
+ *         description: List of all reviews
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Review'
+ *       500:
+ *         description: Server error
+ */
 router.get("/", async (req, res,next) => {
   try {
     const revs = await reviews
@@ -181,6 +370,36 @@ router.get("/", async (req, res,next) => {
     res.status(500).send({ message: "Internal Server Error" });
   }
 });
+/**
+ * @swagger
+ * /reviews/package/{packageId}:
+ *   get:
+ *     summary: Get reviews for a package
+ *     tags: [Reviews]
+ *     description: Retrieve all reviews for a specific package
+ *     parameters:
+ *       - in: path
+ *         name: packageId
+ *         required: true
+ *         description: ID of the package to get reviews for
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of reviews for the package
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Review'
+ *       400:
+ *         description: Package ID is required
+ *       404:
+ *         description: No reviews found for this package
+ *       500:
+ *         description: Server error
+ */
 router.get("/package/:packageId", async (req, res,next) => {
   const { packageId } = req.params; // Extract the packageId properly
 
@@ -207,6 +426,34 @@ router.get("/package/:packageId", async (req, res,next) => {
     res.status(500).json({ message: "Error fetching reviews" });
   }
 });
+/**
+ * @swagger
+ * /reviews/guides/{guideId}/reviews:
+ *   get:
+ *     summary: Get reviews for a guide
+ *     tags: [Reviews]
+ *     description: Retrieve all reviews for a specific guide
+ *     parameters:
+ *       - in: path
+ *         name: guideId
+ *         required: true
+ *         description: ID of the guide to get reviews for
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of reviews for the guide
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Review'
+ *       400:
+ *         description: Guide ID is required
+ *       500:
+ *         description: Server error
+ */
 router.get("/guides/:guideId/reviews", async (req, res,next) => {
   const { guideId } = req.params; // Extract the guideId properly
 
@@ -234,7 +481,32 @@ router.get("/guides/:guideId/reviews", async (req, res,next) => {
   }
 });
 
-// Get a specific review by ID
+/**
+ * @swagger
+ * /reviews/{id}:
+ *   get:
+ *     summary: Get a review by ID
+ *     tags: [Reviews]
+ *     description: Retrieve a specific review by ID with populated customer and package details
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the review to retrieve
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Review details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Review'
+ *       404:
+ *         description: Review not found
+ *       500:
+ *         description: Server error
+ */
 router.get("/:id", async (req, res,next) => {
   try {
     const review = await reviews
@@ -252,7 +524,51 @@ router.get("/:id", async (req, res,next) => {
   }
 });
 
-// Update a review by ID
+/**
+ * @swagger
+ * /reviews/{id}:
+ *   put:
+ *     summary: Update a review
+ *     tags: [Reviews]
+ *     description: Update a specific review by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the review to update
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               rating:
+ *                 type: number
+ *                 minimum: 1
+ *                 maximum: 5
+ *                 description: Updated rating from 1 to 5
+ *               comment:
+ *                 type: string
+ *                 description: Updated review comment
+ *               status:
+ *                 type: string
+ *                 enum: [pending, approved, rejected]
+ *                 description: Updated status of the review
+ *     responses:
+ *       200:
+ *         description: Review updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Review'
+ *       404:
+ *         description: Review not found
+ *       500:
+ *         description: Server error
+ */
 router.put("/:id", async (req, res,next) => {
   try {
     const { rating, comment, status } = req.body;
@@ -274,7 +590,36 @@ router.put("/:id", async (req, res,next) => {
   }
 });
 
-// Delete a review by ID
+/**
+ * @swagger
+ * /reviews/{id}:
+ *   delete:
+ *     summary: Delete a review
+ *     tags: [Reviews]
+ *     description: Delete a specific review by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the review to delete
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Review deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Review deleted successfully
+ *       404:
+ *         description: Review not found
+ *       500:
+ *         description: Server error
+ */
 router.delete("/:id", async (req, res,next) => {
   try {
     const review = await reviews.findByIdAndDelete(req.params.id);
@@ -288,6 +633,39 @@ router.delete("/:id", async (req, res,next) => {
     res.status(500).send({ message: "Internal Server Error" });
   }
 });
+/**
+ * @swagger
+ * /reviews/guides/{guideId}/details:
+ *   get:
+ *     summary: Get guide details with reviews
+ *     tags: [Reviews]
+ *     description: Retrieve guide details along with their reviews and update the guide's average rating
+ *     parameters:
+ *       - in: path
+ *         name: guideId
+ *         required: true
+ *         description: ID of the guide to get details for
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Guide details with reviews
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 guide:
+ *                   $ref: '#/components/schemas/Guide'
+ *                 review:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Review'
+ *       404:
+ *         description: Guide not found
+ *       500:
+ *         description: Server error
+ */
 router.get("/guides/:guideId/details", async (req, res,next) => {
   const { guideId } = req.params;
 

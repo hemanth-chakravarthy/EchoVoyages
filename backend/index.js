@@ -25,6 +25,7 @@ import requests from './routes/requestRoutes.js'
 import cacheRoutes from './routes/cacheRoutes.js';
 import nodemailer from "nodemailer";
 import ErrorHandler from "./ErrorHandler.js";
+import swaggerDocs from './swaggerSetup.js';
 mongoose
   .connect(mongoURL)
   .then(() => {
@@ -175,4 +176,7 @@ function verifyToken(req, res, next) {
 const port = 5000;
 app.listen(port, () => {
   console.log(`listening on port ${port}`);
+
+  // Initialize Swagger
+  swaggerDocs(app);
 });

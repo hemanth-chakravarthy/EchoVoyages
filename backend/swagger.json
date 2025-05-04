@@ -1,0 +1,65 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "EchoVoyages API",
+    "description": "API documentation for the EchoVoyages travel booking platform",
+    "version": "1.0.0",
+    "contact": {
+      "name": "EchoVoyages Support",
+      "email": "support@echovoyages.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000",
+      "description": "Development server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Packages",
+      "description": "Travel package operations"
+    },
+    {
+      "name": "Customers",
+      "description": "Customer operations"
+    },
+    {
+      "name": "Guides",
+      "description": "Guide operations"
+    },
+    {
+      "name": "Agencies",
+      "description": "Agency operations"
+    },
+    {
+      "name": "Bookings",
+      "description": "Booking operations"
+    },
+    {
+      "name": "Reviews",
+      "description": "Review operations"
+    },
+    {
+      "name": "Wishlist",
+      "description": "Wishlist operations"
+    },
+    {
+      "name": "Search",
+      "description": "Search operations"
+    },
+    {
+      "name": "Requests",
+      "description": "Request operations"
+    },
+    {
+      "name": "Guide Requests",
+      "description": "Guide request operations"
+    },
+    {
+      "name": "Cache",
+      "description": "Cache operations"
+    }
+  ],
+  "paths": {}
+}

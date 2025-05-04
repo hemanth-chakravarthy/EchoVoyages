@@ -5,7 +5,156 @@ import { customers } from "../models/customerModel.js";
 
 const router = express.Router();
 
-// Endpoint to handle customization or booking request
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Request:
+ *       type: object
+ *       required:
+ *         - customerId
+ *         - packageId
+ *         - price
+ *         - duration
+ *         - itinerary
+ *         - availableDates
+ *         - maxGroupSize
+ *       properties:
+ *         _id:
+ *           type: string
+ *           description: Auto-generated ID of the request
+ *         customerId:
+ *           type: string
+ *           description: ID of the customer making the request
+ *         customerName:
+ *           type: string
+ *           description: Name of the customer making the request
+ *         packageId:
+ *           type: string
+ *           description: ID of the package being requested
+ *         packageName:
+ *           type: string
+ *           description: Name of the package being requested
+ *         price:
+ *           type: number
+ *           description: Requested price for the package
+ *         requestType:
+ *           type: string
+ *           enum: [customization, booking]
+ *           description: Type of request (customization or booking)
+ *         duration:
+ *           type: number
+ *           description: Requested duration in days
+ *         itinerary:
+ *           type: string
+ *           description: Requested itinerary details
+ *         availableDates:
+ *           type: array
+ *           items:
+ *             type: string
+ *             format: date
+ *           description: Requested available dates
+ *         maxGroupSize:
+ *           type: number
+ *           description: Requested maximum group size
+ *         AgentID:
+ *           type: string
+ *           description: ID of the agency handling the request
+ *         status:
+ *           type: string
+ *           enum: [pending, approved, rejected]
+ *           default: pending
+ *           description: Status of the request
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *           description: Date when the request was created
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *           description: Date when the request was last updated
+ *       example:
+ *         _id: "60d21b4667d0d8992e610c94"
+ *         customerId: "60d21b4667d0d8992e610c91"
+ *         customerName: "John Doe"
+ *         packageId: "60d21b4667d0d8992e610c85"
+ *         packageName: "Adventure in the Alps"
+ *         price: 1200
+ *         requestType: "customization"
+ *         duration: 7
+ *         itinerary: "Day 1: Arrival, Day 2: Hiking, Day 3: Skiing..."
+ *         availableDates: ["2023-06-15", "2023-06-22"]
+ *         maxGroupSize: 5
+ *         AgentID: "60d21b4667d0d8992e610c88"
+ *         status: "pending"
+ *         createdAt: "2023-05-15T10:30:00Z"
+ *         updatedAt: "2023-05-15T10:30:00Z"
+ */
+
+/**
+ * @swagger
+ * /requests:
+ *   post:
+ *     summary: Create a new customization or booking request
+ *     tags: [Requests]
+ *     description: Submit a new request for package customization or booking
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - price
+ *               - duration
+ *               - itinerary
+ *               - availableDates
+ *               - maxGroupSize
+ *               - packageId
+ *               - customerId
+ *             properties:
+ *               price:
+ *                 type: number
+ *                 description: Requested price for the package
+ *               duration:
+ *                 type: number
+ *                 description: Requested duration in days
+ *               itinerary:
+ *                 type: string
+ *                 description: Requested itinerary details
+ *               availableDates:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: date
+ *                 description: Requested available dates
+ *               maxGroupSize:
+ *                 type: number
+ *                 description: Requested maximum group size
+ *               packageId:
+ *                 type: string
+ *                 description: ID of the package being requested
+ *               customerId:
+ *                 type: string
+ *                 description: ID of the customer making the request
+ *               requestType:
+ *                 type: string
+ *                 enum: [customization, booking]
+ *                 description: Type of request
+ *     responses:
+ *       201:
+ *         description: Request created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Request'
+ *       400:
+ *         description: Missing required fields
+ *       404:
+ *         description: Package or customer not found
+ *       500:
+ *         description: Server error
+ */
 router.post("/", async (req, res,next) => {
   try {
     // Extract request body fields
@@ -78,6 +227,30 @@ router.post("/", async (req, res,next) => {
     });
   }
 });
+/**
+ * @swagger
+ * /requests:
+ *   get:
+ *     summary: Get all requests
+ *     tags: [Requests]
+ *     description: Retrieve all customization and booking requests
+ *     responses:
+ *       200:
+ *         description: List of all requests
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Request'
+ *       404:
+ *         description: No requests found
+ *       500:
+ *         description: Server error
+ */
 router.get('/', async (req, res,next) => {
   try {
     // Fetch all requests from the database
@@ -94,6 +267,37 @@ router.get('/', async (req, res,next) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+/**
+ * @swagger
+ * /requests/agen/{agentid}:
+ *   get:
+ *     summary: Get requests by agent ID
+ *     tags: [Requests]
+ *     description: Retrieve all requests for a specific agent
+ *     parameters:
+ *       - in: path
+ *         name: agentid
+ *         required: true
+ *         description: ID of the agent to get requests for
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of requests for the agent
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Request'
+ *       404:
+ *         description: No requests found for this agent
+ *       500:
+ *         description: Server error
+ */
 router.get('/agen/:agentid', async (req, res,next) => {
   const { agentID } = req.params; // Get the agentID from the URL parameter
 
@@ -112,6 +316,35 @@ router.get('/agen/:agentid', async (req, res,next) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+/**
+ * @swagger
+ * /requests/{id}:
+ *   get:
+ *     summary: Get a request by ID
+ *     tags: [Requests]
+ *     description: Retrieve a specific request by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the request to retrieve
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Request details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   $ref: '#/components/schemas/Request'
+ *       404:
+ *         description: Request not found
+ *       500:
+ *         description: Server error
+ */
 router.get('/:id', async (req, res,next) => {
   const { id } = req.params; // Get the requestID from the URL parameter
 
@@ -130,6 +363,67 @@ router.get('/:id', async (req, res,next) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+/**
+ * @swagger
+ * /requests/{id}:
+ *   put:
+ *     summary: Update a request
+ *     tags: [Requests]
+ *     description: Update a specific request by ID, including status changes that can trigger booking updates
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the request to update
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [pending, approved, rejected]
+ *                 description: New status for the request
+ *               price:
+ *                 type: number
+ *                 description: Updated price
+ *               duration:
+ *                 type: number
+ *                 description: Updated duration
+ *               itinerary:
+ *                 type: string
+ *                 description: Updated itinerary
+ *               availableDates:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: date
+ *                 description: Updated available dates
+ *               maxGroupSize:
+ *                 type: number
+ *                 description: Updated maximum group size
+ *     responses:
+ *       200:
+ *         description: Request updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Request updated successfully
+ *                 data:
+ *                   $ref: '#/components/schemas/Request'
+ *       404:
+ *         description: Request not found
+ *       500:
+ *         description: Server error
+ */
 router.put('/:id',async (req,res,next) => {
   try {
       const {id} = req.params;
@@ -144,12 +438,13 @@ router.put('/:id',async (req,res,next) => {
       // Update the request
       const result = await requests.findByIdAndUpdate(id, req.body, { new: true });
 
-      // If the request is being approved, update any related bookings
+      // If the request is being approved, update any related bookings and attach guide to package
       if (status === "approved") {
           try {
-              // Import the bookings model and Guide model
+              // Import the bookings model, Guide model, and Package model
               const { bookings } = await import('../models/bookingModel.js');
               const { Guide } = await import('../models/guideModel.js');
+              const { packages } = await import('../models/packageModel.js');
 
               // Find any bookings for this customer and package
               const relatedBookings = await bookings.find({
@@ -169,7 +464,7 @@ router.put('/:id',async (req,res,next) => {
                           { new: true }
                       );
 
-                      // If the booking has a guide, update guide earnings
+                      // If the booking has a guide, update guide earnings and attach guide to package
                       if (updatedBooking.guideId) {
                           try {
                               // Calculate guide's share (70% of package price)
@@ -218,9 +513,42 @@ router.put('/:id',async (req,res,next) => {
                                   // Save the updated guide
                                   await guide.save();
                                   console.log(`Updated guide earnings for booking ${updatedBooking._id}`);
+
+                                  // Attach guide to package if not already attached
+                                  const packageData = await packages.findById(updatedBooking.packageId);
+                                  if (packageData) {
+                                      // Check if guide is already in the guides array
+                                      const guideExists = packageData.guides.some(
+                                          g => g.toString() === updatedBooking.guideId.toString()
+                                      );
+
+                                      if (!guideExists) {
+                                          // Add guide to the package's guides array
+                                          packageData.guides.push(updatedBooking.guideId);
+                                          await packageData.save();
+                                          console.log(`Attached guide ${updatedBooking.guideId} to package ${updatedBooking.packageId}`);
+                                      }
+
+                                      // Check if package is already in guide's assignedPackages
+                                      const packageExists = guide.assignedPackages.some(
+                                          pkg => pkg.packageId.toString() === updatedBooking.packageId.toString()
+                                      );
+
+                                      if (!packageExists) {
+                                          // Add package to guide's assignedPackages
+                                          guide.assignedPackages.push({
+                                              packageId: updatedBooking.packageId,
+                                              packageName: packageData.name,
+                                              price: packageData.price,
+                                              status: 'confirmed'
+                                          });
+                                          await guide.save();
+                                          console.log(`Added package ${updatedBooking.packageId} to guide's assigned packages`);
+                                      }
+                                  }
                               }
                           } catch (error) {
-                              console.error('Error updating guide earnings:', error);
+                              console.error('Error updating guide earnings or attaching guide to package:', error);
                               // Continue with the process even if earnings update fails
                           }
                       }

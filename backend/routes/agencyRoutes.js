@@ -6,6 +6,91 @@ import fs from 'fs';
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Agency:
+ *       type: object
+ *       required:
+ *         - name
+ *         - gmail
+ *         - phno
+ *         - specialization
+ *       properties:
+ *         _id:
+ *           type: string
+ *           description: Auto-generated ID of the agency
+ *         username:
+ *           type: string
+ *           description: Username of the agency
+ *         name:
+ *           type: string
+ *           description: Name of the agency
+ *         gmail:
+ *           type: string
+ *           description: Email address of the agency
+ *         phno:
+ *           type: string
+ *           description: Phone number of the agency
+ *         password:
+ *           type: string
+ *           description: Hashed password of the agency
+ *         role:
+ *           type: string
+ *           default: agency
+ *           description: Role of the user
+ *         bio:
+ *           type: string
+ *           description: Biography or description of the agency
+ *         specialization:
+ *           type: string
+ *           enum: [luxury, adventure, business, family, budget-friendly, other]
+ *           description: Specialization of the agency
+ *         profileImage:
+ *           type: string
+ *           description: Path to the agency's profile image
+ *         contactInfo:
+ *           type: object
+ *           properties:
+ *             email:
+ *               type: string
+ *               description: Contact email of the agency
+ *             phone:
+ *               type: string
+ *               description: Contact phone number of the agency
+ *         travelPackages:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: IDs of travel packages offered by the agency
+ *         packageName:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: Names of travel packages offered by the agency
+ *         bookingRequests:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: IDs of booking requests received by the agency
+ *       example:
+ *         _id: "60d21b4667d0d8992e610c88"
+ *         username: "alpineadventures"
+ *         name: "Alpine Adventures"
+ *         gmail: "info@alpineadventures.com"
+ *         phno: "+41123456789"
+ *         role: "agency"
+ *         bio: "Specializing in mountain and alpine adventures since 2005"
+ *         specialization: "adventure"
+ *         profileImage: "/public/agencyProfiles/profile-1624276806-123456.jpg"
+ *         contactInfo:
+ *           email: "info@alpineadventures.com"
+ *           phone: "+41123456789"
+ *         travelPackages: ["60d21b4667d0d8992e610c85", "60d21b4667d0d8992e610c86"]
+ *         packageName: ["Adventure in the Alps", "Swiss Mountain Retreat"]
+ */
+
 // Configure multer for file uploads
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -44,7 +129,69 @@ const upload = multer({
     },
 });
 
-// Save a new agency
+/**
+ * @swagger
+ * /agencies:
+ *   post:
+ *     summary: Create a new agency
+ *     tags: [Agencies]
+ *     description: Create a new travel agency with basic information
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - gmail
+ *               - phno
+ *               - bio
+ *               - specialization
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Name of the agency
+ *               gmail:
+ *                 type: string
+ *                 description: Email address of the agency
+ *               phno:
+ *                 type: string
+ *                 description: Phone number of the agency
+ *               bio:
+ *                 type: string
+ *                 description: Biography or description of the agency
+ *               specialization:
+ *                 type: string
+ *                 enum: [luxury, adventure, business, family, budget-friendly, other]
+ *                 description: Specialization of the agency
+ *               travelPackages:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: IDs of travel packages offered by the agency (optional)
+ *               packageName:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Names of travel packages offered by the agency (optional)
+ *               bookingRequests:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: IDs of booking requests received by the agency (optional)
+ *     responses:
+ *       201:
+ *         description: Agency created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Agency'
+ *       400:
+ *         description: Missing required fields
+ *       500:
+ *         description: Internal server error
+ */
 router.post('/', async (req, res,next) => {
     try {
         const { name, gmail, phno, bio, specialization } = req.body;
@@ -80,7 +227,31 @@ router.post('/', async (req, res,next) => {
     }
 });
 
-// Get all agencies
+/**
+ * @swagger
+ * /agencies:
+ *   get:
+ *     summary: Get all agencies
+ *     tags: [Agencies]
+ *     description: Retrieve a list of all travel agencies
+ *     responses:
+ *       200:
+ *         description: A list of agencies
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: integer
+ *                   description: Number of agencies returned
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Agency'
+ *       500:
+ *         description: Server error
+ */
 router.get('/', async (req, res,next) => {
     try {
         const agencies = await Agency.find({});
@@ -95,7 +266,36 @@ router.get('/', async (req, res,next) => {
     }
 });
 
-// Delete an agency
+/**
+ * @swagger
+ * /agencies/{id}:
+ *   delete:
+ *     summary: Delete an agency
+ *     tags: [Agencies]
+ *     description: Delete a specific agency by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the agency to delete
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Agency deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Agency deleted
+ *       404:
+ *         description: Agency not found
+ *       500:
+ *         description: Server error
+ */
 router.delete('/:id', async (req, res,next) => {
     try {
         const { id } = req.params;
@@ -111,7 +311,75 @@ router.delete('/:id', async (req, res,next) => {
     }
 });
 
-// Update an agency with profile image support
+/**
+ * @swagger
+ * /agencies/{id}:
+ *   put:
+ *     summary: Update an agency
+ *     tags: [Agencies]
+ *     description: Update a specific agency by ID, with support for profile image upload
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the agency to update
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Name of the agency
+ *               gmail:
+ *                 type: string
+ *                 description: Email address of the agency
+ *               phno:
+ *                 type: string
+ *                 description: Phone number of the agency
+ *               bio:
+ *                 type: string
+ *                 description: Biography or description of the agency
+ *               specialization:
+ *                 type: string
+ *                 description: Specialization of the agency
+ *               'contactInfo.email':
+ *                 type: string
+ *                 description: Contact email of the agency
+ *               'contactInfo.phone':
+ *                 type: string
+ *                 description: Contact phone number of the agency
+ *               travelPackages:
+ *                 type: string
+ *                 format: json
+ *                 description: JSON string of travel package IDs
+ *               packageName:
+ *                 type: string
+ *                 format: json
+ *                 description: JSON string of package names
+ *               bookingRequests:
+ *                 type: string
+ *                 format: json
+ *                 description: JSON string of booking request IDs
+ *               profileImage:
+ *                 type: string
+ *                 format: binary
+ *                 description: Profile image file
+ *     responses:
+ *       200:
+ *         description: Agency updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Agency'
+ *       404:
+ *         description: Agency not found
+ *       500:
+ *         description: Server error
+ */
 router.put('/:id', upload.single('profileImage'), async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -163,7 +431,32 @@ router.put('/:id', upload.single('profileImage'), async (req, res, next) => {
     }
 });
 
-// View a single agency
+/**
+ * @swagger
+ * /agencies/{id}:
+ *   get:
+ *     summary: Get an agency by ID
+ *     tags: [Agencies]
+ *     description: Retrieve a specific agency by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the agency to retrieve
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Agency details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Agency'
+ *       404:
+ *         description: Agency not found
+ *       500:
+ *         description: Server error
+ */
 router.get('/:id', async (req, res,next) => {
     try {
         const { id } = req.params;

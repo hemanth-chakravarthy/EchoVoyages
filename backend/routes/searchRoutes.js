@@ -6,7 +6,103 @@ import { cacheMiddleware } from '../middleware/cacheMiddleware.js';
 
 const router = express.Router();
 
-// Update the main search route to handle filtering by availability, languages, and text search
+/**
+ * @swagger
+ * tags:
+ *   name: Search
+ *   description: API endpoints for searching guides and packages
+ */
+
+/**
+ * @swagger
+ * /search:
+ *   get:
+ *     summary: Search for guides or packages
+ *     tags: [Search]
+ *     description: Search for guides or packages with various filters
+ *     parameters:
+ *       - in: query
+ *         name: entityType
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum: [Guide, Package]
+ *         description: Type of entity to search for (Guide or Package)
+ *       - in: query
+ *         name: searchTerm
+ *         schema:
+ *           type: string
+ *         description: Text to search for in names, descriptions, etc.
+ *       - in: query
+ *         name: location
+ *         schema:
+ *           type: string
+ *         description: Location to filter by
+ *       - in: query
+ *         name: availability
+ *         schema:
+ *           type: string
+ *           enum: [true, false]
+ *         description: Filter guides by availability (true/false)
+ *       - in: query
+ *         name: language
+ *         schema:
+ *           type: string
+ *         description: Filter guides by language
+ *       - in: query
+ *         name: minDuration
+ *         schema:
+ *           type: integer
+ *         description: Minimum duration for packages (in days)
+ *       - in: query
+ *         name: maxDuration
+ *         schema:
+ *           type: integer
+ *         description: Maximum duration for packages (in days)
+ *       - in: query
+ *         name: minGroupSize
+ *         schema:
+ *           type: integer
+ *         description: Minimum group size for packages
+ *       - in: query
+ *         name: maxGroupSize
+ *         schema:
+ *           type: integer
+ *         description: Maximum group size for packages
+ *       - in: query
+ *         name: minPrice
+ *         schema:
+ *           type: number
+ *         description: Minimum price for packages
+ *       - in: query
+ *         name: maxPrice
+ *         schema:
+ *           type: number
+ *         description: Maximum price for packages
+ *       - in: query
+ *         name: availableDates
+ *         schema:
+ *           type: array
+ *           items:
+ *             type: string
+ *             format: date
+ *         description: Available dates for packages (can be multiple)
+ *     responses:
+ *       200:
+ *         description: Search results
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 oneOf:
+ *                   - $ref: '#/components/schemas/Guide'
+ *                   - $ref: '#/components/schemas/Package'
+ *       400:
+ *         description: Invalid entity type or missing required parameters
+ *       500:
+ *         description: Server error
+ */
 router.get('/', cacheMiddleware(120), async (req, res) => {
     try {
         const {
@@ -109,7 +205,26 @@ router.get('/', cacheMiddleware(120), async (req, res) => {
     }
 });
 
-// Endpoint to fetch all unique languages
+/**
+ * @swagger
+ * /search/guide-languages:
+ *   get:
+ *     summary: Get all unique guide languages
+ *     tags: [Search]
+ *     description: Retrieve a list of all unique languages spoken by guides
+ *     responses:
+ *       200:
+ *         description: List of unique languages
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: string
+ *               example: ["English", "Spanish", "French", "German"]
+ *       500:
+ *         description: Server error
+ */
 router.get('/guide-languages', cacheMiddleware(3600), async (req, res) => {
     try {
         const languages = await Guide.distinct('languages');
@@ -118,7 +233,29 @@ router.get('/guide-languages', cacheMiddleware(3600), async (req, res) => {
         res.status(500).json({ message: 'Error fetching languages', error: error.message });
     }
 });
-// Fetch unique guide locations
+/**
+ * @swagger
+ * /search/guide-locations:
+ *   get:
+ *     summary: Get all unique guide locations
+ *     tags: [Search]
+ *     description: Retrieve a list of all unique locations where guides are available
+ *     responses:
+ *       200:
+ *         description: List of unique guide locations
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 locations:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   example: ["New York", "Paris", "Tokyo", "Sydney"]
+ *       500:
+ *         description: Server error
+ */
 router.get('/guide-locations', cacheMiddleware(3600), async (req, res) => {
     try {
         const locations = await Guide.distinct('location');
@@ -128,7 +265,26 @@ router.get('/guide-locations', cacheMiddleware(3600), async (req, res) => {
     }
 });
 
-// Fetch unique package locations
+/**
+ * @swagger
+ * /search/package-locations:
+ *   get:
+ *     summary: Get all unique package locations
+ *     tags: [Search]
+ *     description: Retrieve a list of all unique locations where packages are available
+ *     responses:
+ *       200:
+ *         description: List of unique package locations
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: string
+ *               example: ["Bali", "Switzerland", "Costa Rica", "Thailand"]
+ *       500:
+ *         description: Server error
+ */
 router.get('/package-locations', cacheMiddleware(3600), async (req, res) => {
     try {
         const locations = await packages.distinct('location');

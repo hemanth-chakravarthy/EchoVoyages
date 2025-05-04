@@ -6,7 +6,200 @@ import { Agency } from '../models/agencyModel.js';
 
 const router = express.Router();
 
-// Create a new guide request (Guide to Package)
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     GuideRequest:
+ *       type: object
+ *       required:
+ *         - guideId
+ *         - guideName
+ *         - initiator
+ *         - type
+ *         - status
+ *       properties:
+ *         _id:
+ *           type: string
+ *           description: Auto-generated ID of the guide request
+ *         guideId:
+ *           type: string
+ *           description: ID of the guide
+ *         guideName:
+ *           type: string
+ *           description: Name of the guide
+ *         packageId:
+ *           type: string
+ *           description: ID of the package (for package assignment requests)
+ *         packageName:
+ *           type: string
+ *           description: Name of the package (for package assignment requests)
+ *         agencyId:
+ *           type: string
+ *           description: ID of the agency
+ *         agencyName:
+ *           type: string
+ *           description: Name of the agency
+ *         message:
+ *           type: string
+ *           description: Message included with the request
+ *         initiator:
+ *           type: string
+ *           enum: [guide, agency]
+ *           description: Who initiated the request
+ *         type:
+ *           type: string
+ *           enum: [package_assignment, general_collaboration]
+ *           description: Type of request
+ *         status:
+ *           type: string
+ *           enum: [pending, approved, rejected]
+ *           default: pending
+ *           description: Status of the request
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *           description: Date when the request was created
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *           description: Date when the request was last updated
+ *       example:
+ *         _id: "60d21b4667d0d8992e610c98"
+ *         guideId: "60d21b4667d0d8992e610c93"
+ *         guideName: "Jane Smith"
+ *         packageId: "60d21b4667d0d8992e610c85"
+ *         packageName: "Adventure in the Alps"
+ *         agencyId: "60d21b4667d0d8992e610c88"
+ *         agencyName: "Alpine Adventures"
+ *         message: "I'm interested in guiding this package"
+ *         initiator: "guide"
+ *         type: "package_assignment"
+ *         status: "pending"
+ *         createdAt: "2023-05-15T10:30:00Z"
+ *         updatedAt: "2023-05-15T10:30:00Z"
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     GuideRequest:
+ *       type: object
+ *       required:
+ *         - guideId
+ *         - guideName
+ *         - initiator
+ *         - type
+ *         - status
+ *       properties:
+ *         _id:
+ *           type: string
+ *           description: Auto-generated ID of the guide request
+ *         guideId:
+ *           type: string
+ *           description: ID of the guide
+ *         guideName:
+ *           type: string
+ *           description: Name of the guide
+ *         packageId:
+ *           type: string
+ *           description: ID of the package (for package assignment requests)
+ *         packageName:
+ *           type: string
+ *           description: Name of the package (for package assignment requests)
+ *         agencyId:
+ *           type: string
+ *           description: ID of the agency
+ *         agencyName:
+ *           type: string
+ *           description: Name of the agency
+ *         message:
+ *           type: string
+ *           description: Message included with the request
+ *         initiator:
+ *           type: string
+ *           enum: [guide, agency]
+ *           description: Who initiated the request
+ *         type:
+ *           type: string
+ *           enum: [package_assignment, general_collaboration]
+ *           description: Type of request
+ *         status:
+ *           type: string
+ *           enum: [pending, approved, rejected]
+ *           default: pending
+ *           description: Status of the request
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *           description: Date when the request was created
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *           description: Date when the request was last updated
+ *       example:
+ *         _id: "60d21b4667d0d8992e610c98"
+ *         guideId: "60d21b4667d0d8992e610c93"
+ *         guideName: "Jane Smith"
+ *         packageId: "60d21b4667d0d8992e610c85"
+ *         packageName: "Adventure in the Alps"
+ *         agencyId: "60d21b4667d0d8992e610c88"
+ *         agencyName: "Alpine Adventures"
+ *         message: "I'm interested in guiding this package"
+ *         initiator: "guide"
+ *         type: "package_assignment"
+ *         status: "pending"
+ *         createdAt: "2023-05-15T10:30:00Z"
+ *         updatedAt: "2023-05-15T10:30:00Z"
+ */
+
+/**
+ * @swagger
+ * /guide-requests/guide-to-package:
+ *   post:
+ *     summary: Create a new guide request (Guide to Package)
+ *     tags: [GuideRequests]
+ *     description: Submit a request from a guide to be assigned to a specific package
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - guideId
+ *               - packageId
+ *             properties:
+ *               guideId:
+ *                 type: string
+ *                 description: ID of the guide submitting the request
+ *               packageId:
+ *                 type: string
+ *                 description: ID of the package the guide wants to be assigned to
+ *               message:
+ *                 type: string
+ *                 description: Optional message from the guide
+ *     responses:
+ *       201:
+ *         description: Guide request submitted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Guide request submitted successfully
+ *                 data:
+ *                   $ref: '#/components/schemas/GuideRequest'
+ *       400:
+ *         description: Bad request - missing fields, guide already assigned, or duplicate request
+ *       404:
+ *         description: Guide or package not found
+ *       500:
+ *         description: Server error
+ */
 router.post('/guide-to-package', async (req, res) => {
     try {
         const { guideId, packageId, message } = req.body;
@@ -62,7 +255,62 @@ router.post('/guide-to-package', async (req, res) => {
     }
 });
 
-// Create a new agency request (Agency to Guide)
+/**
+ * @swagger
+ * /guide-requests/agency-to-guide:
+ *   post:
+ *     summary: Create a new agency request (Agency to Guide)
+ *     tags: [GuideRequests]
+ *     description: Submit a request from an agency to a guide for package assignment or general collaboration
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - agencyId
+ *               - guideId
+ *             properties:
+ *               agencyId:
+ *                 type: string
+ *                 description: ID of the agency submitting the request
+ *               guideId:
+ *                 type: string
+ *                 description: ID of the guide the agency wants to work with
+ *               packageId:
+ *                 type: string
+ *                 description: ID of the package (required for package_assignment type)
+ *               message:
+ *                 type: string
+ *                 description: Optional message from the agency
+ *               type:
+ *                 type: string
+ *                 enum: [package_assignment, general_collaboration]
+ *                 default: package_assignment
+ *                 description: Type of request
+ *     responses:
+ *       201:
+ *         description: Agency request submitted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Agency request submitted successfully
+ *                 data:
+ *                   $ref: '#/components/schemas/GuideRequest'
+ *       400:
+ *         description: Bad request - missing fields, guide already assigned, or duplicate request
+ *       403:
+ *         description: Package does not belong to the agency
+ *       404:
+ *         description: Agency, guide, or package not found
+ *       500:
+ *         description: Server error
+ */
 router.post('/agency-to-guide', async (req, res) => {
     try {
         console.log('Received agency-to-guide request:', req.body);
@@ -173,7 +421,65 @@ router.post('/agency-to-guide', async (req, res) => {
     }
 });
 
-// Get all guide requests (Filterable)
+/**
+ * @swagger
+ * /guide-requests:
+ *   get:
+ *     summary: Get all guide requests
+ *     tags: [GuideRequests]
+ *     description: Retrieve all guide requests with optional filtering
+ *     parameters:
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [pending, approved, rejected]
+ *         description: Filter by request status
+ *       - in: query
+ *         name: guideId
+ *         schema:
+ *           type: string
+ *         description: Filter by guide ID
+ *       - in: query
+ *         name: packageId
+ *         schema:
+ *           type: string
+ *         description: Filter by package ID
+ *       - in: query
+ *         name: agencyId
+ *         schema:
+ *           type: string
+ *         description: Filter by agency ID
+ *       - in: query
+ *         name: initiator
+ *         schema:
+ *           type: string
+ *           enum: [guide, agency]
+ *         description: Filter by who initiated the request
+ *       - in: query
+ *         name: type
+ *         schema:
+ *           type: string
+ *           enum: [package_assignment, general_collaboration]
+ *         description: Filter by request type
+ *     responses:
+ *       200:
+ *         description: List of guide requests
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: integer
+ *                   description: Number of requests returned
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/GuideRequest'
+ *       500:
+ *         description: Server error
+ */
 router.get('/', async (req, res) => {
     try {
         const { status, guideId, packageId, agencyId, initiator, type } = req.query;
@@ -198,7 +504,32 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Get specific guide request by ID
+/**
+ * @swagger
+ * /guide-requests/{id}:
+ *   get:
+ *     summary: Get a guide request by ID
+ *     tags: [GuideRequests]
+ *     description: Retrieve a specific guide request by ID with populated guide, package, and agency details
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the guide request to retrieve
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Guide request details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/GuideRequest'
+ *       404:
+ *         description: Guide request not found
+ *       500:
+ *         description: Server error
+ */
 router.get('/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -219,7 +550,53 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// Update a guide request status
+/**
+ * @swagger
+ * /guide-requests/{id}:
+ *   put:
+ *     summary: Update a guide request status
+ *     tags: [GuideRequests]
+ *     description: Update the status of a guide request and handle package and guide assignments if approved
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the guide request to update
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - status
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [pending, approved, rejected]
+ *                 description: New status for the request
+ *     responses:
+ *       200:
+ *         description: Guide request updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Request approved successfully
+ *                 data:
+ *                   $ref: '#/components/schemas/GuideRequest'
+ *       400:
+ *         description: Invalid status value
+ *       404:
+ *         description: Guide request not found
+ *       500:
+ *         description: Server error
+ */
 router.put('/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -270,7 +647,36 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// Delete a guide request
+/**
+ * @swagger
+ * /guide-requests/{id}:
+ *   delete:
+ *     summary: Delete a guide request
+ *     tags: [GuideRequests]
+ *     description: Delete a specific guide request by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the guide request to delete
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Guide request deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Guide request deleted successfully
+ *       404:
+ *         description: Guide request not found
+ *       500:
+ *         description: Server error
+ */
 router.delete('/:id', async (req, res) => {
     try {
         const { id } = req.params;

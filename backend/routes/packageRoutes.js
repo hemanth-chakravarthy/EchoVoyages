@@ -8,6 +8,130 @@ import path from 'path';
 import { cacheMiddleware, clearCacheMiddleware } from '../middleware/cacheMiddleware.js';
 const router = express.Router();
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Package:
+ *       type: object
+ *       required:
+ *         - name
+ *         - description
+ *         - price
+ *         - duration
+ *         - location
+ *         - highlights
+ *         - maxGroupSize
+ *         - AgentID
+ *         - image
+ *       properties:
+ *         _id:
+ *           type: string
+ *           description: Auto-generated ID of the package
+ *         name:
+ *           type: string
+ *           description: Name of the travel package
+ *         description:
+ *           type: string
+ *           description: Detailed description of the package
+ *         price:
+ *           type: number
+ *           description: Price of the package
+ *         duration:
+ *           type: number
+ *           description: Duration of the package in days
+ *         location:
+ *           type: string
+ *           description: Location of the package
+ *         itinerary:
+ *           type: string
+ *           description: Detailed itinerary of the package
+ *         highlights:
+ *           type: string
+ *           description: Highlights of the package
+ *         availableDates:
+ *           type: array
+ *           items:
+ *             type: string
+ *             format: date
+ *           description: List of available dates for the package
+ *         maxGroupSize:
+ *           type: number
+ *           description: Maximum group size for the package
+ *         guide:
+ *           type: string
+ *           description: ID of the primary guide (for backward compatibility)
+ *         guides:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: List of guide IDs assigned to the package
+ *         AgentID:
+ *           type: string
+ *           description: ID of the agency that created the package
+ *         AgentName:
+ *           type: string
+ *           description: Name of the agency that created the package
+ *         reviews:
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               customer:
+ *                 type: string
+ *                 description: ID of the customer who left the review
+ *               rating:
+ *                 type: number
+ *                 minimum: 1
+ *                 maximum: 5
+ *                 description: Rating from 1 to 5
+ *               comment:
+ *                 type: string
+ *                 description: Review comment
+ *               date:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Date when the review was submitted
+ *           description: List of reviews for the package
+ *         image:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: List of image paths for the package
+ *         totalBookings:
+ *           type: number
+ *           description: Total number of bookings for the package
+ *         isActive:
+ *           type: string
+ *           enum: [pending, confirmed, canceled]
+ *           description: Status of the package
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *           description: Date when the package was created
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *           description: Date when the package was last updated
+ *       example:
+ *         _id: "60d21b4667d0d8992e610c85"
+ *         name: "Adventure in the Alps"
+ *         description: "Experience the thrill of the Alps with this adventure package"
+ *         price: 1200
+ *         duration: 7
+ *         location: "Swiss Alps"
+ *         itinerary: "Day 1: Arrival, Day 2: Hiking, Day 3: Skiing..."
+ *         highlights: "Breathtaking views, Professional guides, All equipment included"
+ *         availableDates: ["2023-07-15", "2023-08-01"]
+ *         maxGroupSize: 10
+ *         guides: ["60d21b4667d0d8992e610c86", "60d21b4667d0d8992e610c87"]
+ *         AgentID: "60d21b4667d0d8992e610c88"
+ *         AgentName: "Alpine Adventures"
+ *         image: ["/public/packageImage/1624276806-alps1.jpg", "/public/packageImage/1624276806-alps2.jpg"]
+ *         totalBookings: 5
+ *         isActive: "confirmed"
+ */
+
 // Multer setup for handling file uploads
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -20,7 +144,90 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// Save a new package with image upload handling
+/**
+ * @swagger
+ * /packages:
+ *   post:
+ *     summary: Create a new travel package
+ *     tags: [Packages]
+ *     description: Create a new travel package with images and optional guide assignments
+ *     consumes:
+ *       - multipart/form-data
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - description
+ *               - price
+ *               - duration
+ *               - location
+ *               - itinerary
+ *               - highlights
+ *               - availableDates
+ *               - maxGroupSize
+ *               - AgentID
+ *               - images
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Name of the travel package
+ *               description:
+ *                 type: string
+ *                 description: Detailed description of the package
+ *               price:
+ *                 type: number
+ *                 description: Price of the package
+ *               duration:
+ *                 type: number
+ *                 description: Duration of the package in days
+ *               location:
+ *                 type: string
+ *                 description: Location of the package
+ *               itinerary:
+ *                 type: string
+ *                 description: Detailed itinerary of the package
+ *               highlights:
+ *                 type: string
+ *                 description: Highlights of the package
+ *               availableDates:
+ *                 type: string
+ *                 description: Comma-separated list of available dates
+ *               maxGroupSize:
+ *                 type: number
+ *                 description: Maximum group size for the package
+ *               guide:
+ *                 type: string
+ *                 description: ID of the primary guide (optional)
+ *               guides:
+ *                 type: string
+ *                 description: Comma-separated list or JSON array of guide IDs (optional)
+ *               AgentID:
+ *                 type: string
+ *                 description: ID of the agency creating the package
+ *               images:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *                 description: Images for the package
+ *     responses:
+ *       201:
+ *         description: Package created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Package'
+ *       400:
+ *         description: Missing required fields or invalid guide ID
+ *       404:
+ *         description: Agent not found
+ *       500:
+ *         description: Internal server error
+ */
 router.post('/', upload.array('images'), clearCacheMiddleware('/packages'), async (req, res, next) => {
     try {
         // Check if all required fields are provided
@@ -105,7 +312,31 @@ router.post('/', upload.array('images'), clearCacheMiddleware('/packages'), asyn
     }
 });
 
-// view all packages
+/**
+ * @swagger
+ * /packages:
+ *   get:
+ *     summary: Get all travel packages
+ *     tags: [Packages]
+ *     description: Retrieve a list of all travel packages with guide details
+ *     responses:
+ *       200:
+ *         description: A list of packages
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: integer
+ *                   description: Number of packages returned
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Package'
+ *       500:
+ *         description: Server error
+ */
 router.get('/', cacheMiddleware(300), async (req, res, next) => {
     try {
         // Find all packages and populate guide details
@@ -129,7 +360,32 @@ router.get('/', cacheMiddleware(300), async (req, res, next) => {
         res.status(500).send({ message: error.message });
     }
 })
-// view a single package
+/**
+ * @swagger
+ * /packages/{id}:
+ *   get:
+ *     summary: Get a specific travel package by ID
+ *     tags: [Packages]
+ *     description: Retrieve detailed information about a specific travel package by its ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the package to retrieve
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Package details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Package'
+ *       404:
+ *         description: Package not found
+ *       500:
+ *         description: Server error
+ */
 router.get('/:id', cacheMiddleware(300), async (req, res, next) => {
     try {
         let { id } = req.params;
@@ -157,7 +413,86 @@ router.get('/:id', cacheMiddleware(300), async (req, res, next) => {
         res.status(500).send({ message: error.message });
     }
 })
-// update package
+/**
+ * @swagger
+ * /packages/{id}:
+ *   put:
+ *     summary: Update a package
+ *     tags: [Packages]
+ *     description: Update a specific travel package by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the package to update
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Name of the travel package
+ *               description:
+ *                 type: string
+ *                 description: Detailed description of the package
+ *               price:
+ *                 type: number
+ *                 description: Price of the package
+ *               duration:
+ *                 type: number
+ *                 description: Duration of the package in days
+ *               location:
+ *                 type: string
+ *                 description: Location of the package
+ *               itinerary:
+ *                 type: string
+ *                 description: Detailed itinerary of the package
+ *               highlights:
+ *                 type: string
+ *                 description: Highlights of the package
+ *               availableDates:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: date
+ *                 description: Available dates for the package
+ *               maxGroupSize:
+ *                 type: number
+ *                 description: Maximum group size for the package
+ *               guides:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Array of guide IDs assigned to the package
+ *               isActive:
+ *                 type: string
+ *                 enum: [pending, confirmed, canceled]
+ *                 description: Status of the package
+ *     responses:
+ *       200:
+ *         description: Package updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Package updated successfully
+ *                 data:
+ *                   $ref: '#/components/schemas/Package'
+ *       400:
+ *         description: Invalid guide ID
+ *       404:
+ *         description: Package not found
+ *       500:
+ *         description: Server error
+ */
 router.put('/:id', clearCacheMiddleware('/packages'), async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -214,7 +549,36 @@ router.put('/:id', clearCacheMiddleware('/packages'), async (req, res, next) => 
         res.status(500).send({ message: error.message });
     }
 })
-// delete a package
+/**
+ * @swagger
+ * /packages/{id}:
+ *   delete:
+ *     summary: Delete a package
+ *     tags: [Packages]
+ *     description: Delete a specific travel package by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the package to delete
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Package deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: package deleted
+ *       404:
+ *         description: Package not found
+ *       500:
+ *         description: Server error
+ */
 router.delete('/:id', clearCacheMiddleware('/packages'), async (req,res,next) => {
     try {
         const {id} = req.params;
@@ -232,6 +596,36 @@ router.delete('/:id', clearCacheMiddleware('/packages'), async (req,res,next) =>
     }
 
 })
+/**
+ * @swagger
+ * /packages/agents/{AgentID}:
+ *   get:
+ *     summary: Get packages by agent ID
+ *     tags: [Packages]
+ *     description: Retrieve all packages created by a specific agent
+ *     parameters:
+ *       - in: path
+ *         name: AgentID
+ *         required: true
+ *         description: ID of the agent to get packages for
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of packages for the agent
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Package'
+ *       400:
+ *         description: Agent ID is required
+ *       404:
+ *         description: No packages found for this agent
+ *       500:
+ *         description: Server error
+ */
 router.get('/agents/:AgentID', cacheMiddleware(300), async (req, res, next) => {
     const { AgentID } = req.params;
     // This check might not be needed since AgentID is expected in the route
@@ -266,7 +660,54 @@ router.get('/agents/:AgentID', cacheMiddleware(300), async (req, res, next) => {
 });
 
 
-// Endpoint to assign guides to a package
+/**
+ * @swagger
+ * /packages/{id}/guides:
+ *   post:
+ *     summary: Assign guides to a package
+ *     tags: [Packages]
+ *     description: Assign multiple guides to a specific package
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the package to assign guides to
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - guideIds
+ *             properties:
+ *               guideIds:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Array of guide IDs to assign to the package
+ *     responses:
+ *       200:
+ *         description: Guides assigned successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Guides assigned to package successfully
+ *                 data:
+ *                   $ref: '#/components/schemas/Package'
+ *       400:
+ *         description: Invalid input or guide ID
+ *       404:
+ *         description: Package not found
+ *       500:
+ *         description: Server error
+ */
 router.post('/:id/guides', clearCacheMiddleware('/packages'), async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -344,7 +785,40 @@ router.post('/:id/guides', clearCacheMiddleware('/packages'), async (req, res, n
     }
 });
 
-// Endpoint to get packages by guide ID
+/**
+ * @swagger
+ * /packages/guides/{guideId}:
+ *   get:
+ *     summary: Get packages by guide ID
+ *     tags: [Packages]
+ *     description: Retrieve all packages assigned to a specific guide
+ *     parameters:
+ *       - in: path
+ *         name: guideId
+ *         required: true
+ *         description: ID of the guide to get packages for
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of packages for the guide
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: integer
+ *                   description: Number of packages returned
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Package'
+ *       404:
+ *         description: Guide not found or no packages found for this guide
+ *       500:
+ *         description: Server error
+ */
 router.get('/guides/:guideId', cacheMiddleware(300), async (req, res, next) => {
     try {
         const { guideId } = req.params;
@@ -381,7 +855,44 @@ router.get('/guides/:guideId', cacheMiddleware(300), async (req, res, next) => {
     }
 });
 
-// Endpoint to remove a guide from a package
+/**
+ * @swagger
+ * /packages/{packageId}/guides/{guideId}:
+ *   delete:
+ *     summary: Remove a guide from a package
+ *     tags: [Packages]
+ *     description: Remove a specific guide from a package
+ *     parameters:
+ *       - in: path
+ *         name: packageId
+ *         required: true
+ *         description: ID of the package
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: guideId
+ *         required: true
+ *         description: ID of the guide to remove from the package
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Guide removed from package successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Guide removed from package successfully
+ *                 data:
+ *                   $ref: '#/components/schemas/Package'
+ *       404:
+ *         description: Package or guide not found
+ *       500:
+ *         description: Server error
+ */
 router.delete('/:packageId/guides/:guideId', clearCacheMiddleware('/packages'), async (req, res, next) => {
     try {
         const { packageId, guideId } = req.params;
