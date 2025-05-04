@@ -1,7 +1,21 @@
+/** @format */
+
 import React, { useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
-  
+import {
+  FaMapMarkerAlt,
+  FaMoneyBillWave,
+  FaClock,
+  FaUsers,
+  FaImage,
+  FaCalendarAlt,
+  FaListUl,
+  FaStar,
+  FaInfoCircle,
+  FaCheckCircle, // Add this import
+} from "react-icons/fa";
+
 const CreatePackage = () => {
   const navigate = useNavigate();
   const AgentId = jwtDecode(localStorage.getItem("token")).id;
@@ -141,28 +155,36 @@ const CreatePackage = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+    <div className="w-full">
       <form
         onSubmit={handleSubmit}
         encType="multipart/form-data"
-        className="space-y-6"
+        className="space-y-8"
       >
         {/* Progress Bar */}
-        <div className="flex flex-col items-center gap-2 mb-8">
-          <h2 className="text-2xl font-bold text-[#1a365d]">Create New Package</h2>
-          <progress
-            className="progress w-56"
-            value={progress}
-            max="100"
-          ></progress>
-          <p className="text-sm text-[#2d3748]">Step {currentStep} of 3</p>
+        <div className="flex flex-col items-center gap-3 mb-8">
+          <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-[#0a66c2] transition-all duration-300"
+              style={{ width: `${progress}%` }}
+            ></div>
+          </div>
+          <p className="text-sm text-gray-600 font-medium">
+            Step {currentStep} of 3
+          </p>
         </div>
 
         {/* Step 1: Package Info */}
         {currentStep === 1 && (
-          <div>
-            <div>
-              <label className="text-black" htmlFor="name">Package Name</label>
+          <div className="space-y-6">
+            <div className="form-group">
+              <label
+                className="flex items-center gap-2 text-gray-700 font-medium mb-2"
+                htmlFor="name"
+              >
+                <FaInfoCircle className="text-[#0a66c2]" />
+                Package Name
+              </label>
               <input
                 id="name"
                 name="name"
@@ -170,58 +192,91 @@ const CreatePackage = () => {
                 onChange={handleInputChange}
                 type="text"
                 placeholder="Enter package name"
-                className="input input-bordered w-full text-black bg-gray-50"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0a66c2]/20 focus:border-[#0a66c2] bg-white hover:bg-gray-50 transition-colors placeholder-gray-400"
               />
-              {errors.name && <p className="text-red-500">{errors.name}</p>}
+              {errors.name && (
+                <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+              )}
             </div>
 
-            <div>
-              <label className="text-black" htmlFor="description" >Description</label>
+            <div className="form-group">
+              <label
+                className="flex items-center gap-2 text-gray-700 font-medium mb-2"
+                htmlFor="description"
+              >
+                <FaListUl className="text-[#0a66c2]" />
+                Description
+              </label>
               <textarea
                 id="description"
                 name="description"
                 value={formData.description}
                 onChange={handleInputChange}
                 placeholder="Enter description"
-                className="textarea textarea-bordered w-full text-black bg-gray-50"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0a66c2]/20 focus:border-[#0a66c2] bg-white hover:bg-gray-50 transition-colors placeholder-gray-400"
               />
               {errors.description && (
-                <p className="text-red-500">{errors.description}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.description}
+                </p>
               )}
             </div>
 
-            <div>
-              <label className="text-black" htmlFor="price">Price</label>
-              <input
-                id="price"
-                name="price"
-                value={formData.price}
-                onChange={handleInputChange}
-                type="number"
-                placeholder="Enter price"
-                className="input input-bordered w-full text-black bg-gray-50"
-              />
-              {errors.price && <p className="text-red-500">{errors.price}</p>}
+            {/* Similar styling for price, duration, location inputs */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="form-group">
+                <label
+                  className="flex items-center gap-2 text-gray-700 font-medium mb-2"
+                  htmlFor="price"
+                >
+                  <FaMoneyBillWave className="text-[#0a66c2]" />
+                  Price
+                </label>
+                <input
+                  id="price"
+                  name="price"
+                  value={formData.price}
+                  onChange={handleInputChange}
+                  type="number"
+                  placeholder="Enter price"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0a66c2]/20 focus:border-[#0a66c2] bg-white hover:bg-gray-50 transition-colors placeholder-gray-400"
+                />
+                {errors.price && (
+                  <p className="text-red-500 text-sm mt-1">{errors.price}</p>
+                )}
+              </div>
+
+              <div className="form-group">
+                <label
+                  className="flex items-center gap-2 text-gray-700 font-medium mb-2"
+                  htmlFor="duration"
+                >
+                  <FaClock className="text-[#0a66c2]" />
+                  Duration (Days)
+                </label>
+                <input
+                  id="duration"
+                  name="duration"
+                  value={formData.duration}
+                  onChange={handleInputChange}
+                  type="number"
+                  placeholder="Enter duration"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0a66c2]/20 focus:border-[#0a66c2] bg-white hover:bg-gray-50 transition-colors placeholder-gray-400"
+                />
+                {errors.duration && (
+                  <p className="text-red-500 text-sm mt-1">{errors.duration}</p>
+                )}
+              </div>
             </div>
 
-            <div>
-              <label className="text-black" htmlFor="duration">Duration</label>
-              <input
-                id="duration"
-                name="duration"
-                value={formData.duration}
-                onChange={handleInputChange}
-                type="number"
-                placeholder="Enter duration"
-                className="input input-bordered w-full text-black bg-gray-50"
-              />
-              {errors.duration && (
-                <p className="text-red-500">{errors.duration}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="text-black" htmlFor="location">Location</label>
+            <div className="form-group">
+              <label
+                className="flex items-center gap-2 text-gray-700 font-medium mb-2"
+                htmlFor="location"
+              >
+                <FaMapMarkerAlt className="text-[#0a66c2]" />
+                Location
+              </label>
               <input
                 id="location"
                 name="location"
@@ -229,10 +284,10 @@ const CreatePackage = () => {
                 onChange={handleInputChange}
                 type="text"
                 placeholder="Enter location"
-                className="input input-bordered w-full text-black bg-gray-50"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0a66c2]/20 focus:border-[#0a66c2] bg-white hover:bg-gray-50 transition-colors placeholder-gray-400"
               />
               {errors.location && (
-                <p className="text-red-500">{errors.location}</p>
+                <p className="text-red-500 text-sm mt-1">{errors.location}</p>
               )}
             </div>
           </div>
@@ -240,127 +295,151 @@ const CreatePackage = () => {
 
         {/* Step 2: Package Details */}
         {currentStep === 2 && (
-          <div>
-            <div>
-              <label className="text-black" htmlFor="itinerary">Itinerary</label>
+          <div className="space-y-6">
+            <div className="form-group">
+              <label className="flex items-center gap-2 text-gray-700 font-medium mb-2" htmlFor="itinerary">
+                <FaListUl className="text-[#0a66c2]" />
+                Itinerary
+              </label>
               <textarea
                 id="itinerary"
                 name="itinerary"
                 value={formData.itinerary}
                 onChange={handleInputChange}
-                placeholder="Enter itinerary"
-                className="textarea textarea-bordered w-full text-black bg-gray-50"
+                placeholder="Enter detailed itinerary"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0a66c2]/20 focus:border-[#0a66c2] bg-white hover:bg-gray-50 transition-colors placeholder-gray-400 min-h-[100px]"
               />
-              {errors.itinerary && (
-                <p className="text-red-500">{errors.itinerary}</p>
-              )}
+              {errors.itinerary && <p className="text-red-500 text-sm mt-1">{errors.itinerary}</p>}
             </div>
 
-            <div>
-              <label className="text-black" htmlFor="highlights">Highlights</label>
+            <div className="form-group">
+              <label className="flex items-center gap-2 text-gray-700 font-medium mb-2" htmlFor="highlights">
+                <FaStar className="text-[#0a66c2]" />
+                Highlights
+              </label>
               <textarea
                 id="highlights"
                 name="highlights"
                 value={formData.highlights}
                 onChange={handleInputChange}
-                placeholder="Enter highlights"
-                className="textarea textarea-bordered w-full text-black bg-gray-50"
+                placeholder="Enter package highlights"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0a66c2]/20 focus:border-[#0a66c2] bg-white hover:bg-gray-50 transition-colors placeholder-gray-400"
               />
-              {errors.highlights && (
-                <p className="text-red-500">{errors.highlights}</p>
-              )}
+              {errors.highlights && <p className="text-red-500 text-sm mt-1">{errors.highlights}</p>}
             </div>
 
-            <div>
-              <label className="text-black" htmlFor="availableDates">Available Dates</label>
-              <input
-                id="availableDates"
-                name="availableDates"
-                value={formData.availableDates}
-                onChange={handleInputChange}
-                type="date"
-                className="input input-bordered w-full text-black bg-gray-50"
-              />
-              {errors.availableDates && (
-                <p className="text-red-500">{errors.availableDates}</p>
-              )}
-            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="form-group">
+                <label className="flex items-center gap-2 text-gray-700 font-medium mb-2" htmlFor="availableDates">
+                  <FaCalendarAlt className="text-[#0a66c2]" />
+                  Available Dates
+                </label>
+                <input
+                  id="availableDates"
+                  name="availableDates"
+                  value={formData.availableDates}
+                  onChange={handleInputChange}
+                  type="date"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0a66c2]/20 focus:border-[#0a66c2] bg-white hover:bg-gray-50 transition-colors placeholder-gray-400"
+                />
+                {errors.availableDates && <p className="text-red-500 text-sm mt-1">{errors.availableDates}</p>}
+              </div>
 
-            <div>
-              <label className="text-black" htmlFor="maxGroupSize">Max Group Size</label>
-              <input
-                id="maxGroupSize"
-                name="maxGroupSize"
-                value={formData.maxGroupSize}
-                onChange={handleInputChange}
-                type="number"
-                placeholder="Enter max group size"
-                className="input input-bordered w-full text-black bg-gray-50"
-              />
-              {errors.maxGroupSize && (
-                <p className="text-red-500">{errors.maxGroupSize}</p>
-              )}
+              <div className="form-group">
+                <label className="flex items-center gap-2 text-gray-700 font-medium mb-2" htmlFor="maxGroupSize">
+                  <FaUsers className="text-[#0a66c2]" />
+                  Max Group Size
+                </label>
+                <input
+                  id="maxGroupSize"
+                  name="maxGroupSize"
+                  value={formData.maxGroupSize}
+                  onChange={handleInputChange}
+                  type="number"
+                  placeholder="Enter maximum group size"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0a66c2]/20 focus:border-[#0a66c2] bg-white hover:bg-gray-50 transition-colors placeholder-gray-400"
+                />
+                {errors.maxGroupSize && <p className="text-red-500 text-sm mt-1">{errors.maxGroupSize}</p>}
+              </div>
             </div>
           </div>
         )}
 
         {/* Step 3: Upload Images */}
         {currentStep === 3 && (
-          <div>
-            <label className="text-black" htmlFor="images">Upload Images</label>
-            <input
-              id="images"
-              name="images"
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handleImageChange}
-              className="file-input file-input-bordered w-full text-black bg-gray-50"
-            />
-            {errors.images && <p className="text-red-500">{errors.images}</p>}
+          <div className="space-y-6">
+            <label
+              className="flex items-center gap-2 text-gray-700 font-medium mb-2"
+              htmlFor="images"
+            >
+              <FaImage className="text-[#0a66c2]" />
+              Upload Images
+            </label>
+            <div className="w-full px-4 py-8 border-2 border-dashed border-gray-300 rounded-lg hover:border-[#0a66c2] transition-colors text-center">
+              <input
+                id="images"
+                name="images"
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleImageChange}
+                className="hidden"
+              />
+              <label htmlFor="images" className="cursor-pointer">
+                <FaImage className="mx-auto text-4xl text-gray-400 mb-2" />
+                <span className="text-gray-600">Click to upload images</span>
+              </label>
+            </div>
+            {errors.images && (
+              <p className="text-red-500 text-sm mt-1">{errors.images}</p>
+            )}
           </div>
         )}
 
         {/* Navigation Buttons */}
-        <div className="flex justify-between">
+        <div className="flex justify-between pt-6">
           {currentStep > 1 && (
             <button
               type="button"
               onClick={prevStep}
-              className="px-8 py-3 bg-[#00072D] text-white font-medium rounded-full hover:bg-[#1a365d] transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
+              className="px-6 py-2 bg-white text-[#0a66c2] border border-[#0a66c2] font-medium rounded-full hover:bg-[#0a66c2]/5 transition-colors"
             >
               Previous
             </button>
           )}
-          {currentStep < 3 && (
+          {currentStep < 3 ? (
             <button
               type="button"
               onClick={nextStep}
-              className="px-8 py-3 bg-[#4169E1] text-white font-medium rounded-full hover:bg-[#1a365d] transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
+              className="px-6 py-2 bg-[#0a66c2] text-white font-medium rounded-full hover:bg-[#0a66c2]/90 transition-colors ml-auto"
             >
               Next
             </button>
-          )}
-          {currentStep === 3 && (
+          ) : (
             <button
               type="submit"
-              className="px-8 py-3 bg-[#4169E1] text-white font-medium rounded-full hover:bg-[#1a365d] transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
+              className="px-6 py-2 bg-[#0a66c2] text-white font-medium rounded-full hover:bg-[#0a66c2]/90 transition-colors ml-auto"
             >
-              Submit
+              Create Package
             </button>
           )}
         </div>
 
-        {/* Modal */}
+        {/* Success Modal */}
         <dialog id="my_modal_3" className="modal">
-          <div className="modal-box">
+          <div className="modal-box bg-white rounded-xl shadow-xl p-6">
             <form method="dialog">
               <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
                 ✕
               </button>
             </form>
-            <h3 className="font-bold text-lg">Success!</h3>
-            <p className="py-4">Your package has been successfully created.</p>
+            <div className="text-center">
+              <FaCheckCircle className="text-green-500 text-4xl mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Success!</h3>
+              <p className="text-gray-600">
+                Your package has been successfully created.
+              </p>
+            </div>
           </div>
         </dialog>
       </form>
