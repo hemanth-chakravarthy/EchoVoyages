@@ -1,142 +1,137 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+/** @format */
+
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { FaStar, FaUser, FaLanguage, FaBriefcase, FaEye } from "react-icons/fa";
 
 const CustomerGuide = () => {
-    const [guides, setGuides] = useState([]);
-    const [loading, setLoading] = useState(true);
+  const [guides, setGuides] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchGuides = async () => {
-            try {
-                const response = await fetch('http://localhost:5000/guides');
-                const data = await response.json();
+  useEffect(() => {
+    const fetchGuides = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/guides");
+        const data = await response.json();
+        if (data && data.data) {
+          setGuides(data.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch guides:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-                if (data && data.data) {
-                    setGuides(data.data);
-                }
-            } catch (error) {
-                console.error('Failed to fetch guides:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
+    fetchGuides();
+  }, []);
 
-        fetchGuides();
-    }, []);
-
-    if (loading) {
-        return (
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="min-h-screen flex flex-col bg-white"
-                style={{
-                    backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0, 0, 0) 1px, transparent 0)`,
-                    backgroundSize: '20px 20px',
-                    backgroundPosition: '0 0',
-                    backgroundColor: 'rgba(255, 255, 255, 0.97)'
-                }}
-            >
-                {/* Navbar removed - now using RoleBasedNavbar from Layout component */}
-                <div className="flex-grow flex items-center justify-center">
-                    <div className="w-16 h-16 border-t-4 border-[#4169E1] border-solid rounded-full animate-spin"></div>
-                </div>
-            </motion.div>
-        );
-    }
-
+  if (loading) {
     return (
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="min-h-screen flex flex-col bg-white"
-            style={{
-                backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0, 0, 0) 1px, transparent 0)`,
-                backgroundSize: '20px 20px',
-                backgroundPosition: '0 0',
-                backgroundColor: 'rgba(255, 255, 255, 0.97)'
-            }}
-        >
-            {/* Navbar removed - now using RoleBasedNavbar from Layout component */}
-            <motion.main
-                initial={{ y: 20 }}
-                animate={{ y: 0 }}
-                className="flex-grow container mx-auto px-4 py-12 relative z-10"
-            >
-                <motion.h1
-                    initial={{ y: -20 }}
-                    animate={{ y: 0 }}
-                    className="text-5xl font-bold text-[#1a365d] tracking-tight text-center mb-16"
-                >
-                    Our Guides
-                </motion.h1>
-
-                {guides.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {guides.map((guide) => (
-                            <motion.div
-                                key={guide._id}
-                                whileHover={{
-                                    y: -5,
-                                    scale: 1.01,
-                                    boxShadow: "0 22px 45px -12px rgba(26, 54, 93, 0.15)"
-                                }}
-                                className="bg-white rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100"
-                            >
-                                <div className="p-6">
-                                    <h2 className="text-2xl font-bold text-[#1a365d] mb-2">{guide.username}</h2>
-
-                                    {/* Rating display */}
-                                    <div className="flex items-center mb-3">
-                                      <div className="flex items-center bg-yellow-100 px-3 py-1 rounded-full">
-                                        <span className="text-yellow-700 font-bold mr-1">
-                                          {guide.ratings && guide.ratings.averageRating > 0
-                                            ? guide.ratings.averageRating.toFixed(1)
-                                            : "0.0"}
-                                        </span>
-                                        <span className="text-yellow-700">★</span>
-                                        <span className="text-gray-600 ml-2 text-sm">
-                                          ({guide.ratings ? guide.ratings.numberOfReviews : 0} {guide.ratings && guide.ratings.numberOfReviews === 1 ? "rating" : "ratings"})
-                                        </span>
-                                      </div>
-                                    </div>
-
-                                    <p className="text-[#2d3748] mb-4 leading-relaxed">{guide.description}</p>
-                                    <div className="flex justify-between items-center mb-4">
-                                        <p className="text-[#2d3748]">
-                                            <span className="font-semibold">Experience:</span> {guide.experience} years
-                                        </p>
-                                    </div>
-                                    <p className="text-[#2d3748] mb-4">
-                                        <span className="font-semibold">Languages:</span> {guide.languages.join(', ')}
-                                    </p>
-                                    <Link to={`/guides/${guide._id}`} className="block w-full">
-                                        <motion.button
-                                            whileHover={{ scale: 1.02, backgroundColor: "#1a365d" }}
-                                            whileTap={{ scale: 0.98 }}
-                                            className="w-full bg-[#00072D] text-white font-semibold py-3 px-6 rounded-md transition-all duration-300 shadow-md hover:shadow-lg"
-                                        >
-                                            View Guide
-                                        </motion.button>
-                                    </Link>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
-                ) : (
-                    <motion.p
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="text-center text-xl text-[#2d3748]"
-                    >
-                        No guides available
-                    </motion.p>
-                )}
-            </motion.main>
-        </motion.div>
+      <div className="min-h-screen bg-[#f3f6f8] font-['Source Sans', 'Segoe UI', Arial, sans-serif] py-8 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex justify-center items-center h-64">
+            <div className="w-8 h-8 border-4 border-[#0a66c2] border-t-transparent rounded-full animate-spin"></div>
+            <p className="ml-3 text-[#38434f] font-medium">Loading guides...</p>
+          </div>
+        </div>
+      </div>
     );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#f3f6f8] font-['Source Sans', 'Segoe UI', Arial, sans-serif] py-8 px-4">
+      <div className="max-w-7xl mx-auto">
+        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+          <h1 className="text-2xl font-bold text-[#38434f] mb-6">Our Guides</h1>
+
+          {guides.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {guides.map((guide) => (
+                <motion.div
+                  key={guide._id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow border border-[#dce6f1]"
+                >
+                  <div className="h-40 bg-[#dce6f1] relative overflow-hidden">
+                    {guide.profilePicture ? (
+                      <img
+                        src={`http://localhost:5000/${guide.profilePicture}`}
+                        alt={guide.username}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center h-full">
+                        <FaUser className="text-[#56687a] text-4xl" />
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <h2 className="text-lg font-bold text-[#38434f]">
+                        {guide.username}
+                      </h2>
+                      <div className="flex items-center bg-[#e9e5df] px-2 py-1 rounded-full">
+                        <FaStar className="text-[#e7a33e] mr-1" />
+                        <span className="text-[#38434f] font-medium">
+                          {guide.ratings && guide.ratings.averageRating > 0
+                            ? guide.ratings.averageRating.toFixed(1)
+                            : "0.0"}
+                        </span>
+                        <span className="text-[#56687a] text-xs ml-1">
+                          ({guide.ratings ? guide.ratings.numberOfReviews : 0}{" "}
+                          {guide.ratings && guide.ratings.numberOfReviews === 1
+                            ? "rating"
+                            : "ratings"}
+                          )
+                        </span>
+                      </div>
+                    </div>
+
+                    <p className="text-[#56687a] mb-4 line-clamp-3">
+                      {guide.description}
+                    </p>
+
+                    <div className="space-y-2 mb-4">
+                      <div className="flex items-center text-[#56687a]">
+                        <FaBriefcase className="mr-2 text-[#0a66c2]" />
+                        <span>Experience: {guide.experience} years</span>
+                      </div>
+                      <div className="flex items-center text-[#56687a]">
+                        <FaLanguage className="mr-2 text-[#0a66c2]" />
+                        <span>Languages: {guide.languages.join(", ")}</span>
+                      </div>
+                    </div>
+
+                    <Link
+                      to={`/guides/${guide._id}`}
+                      className="w-full bg-[#f3f6f8] hover:bg-[#dce6f1] text-[#0a66c2] font-medium py-2 rounded flex items-center justify-center transition-colors"
+                    >
+                      <FaEye className="mr-2" /> View Guide
+                    </Link>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-[#f3f6f8] rounded-lg p-8 text-center">
+              <FaUser className="text-[#56687a] text-5xl mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-[#38434f] mb-2">
+                No guides available
+              </h3>
+              <p className="text-[#56687a]">
+                Check back later for available guides.
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default CustomerGuide;
-

@@ -410,7 +410,7 @@ const AgentProfilePage = () => {
             <div className="relative">
               <div className="h-64 overflow-hidden">
                 <img
-                  src="./public/images/travel-banner.png"
+                  src="/images/travel-banner.png"
                   alt="Travel Agency Banner"
                   className="w-full h-full object-cover"
                 />
