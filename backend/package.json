@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:simple": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config=jest.simple.config.js tests/simple.test.js",
+    "test:minimal": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config=jest.minimal.config.js tests/minimal.test.js",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
     "start": "node index.js",
     "dev": "nodemon index.js"
   },
@@ -27,5 +30,13 @@
     "path": "^0.12.7",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.27.1",
+    "@babel/preset-env": "^7.27.1",
+    "babel-jest": "^29.7.0",
+    "jest": "^29.7.0",
+    "mongodb-memory-server": "^9.1.6",
+    "supertest": "^6.3.4"
   }
 }
