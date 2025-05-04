@@ -110,7 +110,7 @@ const HomePage = () => {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="w-full bg-white border border-gray-300 rounded-lg py-2 px-3 text-gray-700 
+              className="w-full bg-white border border-gray-300 rounded-lg py-2 px-3 text-gray-700
                 focus:outline-none focus:ring-2 focus:ring-[#0a66c2] focus:border-transparent"
             >
               <option value="dateModified">Latest Updates</option>
@@ -144,7 +144,7 @@ const HomePage = () => {
                         <motion.img
                           whileHover={{ scale: 1.05 }}
                           transition={{ duration: 0.3 }}
-                          src={`http://localhost:5000${pack.image[0]}`}
+                          src={pack.image[0].startsWith('http') ? pack.image[0] : `http://localhost:5000${pack.image[0]}`}
                           alt={pack.name}
                           className="w-full h-64 object-cover"
                         />

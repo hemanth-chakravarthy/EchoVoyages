@@ -137,9 +137,29 @@ const AgentViewAll = () => {
   const getPackageImage = (pkg) => {
     if (!pkg.image)
       return "https://via.placeholder.com/400x200?text=Travel+Package";
-    if (typeof pkg.image !== "string")
-      return "https://via.placeholder.com/400x200?text=Travel+Package";
-    return pkg.image;
+
+    // Handle array of image paths
+    if (Array.isArray(pkg.image)) {
+      if (pkg.image.length === 0)
+        return "https://via.placeholder.com/400x200?text=Travel+Package";
+
+      // Get the first image path and ensure it starts with http://localhost:5000
+      const imagePath = pkg.image[0];
+      if (imagePath.startsWith('/')) {
+        return `http://localhost:5000${imagePath}`;
+      }
+      return imagePath;
+    }
+
+    // Handle single image path as string
+    if (typeof pkg.image === 'string') {
+      if (pkg.image.startsWith('/')) {
+        return `http://localhost:5000${pkg.image}`;
+      }
+      return pkg.image;
+    }
+
+    return "https://via.placeholder.com/400x200?text=Travel+Package";
   };
 
   if (isLoading) {
@@ -267,8 +287,9 @@ const AgentViewAll = () => {
               >
                 <div className="h-48 overflow-hidden relative">
                   <img
-                    src={Array.isArray(pkg.image) ? pkg.image[0] : pkg.image}
+                    src={getPackageImage(pkg)}
                     alt={pkg.name}
+                    className="w-full h-full object-cover"
                   />
 
                   <div className="absolute top-0 right-0 bg-[#0a66c2] text-white px-3 py-1 m-2 rounded-full text-sm font-medium">
