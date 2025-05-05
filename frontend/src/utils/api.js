@@ -1,4 +1,6 @@
 /** @format */
-const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+console.log("Using API URL:", apiUrl);
+
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export default apiUrl;
