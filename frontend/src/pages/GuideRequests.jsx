@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { Link } from "react-router-dom";
-import GuideIncomingRequests from "../components/guideincomingrequests";
+import GuideIncomingRequests from "../components/GuideIncomingRequests";
 import ConfirmationModal from "../components/ConfirmationModal";
 
 const GuideRequests = () => {
@@ -64,9 +64,12 @@ const GuideRequests = () => {
         try {
           // Show loading toast
           const loadingToastId = toast.loading("Cancelling request...");
-          await axios.delete(`http://localhost:5000/guide-requests/${requestId}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          await axios.delete(
+            `http://localhost:5000/guide-requests/${requestId}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
           // Remove the request from the list
           setRequests((prevRequests) =>
             prevRequests.filter((req) => req._id !== requestId)
