@@ -1,10 +1,12 @@
+/** @format */
+
 import adventurecards from "./adventurecards.png";
 import card from "./card.png";
 import logo from "./logo.svg";
 import quotes from "./quotes.svg";
 import tag from "./Tag.svg";
 import suitcase from "./Suitcase.svg";
-import flight from "./Flight.svg";
+import flight from "/images/Flight.svg";
 import menu from "./menu.svg";
 import close from "./close.svg";
 import arrowUp from "./arrow-up.svg";
