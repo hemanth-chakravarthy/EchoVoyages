@@ -1,6 +1,4 @@
 /** @format */
-import dotenv from "dotenv";
-dotenv.config();
 
 const apiUrl = process.VITE_API_URL || "http://localhost:5000";
 
