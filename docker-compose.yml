@@ -30,15 +30,12 @@ services:
       - MONGO_URI=mongodb://admin:password@mongodb:27017/EchoVoyages2?authSource=admin
       - JWT_SECRET=Voyage_secret
       - NODE_ENV=production
-      - SOLR_HOST=solr
-      - SOLR_PORT=8983
     volumes:
       - ./backend:/app
       - /app/node_modules
       - ./public:/app/public
     depends_on:
       - mongodb
-      - solr
     networks:
       - echovoyages-network
 
@@ -65,4 +62,3 @@ networks:
 
 volumes:
   mongodb_data:
-  solr_data:
