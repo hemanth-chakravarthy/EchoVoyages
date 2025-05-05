@@ -35,7 +35,8 @@ const app = express();
 app.use(express.json());
 const allowedOrigins = [
   process.env.FRONTEND_URL,
-  "http://localhost:5173", // For local development
+  "http://localhost:5173",
+  "https://echo-voyages.vercel.app" // For local development
 ];
 
 app.use(
