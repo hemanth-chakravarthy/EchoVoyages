@@ -51,6 +51,7 @@ app.use(
     credentials: true,
   })
 );
+
 app.get("/", (req, res) => {
   res.json({ status: "success", message: "EchoVoyages API is running" });
 });
