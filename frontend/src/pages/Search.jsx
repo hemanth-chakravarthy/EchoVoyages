@@ -1,11 +1,12 @@
 /** @format */
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import moment from "moment";
 import { motion } from "framer-motion";
 import { FaSearch } from "react-icons/fa";
+import apiUrl from "../utils/api.js";
 
 const Search = () => {
   const [locations, setLocations] = useState([]);
@@ -23,13 +24,14 @@ const Search = () => {
   const [availableDates, setAvailableDates] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-
+  console.log(setMinGroupSize);
+  console.log(setMaxGroupSize);
   useEffect(() => {
     const fetchLocations = async () => {
       try {
         const [guideRes, packageRes] = await Promise.all([
-          axios.get("http://localhost:5000/search/guide-locations"),
-          axios.get("http://localhost:5000/search/package-locations"),
+          axios.get("${apiUrl}/search/guide-locations"),
+          axios.get("${apiUrl}/search/package-locations"),
         ]);
         setLocations([
           ...new Set([...guideRes.data.locations, ...packageRes.data]),
@@ -41,9 +43,7 @@ const Search = () => {
 
     const fetchLanguages = async () => {
       try {
-        const res = await axios.get(
-          "http://localhost:5000/search/guide-languages"
-        );
+        const res = await axios.get("${apiUrl}/search/guide-languages");
         setLanguages(res.data || []);
       } catch (error) {
         console.error("Error fetching languages:", error);
@@ -57,7 +57,7 @@ const Search = () => {
   const handleSearch = async () => {
     if (entityType) {
       try {
-        const res = await axios.get("http://localhost:5000/search", {
+        const res = await axios.get("${apiUrl}/search", {
           params: {
             location: selectedLocation,
             entityType,
@@ -323,7 +323,7 @@ const Search = () => {
                                     duration: 0.6,
                                     ease: "easeOut",
                                   }}
-                                  src={`http://localhost:5000${img}`}
+                                  src={`${apiUrl}${img}`}
                                   alt={`Image of ${result.name}`}
                                   className="w-full h-[200px] object-cover transform group-hover:brightness-105 transition-all duration-500"
                                 />

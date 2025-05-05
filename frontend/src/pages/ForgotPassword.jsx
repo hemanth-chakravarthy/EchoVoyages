@@ -1,8 +1,9 @@
 /** @format */
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import apiUrl from "../utils/api.js";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const ForgotPassword = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .post("http://localhost:5000/forgot-password", { gmail: formData.gmail })
+      .post("${apiUrl}/forgot-password", { gmail: formData.gmail })
       .then((res) => {
         if (res.data.status === "Success") {
           navigate("/login");

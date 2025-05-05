@@ -1,16 +1,19 @@
-import React, { useState } from "react";
+/** @format */
+
+import { useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import BackButton from "../components/BackButton";
+import apiUrl from "../utils/api.js";
 
 const DeleteEntity = () => {
   const navigate = useNavigate();
   const { id, entity } = useParams();
   const [entityType, setEntityType] = useState(entity || "customers");
-
+  console.log(setEntityType);
   const handleDelete = () => {
     axios
-      .delete(`http://localhost:5000/admin/${entityType}/${id}`)
+      .delete(`${apiUrl}/admin/${entityType}/${id}`)
       .then(() => {
         navigate(`/admin`);
       })
@@ -56,4 +59,3 @@ const DeleteEntity = () => {
 };
 
 export default DeleteEntity;
-

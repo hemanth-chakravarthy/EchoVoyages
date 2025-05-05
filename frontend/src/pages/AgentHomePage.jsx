@@ -26,6 +26,7 @@ import {
   FaUser,
   FaArrowRight,
 } from "react-icons/fa";
+import apiUrl from "../utils/api.js";
 
 const AgentHomePage = () => {
   const [requests, setRequests] = useState([]);
@@ -40,9 +41,7 @@ const AgentHomePage = () => {
   useEffect(() => {
     const fetchRequests = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:5000/requests/agen/${agentid}`
-        );
+        const response = await fetch(`${apiUrl}/requests/agen/${agentid}`);
         const data = await response.json();
         if (data && data.data) {
           setRequests(data.data);
@@ -56,7 +55,7 @@ const AgentHomePage = () => {
 
     const fetchReviews = async () => {
       try {
-        const response = await fetch("http://localhost:5000/reviews");
+        const response = await fetch(`${apiUrl}/reviews`);
         const data = await response.json();
         if (data) {
           setReviews(data);
@@ -71,18 +70,15 @@ const AgentHomePage = () => {
     const fetchOutgoingGuideRequests = async () => {
       setLoadingRequests(true);
       try {
-        const response = await axios.get(
-          "http://localhost:5000/guide-requests",
-          {
-            params: {
-              agencyId: agentid,
-              initiator: "agency", // Requests initiated by this agency
-            },
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await axios.get(`${apiUrl}/guide-requests`, {
+          params: {
+            agencyId: agentid,
+            initiator: "agency", // Requests initiated by this agency
+          },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         setOutgoingRequests(response.data.data || []);
       } catch (error) {
@@ -96,7 +92,7 @@ const AgentHomePage = () => {
       setLoadingStats(true);
       try {
         // Fetch all bookings
-        const response = await axios.get("http://localhost:5000/bookings");
+        const response = await axios.get(`${apiUrl}/bookings`);
 
         if (response.data && response.data.data) {
           // Count bookings by status
@@ -140,7 +136,7 @@ const AgentHomePage = () => {
   const handleCancelRequest = async (requestId) => {
     try {
       // Delete the request from the database
-      await axios.delete(`http://localhost:5000/guide-requests/${requestId}`, {
+      await axios.delete(`${apiUrl}/guide-requests/${requestId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

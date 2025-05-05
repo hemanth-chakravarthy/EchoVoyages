@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
+import apiUrl from "../utils/api.js";
 import {
   FaFlag,
   FaStar,
@@ -39,7 +40,7 @@ const ViewGuide = () => {
   useEffect(() => {
     const fetchGuideDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/guides/${id}`);
+        const response = await axios.get(`${apiUrl}/guides/${id}`);
         setGuideDetails(response.data);
       } catch (error) {
         console.error("Error fetching guide details:", error);
@@ -48,9 +49,7 @@ const ViewGuide = () => {
 
     const fetchReviews = async () => {
       try {
-        const res = await fetch(
-          `http://localhost:5000/reviews/guides/${id}/reviews`
-        );
+        const res = await fetch(`${apiUrl}/reviews/guides/${id}/reviews`);
         const data = await res.json();
         setRevDetails(data);
       } catch (error) {
@@ -67,7 +66,7 @@ const ViewGuide = () => {
       try {
         // Check if user is a customer
         const customerResponse = await axios.get(
-          `http://localhost:5000/customers/${userId}`
+          `${apiUrl}/customers/${userId}`
         );
         if (customerResponse.data) {
           setUserRole("customer");
@@ -79,9 +78,7 @@ const ViewGuide = () => {
 
       try {
         // Check if user is an agency
-        const agencyResponse = await axios.get(
-          `http://localhost:5000/agency/${userId}`
-        );
+        const agencyResponse = await axios.get(`${apiUrl}/agency/${userId}`);
         if (agencyResponse.data) {
           setUserRole("agency");
           return;
@@ -92,9 +89,7 @@ const ViewGuide = () => {
 
       try {
         // Check if user is a guide
-        const guideResponse = await axios.get(
-          `http://localhost:5000/guides/${userId}`
-        );
+        const guideResponse = await axios.get(`${apiUrl}/guides/${userId}`);
         if (guideResponse.data) {
           setUserRole("guide");
           return;
@@ -117,7 +112,7 @@ const ViewGuide = () => {
       if (userId && token && userRole === "customer") {
         try {
           const response = await axios.get(
-            `http://localhost:5000/bookings/cust/${userId}`,
+            `${apiUrl}/bookings/cust/${userId}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -156,15 +151,11 @@ const ViewGuide = () => {
         packageId: packageId || null,
       };
 
-      const response = await axios.post(
-        "http://localhost:5000/bookings",
-        bookingData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.post("${apiUrl}/bookings", bookingData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.status === 201) {
         toast.success("Booking confirmed successfully!");
@@ -197,7 +188,7 @@ const ViewGuide = () => {
         return;
       }
 
-      const response = await fetch("http://localhost:5000/reviews", {
+      const response = await fetch("${apiUrl}/reviews", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -243,7 +234,7 @@ const ViewGuide = () => {
       };
 
       const response = await axios.post(
-        "http://localhost:5000/wishlistGuides",
+        "${apiUrl}/wishlistGuides",
         wishlistData,
         {
           headers: {
@@ -295,7 +286,7 @@ const ViewGuide = () => {
               <div className="w-32 h-32 rounded-full border-4 border-white bg-[#e9e5df] flex items-center justify-center overflow-hidden">
                 {guideDetails.profilePicture ? (
                   <img
-                    src={`http://localhost:5000/${guideDetails.profilePicture}`}
+                    src={`${apiUrl}/${guideDetails.profilePicture}`}
                     alt={guideDetails.username}
                     className="w-full h-full object-cover"
                   />

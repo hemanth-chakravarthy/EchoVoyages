@@ -1,9 +1,10 @@
 /** @format */
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
+import apiUrl from "../utils/api.js";
 import { motion } from "framer-motion";
 import {
   BarChart,
@@ -18,19 +19,7 @@ import {
   Pie,
   Cell,
 } from "recharts";
-import {
-  FaChartBar,
-  FaBox,
-  FaStar,
-  FaUser,
-  FaComments,
-  FaRegClock,
-  FaCheckCircle,
-  FaTimesCircle,
-  FaHourglassHalf,
-  FaMoneyBillWave,
-} from "react-icons/fa";
-import GuideEarnings from "../components/GuideEarnings";
+import { FaChartBar, FaBox, FaStar, FaUser, FaComments } from "react-icons/fa";
 
 const GuideHome = () => {
   const [guideData, setGuide] = useState(null);
@@ -43,14 +32,14 @@ const GuideHome = () => {
   const [packages, setPackages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const guideId = jwtDecode(localStorage.getItem("token")).id;
-
+  console.log(bookings);
   useEffect(() => {
     setIsLoading(true);
 
     const fetchGuideData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/reviews/guides/${guideId}/details`
+          `${apiUrl}/reviews/guides/${guideId}/details`
         );
         setGuide(response.data.guide);
         setRevDetails(response.data.review || []);
@@ -61,9 +50,7 @@ const GuideHome = () => {
 
     const fetchBookingsData = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:5000/bookings/guides/${guideId}`
-        );
+        const res = await axios.get(`${apiUrl}/bookings/guides/${guideId}`);
         const bookingData = res.data;
 
         const pendingBookings = bookingData.filter(
@@ -90,7 +77,7 @@ const GuideHome = () => {
       try {
         // Fetch packages assigned to this guide from the guide's assignedPackages array
         const response = await axios.get(
-          `http://localhost:5000/guides/${guideId}/assigned-packages`
+          `${apiUrl}/guides/${guideId}/assigned-packages`
         );
         const packagesData = response.data.data || [];
         setPackages(packagesData);
@@ -256,7 +243,7 @@ const GuideHome = () => {
                         src={
                           pkg.image[0].startsWith("http")
                             ? pkg.image[0]
-                            : `http://localhost:5000${pkg.image[0]}`
+                            : `${apiUrl}${pkg.image[0]}`
                         }
                         alt={pkg.name}
                         className="w-full h-full object-cover"

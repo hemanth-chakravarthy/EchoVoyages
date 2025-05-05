@@ -1,7 +1,10 @@
+/** @format */
+
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { jwtDecode } from "jwt-decode"; // Fix the import here
 import { useNavigate } from "react-router-dom";
+import apiUrl from "../utils/api.js";
 
 const ViewPost = () => {
   const { id } = useParams(); // Get the package ID from the URL
@@ -17,7 +20,7 @@ const ViewPost = () => {
   useEffect(() => {
     const fetchPackageDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/packages/${id}`);
+        const response = await fetch(`${apiUrl}/packages/${id}`);
         const data = await response.json();
         setPackageDetails(data);
       } catch (error) {
@@ -27,7 +30,7 @@ const ViewPost = () => {
     const fetchReviews = async () => {
       try {
         // Fetch reviews from the reviews collection for this package
-        const res = await fetch(`http://localhost:5000/reviews/package/${id}`);
+        const res = await fetch(`${apiUrl}/reviews/package/${id}`);
         if (res.ok) {
           const data = await res.json();
           setRevDetails(data);
@@ -53,10 +56,10 @@ const ViewPost = () => {
     try {
       console.log("Sending booking request with:", {
         customerId,
-        packageId: id
+        packageId: id,
       });
 
-      const response = await fetch("http://localhost:5000/bookings", {
+      const response = await fetch("${apiUrl}/bookings", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -71,7 +74,9 @@ const ViewPost = () => {
       if (response.ok) {
         const result = await response.json();
         console.log("Booking details:", result);
-        alert(`Booking successful! Your booking ID is: ${result.bookingId || result._id}`);
+        alert(
+          `Booking successful! Your booking ID is: ${result.bookingId || result._id}`
+        );
         navigate("/home");
       } else {
         const errorData = await response.json();
@@ -107,11 +112,14 @@ const ViewPost = () => {
   const handleSubmitReview = async () => {
     try {
       // First, check if the user has a booking for this package
-      const bookingsResponse = await fetch(`http://localhost:5000/bookings/cust/${customerId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const bookingsResponse = await fetch(
+        `${apiUrl}/bookings/cust/${customerId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!bookingsResponse.ok) {
         alert("Failed to verify booking. Please try again.");
@@ -121,7 +129,7 @@ const ViewPost = () => {
       const bookings = await bookingsResponse.json();
 
       // Find a booking for this package
-      const booking = bookings.find(b => b.packageId === id);
+      const booking = bookings.find((b) => b.packageId === id);
 
       if (!booking) {
         alert("You can only review packages that you have booked.");
@@ -132,7 +140,7 @@ const ViewPost = () => {
       const bookingIdToShow = booking.bookingId || booking._id;
       alert(`Using booking ID: ${bookingIdToShow} for your review`);
 
-      const response = await fetch("http://localhost:5000/reviews", {
+      const response = await fetch("${apiUrl}/reviews", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -167,7 +175,7 @@ const ViewPost = () => {
   const addToWishlist = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch("http://localhost:5000/wishlist", {
+      const response = await fetch("${apiUrl}/wishlist", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -224,7 +232,7 @@ const ViewPost = () => {
           {packageDetails.image.map((img, index) => (
             <img
               key={index}
-              src={`http://localhost:5000${img}`}
+              src={`${apiUrl}${img}`}
               alt={`Image of ${packageDetails.name}`}
               style={{ width: "300px", height: "200px", marginRight: "10px" }}
             />
@@ -240,12 +248,18 @@ const ViewPost = () => {
         {revvs && revvs.length > 0 ? (
           revvs.map((review) => (
             <div key={review._id} className="review-item">
-              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
-                <strong style={{ marginRight: '8px' }}>Rating:</strong>
-                <div style={{ display: 'flex', color: '#F59E0B' }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "8px",
+                }}
+              >
+                <strong style={{ marginRight: "8px" }}>Rating:</strong>
+                <div style={{ display: "flex", color: "#F59E0B" }}>
                   {[1, 2, 3, 4, 5].map((star) => (
-                    <span key={star} style={{ marginRight: '2px' }}>
-                      {star <= review.rating ? '★' : '☆'}
+                    <span key={star} style={{ marginRight: "2px" }}>
+                      {star <= review.rating ? "★" : "☆"}
                     </span>
                   ))}
                 </div>

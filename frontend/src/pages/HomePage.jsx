@@ -3,58 +3,15 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import {
-  FaSearch,
-  FaStar,
-  FaMapMarkerAlt,
-  FaClock,
-  FaSort,
-  FaDollarSign,
-} from "react-icons/fa";
+import { FaStar, FaMapMarkerAlt, FaClock } from "react-icons/fa";
 import { MdExplore } from "react-icons/md";
+import apiUrl from "../utils/api.js";
 
 const HomePage = () => {
   // Remove other filter states and options, keep only sortBy
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState("dateModified");
-
-  const [filters, setFilters] = useState({
-    location: "All",
-    price: "All",
-    duration: "All",
-  });
-
-  // Add filter options
-  const filterOptions = {
-    location: ["All", "Asia", "Europe", "Americas", "Africa", "Oceania"],
-    price: ["All", "Budget", "Standard", "Luxury"],
-    duration: [
-      "All",
-      "Short (1-3 days)",
-      "Medium (4-7 days)",
-      "Long (8+ days)",
-    ],
-  };
-
-  // Filter function
-  const filterPackages = (packages) => {
-    return packages.filter((pack) => {
-      const locationMatch =
-        filters.location === "All" || pack.location === filters.location;
-      const priceMatch =
-        filters.price === "All" || pack.priceCategory === filters.price;
-      const durationMatch =
-        filters.duration === "All" ||
-        (filters.duration === "Short (1-3 days)" && pack.duration <= 3) ||
-        (filters.duration === "Medium (4-7 days)" &&
-          pack.duration > 3 &&
-          pack.duration <= 7) ||
-        (filters.duration === "Long (8+ days)" && pack.duration > 7);
-
-      return locationMatch && priceMatch && durationMatch;
-    });
-  };
 
   // Sorting function
   const sortPackages = (packages, sortType) => {
@@ -79,7 +36,7 @@ const HomePage = () => {
   useEffect(() => {
     const fetchPackages = async () => {
       try {
-        const response = await fetch("http://localhost:5000/packages");
+        const response = await fetch(`${apiUrl}/packages`);
         const data = await response.json();
 
         if (data && data.data) {
@@ -144,7 +101,11 @@ const HomePage = () => {
                         <motion.img
                           whileHover={{ scale: 1.05 }}
                           transition={{ duration: 0.3 }}
-                          src={pack.image[0].startsWith('http') ? pack.image[0] : `http://localhost:5000${pack.image[0]}`}
+                          src={
+                            pack.image[0].startsWith("http")
+                              ? pack.image[0]
+                              : `${apiUrl}${pack.image[0]}`
+                          }
                           alt={pack.name}
                           className="w-full h-64 object-cover"
                         />

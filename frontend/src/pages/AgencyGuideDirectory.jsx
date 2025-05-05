@@ -1,49 +1,54 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
-import { Link, useLocation } from 'react-router-dom';
+/** @format */
+
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+import { Link, useLocation } from "react-router-dom";
+import apiUrl from "../utils/api.js";
 
 const AgencyGuideDirectory = () => {
   const [guides, setGuides] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedGuide, setSelectedGuide] = useState(null);
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [packages, setPackages] = useState([]);
-  const [selectedPackage, setSelectedPackage] = useState('');
-  const [requestType, setRequestType] = useState('package_assignment');
-  const [message, setMessage] = useState('');
+  const [selectedPackage, setSelectedPackage] = useState("");
+  const [requestType, setRequestType] = useState("package_assignment");
+  const [message, setMessage] = useState("");
 
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
   const agencyId = token ? jwtDecode(token).id : null;
 
   // Get query parameters from URL
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const guideIdFromUrl = queryParams.get('guideId');
+  const guideIdFromUrl = queryParams.get("guideId");
 
   useEffect(() => {
     const fetchGuides = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/guides');
+        const response = await axios.get(`${apiUrl}/guides`);
         const guidesData = response.data.data || [];
         setGuides(guidesData);
 
         // If there's a guideId in the URL, find and select that guide
         if (guideIdFromUrl) {
-          const guideFromUrl = guidesData.find(guide => guide._id === guideIdFromUrl);
+          const guideFromUrl = guidesData.find(
+            (guide) => guide._id === guideIdFromUrl
+          );
           if (guideFromUrl) {
             setSelectedGuide(guideFromUrl);
             setShowRequestModal(true);
           }
         }
       } catch (err) {
-        console.error('Error fetching guides:', err);
-        setError('Failed to load guides');
+        console.error("Error fetching guides:", err);
+        setError("Failed to load guides");
       } finally {
         setLoading(false);
       }
@@ -52,16 +57,18 @@ const AgencyGuideDirectory = () => {
     const fetchPackages = async () => {
       if (agencyId) {
         try {
-          console.log('Fetching packages for agency ID:', agencyId);
-          const response = await axios.get(`http://localhost:5000/packages/agents/${agencyId}`);
-          console.log('Packages response:', response.data);
+          console.log("Fetching packages for agency ID:", agencyId);
+          const response = await axios.get(
+            `${apiUrl}/packages/agents/${agencyId}`
+          );
+          console.log("Packages response:", response.data);
           setPackages(response.data || []);
         } catch (err) {
-          console.error('Error fetching packages:', err);
-          console.error('Error details:', err.response?.data || err.message);
+          console.error("Error fetching packages:", err);
+          console.error("Error details:", err.response?.data || err.message);
         }
       } else {
-        console.warn('No agency ID available to fetch packages');
+        console.warn("No agency ID available to fetch packages");
       }
     };
 
@@ -73,11 +80,14 @@ const AgencyGuideDirectory = () => {
     setSearchTerm(e.target.value);
   };
 
-  const filteredGuides = guides.filter(guide =>
-    guide.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    guide.location?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    guide.languages?.some(lang => lang.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    guide.experience?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredGuides = guides.filter(
+    (guide) =>
+      guide.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      guide.location?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      guide.languages?.some((lang) =>
+        lang.toLowerCase().includes(searchTerm.toLowerCase())
+      ) ||
+      guide.experience?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleOpenRequestModal = (guide) => {
@@ -88,77 +98,81 @@ const AgencyGuideDirectory = () => {
   const handleCloseRequestModal = () => {
     setShowRequestModal(false);
     setSelectedGuide(null);
-    setSelectedPackage('');
-    setRequestType('package_assignment');
-    setMessage('');
+    setSelectedPackage("");
+    setRequestType("package_assignment");
+    setMessage("");
   };
 
   const handleSubmitRequest = async (e) => {
     e.preventDefault();
 
     if (!agencyId) {
-      toast.error('You must be logged in as an agency to send requests');
-      console.error('No agency ID available');
+      toast.error("You must be logged in as an agency to send requests");
+      console.error("No agency ID available");
       return;
     }
 
     if (!selectedGuide || !selectedGuide._id) {
-      toast.error('Invalid guide selection');
-      console.error('Invalid guide:', selectedGuide);
+      toast.error("Invalid guide selection");
+      console.error("Invalid guide:", selectedGuide);
       return;
     }
 
-    if (requestType === 'package_assignment') {
+    if (requestType === "package_assignment") {
       if (!selectedPackage) {
-        toast.error('Please select a package');
-        console.error('No package selected for package assignment');
+        toast.error("Please select a package");
+        console.error("No package selected for package assignment");
         return;
       }
 
       // Validate that the selected package exists
-      const packageExists = packages.some(pkg => pkg._id === selectedPackage);
+      const packageExists = packages.some((pkg) => pkg._id === selectedPackage);
       if (!packageExists) {
-        toast.error('Selected package is invalid');
-        console.error('Invalid package ID:', selectedPackage);
+        toast.error("Selected package is invalid");
+        console.error("Invalid package ID:", selectedPackage);
         return;
       }
     }
 
     try {
-      console.log('Selected guide:', selectedGuide);
-      console.log('Selected package:', selectedPackage);
+      console.log("Selected guide:", selectedGuide);
+      console.log("Selected package:", selectedPackage);
 
       const requestData = {
         agencyId,
         guideId: selectedGuide._id,
         message,
-        type: requestType
+        type: requestType,
       };
 
-      if (requestType === 'package_assignment') {
+      if (requestType === "package_assignment") {
         requestData.packageId = selectedPackage;
       }
 
-      console.log('Sending request data:', requestData);
+      console.log("Sending request data:", requestData);
 
       // First, check if the guide exists
       try {
-        const guideCheckResponse = await axios.get(`http://localhost:5000/guides/${selectedGuide._id}`);
-        console.log('Guide check response:', guideCheckResponse.data);
+        const guideCheckResponse = await axios.get(
+          `${apiUrl}/guides/${selectedGuide._id}`
+        );
+        console.log("Guide check response:", guideCheckResponse.data);
       } catch (guideError) {
-        console.error('Error checking guide:', guideError);
-        toast.error('Error verifying guide information');
+        console.error("Error checking guide:", guideError);
+        toast.error("Error verifying guide information");
         return;
       }
 
       // If it's a package assignment, check if the package exists
-      if (requestType === 'package_assignment') {
+      if (requestType === "package_assignment") {
         try {
-          const packageCheckResponse = await axios.get(`http://localhost:5000/packages/${selectedPackage}`);
-          console.log('Package check response:', packageCheckResponse.data);
+          const packageCheckResponse = await axios.get(
+            `${apiUrl}/packages/${selectedPackage}`
+          );
+          console.log("Package check response:", packageCheckResponse.data);
         } catch (packageError) {
-          console.error('Error checking package:', packageError);
-          toast.error('Error verifying package information');
+          console.error("Error checking package:", packageError);
+          toast.error("Error verifying package information");
           return;
         }
       }
@@ -166,46 +180,56 @@ const AgencyGuideDirectory = () => {
       // Now send the request
       try {
         const response = await axios.post(
-          'http://localhost:5000/guide-requests/agency-to-guide',
+          `${apiUrl}/guide-requests/agency-to-guide`,
           requestData,
           {
             headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`
-            }
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
           }
         );
 
-        console.log('Response:', response.data);
-        toast.success('Request sent successfully!');
+        console.log("Response:", response.data);
+        toast.success("Request sent successfully!");
         handleCloseRequestModal();
         return;
       } catch (requestError) {
-        console.error('Error sending request:', requestError);
+        console.error("Error sending request:", requestError);
 
         if (requestError.response) {
-          console.error('Response error data:', requestError.response.data);
-          console.error('Response status:', requestError.response.status);
+          console.error("Response error data:", requestError.response.data);
+          console.error("Response status:", requestError.response.status);
 
-          if (requestError.response.data && requestError.response.data.message) {
+          if (
+            requestError.response.data &&
+            requestError.response.data.message
+          ) {
             toast.error(requestError.response.data.message);
-          } else if (requestError.response.data && requestError.response.data.error) {
+          } else if (
+            requestError.response.data &&
+            requestError.response.data.error
+          ) {
             toast.error(`Error: ${requestError.response.data.error}`);
           } else {
-            toast.error(`Request failed with status ${requestError.response.status}`);
+            toast.error(
+              `Request failed with status ${requestError.response.status}`
+            );
           }
         } else if (requestError.request) {
-          console.error('Request error:', requestError.request);
-          toast.error('No response received from server. Please check your connection.');
+          console.error("Request error:", requestError.request);
+          toast.error(
+            "No response received from server. Please check your connection."
+          );
         } else {
-          console.error('Error message:', requestError.message);
-          toast.error('Failed to send request. Please try again later.');
+          console.error("Error message:", requestError.message);
+          toast.error("Failed to send request. Please try again later.");
         }
         return;
       }
     } catch (err) {
-      console.error('Unexpected error in handleSubmitRequest:', err);
-      toast.error('An unexpected error occurred. Please try again later.');
+      console.error("Unexpected error in handleSubmitRequest:", err);
+      toast.error("An unexpected error occurred. Please try again later.");
     }
   };
 
@@ -267,9 +291,13 @@ const AgencyGuideDirectory = () => {
               d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
             ></path>
           </svg>
-          <h2 className="text-xl font-semibold text-gray-700 mb-2">No Guides Found</h2>
+          <h2 className="text-xl font-semibold text-gray-700 mb-2">
+            No Guides Found
+          </h2>
           <p className="text-gray-600">
-            {searchTerm ? "No guides match your search criteria." : "There are no guides available at the moment."}
+            {searchTerm
+              ? "No guides match your search criteria."
+              : "There are no guides available at the moment."}
           </p>
         </div>
       ) : (
@@ -277,11 +305,16 @@ const AgencyGuideDirectory = () => {
           {filteredGuides.map((guide) => (
             <motion.div
               key={guide._id}
-              whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
+              whileHover={{
+                y: -5,
+                boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
+              }}
               className="bg-white rounded-lg shadow-md overflow-hidden"
             >
               <div className="p-6">
-                <h2 className="text-xl font-semibold text-[#1a365d] mb-2">{guide.name}</h2>
+                <h2 className="text-xl font-semibold text-[#1a365d] mb-2">
+                  {guide.name}
+                </h2>
 
                 <div className="flex items-center mb-3">
                   <div className="flex items-center bg-yellow-100 px-3 py-1 rounded-full">
@@ -292,13 +325,18 @@ const AgencyGuideDirectory = () => {
                     </span>
                     <span className="text-yellow-700">★</span>
                     <span className="text-gray-600 ml-2 text-sm">
-                      ({guide.ratings ? guide.ratings.numberOfReviews : 0} {guide.ratings && guide.ratings.numberOfReviews === 1 ? "rating" : "ratings"})
+                      ({guide.ratings ? guide.ratings.numberOfReviews : 0}{" "}
+                      {guide.ratings && guide.ratings.numberOfReviews === 1
+                        ? "rating"
+                        : "ratings"}
+                      )
                     </span>
                   </div>
                 </div>
 
                 <p className="text-gray-600 mb-2">
-                  <span className="font-semibold">Location:</span> {guide.location}
+                  <span className="font-semibold">Location:</span>{" "}
+                  {guide.location}
                 </p>
 
                 {guide.languages && guide.languages.length > 0 && (
@@ -309,7 +347,8 @@ const AgencyGuideDirectory = () => {
                 )}
 
                 <p className="text-gray-600 mb-4">
-                  <span className="font-semibold">Experience:</span> {guide.experience}
+                  <span className="font-semibold">Experience:</span>{" "}
+                  {guide.experience}
                 </p>
 
                 <div className="flex justify-between items-center">
@@ -361,11 +400,13 @@ const AgencyGuideDirectory = () => {
                   onChange={(e) => setRequestType(e.target.value)}
                 >
                   <option value="package_assignment">Assign to Package</option>
-                  <option value="general_collaboration">General Collaboration</option>
+                  <option value="general_collaboration">
+                    General Collaboration
+                  </option>
                 </select>
               </div>
 
-              {requestType === 'package_assignment' && (
+              {requestType === "package_assignment" && (
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Select Package
@@ -386,7 +427,8 @@ const AgencyGuideDirectory = () => {
                     </select>
                   ) : (
                     <p className="text-red-500 text-sm">
-                      You don't have any packages. Please create a package first.
+                      You don't have any packages. Please create a package
+                      first.
                     </p>
                   )}
                 </div>
@@ -421,11 +463,15 @@ const AgencyGuideDirectory = () => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   className={`px-4 py-2 rounded-md text-white ${
-                    requestType === 'package_assignment' && (!packages.length || !selectedPackage)
-                      ? 'bg-gray-400 cursor-not-allowed'
-                      : 'bg-[#1a365d] hover:bg-[#2d4a7e] transition-colors duration-300'
+                    requestType === "package_assignment" &&
+                    (!packages.length || !selectedPackage)
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-[#1a365d] hover:bg-[#2d4a7e] transition-colors duration-300"
                   }`}
-                  disabled={requestType === 'package_assignment' && (!packages.length || !selectedPackage)}
+                  disabled={
+                    requestType === "package_assignment" &&
+                    (!packages.length || !selectedPackage)
+                  }
                 >
                   Send Request
                 </motion.button>

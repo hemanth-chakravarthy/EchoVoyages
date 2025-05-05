@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { motion } from "framer-motion";
 import "react-toastify/dist/ReactToastify.css";
+import apiUrl from "../utils/api.js";
 
 const AgentPackActions = () => {
   const [showModal, setShowModal] = useState(false);
@@ -23,9 +24,7 @@ const AgentPackActions = () => {
   const handleOpenModal = async () => {
     setShowModal(true);
     try {
-      const packageResponse = await axios.get(
-        `http://localhost:5000/packages/${id}`
-      );
+      const packageResponse = await axios.get(`${apiUrl}/packages/${id}`);
       const { name, price, description, isActive } = packageResponse.data;
       setName(name);
       setPrice(price);
@@ -40,10 +39,7 @@ const AgentPackActions = () => {
     e.preventDefault();
     try {
       const updatedData = { name, price, description, isActive };
-      const response = await axios.put(
-        `http://localhost:5000/packages/${id}`,
-        updatedData
-      );
+      const response = await axios.put(`${apiUrl}/packages/${id}`, updatedData);
       notifySuccess(response.data.message);
       setShowModal(false);
     } catch (error) {
@@ -53,9 +49,7 @@ const AgentPackActions = () => {
 
   const handleDelete = async () => {
     try {
-      const response = await axios.delete(
-        `http://localhost:5000/packages/${id}`
-      );
+      const response = await axios.delete(`${apiUrl}/packages/${id}`);
       notifySuccess(response.data.message);
     } catch (error) {
       notifyError("Error deleting the package");

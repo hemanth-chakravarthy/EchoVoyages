@@ -16,7 +16,6 @@ import {
   FaPaperPlane,
   FaCompass,
   FaHeart,
-  FaBookmark,
   FaSignInAlt,
   FaUserCircle,
   FaInfoCircle,
@@ -94,11 +93,11 @@ const RoleBasedNavbar = () => {
         text: "Guide Directory",
         icon: <FaUsers />,
       },
-      {
-        to: "/agency-payments",
-        text: "Guide Payments",
-        icon: <FaCreditCard />,
-      },
+      // {
+      //   to: "/agency-payments",
+      //   text: "Guide Payments",
+      //   icon: <FaCreditCard />,
+      // },
       { to: "/AgentProfilePage", text: "Profile", icon: <FaUser /> },
     ],
     guide: [

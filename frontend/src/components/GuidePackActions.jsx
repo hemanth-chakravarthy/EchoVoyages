@@ -1,3 +1,5 @@
+/** @format */
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
@@ -5,6 +7,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion } from "framer-motion";
 import axios from "axios";
+import apiUrl from "../utils/api.js";
 
 const GuidePackActions = () => {
   const { id: packageId } = useParams();
@@ -22,18 +25,24 @@ const GuidePackActions = () => {
   useEffect(() => {
     const fetchPackageDetails = async () => {
       if (!packageId || !token) {
-        console.log("Missing packageId or token:", { packageId, token: !!token });
+        console.log("Missing packageId or token:", {
+          packageId,
+          token: !!token,
+        });
         return;
       }
 
-      console.log("GuidePackActions: Fetching package details for packageId:", packageId);
+      console.log(
+        "GuidePackActions: Fetching package details for packageId:",
+        packageId
+      );
       console.log("GuidePackActions: Guide ID:", guideId);
 
       setLoading(true);
       try {
         // Fetch package details
         const packageResponse = await axios.get(
-          `http://localhost:5000/packages/${packageId}`,
+          `${apiUrl}/packages/${packageId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -54,22 +63,25 @@ const GuidePackActions = () => {
         }
 
         // Check for existing requests
-        const requestsResponse = await axios.get(
-          "http://localhost:5000/guide-requests",
-          {
-            params: {
-              guideId,
-              packageId,
-              type: "package_assignment",
-              initiator: "guide",
-            },
-            headers: { Authorization: `Bearer ${token}` },
-          }
+        const requestsResponse = await axios.get("${apiUrl}/guide-requests", {
+          params: {
+            guideId,
+            packageId,
+            type: "package_assignment",
+            initiator: "guide",
+          },
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        console.log(
+          "GuidePackActions: Existing requests:",
+          requestsResponse.data
         );
 
-        console.log("GuidePackActions: Existing requests:", requestsResponse.data);
-
-        if (requestsResponse.data.data && requestsResponse.data.data.length > 0) {
+        if (
+          requestsResponse.data.data &&
+          requestsResponse.data.data.length > 0
+        ) {
           console.log("GuidePackActions: Found existing request");
           setExistingRequest(requestsResponse.data.data[0]);
         }
@@ -92,7 +104,7 @@ const GuidePackActions = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/guide-requests/guide-to-package",
+        "${apiUrl}/guide-requests/guide-to-package",
         {
           guideId,
           packageId,
@@ -115,7 +127,8 @@ const GuidePackActions = () => {
       }
     } catch (error) {
       console.error("Error sending request:", error);
-      const errorMessage = error.response?.data?.message || "Failed to send request";
+      const errorMessage =
+        error.response?.data?.message || "Failed to send request";
       toast.error(errorMessage);
     }
   };
@@ -127,14 +140,11 @@ const GuidePackActions = () => {
     }
 
     try {
-      await axios.delete(
-        `http://localhost:5000/guide-requests/${existingRequest._id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await axios.delete(`${apiUrl}/guide-requests/${existingRequest._id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       toast.success("Request cancelled successfully");
       setExistingRequest(null);
@@ -155,9 +165,9 @@ const GuidePackActions = () => {
       className="min-h-screen flex flex-col bg-white"
       style={{
         backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0, 0, 0) 1px, transparent 0)`,
-        backgroundSize: '20px 20px',
-        backgroundPosition: '0 0',
-        backgroundColor: 'rgba(255, 255, 255, 0.97)'
+        backgroundSize: "20px 20px",
+        backgroundPosition: "0 0",
+        backgroundColor: "rgba(255, 255, 255, 0.97)",
       }}
     >
       <ToastContainer position="top-right" autoClose={3000} />
@@ -178,17 +188,21 @@ const GuidePackActions = () => {
             </motion.button>
           ) : (
             <div className="flex flex-col items-center gap-4">
-              <div className={`px-4 py-2 rounded-full text-sm font-medium ${
-                existingRequest.status === 'pending'
-                  ? 'bg-yellow-100 text-yellow-800'
-                  : existingRequest.status === 'approved'
-                  ? 'bg-green-100 text-green-800'
-                  : 'bg-red-100 text-red-800'
-              }`}>
-                Request Status: {existingRequest.status.charAt(0).toUpperCase() + existingRequest.status.slice(1)}
+              <div
+                className={`px-4 py-2 rounded-full text-sm font-medium ${
+                  existingRequest.status === "pending"
+                    ? "bg-yellow-100 text-yellow-800"
+                    : existingRequest.status === "approved"
+                      ? "bg-green-100 text-green-800"
+                      : "bg-red-100 text-red-800"
+                }`}
+              >
+                Request Status:{" "}
+                {existingRequest.status.charAt(0).toUpperCase() +
+                  existingRequest.status.slice(1)}
               </div>
 
-              {existingRequest.status === 'pending' && (
+              {existingRequest.status === "pending" && (
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -220,7 +234,9 @@ const GuidePackActions = () => {
 
               <div className="form-control mb-4">
                 <label className="label">
-                  <span className="text-black font-medium">Message to Agency:</span>
+                  <span className="text-black font-medium">
+                    Message to Agency:
+                  </span>
                 </label>
                 <textarea
                   value={message}

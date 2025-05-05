@@ -15,6 +15,7 @@ import {
   FaBan,
   FaEye,
 } from "react-icons/fa";
+import apiUrl from "../utils/api.js";
 
 const AllBookings = () => {
   const [bookings, setBookings] = useState([]);
@@ -30,9 +31,7 @@ const AllBookings = () => {
 
   const fetchBookings = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:5000/bookings/guides/${guideId}`
-      );
+      const res = await axios.get(`${apiUrl}/bookings/guides/${guideId}`);
       setBookings(res.data);
       setLoading(false);
     } catch (error) {

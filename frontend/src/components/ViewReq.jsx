@@ -4,18 +4,15 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import apiUrl from "../utils/api.js";
 import {
   FaCheckCircle,
   FaTimesCircle,
   FaSpinner,
   FaUser,
   FaMapMarkerAlt,
-  FaCalendarAlt,
-  FaDollarSign,
   FaInfoCircle,
   FaArrowLeft,
-  FaClipboardCheck,
-  FaClipboardList,
   FaExclamationTriangle,
 } from "react-icons/fa";
 
@@ -36,7 +33,7 @@ const ViewReq = () => {
 
     const fetchRequestDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/requests/${id}`);
+        const response = await fetch(`${apiUrl}/requests/${id}`);
         if (!response.ok) {
           throw new Error(`Error: ${response.statusText}`);
         }
@@ -60,7 +57,7 @@ const ViewReq = () => {
 
   const handleStatusChange = async (newStatus) => {
     try {
-      const response = await fetch(`http://localhost:5000/requests/${id}`, {
+      const response = await fetch(`${apiUrl}/requests/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -114,7 +111,7 @@ const ViewReq = () => {
     try {
       // Check if there's an existing booking for this customer and package
       const response = await fetch(
-        `http://localhost:5000/bookings/cust/${requestDetails.customerId}`
+        `${apiUrl}/bookings/cust/${requestDetails.customerId}`
       );
       if (response.ok) {
         const bookings = await response.json();
@@ -128,7 +125,7 @@ const ViewReq = () => {
         if (matchingBooking) {
           // Update the existing booking to the new status
           const updateResponse = await fetch(
-            `http://localhost:5000/bookings/${matchingBooking._id}`,
+            `${apiUrl}/bookings/${matchingBooking._id}`,
             {
               method: "PUT",
               headers: {
@@ -158,7 +155,7 @@ const ViewReq = () => {
     try {
       // Check if a booking already exists for this customer and package
       const checkResponse = await fetch(
-        `http://localhost:5000/bookings/cust/${requestDetails.customerId}`
+        `${apiUrl}/bookings/cust/${requestDetails.customerId}`
       );
       if (checkResponse.ok) {
         const existingBookings = await checkResponse.json();
@@ -170,7 +167,7 @@ const ViewReq = () => {
         if (existingBooking) {
           // If a booking already exists, update its status
           const updateResponse = await fetch(
-            `http://localhost:5000/bookings/${existingBooking._id}`,
+            `${apiUrl}/bookings/${existingBooking._id}`,
             {
               method: "PUT",
               headers: {
@@ -198,7 +195,7 @@ const ViewReq = () => {
 
       // If no booking exists and status is confirmed, create a new one
       if (status === "confirmed") {
-        const response = await fetch("http://localhost:5000/bookings", {
+        const response = await fetch("${apiUrl}/bookings", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
