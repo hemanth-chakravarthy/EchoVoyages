@@ -328,48 +328,26 @@ router.get("/", cacheMiddleware(120), async (req, res, next) => {
  *       500:
  *         description: Server error
  */
-router.get(
-  "/cust/:customerId",
-  cacheMiddleware(120),
-  async (req, res, next) => {
-    const { customerId } = req.params;
-    const { type } = req.query; // 'upcoming' or 'past'
+router.get("/cust/:customerId", cacheMiddleware(120), async (req, res) => {
+  const { customerId } = req.params;
 
-    if (!customerId) {
-      return res.status(400).json({ message: "Customer ID is required" });
-    }
-
-    try {
-      const currentDate = new Date();
-      let query = { customerId };
-
-      // Add date filtering based on type
-      if (type === "upcoming") {
-        query.bookingDate = { $gte: currentDate };
-        query.status = { $ne: "canceled" }; // Exclude canceled bookings
-      } else if (type === "past") {
-        query.bookingDate = { $lt: currentDate };
-      }
-
-      // Make sure to use the imported bookings model
-      const bookingResults = await bookings
-        .find(query)
-        .sort({ bookingDate: type === "upcoming" ? 1 : -1 }) // Sort by date
-        .lean();
-
-      if (bookingResults.length === 0) {
-        return res.status(404).json({
-          message: `No ${type || ""} bookings found for this customer`,
-        });
-      }
-
-      return res.status(200).json(bookingResults);
-    } catch (error) {
-      console.error("Error fetching bookings:", error);
-      return res.status(500).json({ message: "Error fetching bookings" });
-    }
+  if (!customerId) {
+    return res.status(400).json({ message: "Customer ID is required" });
   }
-);
+
+  try {
+    const booking = await bookings.find({ customerId });
+    if (booking.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No bookings found for this customer" });
+    }
+    return res.status(200).json(booking);
+  } catch (error) {
+    console.error("Error fetching bookings:", error);
+    return res.status(500).json({ message: "Error fetching bookings" });
+  }
+});
 
 /**
  * @swagger
