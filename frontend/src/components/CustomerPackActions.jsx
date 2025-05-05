@@ -94,7 +94,7 @@ const CustomerPackActions = () => {
 
   const handleRequestSubmit = async () => {
     try {
-      const response = await fetch("${apiUrl}/requests", {
+      const response = await fetch(`${apiUrl}/requests`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -145,7 +145,7 @@ const CustomerPackActions = () => {
     }
 
     try {
-      const response = await fetch("${apiUrl}/reviews", {
+      const response = await fetch(`${apiUrl}/reviews`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -179,7 +179,7 @@ const CustomerPackActions = () => {
   // Handle adding to wishlis
   const addToWishlist = async () => {
     try {
-      const response = await fetch("${apiUrl}/wishlist", {
+      const response = await fetch(`${apiUrl}/wishlist`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

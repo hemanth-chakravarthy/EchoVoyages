@@ -151,7 +151,7 @@ const ViewGuide = () => {
         packageId: packageId || null,
       };
 
-      const response = await axios.post("${apiUrl}/bookings", bookingData, {
+      const response = await axios.post(`${apiUrl}/bookings`, bookingData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -188,7 +188,7 @@ const ViewGuide = () => {
         return;
       }
 
-      const response = await fetch("${apiUrl}/reviews", {
+      const response = await fetch(`${apiUrl}/reviews`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -234,7 +234,7 @@ const ViewGuide = () => {
       };
 
       const response = await axios.post(
-        "${apiUrl}/wishlistGuides",
+        `${apiUrl}/wishlistGuides`,
         wishlistData,
         {
           headers: {

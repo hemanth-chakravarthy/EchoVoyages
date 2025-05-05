@@ -195,7 +195,7 @@ const ViewReq = () => {
 
       // If no booking exists and status is confirmed, create a new one
       if (status === "confirmed") {
-        const response = await fetch("${apiUrl}/bookings", {
+        const response = await fetch(`${apiUrl}/bookings`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

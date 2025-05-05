@@ -63,7 +63,7 @@ const GuidePackActions = () => {
         }
 
         // Check for existing requests
-        const requestsResponse = await axios.get("${apiUrl}/guide-requests", {
+        const requestsResponse = await axios.get(`${apiUrl}/guide-requests`, {
           params: {
             guideId,
             packageId,
@@ -104,7 +104,7 @@ const GuidePackActions = () => {
 
     try {
       const response = await axios.post(
-        "${apiUrl}/guide-requests/guide-to-package",
+        `${apiUrl}/guide-requests/guide-to-package`,
         {
           guideId,
           packageId,

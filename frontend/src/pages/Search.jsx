@@ -30,8 +30,8 @@ const Search = () => {
     const fetchLocations = async () => {
       try {
         const [guideRes, packageRes] = await Promise.all([
-          axios.get("${apiUrl}/search/guide-locations"),
-          axios.get("${apiUrl}/search/package-locations"),
+          axios.get(`${apiUrl}/search/guide-locations`),
+          axios.get(`${apiUrl}/search/package-locations`),
         ]);
         setLocations([
           ...new Set([...guideRes.data.locations, ...packageRes.data]),
@@ -43,7 +43,7 @@ const Search = () => {
 
     const fetchLanguages = async () => {
       try {
-        const res = await axios.get("${apiUrl}/search/guide-languages");
+        const res = await axios.get(`${apiUrl}/search/guide-languages`);
         setLanguages(res.data || []);
       } catch (error) {
         console.error("Error fetching languages:", error);
@@ -57,7 +57,7 @@ const Search = () => {
   const handleSearch = async () => {
     if (entityType) {
       try {
-        const res = await axios.get("${apiUrl}/search", {
+        const res = await axios.get(`${apiUrl}/search`, {
           params: {
             location: selectedLocation,
             entityType,

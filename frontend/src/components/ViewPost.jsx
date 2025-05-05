@@ -59,7 +59,7 @@ const ViewPost = () => {
         packageId: id,
       });
 
-      const response = await fetch("${apiUrl}/bookings", {
+      const response = await fetch(`${apiUrl}/bookings`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -140,7 +140,7 @@ const ViewPost = () => {
       const bookingIdToShow = booking.bookingId || booking._id;
       alert(`Using booking ID: ${bookingIdToShow} for your review`);
 
-      const response = await fetch("${apiUrl}/reviews", {
+      const response = await fetch(`${apiUrl}/reviews`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -175,7 +175,7 @@ const ViewPost = () => {
   const addToWishlist = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch("${apiUrl}/wishlist", {
+      const response = await fetch(`${apiUrl}/wishlist`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -127,7 +127,7 @@ const AgencyAnalytics = () => {
         const headers = { Authorization: `Bearer ${token}` };
 
         // Fetch bookings data
-        const bookingsResponse = await axios.get("${apiUrl}/bookings", {
+        const bookingsResponse = await axios.get(`${apiUrl}/bookings`, {
           headers,
         });
         if (bookingsResponse.data && bookingsResponse.data.data) {
@@ -175,7 +175,7 @@ const AgencyAnalytics = () => {
         }
 
         // Fetch guides data
-        const guidesResponse = await axios.get("${apiUrl}/guides", {
+        const guidesResponse = await axios.get(`${apiUrl}/guides`, {
           headers,
         });
         if (guidesResponse.data && guidesResponse.data.data) {
@@ -216,7 +216,7 @@ const AgencyAnalytics = () => {
         }
 
         // Fetch packages data
-        const packagesResponse = await axios.get("${apiUrl}/packages", {
+        const packagesResponse = await axios.get(`${apiUrl}/packages`, {
           headers,
         });
         if (packagesResponse.data && packagesResponse.data.data) {
