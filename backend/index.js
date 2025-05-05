@@ -2,8 +2,8 @@
 import dotenv from "dotenv";
 dotenv.config();
 import express, { response } from "express";
-import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import connectDB from "./config/database.js";
 import adminRoute from "./routes/adminRoutes.js";
 import customerRoute from "./routes/customerRoutes.js";
 import packageRoute from "./routes/packageRoutes.js";
@@ -27,15 +27,9 @@ import cacheRoutes from "./routes/cacheRoutes.js";
 import nodemailer from "nodemailer";
 import ErrorHandler from "./ErrorHandler.js";
 import swaggerDocs from "./swaggerSetup.js";
-const mongoURL = process.env.mongoURL;
-mongoose
-  .connect(mongoURL)
-  .then(() => {
-    console.log("MongoDB connected");
-  })
-  .catch((error) => {
-    console.log(error);
-  });
+
+// Connect to MongoDB
+connectDB();
 
 const app = express();
 app.use(express.json());

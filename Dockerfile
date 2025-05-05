@@ -1,4 +1,4 @@
-FROM node:20-alpine as backend-build
+FROM node:20-alpine AS backend-build
 
 # Set working directory for backend
 WORKDIR /app/backend
@@ -18,7 +18,7 @@ RUN mkdir -p public/guideProfiles
 RUN mkdir -p public/agencyProfiles
 
 # Build frontend
-FROM node:20-alpine as frontend-build
+FROM node:20-alpine AS frontend-build
 
 # Set working directory for frontend
 WORKDIR /app/frontend
@@ -38,22 +38,28 @@ ENV VITE_API_URL=${VITE_API_URL:-https://echovoyages-backend.onrender.com}
 RUN npm run build
 
 # Final stage for backend
-FROM node:20-alpine as backend
+FROM node:20-alpine AS backend
 
 WORKDIR /app
 
 # Copy built backend from backend-build stage
 COPY --from=backend-build /app/backend ./
 
-# Expose backend port
+# Set environment variables
 ENV PORT=10000
+ENV NODE_ENV=production
+# These will be overridden by values from render.yaml
+ENV MONGO_URI=""
+ENV JWT_SECRET=""
+
+# Expose backend port
 EXPOSE 10000
 
 # Start the backend application
 CMD ["npm", "run", "start"]
 
 # Final stage for frontend
-FROM nginx:alpine as frontend
+FROM nginx:alpine AS frontend
 
 # Copy built frontend assets from frontend-build stage
 COPY --from=frontend-build /app/frontend/dist /usr/share/nginx/html
