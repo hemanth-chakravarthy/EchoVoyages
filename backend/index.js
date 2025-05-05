@@ -27,8 +27,9 @@ import cacheRoutes from "./routes/cacheRoutes.js";
 import nodemailer from "nodemailer";
 import ErrorHandler from "./ErrorHandler.js";
 import swaggerDocs from "./swaggerSetup.js";
+const mongoURL = process.env.mongoURL;
 mongoose
-  .connect(process.env.mongoURL)
+  .connect(mongoURL)
   .then(() => {
     console.log("MongoDB connected");
   })
