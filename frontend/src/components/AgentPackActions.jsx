@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+/** @format */
+
+import { useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
@@ -93,7 +95,9 @@ const AgentPackActions = () => {
           className="modal-box bg-white rounded-lg shadow-xl p-6 max-w-2xl mx-auto"
         >
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-3xl font-bold text-[#1a365d] tracking-tight">Update Package</h2>
+            <h2 className="text-3xl font-bold text-[#1a365d] tracking-tight">
+              Update Package
+            </h2>
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
@@ -107,7 +111,9 @@ const AgentPackActions = () => {
 
           <form onSubmit={handleUpdate} className="space-y-6">
             <div>
-              <label className="text-[#1a365d] font-medium mb-2 block">Name:</label>
+              <label className="text-[#1a365d] font-medium mb-2 block">
+                Name:
+              </label>
               <input
                 type="text"
                 value={name}
@@ -117,7 +123,9 @@ const AgentPackActions = () => {
               />
             </div>
             <div>
-              <label className="text-[#1a365d] font-medium mb-2 block">Price:</label>
+              <label className="text-[#1a365d] font-medium mb-2 block">
+                Price:
+              </label>
               <input
                 type="number"
                 value={price}
@@ -127,7 +135,9 @@ const AgentPackActions = () => {
               />
             </div>
             <div>
-              <label className="text-[#1a365d] font-medium mb-2 block">Description:</label>
+              <label className="text-[#1a365d] font-medium mb-2 block">
+                Description:
+              </label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}

@@ -257,7 +257,6 @@ router.post("/", clearCacheMiddleware("bookings"), async (req, res, next) => {
     return res.status(201).send(savedBooking);
   } catch (error) {
     console.log(error);
-    next(error);
     return res.status(500).send({ message: "Error creating booking" });
   }
 });
@@ -296,7 +295,6 @@ router.get("/", cacheMiddleware(120), async (req, res, next) => {
     });
   } catch (error) {
     console.log(error.message);
-    next(error);
     res.status(500).send({ message: error.message });
   }
 });
@@ -353,23 +351,22 @@ router.get(
         query.bookingDate = { $lt: currentDate };
       }
 
-      // Use lean() for better performance when you don't need Mongoose document methods
-      const booking = await bookings
+      // Make sure to use the imported bookings model
+      const bookingResults = await bookings
         .find(query)
         .sort({ bookingDate: type === "upcoming" ? 1 : -1 }) // Sort by date
         .lean();
 
-      if (booking.length === 0) {
+      if (bookingResults.length === 0) {
         return res.status(404).json({
           message: `No ${type || ""} bookings found for this customer`,
         });
       }
 
-      res.status(200).json(booking);
+      return res.status(200).json(bookingResults);
     } catch (error) {
       console.error("Error fetching bookings:", error);
-      next(error);
-      res.status(500).json({ message: "Error fetching bookings" });
+      return res.status(500).json({ message: "Error fetching bookings" });
     }
   }
 );
@@ -426,7 +423,6 @@ router.get("/pack/:packageId", cacheMiddleware(300), async (req, res, next) => {
     res.status(200).json(booking);
   } catch (error) {
     console.error("Error fetching bookings:", error);
-    next(error);
     res.status(500).json({ message: "Error fetching bookings" });
   }
 });
@@ -494,7 +490,6 @@ router.get("/guides/:guideId", cacheMiddleware(120), async (req, res, next) => {
     res.status(200).json(booking);
   } catch (error) {
     console.error("Error fetching bookings:", error);
-    next(error);
     res.status(500).json({ message: "Error fetching bookings" });
   }
 });
@@ -542,7 +537,6 @@ router.delete(
       return res.status(200).json({ message: " Booking deleted" });
     } catch (error) {
       console.log(error.message);
-      next(error);
       res.status(500).send({ message: error.message });
     }
   }
@@ -733,7 +727,6 @@ router.put("/:id", clearCacheMiddleware("bookings"), async (req, res, next) => {
     });
   } catch (error) {
     console.log(error.message);
-    next(error);
     res.status(500).send({ message: error.message });
   }
 });
@@ -771,7 +764,6 @@ router.get("/:id", async (req, res, next) => {
     return res.status(200).json(book);
   } catch (error) {
     console.log(error.message);
-    next(error);
     res.status(500).send({ message: error.message });
   }
 });
@@ -816,7 +808,6 @@ router.get("/verifyBooking", async (req, res, next) => {
     const booking = await bookings.findOne({ customerId, packageId });
     res.status(200).json({ hasBooking: !!booking });
   } catch (error) {
-    next(error);
     res.status(500).json({ message: "Error verifying booking", error });
   }
 });
