@@ -1,22 +1,4 @@
 services:
-  - type: web
-    name: echovoyages-backend
-    env: docker
-    image: sameera04/echovoyages-backend:latest
-    envVars:
-      - key: MONGO_URI
-        sync: false # Prevents exposing the value in the dashboard
-      - key: JWT_SECRET
-        value: Voyage_secret
-      - key: NODE_ENV
-        value: production
-      - key: FRONTEND_URL
-        fromService:
-          name: echovoyages-frontend
-          type: web
-          property: url
-
-services:
   # Backend API service
   - type: web
     name: echovoyages-backend
@@ -29,8 +11,6 @@ services:
         sync: false
       - key: NODE_ENV
         value: production
-      - key: PORT
-        value: 10000
     healthCheckPath: /
     autoDeploy: true
 
@@ -43,3 +23,4 @@ services:
       - key: VITE_API_URL
         value: https://echovoyages-backend.onrender.com
     autoDeploy: true
+
