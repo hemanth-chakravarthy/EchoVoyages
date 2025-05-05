@@ -37,7 +37,7 @@ const allowedOrigins = [
   process.env.FRONTEND_URL,
   "http://localhost:5173",
   "https://echo-voyages.vercel.app" ,
-  "https://echovoyages-hr0f.onrender.com"// For local development
+  "https://echovoyages-hr0f.onrender.com"
 ];
 
 app.use(
