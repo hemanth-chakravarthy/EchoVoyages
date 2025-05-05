@@ -1,0 +1,33 @@
+services:
+  # Backend API service
+  - type: web
+    name: echovoyages-backend
+    env: docker
+    dockerfilePath: ./backend/Dockerfile
+    envVars:
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+    healthCheckPath: /
+    autoDeploy: true
+
+  # Frontend service
+  - type: web
+    name: echovoyages-frontend
+    env: docker
+    dockerfilePath: ./frontend/Dockerfile
+    envVars:
+      - key: VITE_API_URL
+        value: https://echovoyages-backend.onrender.com
+    autoDeploy: true
+
+databases:
+  # If you want to use Render's MongoDB service instead of Atlas
+  - name: echovoyages-mongodb
+    databaseName: echovoyages
+    user: echovoyages

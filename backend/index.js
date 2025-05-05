@@ -1,7 +1,8 @@
 import express, { response } from "express";
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
-const mongoURL =
+// Use environment variable for MongoDB connection or fallback to the existing URL
+const mongoURL = process.env.MONGO_URI ||
   "mongodb+srv://saiananyakatakam:NLnqR9ifdN8qbVft@cluster0.lbvmb.mongodb.net/EchoVoyages2";
 import adminRoute from "./routes/adminRoutes.js";
 import customerRoute from "./routes/customerRoutes.js";
@@ -39,12 +40,15 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:5173", // Replace with your frontend's URL
+    origin: process.env.NODE_ENV === 'production'
+      ? ["https://echo-voyages.vercel.app", "https://echovoyages.onrender.com"]
+      : "http://localhost:5173",
+    credentials: true
   })
 );
 
 app.get("/", (req, res) => {
-  res.render("");
+  res.json({ status: "success", message: "EchoVoyages API is running" });
 });
 
 app.use("/admin", adminRoute);
@@ -165,7 +169,7 @@ function verifyToken(req, res, next) {
   if (!token) res.status(401).json({ message: "Token Not Found" });
 
   try {
-    const data = jwt.verify(token, "Voyage_secret");
+    const data = jwt.verify(token, process.env.JWT_SECRET || "Voyage_secret");
     req.id = data.id;
     next();
   } catch (error) {
@@ -173,9 +177,9 @@ function verifyToken(req, res, next) {
   }
 }
 
-const port = 5000;
+const port = process.env.PORT || 5000;
 app.listen(port, () => {
-  console.log(`listening on port ${port}`);
+  console.log(`Server running on port ${port}`);
 
   // Initialize Swagger
   swaggerDocs(app);

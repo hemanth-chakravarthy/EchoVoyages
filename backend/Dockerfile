@@ -18,7 +18,8 @@ RUN mkdir -p public/guideProfiles
 RUN mkdir -p public/agencyProfiles
 
 # Expose port
-EXPOSE 5000
+ENV PORT=10000
+EXPOSE 10000
 
 # Start the application
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "start"]
