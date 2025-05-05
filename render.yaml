@@ -3,7 +3,10 @@ services:
   - type: web
     name: echovoyages-backend
     env: docker
-    dockerfilePath: ./backend/Dockerfile
+    dockerfilePath: ./Dockerfile
+    dockerCommand: npm run start
+    dockerContext: ./
+    buildTarget: backend
     envVars:
       - key: MONGO_URI
         sync: false
@@ -11,6 +14,8 @@ services:
         sync: false
       - key: NODE_ENV
         value: production
+      - key: PORT
+        value: 10000
     healthCheckPath: /
     autoDeploy: true
 
@@ -18,7 +23,9 @@ services:
   - type: web
     name: echovoyages-frontend
     env: docker
-    dockerfilePath: ./frontend/Dockerfile
+    dockerfilePath: ./Dockerfile
+    dockerContext: ./
+    buildTarget: frontend
     envVars:
       - key: VITE_API_URL
         value: https://echovoyages-backend.onrender.com
