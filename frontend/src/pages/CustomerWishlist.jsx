@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { motion } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
@@ -15,8 +15,9 @@ import {
   FaExclamationCircle,
   FaHeart,
   FaSpinner,
-  FaCompass
+  FaCompass,
 } from "react-icons/fa";
+import apiUrl from "../utils/api.js";
 
 const CustomerWishlist = () => {
   const [wishlist, setWishlist] = useState({ packages: [], guides: [] });
@@ -33,7 +34,7 @@ const CustomerWishlist = () => {
         let packages = [];
         try {
           const packageResponse = await fetch(
-            `http://localhost:5000/wishlist/customer/${customerId}`,
+            `${apiUrl}/wishlist/customer/${customerId}`,
             {
               method: "GET",
               headers: {
@@ -56,7 +57,7 @@ const CustomerWishlist = () => {
         let guides = [];
         try {
           const guideResponse = await fetch(
-            `http://localhost:5000/wishlistGuides/cust/${customerId}`,
+            `${apiUrl}/wishlistGuides/cust/${customerId}`,
             {
               method: "GET",
               headers: {
@@ -102,8 +103,8 @@ const CustomerWishlist = () => {
     try {
       const endpoint =
         type === "package"
-          ? `http://localhost:5000/wishlist/${itemId}`
-          : `http://localhost:5000/wishlistGuides/${itemId}`;
+          ? `${apiUrl}/wishlist/${itemId}`
+          : `${apiUrl}/wishlistGuides/${itemId}`;
       const response = await fetch(endpoint, {
         method: "DELETE",
         headers: {
@@ -148,7 +149,9 @@ const CustomerWishlist = () => {
           <div className="bg-white p-8 rounded-lg shadow-sm">
             <div className="flex items-center space-x-4">
               <FaSpinner className="w-8 h-8 text-[#0a66c2] animate-spin" />
-              <p className="text-[#38434f] font-medium">Loading your wishlist...</p>
+              <p className="text-[#38434f] font-medium">
+                Loading your wishlist...
+              </p>
             </div>
           </div>
         </div>
@@ -170,7 +173,7 @@ const CustomerWishlist = () => {
               Something went wrong
             </h2>
             <p className="text-[#56687a] mb-6">
-              We couldn't load your wishlist. Please try again later.
+              We could not load your wishlist. Please try again later.
             </p>
             <button
               onClick={() => window.location.reload()}
@@ -200,11 +203,11 @@ const CustomerWishlist = () => {
         <div className="bg-white rounded-lg shadow-sm p-6 mb-4">
           <div className="flex items-center mb-2">
             <FaBookmark className="text-[#0a66c2] mr-2 text-xl" />
-            <h1 className="text-2xl font-bold text-[#38434f]">
-              My Wishlist
-            </h1>
+            <h1 className="text-2xl font-bold text-[#38434f]">My Wishlist</h1>
           </div>
-          <p className="text-[#56687a]">Items you've saved for future reference</p>
+          <p className="text-[#56687a]">
+            Items you have saved for future reference
+          </p>
         </div>
 
         {/* Packages Section */}
@@ -238,11 +241,14 @@ const CustomerWishlist = () => {
                       <div className="p-4">
                         <div className="flex flex-col md:flex-row">
                           <div className="w-full md:w-1/4 h-32 md:h-auto rounded-lg overflow-hidden mb-3 md:mb-0 md:mr-4 flex-shrink-0 border border-[#dce6f1]">
-                            {item.packageId.image && item.packageId.image.length > 0 ? (
+                            {item.packageId.image &&
+                            item.packageId.image.length > 0 ? (
                               <img
-                                src={item.packageId.image[0].startsWith('http')
-                                  ? item.packageId.image[0]
-                                  : `http://localhost:5000${item.packageId.image[0]}`}
+                                src={
+                                  item.packageId.image[0].startsWith("http")
+                                    ? item.packageId.image[0]
+                                    : `${apiUrl}${item.packageId.image[0]}`
+                                }
                                 alt={item.packageId.name}
                                 className="w-full h-full object-cover"
                               />
@@ -262,7 +268,9 @@ const CustomerWishlist = () => {
                             <div className="flex flex-wrap gap-4 mb-3">
                               <div className="flex items-center text-[#56687a]">
                                 <FaMoneyBillWave className="mr-1 text-[#0a66c2]" />
-                                <span className="font-medium">₹{item.packageId.price.toLocaleString()}</span>
+                                <span className="font-medium">
+                                  ₹{item.packageId.price.toLocaleString()}
+                                </span>
                               </div>
                               <div className="flex items-center text-[#56687a]">
                                 <FaCalendarAlt className="mr-1 text-[#0a66c2]" />
@@ -277,7 +285,9 @@ const CustomerWishlist = () => {
                             </div>
                             <div className="flex justify-end">
                               <button
-                                onClick={() => handleRemoveItem(item._id, "package")}
+                                onClick={() =>
+                                  handleRemoveItem(item._id, "package")
+                                }
                                 className="flex items-center text-[#b24020] hover:text-[#dc2626] transition-colors"
                               >
                                 <FaTrashAlt className="mr-1" /> Remove
@@ -300,14 +310,18 @@ const CustomerWishlist = () => {
                               </h3>
                             </div>
                             <p className="text-[#b24020] text-sm mb-3">
-                              This package has been removed or is no longer available.
+                              This package has been removed or is no longer
+                              available.
                             </p>
                             <div className="flex justify-end">
                               <button
-                                onClick={() => handleRemoveItem(item._id, "package")}
+                                onClick={() =>
+                                  handleRemoveItem(item._id, "package")
+                                }
                                 className="flex items-center text-[#b24020] hover:text-[#dc2626] transition-colors"
                               >
-                                <FaTrashAlt className="mr-1" /> Remove from Wishlist
+                                <FaTrashAlt className="mr-1" /> Remove from
+                                Wishlist
                               </button>
                             </div>
                           </div>
@@ -354,7 +368,7 @@ const CustomerWishlist = () => {
                           <div className="w-12 h-12 rounded-full overflow-hidden mr-3 flex-shrink-0 border border-[#dce6f1]">
                             {item.guideId.profilePicture ? (
                               <img
-                                src={`http://localhost:5000/${item.guideId.profilePicture}`}
+                                src={`${apiUrl}/${item.guideId.profilePicture}`}
                                 alt={item.guideId.name}
                                 className="w-full h-full object-cover"
                               />
@@ -378,13 +392,14 @@ const CustomerWishlist = () => {
                               {item.guideId.languages && (
                                 <span className="bg-[#dce6f1] text-[#0a66c2] px-2 py-1 rounded-full text-xs font-medium">
                                   {Array.isArray(item.guideId.languages)
-                                    ? item.guideId.languages.join(', ')
+                                    ? item.guideId.languages.join(", ")
                                     : item.guideId.languages}
                                 </span>
                               )}
                               {item.guideId.location && (
                                 <span className="bg-[#dce6f1] text-[#0a66c2] px-2 py-1 rounded-full text-xs font-medium flex items-center">
-                                  <FaMapMarkedAlt className="mr-1 text-xs" /> {item.guideId.location}
+                                  <FaMapMarkedAlt className="mr-1 text-xs" />{" "}
+                                  {item.guideId.location}
                                 </span>
                               )}
                             </div>
@@ -413,14 +428,18 @@ const CustomerWishlist = () => {
                               </h3>
                             </div>
                             <p className="text-[#b24020] text-sm mb-3">
-                              This guide has been removed or is no longer available.
+                              This guide has been removed or is no longer
+                              available.
                             </p>
                             <div className="flex justify-end">
                               <button
-                                onClick={() => handleRemoveItem(item._id, "guide")}
+                                onClick={() =>
+                                  handleRemoveItem(item._id, "guide")
+                                }
                                 className="flex items-center text-[#b24020] hover:text-[#dc2626] transition-colors"
                               >
-                                <FaTrashAlt className="mr-1" /> Remove from Wishlist
+                                <FaTrashAlt className="mr-1" /> Remove from
+                                Wishlist
                               </button>
                             </div>
                           </div>
@@ -446,7 +465,8 @@ const CustomerWishlist = () => {
               Your wishlist is empty
             </h3>
             <p className="text-[#56687a] mb-6 max-w-md mx-auto">
-              Explore packages and guides to add items to your wishlist for future reference.
+              Explore packages and guides to add items to your wishlist for
+              future reference.
             </p>
             <a
               href="/home"

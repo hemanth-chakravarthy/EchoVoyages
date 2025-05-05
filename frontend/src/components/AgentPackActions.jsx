@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+/** @format */
+
+import { useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { motion } from "framer-motion";
 import "react-toastify/dist/ReactToastify.css";
+import apiUrl from "../utils/api.js";
 
 const AgentPackActions = () => {
   const [showModal, setShowModal] = useState(false);
@@ -21,9 +24,7 @@ const AgentPackActions = () => {
   const handleOpenModal = async () => {
     setShowModal(true);
     try {
-      const packageResponse = await axios.get(
-        `http://localhost:5000/packages/${id}`
-      );
+      const packageResponse = await axios.get(`${apiUrl}/packages/${id}`);
       const { name, price, description, isActive } = packageResponse.data;
       setName(name);
       setPrice(price);
@@ -38,10 +39,7 @@ const AgentPackActions = () => {
     e.preventDefault();
     try {
       const updatedData = { name, price, description, isActive };
-      const response = await axios.put(
-        `http://localhost:5000/packages/${id}`,
-        updatedData
-      );
+      const response = await axios.put(`${apiUrl}/packages/${id}`, updatedData);
       notifySuccess(response.data.message);
       setShowModal(false);
     } catch (error) {
@@ -51,9 +49,7 @@ const AgentPackActions = () => {
 
   const handleDelete = async () => {
     try {
-      const response = await axios.delete(
-        `http://localhost:5000/packages/${id}`
-      );
+      const response = await axios.delete(`${apiUrl}/packages/${id}`);
       notifySuccess(response.data.message);
     } catch (error) {
       notifyError("Error deleting the package");
@@ -93,7 +89,9 @@ const AgentPackActions = () => {
           className="modal-box bg-white rounded-lg shadow-xl p-6 max-w-2xl mx-auto"
         >
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-3xl font-bold text-[#1a365d] tracking-tight">Update Package</h2>
+            <h2 className="text-3xl font-bold text-[#1a365d] tracking-tight">
+              Update Package
+            </h2>
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
@@ -107,7 +105,9 @@ const AgentPackActions = () => {
 
           <form onSubmit={handleUpdate} className="space-y-6">
             <div>
-              <label className="text-[#1a365d] font-medium mb-2 block">Name:</label>
+              <label className="text-[#1a365d] font-medium mb-2 block">
+                Name:
+              </label>
               <input
                 type="text"
                 value={name}
@@ -117,7 +117,9 @@ const AgentPackActions = () => {
               />
             </div>
             <div>
-              <label className="text-[#1a365d] font-medium mb-2 block">Price:</label>
+              <label className="text-[#1a365d] font-medium mb-2 block">
+                Price:
+              </label>
               <input
                 type="number"
                 value={price}
@@ -127,7 +129,9 @@ const AgentPackActions = () => {
               />
             </div>
             <div>
-              <label className="text-[#1a365d] font-medium mb-2 block">Description:</label>
+              <label className="text-[#1a365d] font-medium mb-2 block">
+                Description:
+              </label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}

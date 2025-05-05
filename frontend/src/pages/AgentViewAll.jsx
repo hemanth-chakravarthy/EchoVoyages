@@ -1,3 +1,5 @@
+/** @format */
+
 import React, { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import { Link, useNavigate } from "react-router-dom";
@@ -6,7 +8,6 @@ import {
   FaBriefcase,
   FaMapMarkerAlt,
   FaCalendarAlt,
-  FaDollarSign,
   FaEye,
   FaChartLine,
   FaListAlt,
@@ -14,6 +15,7 @@ import {
   FaSearch,
   FaFilter,
 } from "react-icons/fa";
+import apiUrl from "../utils/api.js";
 
 const AgentViewAll = () => {
   const [packages, setPackages] = useState([]);
@@ -27,9 +29,7 @@ const AgentViewAll = () => {
   useEffect(() => {
     const fetchBookingCount = async (packageId) => {
       try {
-        const response = await fetch(
-          `http://localhost:5000/bookings/pack/${packageId}`
-        );
+        const response = await fetch(`${apiUrl}/bookings/pack/${packageId}`);
         if (response.status === 404) {
           console.log(`No bookings found for package ${packageId}`);
           return 0;
@@ -52,14 +52,11 @@ const AgentViewAll = () => {
         const token = localStorage.getItem("token");
         const decodedToken = jwtDecode(token);
         const agentId = decodedToken.id;
-        const response = await fetch(
-          `http://localhost:5000/packages/agents/${agentId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await fetch(`${apiUrl}/packages/agents/${agentId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (!response.ok) {
           const errorData = await response.json();
@@ -140,18 +137,18 @@ const AgentViewAll = () => {
       if (pkg.image.length === 0)
         return "https://via.placeholder.com/400x200?text=Travel+Package";
 
-      // Get the first image path and ensure it starts with http://localhost:5000
+      // Get the first image path and ensure it starts with ${apiUrl}
       const imagePath = pkg.image[0];
-      if (imagePath.startsWith('/')) {
-        return `http://localhost:5000${imagePath}`;
+      if (imagePath.startsWith("/")) {
+        return `${apiUrl}${imagePath}`;
       }
       return imagePath;
     }
 
     // Handle single image path as string
-    if (typeof pkg.image === 'string') {
-      if (pkg.image.startsWith('/')) {
-        return `http://localhost:5000${pkg.image}`;
+    if (typeof pkg.image === "string") {
+      if (pkg.image.startsWith("/")) {
+        return `${apiUrl}${pkg.image}`;
       }
       return pkg.image;
     }

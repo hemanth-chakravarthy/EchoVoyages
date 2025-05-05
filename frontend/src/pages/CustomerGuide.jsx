@@ -1,9 +1,10 @@
 /** @format */
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaStar, FaUser, FaLanguage, FaBriefcase, FaEye } from "react-icons/fa";
+import apiUrl from "../utils/api.js";
 
 const CustomerGuide = () => {
   const [guides, setGuides] = useState([]);
@@ -12,7 +13,7 @@ const CustomerGuide = () => {
   useEffect(() => {
     const fetchGuides = async () => {
       try {
-        const response = await fetch("http://localhost:5000/guides");
+        const response = await fetch(`${apiUrl}/guides`);
         const data = await response.json();
         if (data && data.data) {
           setGuides(data.data);
@@ -59,7 +60,7 @@ const CustomerGuide = () => {
                   <div className="h-40 bg-[#dce6f1] relative overflow-hidden">
                     {guide.profilePicture ? (
                       <img
-                        src={`http://localhost:5000/${guide.profilePicture}`}
+                        src={`${apiUrl}/${guide.profilePicture}`}
                         alt={guide.username}
                         className="w-full h-full object-cover"
                       />

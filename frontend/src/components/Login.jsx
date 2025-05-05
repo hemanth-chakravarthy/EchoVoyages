@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-
+import apiUrl from "../utils/api.js";
 const Login = () => {
   const [formData, setFormData] = useState({
     username: "",
@@ -35,7 +35,7 @@ const Login = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/customers/login", {
+      const response = await fetch(`${apiUrl}/customers/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -68,16 +68,13 @@ const Login = () => {
 
   const handleAdminLogin = async () => {
     try {
-      const response = await fetch(
-        "http://localhost:5000/customers/adminlogin",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(adminCredentials),
-        }
-      );
+      const response = fetch(`${apiUrl}/customers/adminlogin`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(adminCredentials),
+      });
 
       const data = await response.json();
 

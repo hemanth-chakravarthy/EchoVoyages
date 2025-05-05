@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import apiUrl from "../utils/api.js";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -167,7 +168,7 @@ const Signup = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:5000/customers/signup", {
+      const response = await fetch("${apiUrl}/customers/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

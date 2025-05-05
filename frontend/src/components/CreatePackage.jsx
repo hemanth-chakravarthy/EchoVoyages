@@ -15,7 +15,7 @@ import {
   FaInfoCircle,
   FaCheckCircle, // Add this import
 } from "react-icons/fa";
-
+import apiUrl from "../utils/api.js";
 const CreatePackage = () => {
   const navigate = useNavigate();
   const AgentId = jwtDecode(localStorage.getItem("token")).id;
@@ -105,7 +105,7 @@ const CreatePackage = () => {
     });
 
     try {
-      const response = await fetch("http://localhost:5000/packages", {
+      const response = await fetch("${apiUrl}/packages", {
         method: "POST",
         body: formPayload,
       });
@@ -297,7 +297,10 @@ const CreatePackage = () => {
         {currentStep === 2 && (
           <div className="space-y-6">
             <div className="form-group">
-              <label className="flex items-center gap-2 text-gray-700 font-medium mb-2" htmlFor="itinerary">
+              <label
+                className="flex items-center gap-2 text-gray-700 font-medium mb-2"
+                htmlFor="itinerary"
+              >
                 <FaListUl className="text-[#0a66c2]" />
                 Itinerary
               </label>
@@ -309,11 +312,16 @@ const CreatePackage = () => {
                 placeholder="Enter detailed itinerary"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0a66c2]/20 focus:border-[#0a66c2] bg-white hover:bg-gray-50 transition-colors placeholder-gray-400 min-h-[100px]"
               />
-              {errors.itinerary && <p className="text-red-500 text-sm mt-1">{errors.itinerary}</p>}
+              {errors.itinerary && (
+                <p className="text-red-500 text-sm mt-1">{errors.itinerary}</p>
+              )}
             </div>
 
             <div className="form-group">
-              <label className="flex items-center gap-2 text-gray-700 font-medium mb-2" htmlFor="highlights">
+              <label
+                className="flex items-center gap-2 text-gray-700 font-medium mb-2"
+                htmlFor="highlights"
+              >
                 <FaStar className="text-[#0a66c2]" />
                 Highlights
               </label>
@@ -325,12 +333,17 @@ const CreatePackage = () => {
                 placeholder="Enter package highlights"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0a66c2]/20 focus:border-[#0a66c2] bg-white hover:bg-gray-50 transition-colors placeholder-gray-400"
               />
-              {errors.highlights && <p className="text-red-500 text-sm mt-1">{errors.highlights}</p>}
+              {errors.highlights && (
+                <p className="text-red-500 text-sm mt-1">{errors.highlights}</p>
+              )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="form-group">
-                <label className="flex items-center gap-2 text-gray-700 font-medium mb-2" htmlFor="availableDates">
+                <label
+                  className="flex items-center gap-2 text-gray-700 font-medium mb-2"
+                  htmlFor="availableDates"
+                >
                   <FaCalendarAlt className="text-[#0a66c2]" />
                   Available Dates
                 </label>
@@ -342,11 +355,18 @@ const CreatePackage = () => {
                   type="date"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0a66c2]/20 focus:border-[#0a66c2] bg-white hover:bg-gray-50 transition-colors placeholder-gray-400"
                 />
-                {errors.availableDates && <p className="text-red-500 text-sm mt-1">{errors.availableDates}</p>}
+                {errors.availableDates && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.availableDates}
+                  </p>
+                )}
               </div>
 
               <div className="form-group">
-                <label className="flex items-center gap-2 text-gray-700 font-medium mb-2" htmlFor="maxGroupSize">
+                <label
+                  className="flex items-center gap-2 text-gray-700 font-medium mb-2"
+                  htmlFor="maxGroupSize"
+                >
                   <FaUsers className="text-[#0a66c2]" />
                   Max Group Size
                 </label>
@@ -359,7 +379,11 @@ const CreatePackage = () => {
                   placeholder="Enter maximum group size"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0a66c2]/20 focus:border-[#0a66c2] bg-white hover:bg-gray-50 transition-colors placeholder-gray-400"
                 />
-                {errors.maxGroupSize && <p className="text-red-500 text-sm mt-1">{errors.maxGroupSize}</p>}
+                {errors.maxGroupSize && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.maxGroupSize}
+                  </p>
+                )}
               </div>
             </div>
           </div>

@@ -1,5 +1,5 @@
 /** @format */
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
@@ -22,7 +22,6 @@ import {
   FaSpinner,
   FaEdit,
   FaTrash,
-  FaEye,
   FaHeart,
   FaUser,
   FaCheck,
@@ -31,6 +30,7 @@ import {
   FaExclamationTriangle,
   FaBriefcase,
 } from "react-icons/fa";
+import apiUrl from "../utils/api.js";
 
 const ViewPage = () => {
   // Common states
@@ -129,7 +129,7 @@ const ViewPage = () => {
         // Try to fetch customer data
         try {
           const customerResponse = await axios.get(
-            `http://localhost:5000/customers/${userId}`
+            `${apiUrl}/customers/${userId}`
           );
           if (customerResponse.data) {
             setRole("customer");
@@ -141,9 +141,7 @@ const ViewPage = () => {
 
         // Try to fetch guide data
         try {
-          const guideResponse = await axios.get(
-            `http://localhost:5000/guides/${userId}`
-          );
+          const guideResponse = await axios.get(`${apiUrl}/guides/${userId}`);
           if (guideResponse.data) {
             setRole("guide");
             return;
@@ -154,9 +152,7 @@ const ViewPage = () => {
 
         // Try to fetch agency data
         try {
-          const agencyResponse = await axios.get(
-            `http://localhost:5000/agency/${userId}`
-          );
+          const agencyResponse = await axios.get(`${apiUrl}/agency/${userId}`);
           if (agencyResponse.data) {
             setRole("agency");
             return;
@@ -179,14 +175,12 @@ const ViewPage = () => {
     const fetchPackageDetails = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          `http://localhost:5000/packages/${packageId}`
-        );
+        const response = await axios.get(`${apiUrl}/packages/${packageId}`);
         const data = response.data;
 
         if (data && data.image) {
           data.image = data.image.map((img) =>
-            img.startsWith("http") ? img : `http://localhost:5000${img}`
+            img.startsWith("http") ? img : `${apiUrl}${img}`
           );
         }
 
@@ -218,9 +212,7 @@ const ViewPage = () => {
 
     const fetchReviews = async () => {
       try {
-        const res = await fetch(
-          `http://localhost:5000/reviews/package/${packageId}`
-        );
+        const res = await fetch(`${apiUrl}/reviews/package/${packageId}`);
         const data = await res.json();
         setReviews(data);
       } catch (error) {
@@ -237,7 +229,7 @@ const ViewPage = () => {
       const fetchCustomerBookings = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:5000/bookings/cust/${userId}`,
+            `${apiUrl}/bookings/cust/${userId}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -277,20 +269,17 @@ const ViewPage = () => {
           }
 
           // Check for existing requests
-          const requestsResponse = await axios.get(
-            "http://localhost:5000/guide-requests",
-            {
-              params: {
-                guideId: userId,
-                packageId,
-                type: "package_assignment",
-                initiator: "guide",
-              },
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
+          const requestsResponse = await axios.get("${apiUrl}/guide-requests", {
+            params: {
+              guideId: userId,
+              packageId,
+              type: "package_assignment",
+              initiator: "guide",
+            },
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
 
           if (
             requestsResponse.data.data &&
@@ -319,13 +308,10 @@ const ViewPage = () => {
             initiator: "guide",
           };
 
-          const response = await axios.get(
-            "http://localhost:5000/guide-requests",
-            {
-              params,
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
+          const response = await axios.get("${apiUrl}/guide-requests", {
+            params,
+            headers: { Authorization: `Bearer ${token}` },
+          });
 
           setGuideRequests(response.data.data || []);
         } catch (err) {
@@ -340,7 +326,7 @@ const ViewPage = () => {
   // CUSTOMER ACTIONS
   const handleCustomerRequestSubmit = async () => {
     try {
-      const response = await fetch("http://localhost:5000/requests", {
+      const response = await fetch("${apiUrl}/requests", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -380,7 +366,7 @@ const ViewPage = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/reviews", {
+      const response = await fetch("${apiUrl}/reviews", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -414,7 +400,7 @@ const ViewPage = () => {
 
   const addToWishlist = async () => {
     try {
-      const response = await fetch("http://localhost:5000/wishlist", {
+      const response = await fetch("${apiUrl}/wishlist", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -449,7 +435,7 @@ const ViewPage = () => {
       };
 
       const response = await axios.put(
-        `http://localhost:5000/packages/${packageId}`,
+        `${apiUrl}/packages/${packageId}`,
         updatedData
       );
 
@@ -465,9 +451,7 @@ const ViewPage = () => {
   const handleDeletePackage = async () => {
     if (window.confirm("Are you sure you want to delete this package?")) {
       try {
-        const response = await axios.delete(
-          `http://localhost:5000/packages/${packageId}`
-        );
+        const response = await axios.delete(`${apiUrl}/packages/${packageId}`);
 
         toast.success(response.data.message || "Package deleted successfully");
         navigate("/packages");
@@ -487,11 +471,11 @@ const ViewPage = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/guide-requests/guide-to-package",
+        "${apiUrl}/guide-requests/guide-to-package",
         {
           guideId: userId,
           packageId,
-          message: message || "I'm interested in guiding this package",
+          message: message || "I am interested in guiding this package",
         },
         {
           headers: {
@@ -521,14 +505,11 @@ const ViewPage = () => {
     }
 
     try {
-      await axios.delete(
-        `http://localhost:5000/guide-requests/${existingRequest._id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await axios.delete(`${apiUrl}/guide-requests/${existingRequest._id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       toast.success("Request cancelled successfully");
       setExistingRequest(null);
@@ -542,7 +523,7 @@ const ViewPage = () => {
   const handleGuideRequestStatusUpdate = async (requestId, newStatus) => {
     try {
       await axios.put(
-        `http://localhost:5000/guide-requests/${requestId}`,
+        `${apiUrl}/guide-requests/${requestId}`,
         { status: newStatus },
         {
           headers: {
@@ -575,9 +556,7 @@ const ViewPage = () => {
     }
 
     try {
-      const response = await axios.post(
-        `http://localhost:5000/reviews/${reviewId}`
-      );
+      const response = await axios.post(`${apiUrl}/reviews/${reviewId}`);
 
       if (response.status === 200) {
         toast.success("Review has been reported successfully!");
@@ -613,7 +592,7 @@ const ViewPage = () => {
             Package Not Found
           </h2>
           <p className="text-[#56687a] mb-6">
-            The package you're looking for doesn't exist or has been removed.
+            The package you are looking for does not exist or has been removed.
           </p>
           <Link
             to="/packages"
@@ -1237,7 +1216,7 @@ const ViewPage = () => {
                 </select>
               ) : (
                 <p className="text-[#b24020]">
-                  You haven't booked this package yet. Please book the package
+                  You have not booked this package yet. Please book the package
                   before leaving a review.
                 </p>
               )}

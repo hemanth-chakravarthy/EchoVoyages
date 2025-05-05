@@ -1,6 +1,9 @@
+/** @format */
+
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
+import apiUrl from "../utils/api.js";
 
 const ViewBooking = () => {
   const { bookingId } = useParams();
@@ -14,16 +17,13 @@ const ViewBooking = () => {
 
   const fetchBooking = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:5000/bookings/${bookingId}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(`${apiUrl}/bookings/${bookingId}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       if (!response.ok) {
         throw new Error("Failed to fetch booking.");
@@ -34,7 +34,7 @@ const ViewBooking = () => {
       setStatus(data.status);
 
       const customerResponse = await fetch(
-        `http://localhost:5000/customers/${data.customerId}`,
+        `${apiUrl}/customers/${data.customerId}`,
         {
           method: "GET",
           headers: {
@@ -63,17 +63,14 @@ const ViewBooking = () => {
 
   const updateStatus = async (newStatus) => {
     try {
-      const response = await fetch(
-        `http://localhost:5000/bookings/${bookingId}`,
-        {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ status: newStatus }),
-        }
-      );
+      const response = await fetch(`${apiUrl}/bookings/${bookingId}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
 
       if (!response.ok) {
         throw new Error("Failed to update status.");
@@ -101,9 +98,9 @@ const ViewBooking = () => {
         className="min-h-screen flex items-center justify-center bg-white"
         style={{
           backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0, 0, 0) 1px, transparent 0)`,
-          backgroundSize: '20px 20px',
-          backgroundPosition: '0 0',
-          backgroundColor: 'rgba(255, 255, 255, 0.97)'
+          backgroundSize: "20px 20px",
+          backgroundPosition: "0 0",
+          backgroundColor: "rgba(255, 255, 255, 0.97)",
         }}
       >
         <span className="loading loading-spinner loading-lg text-[#4169E1]"></span>
@@ -119,13 +116,14 @@ const ViewBooking = () => {
         className="min-h-screen flex items-center justify-center bg-white"
         style={{
           backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0, 0, 0) 1px, transparent 0)`,
-          backgroundSize: '20px 20px',
-          backgroundPosition: '0 0',
-          backgroundColor: 'rgba(255, 255, 255, 0.97)'
+          backgroundSize: "20px 20px",
+          backgroundPosition: "0 0",
+          backgroundColor: "rgba(255, 255, 255, 0.97)",
         }}
       >
         <div className="text-[#1a365d] text-xl">
-          {error || "No booking found or this booking is not associated with a guide."}
+          {error ||
+            "No booking found or this booking is not associated with a guide."}
         </div>
       </motion.div>
     );
@@ -138,9 +136,9 @@ const ViewBooking = () => {
       className="min-h-screen flex flex-col bg-white"
       style={{
         backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0, 0, 0) 1px, transparent 0)`,
-        backgroundSize: '20px 20px',
-        backgroundPosition: '0 0',
-        backgroundColor: 'rgba(255, 255, 255, 0.97)'
+        backgroundSize: "20px 20px",
+        backgroundPosition: "0 0",
+        backgroundColor: "rgba(255, 255, 255, 0.97)",
       }}
     >
       <motion.main
@@ -153,7 +151,7 @@ const ViewBooking = () => {
           whileHover={{
             y: -5,
             scale: 1.01,
-            boxShadow: "0 22px 45px -12px rgba(26, 54, 93, 0.15)"
+            boxShadow: "0 22px 45px -12px rgba(26, 54, 93, 0.15)",
           }}
           className="bg-white rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 max-w-3xl mx-auto p-6"
         >
@@ -161,7 +159,10 @@ const ViewBooking = () => {
             Booking Details
           </h1>
           <h2 className="text-2xl font-bold text-[#2d3748] mb-4">
-            Booking ID: <span className="bg-yellow-100 px-2 py-1 rounded-md text-yellow-800">{booking.bookingId || booking._id}</span>
+            Booking ID:{" "}
+            <span className="bg-yellow-100 px-2 py-1 rounded-md text-yellow-800">
+              {booking.bookingId || booking._id}
+            </span>
           </h2>
 
           {successMessage && (
@@ -177,22 +178,30 @@ const ViewBooking = () => {
             </div>
             <div className="text-[#2d3748] leading-relaxed">
               <p className="text-sm font-medium opacity-70">Status</p>
-              <span className={`inline-block px-3 py-1 rounded-full text-white ${
-                booking.status === "confirmed" ? "bg-green-500" :
-                booking.status === "pending" ? "bg-yellow-500" :
-                "bg-red-500"
-              }`}>
+              <span
+                className={`inline-block px-3 py-1 rounded-full text-white ${
+                  booking.status === "confirmed"
+                    ? "bg-green-500"
+                    : booking.status === "pending"
+                      ? "bg-yellow-500"
+                      : "bg-red-500"
+                }`}
+              >
                 {booking.status}
               </span>
             </div>
             {customer && (
               <>
                 <div className="text-[#2d3748] leading-relaxed">
-                  <p className="text-sm font-medium opacity-70">Customer Phone</p>
+                  <p className="text-sm font-medium opacity-70">
+                    Customer Phone
+                  </p>
                   <p className="text-xl font-semibold">{customer.phno}</p>
                 </div>
                 <div className="text-[#2d3748] leading-relaxed">
-                  <p className="text-sm font-medium opacity-70">Customer Email</p>
+                  <p className="text-sm font-medium opacity-70">
+                    Customer Email
+                  </p>
                   <p className="text-xl font-semibold">{customer.gmail}</p>
                 </div>
               </>

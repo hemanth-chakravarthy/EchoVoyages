@@ -1,4 +1,22 @@
 services:
+  - type: web
+    name: echovoyages-backend
+    env: docker
+    image: sameera04/echovoyages-backend:latest
+    envVars:
+      - key: MONGO_URI
+        sync: false # Prevents exposing the value in the dashboard
+      - key: JWT_SECRET
+        value: Voyage_secret
+      - key: NODE_ENV
+        value: production
+      - key: FRONTEND_URL
+        fromService:
+          name: echovoyages-frontend
+          type: web
+          property: url
+
+services:
   # Backend API service
   - type: web
     name: echovoyages-backend
@@ -25,9 +43,3 @@ services:
       - key: VITE_API_URL
         value: https://echovoyages-backend.onrender.com
     autoDeploy: true
-
-databases:
-  # If you want to use Render's MongoDB service instead of Atlas
-  - name: echovoyages-mongodb
-    databaseName: echovoyages
-    user: echovoyages

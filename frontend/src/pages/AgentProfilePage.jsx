@@ -6,8 +6,6 @@ import { jwtDecode } from "jwt-decode";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
-  BarChart,
-  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -35,6 +33,7 @@ import {
   FaDollarSign,
   FaChartLine,
 } from "react-icons/fa";
+import apiUrl from "../utils/api.js";
 
 const AgentProfilePage = () => {
   const [bookings, setBookings] = useState([]);
@@ -98,12 +97,12 @@ const AgentProfilePage = () => {
   useEffect(() => {
     const fetchAgent = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/agency/${id}`);
+        const response = await axios.get(`${apiUrl}/agency/${id}`);
         setAgent(response.data);
         if (response.data.profileImage) {
           const profileImageUrl = response.data.profileImage.startsWith("http")
             ? response.data.profileImage
-            : `http://localhost:5000/${response.data.profileImage}`;
+            : `${apiUrl}/${response.data.profileImage}`;
           setPreviewImage(profileImageUrl);
         }
       } catch (error) {
@@ -114,9 +113,7 @@ const AgentProfilePage = () => {
 
     const fetchBookingsData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:5000/packages/agents/${id}`
-        );
+        const response = await axios.get(`${apiUrl}/packages/agents/${id}`);
         const packagesWithCounts = await Promise.all(
           response.data.map(async (pkg) => {
             const bookingCount = await fetchBookingCount(pkg._id);
@@ -136,9 +133,7 @@ const AgentProfilePage = () => {
 
   const fetchBookingCount = async (packageId) => {
     try {
-      const response = await axios.get(
-        `http://localhost:5000/bookings/pack/${packageId}`
-      );
+      const response = await axios.get(`${apiUrl}/bookings/pack/${packageId}`);
       return response.data.length;
     } catch (error) {
       console.error("Error fetching booking count:", error);
@@ -247,15 +242,11 @@ const AgentProfilePage = () => {
           formData.append("profileImage", profileImage);
         }
 
-        const response = await axios.put(
-          `http://localhost:5000/agency/${id}`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
+        const response = await axios.put(`${apiUrl}/agency/${id}`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
 
         toast.update(loadingToastId, {
           render: "Profile updated successfully!",
@@ -269,7 +260,7 @@ const AgentProfilePage = () => {
         if (response.data.profileImage) {
           const profileImageUrl = response.data.profileImage.startsWith("http")
             ? response.data.profileImage
-            : `http://localhost:5000/${response.data.profileImage}`;
+            : `${apiUrl}/${response.data.profileImage}`;
           setPreviewImage(profileImageUrl);
         }
 

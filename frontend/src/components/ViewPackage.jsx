@@ -16,6 +16,7 @@ import {
   FaInfoCircle,
   FaSpinner,
 } from "react-icons/fa";
+import apiUrl from "../utils/api.js";
 import { jwtDecode } from "jwt-decode";
 import { motion } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
@@ -48,12 +49,12 @@ const ViewPackage = () => {
     const fetchPackageDetails = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:5000/packages/${id}`);
+        const response = await fetch(`${apiUrl}/packages/${id}`);
         const data = await response.json();
         console.log("Fetched package details:", data);
         if (data && data.image) {
           data.image = data.image.map((img) =>
-            img.startsWith("http") ? img : `http://localhost:5000${img}`
+            img.startsWith("http") ? img : `${apiUrl}${img}`
           );
         }
         setPackageDetails(data);
@@ -69,7 +70,7 @@ const ViewPackage = () => {
 
     const fetchReviews = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/reviews/package/${id}`);
+        const res = await fetch(`${apiUrl}/reviews/package/${id}`);
         const data = await res.json();
         setReviews(data);
       } catch (error) {
@@ -94,9 +95,7 @@ const ViewPackage = () => {
     }
 
     try {
-      const response = await axios.post(
-        `http://localhost:5000/reviews/${reviewId}`
-      );
+      const response = await axios.post(`${apiUrl}/reviews/${reviewId}`);
       if (response.status === 200) {
         toast.success("Review has been reported successfully!");
         setReportedReviews((prev) => ({ ...prev, [reviewId]: true }));

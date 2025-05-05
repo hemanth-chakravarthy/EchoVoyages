@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from "react";
+/** @format */
+
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import BackButton from "../components/BackButton";
+import apiUrl from "../utils/api.js";
 
 const ShowEntity = () => {
   const [entity, setEntity] = useState({});
@@ -9,7 +12,7 @@ const ShowEntity = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/admin/${entityType}/${id}`)
+      .get(`${apiUrl}/admin/${entityType}/${id}`)
       .then((res) => {
         setEntity(res.data);
       })
@@ -83,19 +86,17 @@ const ShowEntity = () => {
               {entityType === "customers"
                 ? "Customer Details"
                 : entityType === "packages"
-                ? "Package Details"
-                : entityType === "guides"
-                ? "Guide Details"
-                : entityType === "bookings"
-                ? "Booking Details"
-                : entityType === "agency"
-                ? "Agency Details"
-                : "Details"}
+                  ? "Package Details"
+                  : entityType === "guides"
+                    ? "Guide Details"
+                    : entityType === "bookings"
+                      ? "Booking Details"
+                      : entityType === "agency"
+                        ? "Agency Details"
+                        : "Details"}
             </h1>
           </div>
-          <div className="px-4 py-3 space-y-2">
-            {renderEntityRows()}
-          </div>
+          <div className="px-4 py-3 space-y-2">{renderEntityRows()}</div>
         </div>
       </div>
     </div>
@@ -110,4 +111,3 @@ const EntityRow = ({ label, value }) => (
 );
 
 export default ShowEntity;
-

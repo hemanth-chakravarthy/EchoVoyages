@@ -1,9 +1,9 @@
+/** @format */
+import dotenv from "dotenv";
+dotenv.config();
 import express, { response } from "express";
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
-// Use environment variable for MongoDB connection or fallback to the existing URL
-const mongoURL = process.env.MONGO_URI ||
-  "mongodb+srv://saiananyakatakam:NLnqR9ifdN8qbVft@cluster0.lbvmb.mongodb.net/EchoVoyages2";
 import adminRoute from "./routes/adminRoutes.js";
 import customerRoute from "./routes/customerRoutes.js";
 import packageRoute from "./routes/packageRoutes.js";
@@ -22,13 +22,13 @@ import multer from "multer";
 import path from "path";
 import jwt from "jsonwebtoken";
 import searchRoutes from "./routes/searchRoutes.js";
-import requests from './routes/requestRoutes.js'
-import cacheRoutes from './routes/cacheRoutes.js';
+import requests from "./routes/requestRoutes.js";
+import cacheRoutes from "./routes/cacheRoutes.js";
 import nodemailer from "nodemailer";
 import ErrorHandler from "./ErrorHandler.js";
-import swaggerDocs from './swaggerSetup.js';
+import swaggerDocs from "./swaggerSetup.js";
 mongoose
-  .connect(mongoURL)
+  .connect(process.env.mongoURL)
   .then(() => {
     console.log("MongoDB connected");
   })
@@ -38,15 +38,23 @@ mongoose
 
 const app = express();
 app.use(express.json());
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  "http://localhost:5173", // For local development
+];
+
 app.use(
   cors({
-    origin: process.env.NODE_ENV === 'production'
-      ? ["https://echo-voyages.vercel.app", "https://echovoyages.onrender.com"]
-      : "http://localhost:5173",
-    credentials: true
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
   })
 );
-
 app.get("/", (req, res) => {
   res.json({ status: "success", message: "EchoVoyages API is running" });
 });
@@ -61,11 +69,11 @@ app.use("/agency", agencyRoutes);
 app.use("/wishlist", wishlistRoutes);
 app.use("/search", searchRoutes);
 app.use("/wishlistGuides", wishlistGuideRoutes);
-app.use('/requests',requests);
-app.use('/guide-requests', guideRequestRoutes);
-app.use('/cache', cacheRoutes);
+app.use("/requests", requests);
+app.use("/guide-requests", guideRequestRoutes);
+app.use("/cache", cacheRoutes);
 app.use("/public", express.static("public"));
-app.use(ErrorHandler)
+app.use(ErrorHandler);
 
 // forgot password
 app.post("/forgot-password", async (req, res) => {
@@ -106,7 +114,7 @@ app.post("/forgot-password", async (req, res) => {
       from: "ksaiananya5104@gmail.com",
       to: gmail,
       subject: "Reset Password Link",
-      text: `Hello ${userType},\n\nPlease click the link below to reset your password:\n\nhttp://localhost:5173/reset-password/${user._id}/${token}\n\nThis link will expire in 1 hour.`,
+      text: `Hello ${userType},\n\nPlease click the link below to reset your password:\n\n${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password/${user._id}/${token}\n\nThis link will expire in 1 hour.`,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {

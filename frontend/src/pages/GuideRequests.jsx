@@ -1,13 +1,14 @@
 /** @format */
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import apiUrl from "../utils/api.js";
 import { Link } from "react-router-dom";
-import GuideIncomingRequests from "../components/guideincomingrequests";
+import GuideIncomingRequests from "../components/GuideIncomingRequests";
 import ConfirmationModal from "../components/ConfirmationModal";
 
 const GuideRequests = () => {
@@ -36,13 +37,10 @@ const GuideRequests = () => {
         return;
       }
       try {
-        const response = await axios.get(
-          "http://localhost:5000/guide-requests",
-          {
-            params: { guideId, initiator: "guide" },
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const response = await axios.get(`${apiUrl}/guide-requests`, {
+          params: { guideId, initiator: "guide" },
+          headers: { Authorization: `Bearer ${token}` },
+        });
         setRequests(response.data.data);
         setError(null);
       } catch (err) {
@@ -64,7 +62,7 @@ const GuideRequests = () => {
         try {
           // Show loading toast
           const loadingToastId = toast.loading("Cancelling request...");
-          await axios.delete(`http://localhost:5000/guide-requests/${requestId}`, {
+          await axios.delete(`${apiUrl}/guide-requests/${requestId}`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           // Remove the request from the list
@@ -195,7 +193,7 @@ const GuideRequests = () => {
                   />
                 </svg>
                 <p className="text-[#38434f] text-lg mb-4">
-                  You haven't requested to guide any packages yet.
+                  You have not requested to guide any packages yet.
                 </p>
                 <Link
                   to="/home"

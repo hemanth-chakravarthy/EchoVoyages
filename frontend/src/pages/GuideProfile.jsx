@@ -1,8 +1,9 @@
 /** @format */
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate, Link } from "react-router-dom";
+import apiUrl from "../utils/api.js";
+import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { ToastContainer, toast } from "react-toastify";
 import { motion } from "framer-motion";
@@ -30,12 +31,13 @@ const GuideProfilePage = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [profileImage, setProfileImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
-
+  console.log(reviews);
+  console.log(validationErrors);
   useEffect(() => {
     const fetchGuideDetails = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/guides/${guideId}`
+          `${apiUrl}/guides/${guideId}`
         );
         setGuide(response.data);
         setUpdatedGuide(response.data);
@@ -49,7 +51,7 @@ const GuideProfilePage = () => {
     const fetchReviewsAndCalculateRating = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/reviews/guides/${guideId}/details`
+          `${apiUrl}/reviews/guides/${guideId}/details`
         );
         setReviews(response.data.review || []);
 
@@ -87,7 +89,7 @@ const GuideProfilePage = () => {
 
     // Set preview URL if guide has a profile picture
     if (guide.profilePicture) {
-      setPreviewUrl(`http://localhost:5000/${guide.profilePicture}`);
+      setPreviewUrl(`${apiUrl}/${guide.profilePicture}`);
     }
   };
 
@@ -143,17 +145,6 @@ const GuideProfilePage = () => {
     });
 
     return dateErrors;
-  };
-
-  const handleNestedChange = (e, parentKey) => {
-    const { name, value } = e.target;
-    setUpdatedGuide({
-      ...updatedGuide,
-      [parentKey]: {
-        ...updatedGuide[parentKey],
-        [name]: value,
-      },
-    });
   };
 
   const handleAvailabilityDateChange = (index, field, value) => {
@@ -266,7 +257,7 @@ const GuideProfilePage = () => {
 
       // Send the request
       const response = await axios.put(
-        `http://localhost:5000/guides/${guideId}`,
+        `${apiUrl}/guides/${guideId}`,
         formData,
         {
           headers: {
@@ -358,7 +349,7 @@ const GuideProfilePage = () => {
                     />
                   ) : guide.profilePicture ? (
                     <img
-                      src={`http://localhost:5000/${guide.profilePicture}`}
+                      src={`${apiUrl}/${guide.profilePicture}`}
                       alt="Profile"
                       className="w-full h-full object-cover"
                     />

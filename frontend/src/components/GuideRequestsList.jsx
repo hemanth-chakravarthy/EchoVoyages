@@ -1,44 +1,52 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
+/** @format */
+
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+import apiUrl from "../utils/api.js";
 
 const GuideRequestsList = ({ packageId, refreshTrigger = 0 }) => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
   const agencyId = token ? jwtDecode(token).id : null;
 
   // Fetch guide requests for this package
   useEffect(() => {
     const fetchRequests = async () => {
       if (!token || !agencyId) {
-        setError('Authentication required');
+        setError("Authentication required");
         setLoading(false);
         return;
       }
 
       try {
         const params = packageId
-          ? { packageId, agencyId, type: 'package_assignment', initiator: 'guide' }
-          : { agencyId, initiator: 'guide' };
+          ? {
+              packageId,
+              agencyId,
+              type: "package_assignment",
+              initiator: "guide",
+            }
+          : { agencyId, initiator: "guide" };
 
-        const response = await axios.get('http://localhost:5000/guide-requests', {
+        const response = await axios.get("${apiUrl}/guide-requests", {
           params,
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
 
         setRequests(response.data.data);
         setError(null);
       } catch (err) {
-        console.error('Error fetching guide requests:', err);
-        setError('Failed to load guide requests');
+        console.error("Error fetching guide requests:", err);
+        setError("Failed to load guide requests");
       } finally {
         setLoading(false);
       }
@@ -50,19 +58,19 @@ const GuideRequestsList = ({ packageId, refreshTrigger = 0 }) => {
   const handleStatusUpdate = async (requestId, newStatus) => {
     try {
       await axios.put(
-        `http://localhost:5000/guide-requests/${requestId}`,
+        `${apiUrl}/guide-requests/${requestId}`,
         { status: newStatus },
         {
           headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
-          }
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
       // Update the local state
-      setRequests(prevRequests =>
-        prevRequests.map(req =>
+      setRequests((prevRequests) =>
+        prevRequests.map((req) =>
           req._id === requestId ? { ...req, status: newStatus } : req
         )
       );
@@ -85,7 +93,9 @@ const GuideRequestsList = ({ packageId, refreshTrigger = 0 }) => {
   if (requests.length === 0) {
     return (
       <div className="bg-gray-50 rounded-lg p-6 text-center">
-        <p className="text-gray-600">No guide requests found for this package.</p>
+        <p className="text-gray-600">
+          No guide requests found for this package.
+        </p>
       </div>
     );
   }
@@ -95,7 +105,7 @@ const GuideRequestsList = ({ packageId, refreshTrigger = 0 }) => {
       <ToastContainer position="top-right" autoClose={3000} />
 
       <h3 className="text-xl font-bold text-[#1a365d] mb-4">
-        Guide Requests {packageId ? 'for this Package' : ''}
+        Guide Requests {packageId ? "for this Package" : ""}
       </h3>
 
       <div className="space-y-4">
@@ -107,23 +117,24 @@ const GuideRequestsList = ({ packageId, refreshTrigger = 0 }) => {
             <div className="flex justify-between items-start mb-2">
               <div>
                 <h4 className="font-semibold text-lg">
-                  {request.guideName || 'Guide'}
+                  {request.guideName || "Guide"}
                 </h4>
                 <p className="text-sm text-gray-600">
-                  Package: {request.packageName || 'Unknown Package'}
+                  Package: {request.packageName || "Unknown Package"}
                 </p>
               </div>
               <div className="flex items-center">
                 <span
                   className={`px-2 py-1 text-xs rounded-full ${
-                    request.status === 'pending'
-                      ? 'bg-yellow-100 text-yellow-800'
-                      : request.status === 'approved'
-                      ? 'bg-green-100 text-green-800'
-                      : 'bg-red-100 text-red-800'
+                    request.status === "pending"
+                      ? "bg-yellow-100 text-yellow-800"
+                      : request.status === "approved"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
                   }`}
                 >
-                  {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
+                  {request.status.charAt(0).toUpperCase() +
+                    request.status.slice(1)}
                 </span>
               </div>
             </div>
@@ -138,12 +149,12 @@ const GuideRequestsList = ({ packageId, refreshTrigger = 0 }) => {
               Requested on: {new Date(request.createdAt).toLocaleDateString()}
             </p>
 
-            {request.status === 'pending' && (
+            {request.status === "pending" && (
               <div className="flex space-x-2 mt-2">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => handleStatusUpdate(request._id, 'approved')}
+                  onClick={() => handleStatusUpdate(request._id, "approved")}
                   className="px-3 py-1 bg-green-600 text-white text-sm rounded-md hover:bg-green-700 transition-colors duration-300"
                 >
                   Approve
@@ -151,7 +162,7 @@ const GuideRequestsList = ({ packageId, refreshTrigger = 0 }) => {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => handleStatusUpdate(request._id, 'rejected')}
+                  onClick={() => handleStatusUpdate(request._id, "rejected")}
                   className="px-3 py-1 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 transition-colors duration-300"
                 >
                   Reject

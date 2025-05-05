@@ -9,17 +9,8 @@ import {
   FaUser,
   FaSuitcase,
   FaCalendarAlt,
-  FaMapMarkerAlt,
   FaUserTie,
   FaIdCard,
-  FaDollarSign,
-  FaCheckCircle,
-  FaHourglass,
-  FaTimesCircle,
-  FaFilter,
-  FaChartBar,
-  FaCog,
-  FaBell,
   FaEdit,
   FaSave,
   FaTimes,
@@ -29,6 +20,7 @@ import {
   FaCamera,
   FaSignOutAlt,
 } from "react-icons/fa";
+import apiUrl from "../utils/api.js";
 
 export default function CustomerProfile() {
   const [customer, setCustomer] = useState(null);
@@ -70,20 +62,16 @@ export default function CustomerProfile() {
 
       setLoading(true);
       try {
-        const customerResponse = await axios.get(
-          `http://localhost:5000/customers/${id}`
-        );
+        const customerResponse = await axios.get(`${apiUrl}/customers/${id}`);
         setCustomer(customerResponse.data);
 
         // Set preview URL if profile picture exists
         if (customerResponse.data.profilePicture) {
-          setPreviewUrl(
-            `http://localhost:5000/${customerResponse.data.profilePicture}`
-          );
+          setPreviewUrl(`${apiUrl}/${customerResponse.data.profilePicture}`);
         }
 
         const bookingsResponse = await axios.get(
-          `http://localhost:5000/bookings/cust/${id}`
+          `${apiUrl}/bookings/cust/${id}`
         );
         setBookings(bookingsResponse.data);
       } catch (error) {
@@ -184,7 +172,7 @@ export default function CustomerProfile() {
       if (profileImage) {
         formData.append("profilePicture", profileImage);
       }
-      await axios.put(`http://localhost:5000/customers/${id}`, formData, {
+      await axios.put(`${apiUrl}/customers/${id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -200,7 +188,7 @@ export default function CustomerProfile() {
   const handleUpdatePassword = async () => {
     if (!validateForm()) return;
     try {
-      await axios.put(`http://localhost:5000/customers/${id}/update-password`, {
+      await axios.put(`${apiUrl}/customers/${id}/update-password`, {
         currentPassword,
         newPassword,
       });
@@ -629,7 +617,7 @@ export default function CustomerProfile() {
                       No Bookings Found
                     </h3>
                     <p className="text-[#56687a]">
-                      You haven't made any travel bookings yet.
+                      You have not made any travel bookings yet.
                     </p>
                   </div>
                 )}

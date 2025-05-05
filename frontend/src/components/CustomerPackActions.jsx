@@ -1,3 +1,5 @@
+/** @format */
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
@@ -7,6 +9,7 @@ import { motion } from "framer-motion";
 import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import apiUrl from "../utils/api.js";
 
 const CustomerPackActions = () => {
   const { id } = useParams(); // `id` is the packageId
@@ -38,7 +41,7 @@ const CustomerPackActions = () => {
       if (!showRequestModal) return; // Fetch only when modal is shown
       setIsLoading(true);
       try {
-        const response = await fetch(`http://localhost:5000/packages/${id}`, {
+        const response = await fetch(`${apiUrl}/packages/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (response.ok) {
@@ -65,7 +68,7 @@ const CustomerPackActions = () => {
       if (customerId && token && showReviewModal) {
         try {
           const response = await axios.get(
-            `http://localhost:5000/bookings/cust/${customerId}`,
+            `${apiUrl}/bookings/cust/${customerId}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -75,7 +78,7 @@ const CustomerPackActions = () => {
 
           // Filter bookings for this package
           const packageBookings = response.data.filter(
-            booking => booking.packageId === id
+            (booking) => booking.packageId === id
           );
 
           setCustomerBookings(packageBookings);
@@ -91,7 +94,7 @@ const CustomerPackActions = () => {
 
   const handleRequestSubmit = async () => {
     try {
-      const response = await fetch("http://localhost:5000/requests", {
+      const response = await fetch("${apiUrl}/requests", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -142,7 +145,7 @@ const CustomerPackActions = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/reviews", {
+      const response = await fetch("${apiUrl}/reviews", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -176,7 +179,7 @@ const CustomerPackActions = () => {
   // Handle adding to wishlis
   const addToWishlist = async () => {
     try {
-      const response = await fetch("http://localhost:5000/wishlist", {
+      const response = await fetch("${apiUrl}/wishlist", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -207,9 +210,9 @@ const CustomerPackActions = () => {
       className="min-h-screen flex flex-col bg-white"
       style={{
         backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0, 0, 0) 1px, transparent 0)`,
-        backgroundSize: '20px 20px',
-        backgroundPosition: '0 0',
-        backgroundColor: 'rgba(255, 255, 255, 0.97)'
+        backgroundSize: "20px 20px",
+        backgroundPosition: "0 0",
+        backgroundColor: "rgba(255, 255, 255, 0.97)",
       }}
     >
       <ToastContainer position="top-right" autoClose={3000} />
@@ -266,7 +269,9 @@ const CustomerPackActions = () => {
                 <>
                   <div className="form-control mb-4">
                     <label className="label">
-                      <span className="text-black font-medium">Request Type:</span>
+                      <span className="text-black font-medium">
+                        Request Type:
+                      </span>
                     </label>
                     <select
                       name="requestType"
@@ -287,20 +292,29 @@ const CustomerPackActions = () => {
                       name="price"
                       type="number"
                       value={customDetails.price}
-                      onChange={(e) => handleCustomDetailsChange("price", e.target.value)}
+                      onChange={(e) =>
+                        handleCustomDetailsChange("price", e.target.value)
+                      }
                       className="w-full text-black p-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-transparent transition-all duration-300"
                     />
                   </div>
 
                   <div className="form-control mb-4">
                     <label className="label">
-                      <span className="text-black font-medium">Duration (days):</span>
+                      <span className="text-black font-medium">
+                        Duration (days):
+                      </span>
                     </label>
                     <input
                       name="duration"
                       type="number"
                       value={customDetails.duration}
-                      onChange={(e) => handleCustomDetailsChange("duration", parseInt(e.target.value, 10))}
+                      onChange={(e) =>
+                        handleCustomDetailsChange(
+                          "duration",
+                          parseInt(e.target.value, 10)
+                        )
+                      }
                       className="w-full text-black p-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-transparent transition-all duration-300"
                     />
                   </div>
@@ -312,7 +326,9 @@ const CustomerPackActions = () => {
                     <textarea
                       name="itinerary"
                       value={customDetails.itinerary}
-                      onChange={(e) => handleCustomDetailsChange("itinerary", e.target.value)}
+                      onChange={(e) =>
+                        handleCustomDetailsChange("itinerary", e.target.value)
+                      }
                       className="w-full text-black p-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-transparent transition-all duration-300 resize-none"
                       rows="4"
                     ></textarea>
@@ -320,7 +336,9 @@ const CustomerPackActions = () => {
 
                   <div className="form-control mb-4">
                     <label className="label">
-                      <span className="text-black font-medium">Select Date:</span>
+                      <span className="text-black font-medium">
+                        Select Date:
+                      </span>
                     </label>
                     <DatePicker
                       selected={selectedDate}
@@ -337,13 +355,20 @@ const CustomerPackActions = () => {
 
                   <div className="form-control mb-4">
                     <label className="label">
-                      <span className="text-black font-medium">Max Group Size:</span>
+                      <span className="text-black font-medium">
+                        Max Group Size:
+                      </span>
                     </label>
                     <input
                       name="maxGroupSize"
                       type="number"
                       value={customDetails.maxGroupSize}
-                      onChange={(e) => handleCustomDetailsChange("maxGroupSize", parseInt(e.target.value, 10))}
+                      onChange={(e) =>
+                        handleCustomDetailsChange(
+                          "maxGroupSize",
+                          parseInt(e.target.value, 10)
+                        )
+                      }
                       className="w-full text-black p-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-transparent transition-all duration-300"
                     />
                   </div>
@@ -405,7 +430,9 @@ const CustomerPackActions = () => {
               </h2>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Select Your Booking:</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Select Your Booking:
+                </label>
                 {customerBookings.length > 0 ? (
                   <select
                     className="w-full border border-gray-300 rounded-md py-2 px-3"
@@ -415,27 +442,35 @@ const CustomerPackActions = () => {
                     <option value="">Select a booking</option>
                     {customerBookings.map((booking) => (
                       <option key={booking._id} value={booking._id}>
-                        {booking.bookingId || booking._id} - {new Date(booking.bookingDate).toLocaleDateString()}
+                        {booking.bookingId || booking._id} -{" "}
+                        {new Date(booking.bookingDate).toLocaleDateString()}
                       </option>
                     ))}
                   </select>
                 ) : (
                   <div className="text-red-500 p-2 bg-red-50 rounded-md">
-                    <p>You haven't booked this package yet. Please book the package before leaving a review.</p>
+                    <p>
+                      You haven't booked this package yet. Please book the
+                      package before leaving a review.
+                    </p>
                   </div>
                 )}
               </div>
 
               <div className="form-control mb-4">
                 <label className="label">
-                  <span className="text-black font-medium">Rating (1 to 5):</span>
+                  <span className="text-black font-medium">
+                    Rating (1 to 5):
+                  </span>
                 </label>
                 <select
                   value={rating}
                   onChange={(e) => setRating(e.target.value)}
                   className="w-full text-black p-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-transparent transition-all duration-300"
                 >
-                  <option className="text-black" value="1">1</option>
+                  <option className="text-black" value="1">
+                    1
+                  </option>
                   <option value="2">2</option>
                   <option value="3">3</option>
                   <option value="4">4</option>

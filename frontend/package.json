@@ -13,6 +13,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.6.0",
     "axios": "^1.7.5",
+    "dotenv": "^16.5.0",
     "framer-motion": "^12.5.0",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.464.0",

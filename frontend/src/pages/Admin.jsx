@@ -8,7 +8,7 @@ import PackagesTable from "../components/PackagesTable";
 import ReviewsTable from "../components/ReviewsTable";
 import GuidesTable from "../components/GuideTable";
 import BookingsTable from "../components/BookingsTable";
-// import AgencyTable from "../components/AgenciesTable";
+import apiUrl from "../utils/api.js";
 import {
   UserDistributionChart,
   BookingStatusChart,
@@ -45,12 +45,10 @@ const Admin = () => {
       ];
       const responses = await Promise.all(
         endpoints.map((endpoint) =>
-          axios
-            .get(`http://localhost:5000/admin/${endpoint}`)
-            .catch((error) => {
-              console.error(`Error fetching ${endpoint}:`, error);
-              return { data: { data: [] } };
-            })
+          axios.get(`${apiUrl}/admin/${endpoint}`).catch((error) => {
+            console.error(`Error fetching ${endpoint}:`, error);
+            return { data: { data: [] } };
+          })
         )
       );
 

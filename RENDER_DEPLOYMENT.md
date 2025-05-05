@@ -1,6 +1,6 @@
-# Deploying EchoVoyages on Render
+# Deploying EchoVoyages on Render with Vercel Frontend
 
-This guide explains how to deploy the EchoVoyages application on Render using Docker.
+This guide explains how to deploy the EchoVoyages backend on Render using Docker, while the frontend is deployed on Vercel at https://echo-voyages.vercel.app.
 
 ## Prerequisites
 
@@ -38,13 +38,14 @@ After the services are created, you'll need to set up the environment variables:
    - `JWT_SECRET`: A secure random string for JWT token signing
    - `NODE_ENV`: Set to "production"
    - `PORT`: Set to "10000"
+   - `FRONTEND_URL`: Set to "https://echo-voyages.vercel.app"
 
 ### 4. Verify Deployment
 
-1. Once deployment is complete, click on the URL for your frontend service
-2. Verify that the application loads correctly
+1. Once the backend deployment is complete, visit your Vercel frontend at https://echo-voyages.vercel.app
+2. Verify that the application loads correctly and can connect to the backend
 3. Test key functionality to ensure everything works as expected
-4. Check the logs for any errors
+4. Check the logs for both Render (backend) and Vercel (frontend) for any errors
 
 ## Troubleshooting
 
