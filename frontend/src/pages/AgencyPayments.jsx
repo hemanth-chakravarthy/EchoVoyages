@@ -21,7 +21,7 @@ const AgencyPayments = () => {
       setLoading(true);
       try {
         // Fetch all guides
-        const response = await axios.get("${apiUrl}/guides");
+        const response = await axios.get(`${apiUrl}/guides`);
 
         // Filter guides that have packages from this agency
         const guidesData = response.data.data || [];

@@ -51,15 +51,12 @@ const AllBookings = () => {
         return;
       }
 
-      const bookingResponse = await fetch(
-        `http://localhost:5000/bookings/${bookingId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const bookingResponse = await fetch(`${apiUrl}/bookings/${bookingId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       if (!bookingResponse.ok) {
         throw new Error(
@@ -77,7 +74,7 @@ const AllBookings = () => {
       setStatus(bookingData.status);
 
       const customerResponse = await fetch(
-        `http://localhost:5000/customers/${bookingData.customerId}`,
+        `${apiUrl}/customers/${bookingData.customerId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -110,7 +107,7 @@ const AllBookings = () => {
 
   const updateStatus = async (newStatus) => {
     try {
-      await fetch(`http://localhost:5000/bookings/${selectedBooking._id}`, {
+      await fetch(`${apiUrl}/bookings/${selectedBooking._id}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,

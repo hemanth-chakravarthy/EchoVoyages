@@ -269,7 +269,7 @@ const ViewPage = () => {
           }
 
           // Check for existing requests
-          const requestsResponse = await axios.get("${apiUrl}/guide-requests", {
+          const requestsResponse = await axios.get(`${apiUrl}/guide-requests`, {
             params: {
               guideId: userId,
               packageId,
@@ -308,7 +308,7 @@ const ViewPage = () => {
             initiator: "guide",
           };
 
-          const response = await axios.get("${apiUrl}/guide-requests", {
+          const response = await axios.get(`${apiUrl}/guide-requests`, {
             params,
             headers: { Authorization: `Bearer ${token}` },
           });
@@ -326,7 +326,7 @@ const ViewPage = () => {
   // CUSTOMER ACTIONS
   const handleCustomerRequestSubmit = async () => {
     try {
-      const response = await fetch("${apiUrl}/requests", {
+      const response = await fetch(`${apiUrl}/requests`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -366,7 +366,7 @@ const ViewPage = () => {
     }
 
     try {
-      const response = await fetch("${apiUrl}/reviews", {
+      const response = await fetch(`${apiUrl}/reviews`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -400,7 +400,7 @@ const ViewPage = () => {
 
   const addToWishlist = async () => {
     try {
-      const response = await fetch("${apiUrl}/wishlist", {
+      const response = await fetch(`${apiUrl}/wishlist`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -471,7 +471,7 @@ const ViewPage = () => {
 
     try {
       const response = await axios.post(
-        "${apiUrl}/guide-requests/guide-to-package",
+        `${apiUrl}/guide-requests/guide-to-package`,
         {
           guideId: userId,
           packageId,
@@ -595,7 +595,7 @@ const ViewPage = () => {
             The package you are looking for does not exist or has been removed.
           </p>
           <Link
-            to="/packages"
+            to="/home"
             className="bg-[#0a66c2] text-white px-4 py-2 rounded hover:bg-[#004182] transition-colors"
           >
             <FaArrowLeft className="inline mr-2" /> Browse Packages

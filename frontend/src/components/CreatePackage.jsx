@@ -105,7 +105,7 @@ const CreatePackage = () => {
     });
 
     try {
-      const response = await fetch("${apiUrl}/packages", {
+      const response = await fetch(`${apiUrl}/packages`, {
         method: "POST",
         body: formPayload,
       });

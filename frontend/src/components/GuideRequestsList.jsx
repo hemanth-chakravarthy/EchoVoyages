@@ -35,7 +35,7 @@ const GuideRequestsList = ({ packageId, refreshTrigger = 0 }) => {
             }
           : { agencyId, initiator: "guide" };
 
-        const response = await axios.get("${apiUrl}/guide-requests", {
+        const response = await axios.get(`${apiUrl}/guide-requests`, {
           params,
           headers: {
             Authorization: `Bearer ${token}`,

@@ -36,7 +36,7 @@ app.use(express.json());
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   "http://localhost:5173",
-  "https://echo-voyages.vercel.app" // For local development
+  "https://echovoyages-hr0f.onrender.com"
 ];
 
 app.use(
@@ -51,6 +51,7 @@ app.use(
     credentials: true,
   })
 );
+
 app.get("/", (req, res) => {
   res.json({ status: "success", message: "EchoVoyages API is running" });
 });

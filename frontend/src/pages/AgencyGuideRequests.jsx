@@ -117,7 +117,7 @@ const AgencyGuideRequests = () => {
       const loadingToastId = toast.loading("Cancelling request...");
 
       // Delete the request from the database
-      await axios.delete(`http://localhost:5000/guide-requests/${requestId}`, {
+      await axios.delete(`${apiUrl}/guide-requests/${requestId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

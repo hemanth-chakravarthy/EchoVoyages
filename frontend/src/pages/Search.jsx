@@ -30,8 +30,8 @@ const Search = () => {
     const fetchLocations = async () => {
       try {
         const [guideRes, packageRes] = await Promise.all([
-          axios.get("${apiUrl}/search/guide-locations"),
-          axios.get("${apiUrl}/search/package-locations"),
+          axios.get(`${apiUrl}/search/guide-locations`),
+          axios.get(`${apiUrl}/search/package-locations`),
         ]);
         setLocations([
           ...new Set([...guideRes.data.locations, ...packageRes.data]),
@@ -43,7 +43,7 @@ const Search = () => {
 
     const fetchLanguages = async () => {
       try {
-        const res = await axios.get("${apiUrl}/search/guide-languages");
+        const res = await axios.get(`${apiUrl}/search/guide-languages`);
         setLanguages(res.data || []);
       } catch (error) {
         console.error("Error fetching languages:", error);
@@ -57,7 +57,7 @@ const Search = () => {
   const handleSearch = async () => {
     if (entityType) {
       try {
-        const res = await axios.get("${apiUrl}/search", {
+        const res = await axios.get(`${apiUrl}/search`, {
           params: {
             location: selectedLocation,
             entityType,
@@ -101,36 +101,17 @@ const Search = () => {
         className="flex-grow container mx-auto px-4 py-12 relative"
       >
         <h1 className="text-5xl font-bold text-center mb-12 text-[#1a365d]">
-          Search Packages and Guides
+          Find Packages or Guides
         </h1>
 
         <motion.div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-          {/* Search input field */}
-          <div className="relative mb-6">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <FaSearch className="h-5 w-5 text-gray-400" />
-            </div>
-            <input
-              type="text"
-              placeholder="Search for packages or guides..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleSearch();
-                }
-              }}
-              className="w-full bg-white text-[#2d3748] border border-gray-200 rounded-md pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-[#4169E1] shadow-sm transition-all duration-300"
-            />
-          </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <select
               className="w-full bg-white text-[#2d3748] border border-gray-200 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:border-[#4169E1] shadow-sm transition-all duration-300"
               value={selectedLocation}
               onChange={(e) => setSelectedLocation(e.target.value)}
             >
-              <option value="">Select Location (Optional)</option>
+              <option value="">Select Location</option>
               {locations.map((loc, index) => (
                 <option key={index} value={loc}>
                   {loc}

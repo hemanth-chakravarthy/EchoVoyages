@@ -1,5 +1,4 @@
 /** @format */
-
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
@@ -13,13 +12,18 @@ const AgencyGuideDirectory = () => {
   const [guides, setGuides] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
   const [selectedGuide, setSelectedGuide] = useState(null);
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [packages, setPackages] = useState([]);
   const [selectedPackage, setSelectedPackage] = useState("");
   const [requestType, setRequestType] = useState("package_assignment");
   const [message, setMessage] = useState("");
+  const [filters, setFilters] = useState({
+    location: "",
+    language: "",
+    experience: 0,
+  });
+  const [searchTerm, setSearchTerm] = useState("");
 
   const token = localStorage.getItem("token");
   const agencyId = token ? jwtDecode(token).id : null;
@@ -76,19 +80,44 @@ const AgencyGuideDirectory = () => {
     fetchPackages();
   }, [agencyId, guideIdFromUrl]);
 
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
+  // Get unique locations and languages for filters
+  const locations = [
+    ...new Set(guides.map((guide) => guide.location).filter(Boolean)),
+  ];
+  const languages = [
+    ...new Set(guides.flatMap((guide) => guide.languages || [])),
+  ];
+
+  const handleFilterChange = (filterType, value) => {
+    setFilters({
+      ...filters,
+      [filterType]: filterType === "experience" ? Number(value) : value,
+    });
   };
 
-  const filteredGuides = guides.filter(
-    (guide) =>
-      guide.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      guide.location?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      guide.languages?.some((lang) =>
-        lang.toLowerCase().includes(searchTerm.toLowerCase())
-      ) ||
-      guide.experience?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const clearFilters = () => {
+    setFilters({
+      location: "",
+      language: "",
+      experience: 0,
+    });
+  };
+
+  const filteredGuides = guides.filter((guide) => {
+    const locationMatch =
+      !filters.location || guide.location === filters.location;
+    const languageMatch =
+      !filters.language ||
+      (guide.languages && guide.languages.includes(filters.language));
+    const experienceMatch =
+      filters.experience === 0 ||
+      (guide.experience && guide.experience >= filters.experience);
+    const nameMatch =
+      !searchTerm ||
+      (guide.name &&
+        guide.name.toLowerCase().includes(searchTerm.toLowerCase()));
+    return locationMatch && languageMatch && experienceMatch && nameMatch;
+  });
 
   const handleOpenRequestModal = (guide) => {
     setSelectedGuide(guide);
@@ -105,26 +134,22 @@ const AgencyGuideDirectory = () => {
 
   const handleSubmitRequest = async (e) => {
     e.preventDefault();
-
     if (!agencyId) {
       toast.error("You must be logged in as an agency to send requests");
       console.error("No agency ID available");
       return;
     }
-
     if (!selectedGuide || !selectedGuide._id) {
       toast.error("Invalid guide selection");
       console.error("Invalid guide:", selectedGuide);
       return;
     }
-
     if (requestType === "package_assignment") {
       if (!selectedPackage) {
         toast.error("Please select a package");
         console.error("No package selected for package assignment");
         return;
       }
-
       // Validate that the selected package exists
       const packageExists = packages.some((pkg) => pkg._id === selectedPackage);
       if (!packageExists) {
@@ -133,22 +158,18 @@ const AgencyGuideDirectory = () => {
         return;
       }
     }
-
     try {
       console.log("Selected guide:", selectedGuide);
       console.log("Selected package:", selectedPackage);
-
       const requestData = {
         agencyId,
         guideId: selectedGuide._id,
         message,
         type: requestType,
       };
-
       if (requestType === "package_assignment") {
         requestData.packageId = selectedPackage;
       }
-
       console.log("Sending request data:", requestData);
 
       // First, check if the guide exists
@@ -189,18 +210,15 @@ const AgencyGuideDirectory = () => {
             },
           }
         );
-
         console.log("Response:", response.data);
         toast.success("Request sent successfully!");
         handleCloseRequestModal();
         return;
       } catch (requestError) {
         console.error("Error sending request:", requestError);
-
         if (requestError.response) {
           console.error("Response error data:", requestError.response.data);
           console.error("Response status:", requestError.response.status);
-
           if (
             requestError.response.data &&
             requestError.response.data.message
@@ -233,251 +251,413 @@ const AgencyGuideDirectory = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#1a365d] mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading guides...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="container mx-auto px-4 py-8">
-      <ToastContainer position="top-right" autoClose={3000} />
-
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-[#1a365d]">Guide Directory</h1>
-        {/* <Link to="/AgentHome">
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="px-4 py-2 bg-[#1a365d] text-white rounded-md hover:bg-[#2d4a7e] transition-colors duration-300"
-          >
-            Back to Dashboard
-          </motion.button>
-        </Link> */}
-      </div>
-
-      <div className="mb-6">
-        <input
-          type="text"
-          placeholder="Search guides by name, location, languages, or experience..."
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1a365d]"
-          value={searchTerm}
-          onChange={handleSearchChange}
-        />
-      </div>
-
-      {error ? (
-        <div className="bg-red-100 text-red-700 p-4 rounded-md mb-6">
-          {error}
-        </div>
-      ) : filteredGuides.length === 0 ? (
-        <div className="bg-white rounded-lg shadow-md p-8 text-center">
-          <svg
-            className="w-16 h-16 text-gray-400 mx-auto mb-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            ></path>
-          </svg>
-          <h2 className="text-xl font-semibold text-gray-700 mb-2">
-            No Guides Found
-          </h2>
+    <div className="bg-[#f3f6f8] min-h-screen font-sans">
+      <ToastContainer />
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="text-center mb-10">
+          <h1 className="text-3xl font-bold text-[#0077B5] mb-2">
+            Guide Directory
+          </h1>
           <p className="text-gray-600">
-            {searchTerm
-              ? "No guides match your search criteria."
-              : "There are no guides available at the moment."}
+            Find and connect with professional guides for your tours
           </p>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredGuides.map((guide) => (
-            <motion.div
-              key={guide._id}
-              whileHover={{
-                y: -5,
-                boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
-              }}
-              className="bg-white rounded-lg shadow-md overflow-hidden"
-            >
-              <div className="p-6">
-                <h2 className="text-xl font-semibold text-[#1a365d] mb-2">
-                  {guide.name}
-                </h2>
 
-                <div className="flex items-center mb-3">
-                  <div className="flex items-center bg-yellow-100 px-3 py-1 rounded-full">
-                    <span className="text-yellow-700 font-bold mr-1">
-                      {guide.ratings && guide.ratings.averageRating > 0
-                        ? guide.ratings.averageRating.toFixed(1)
-                        : "0.0"}
+        <div className="flex flex-col md:flex-row gap-6">
+          {/* Filter Panel */}
+          <div className="w-full md:w-64 bg-white rounded-lg shadow-sm p-5">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              Filters
+            </h3>
+
+            {/* Applied filters */}
+            {(filters.location ||
+              filters.language ||
+              filters.experience > 0) && (
+              <div className="mb-6">
+                <h4 className="text-sm font-medium text-gray-700 mb-2">
+                  Applied Filters
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {filters.location && (
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      Location: {filters.location}
+                      <button
+                        onClick={() => handleFilterChange("location", "")}
+                        className="ml-1.5 text-blue-500 hover:text-blue-700"
+                      >
+                        ×
+                      </button>
                     </span>
-                    <span className="text-yellow-700">★</span>
-                    <span className="text-gray-600 ml-2 text-sm">
-                      ({guide.ratings ? guide.ratings.numberOfReviews : 0}{" "}
-                      {guide.ratings && guide.ratings.numberOfReviews === 1
-                        ? "rating"
-                        : "ratings"}
-                      )
+                  )}
+                  {filters.language && (
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      Language: {filters.language}
+                      <button
+                        onClick={() => handleFilterChange("language", "")}
+                        className="ml-1.5 text-blue-500 hover:text-blue-700"
+                      >
+                        ×
+                      </button>
                     </span>
-                  </div>
-                </div>
-
-                <p className="text-gray-600 mb-2">
-                  <span className="font-semibold">Location:</span>{" "}
-                  {guide.location}
-                </p>
-
-                {guide.languages && guide.languages.length > 0 && (
-                  <p className="text-gray-600 mb-2">
-                    <span className="font-semibold">Languages:</span>{" "}
-                    {guide.languages.join(", ")}
-                  </p>
-                )}
-
-                <p className="text-gray-600 mb-4">
-                  <span className="font-semibold">Experience:</span>{" "}
-                  {guide.experience}
-                </p>
-
-                <div className="flex justify-between items-center">
-                  <Link to={`/guides/${guide._id}`}>
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="px-3 py-1 bg-[#1a365d] text-white text-sm rounded-md hover:bg-[#2d4a7e] transition-colors duration-300"
-                    >
-                      View Profile
-                    </motion.button>
-                  </Link>
-
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => handleOpenRequestModal(guide)}
-                    className="px-3 py-1 bg-[#4169E1] text-white text-sm rounded-md hover:bg-[#2d4a7e] transition-colors duration-300"
+                  )}
+                  {filters.experience > 0 && (
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      Experience: {filters.experience}+ years
+                      <button
+                        onClick={() => handleFilterChange("experience", 0)}
+                        className="ml-1.5 text-blue-500 hover:text-blue-700"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  )}
+                  <button
+                    onClick={clearFilters}
+                    className="text-sm text-[#0077B5] hover:text-[#005885] mt-2"
                   >
-                    Send Request
-                  </motion.button>
+                    Clear All
+                  </button>
                 </div>
               </div>
-            </motion.div>
-          ))}
+            )}
+
+            {/* Filter Form */}
+            <div className="filter-section pb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Search by Name
+              </label>
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search guides..."
+                className="p-2 w-full max-w-md text-sm bg-[#f3f6f8] border-[#0a66c2]/20 focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2] transition-all duration-300"
+              />
+            </div>
+
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Location
+                </label>
+                <select
+                  value={filters.location}
+                  onChange={(e) =>
+                    handleFilterChange("location", e.target.value)
+                  }
+                  className="p-2 w-full max-w-md text-sm bg-[#f3f6f8] border-[#0a66c2]/20 focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2] transition-all duration-300"
+                >
+                  <option value="">All Locations</option>
+                  {locations.map((loc) => (
+                    <option key={loc} value={loc}>
+                      {loc}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Language
+                </label>
+                <select
+                  value={filters.language}
+                  onChange={(e) =>
+                    handleFilterChange("language", e.target.value)
+                  }
+                  className="p-2 w-full max-w-md text-sm bg-[#f3f6f8] border-[#0a66c2]/20 focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2] transition-all duration-300"
+                >
+                  <option value="">All Languages</option>
+                  {languages.map((lang) => (
+                    <option key={lang} value={lang}>
+                      {lang}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Experience (years)
+                </label>
+                <select
+                  value={filters.experience}
+                  onChange={(e) =>
+                    handleFilterChange("experience", e.target.value)
+                  }
+                  className="p-2 w-full max-w-md text-sm bg-[#f3f6f8] border-[#0a66c2]/20 focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2] transition-all duration-300"
+                >
+                  <option value="0">Any Experience</option>
+                  <option value="1">1+ years</option>
+                  <option value="3">3+ years</option>
+                  <option value="5">5+ years</option>
+                  <option value="10">10+ years</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Guide Cards */}
+          <div className="flex-1">
+            {loading ? (
+              <div className="flex flex-col items-center justify-center h-64">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0077B5]"></div>
+                <p className="mt-4 text-gray-600">Loading guides...</p>
+              </div>
+            ) : error ? (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                <p>{error}</p>
+              </div>
+            ) : filteredGuides.length === 0 ? (
+              <div className="bg-white border border-gray-200 rounded-lg p-6 text-center">
+                <p className="text-gray-600">
+                  {filters.location ||
+                  filters.language ||
+                  filters.experience > 0
+                    ? "No guides match your filter criteria."
+                    : "There are no guides available at the moment."}
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredGuides.map((guide) => (
+                  <motion.div
+                    key={guide._id}
+                    className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300"
+                    whileHover={{ y: -5 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <div className="p-5">
+                      <div className="flex items-center mb-4">
+                        <div className="h-14 w-14 rounded-full bg-[#0077B5] flex items-center justify-center text-white text-xl font-semibold mr-3">
+                          {guide.profilePicture ? (
+                            <img
+                              src={`${apiUrl}/${guide.profilePicture}`}
+                              alt={guide.name}
+                              className="h-full w-full object-cover rounded-full"
+                            />
+                          ) : guide.name ? (
+                            guide.name.charAt(0).toUpperCase()
+                          ) : (
+                            "G"
+                          )}
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-800">
+                            {guide.name}
+                          </h3>
+                          {guide.location && (
+                            <p className="text-sm text-gray-500 flex items-center">
+                              <svg
+                                className="w-4 h-4 mr-1"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                                  clipRule="evenodd"
+                                ></path>
+                              </svg>
+                              {guide.location}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="space-y-2 mb-4">
+                        {guide.languages && guide.languages.length > 0 && (
+                          <div className="flex items-start">
+                            <svg
+                              className="w-5 h-5 mr-2 text-gray-500 mt-0.5"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M7 2a1 1 0 011 1v1h3a1 1 0 110 2H9.20l-.31 1.242c-.413 1.65-1.717 2.852-3.349 3.003L5.9 13.9l3.4.9a1 1 0 01.8 1.22l-.4 1.8a1 1 0 01-1.2.8l-7-1.8a1 1 0 01-.8-1.2l1.8-7a1 1 0 011.2-.8l1.8.4a1 1 0 01.8 1.2L5.8 8.4c.5-.1.9-.5 1.1-1l.9-3.4a1 1 0 011-1z"
+                                clipRule="evenodd"
+                              ></path>
+                            </svg>
+                            <div>
+                              <p className="text-sm font-medium text-gray-700">
+                                Languages
+                              </p>
+                              <p className="text-sm text-gray-600">
+                                {guide.languages.join(", ")}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="flex items-start">
+                          <svg
+                            className="w-5 h-5 mr-2 text-gray-500 mt-0.5"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                              clipRule="evenodd"
+                            ></path>
+                          </svg>
+                          <div>
+                            <p className="text-sm font-medium text-gray-700">
+                              Experience
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              {guide.experience || 0} years
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex space-x-2 w-full">
+                        <button
+                          onClick={() => handleOpenRequestModal(guide)}
+                          className="flex-1 bg-[#0077B5] hover:bg-[#005885] text-white font-medium rounded-full transition-colors duration-300 flex items-center justify-center"
+                        >
+                          <svg
+                            className="w-5 h-5 mr-2"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"></path>
+                          </svg>
+                        </button>
+
+                        <Link
+                          to={`/guides/${guide._id}`}
+                          className="flex-1 bg-white border border-[#0077B5] text-[#0077B5] hover:bg-gray-50 font-medium py-2 px-4 rounded-full transition-colors duration-300 flex items-center justify-center"
+                        >
+                          <svg
+                            className="w-5 h-5 mr-2"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
+                            <path
+                              fillRule="evenodd"
+                              d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                              clipRule="evenodd"
+                            ></path>
+                          </svg>
+                          View Guide
+                        </Link>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
-      )}
+      </div>
 
       {/* Request Modal */}
       {showRequestModal && selectedGuide && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md"
-          >
-            <h2 className="text-2xl font-bold text-[#1a365d] mb-4">
-              Send Request to {selectedGuide.name}
-            </h2>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center p-6 border-b">
+              <h2 className="text-xl font-semibold text-gray-800">
+                Connect with {selectedGuide.name}
+              </h2>
+              <button
+                onClick={handleCloseRequestModal}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  ></path>
+                </svg>
+              </button>
+            </div>
 
-            <form onSubmit={handleSubmitRequest}>
+            <form onSubmit={handleSubmitRequest} className="p-6">
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Request Type
                 </label>
                 <select
-                  className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-[#1a365d]"
                   value={requestType}
                   onChange={(e) => setRequestType(e.target.value)}
+                  className="p-2 w-full max-w-md text-sm bg-[#f3f6f8] border-[#0a66c2]/20 focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2] transition-all duration-300"
                 >
-                  <option value="package_assignment">Assign to Package</option>
-                  <option value="general_collaboration">
-                    General Collaboration
-                  </option>
+                  <option value="package_assignment">Package Assignment</option>
+                  <option value="general_inquiry">General Inquiry</option>
                 </select>
               </div>
 
               {requestType === "package_assignment" && (
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Select Package
                   </label>
-                  {packages.length > 0 ? (
-                    <select
-                      className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-[#1a365d]"
-                      value={selectedPackage}
-                      onChange={(e) => setSelectedPackage(e.target.value)}
-                      required
-                    >
-                      <option value="">Select a package</option>
-                      {packages.map((pkg) => (
-                        <option key={pkg._id} value={pkg._id}>
-                          {pkg.name}
-                        </option>
-                      ))}
-                    </select>
-                  ) : (
-                    <p className="text-red-500 text-sm">
-                      You don't have any packages. Please create a package
-                      first.
-                    </p>
-                  )}
+                  <select
+                    value={selectedPackage}
+                    onChange={(e) => setSelectedPackage(e.target.value)}
+                    className="p-2 w-full max-w-md text-sm bg-[#f3f6f8] border-[#0a66c2]/20 focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2] transition-all duration-300"
+                  >
+                    <option value="">Select a package</option>
+                    {packages.map((pkg) => (
+                      <option key={pkg._id} value={pkg._id}>
+                        {pkg.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               )}
 
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Message (Optional)
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Message
                 </label>
                 <textarea
-                  className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-[#1a365d]"
-                  rows="4"
-                  placeholder="Explain why you'd like to work with this guide..."
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                />
+                  placeholder="Enter your message to the guide..."
+                  rows="4"
+                  className="p-2 w-full max-w-md text-sm bg-[#f3f6f8] border-[#0a66c2]/20 focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2] transition-all duration-300"
+                ></textarea>
               </div>
 
               <div className="flex justify-end space-x-3">
-                <motion.button
+                <button
                   type="button"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
                   onClick={handleCloseRequestModal}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors duration-300"
+                  className="px-4 py-2 border border-gray-300 rounded-full text-gray-700 hover:bg-gray-50 font-medium"
                 >
                   Cancel
-                </motion.button>
-
-                <motion.button
+                </button>
+                <button
                   type="submit"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`px-4 py-2 rounded-md text-white ${
-                    requestType === "package_assignment" &&
-                    (!packages.length || !selectedPackage)
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-[#1a365d] hover:bg-[#2d4a7e] transition-colors duration-300"
-                  }`}
-                  disabled={
-                    requestType === "package_assignment" &&
-                    (!packages.length || !selectedPackage)
-                  }
+                  className="px-4 py-2 bg-[#0077B5] hover:bg-[#005885] text-white rounded-full font-medium"
                 >
                   Send Request
-                </motion.button>
+                </button>
               </div>
             </form>
-          </motion.div>
+          </div>
         </div>
       )}
     </div>

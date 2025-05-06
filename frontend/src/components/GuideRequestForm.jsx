@@ -27,7 +27,7 @@ const GuideRequestForm = ({ packageId, packageName, onRequestSubmitted }) => {
 
     try {
       const response = await axios.post(
-        "${apiUrl}/guide-requests/guide-to-package",
+        `${apiUrl}/guide-requests/guide-to-package`,
         {
           guideId,
           packageId,
