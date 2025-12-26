@@ -1,7 +1,8 @@
 # EchoVoyages
-**FDFED - GROUP 15**  
+
 A travel website connecting tourists, guides and travel agencies
 
+<<<<<<< HEAD
 ## Installation and Setup
 
 ### 1. Install Dependencies
@@ -66,3 +67,6 @@ This will start the backend, and it will be running on http://localhost:5000.
 **Sai Ananya**: S20220010101  
 **Sai Jagannadh**: S20220010045  
 
+=======
+ 
+>>>>>>> a5c8bd8bd88fefdca01b3f6b77956cba0e52ac4c
