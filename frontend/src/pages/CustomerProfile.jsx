@@ -27,7 +27,6 @@ export default function CustomerProfile() {
   const [bookings, setBookings] = useState([]);
   const [statusFilter, setStatusFilter] = useState("all");
   const [loading, setLoading] = useState(true);
-  const [activeSection, setActiveSection] = useState("bookings");
 
   // Profile editing states
   const [editing, setEditing] = useState(false);
@@ -552,6 +551,38 @@ export default function CustomerProfile() {
                     <FaSuitcase className="mr-2 text-[#0a66c2]" /> Your Travel
                     Bookings
                   </h2>
+                  <div className="flex gap-2 mt-4 md:mt-0">
+                    <button
+                      onClick={() => setStatusFilter("all")}
+                      className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
+                        statusFilter === "all"
+                          ? "bg-[#0a66c2] text-white"
+                          : "bg-[#f3f6f8] text-[#56687a] hover:bg-[#dce6f1]"
+                      }`}
+                    >
+                      All
+                    </button>
+                    <button
+                      onClick={() => setStatusFilter("confirmed")}
+                      className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
+                        statusFilter === "confirmed"
+                          ? "bg-[#0a66c2] text-white"
+                          : "bg-[#f3f6f8] text-[#56687a] hover:bg-[#dce6f1]"
+                      }`}
+                    >
+                      Confirmed
+                    </button>
+                    <button
+                      onClick={() => setStatusFilter("pending")}
+                      className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
+                        statusFilter === "pending"
+                          ? "bg-[#0a66c2] text-white"
+                          : "bg-[#f3f6f8] text-[#56687a] hover:bg-[#dce6f1]"
+                      }`}
+                    >
+                      Pending
+                    </button>
+                  </div>
                 </div>
 
                 {bookings.length > 0 ? (

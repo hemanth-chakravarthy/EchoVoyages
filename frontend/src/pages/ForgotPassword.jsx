@@ -20,7 +20,7 @@ const ForgotPassword = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .post("${apiUrl}/forgot-password", { gmail: formData.gmail })
+      .post(`${apiUrl}/forgot-password`, { gmail: formData.gmail })
       .then((res) => {
         if (res.data.status === "Success") {
           navigate("/login");

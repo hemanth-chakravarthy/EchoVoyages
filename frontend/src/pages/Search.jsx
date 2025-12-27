@@ -22,7 +22,6 @@ const Search = () => {
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [availableDates, setAvailableDates] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   console.log(setMinGroupSize);
   console.log(setMaxGroupSize);
@@ -70,7 +69,6 @@ const Search = () => {
             minPrice,
             maxPrice,
             availableDates,
-            searchTerm,
           },
         });
         setSearchResults(res.data || []);
@@ -236,14 +234,6 @@ const Search = () => {
             <p className="text-[#2d3748] text-lg">
               Found <span className="font-bold">{searchResults.length}</span>{" "}
               results
-              {searchTerm && (
-                <span>
-                  {" "}
-                  for "
-                  <span className="font-bold text-[#4169E1]">{searchTerm}</span>
-                  "
-                </span>
-              )}
             </p>
           </div>
         )}
@@ -367,13 +357,9 @@ const Search = () => {
               className="col-span-full text-center p-8 bg-white rounded-lg shadow-md"
             >
               <p className="text-[#2d3748] text-xl mb-2">No results found</p>
-              {searchTerm && (
-                <p className="text-gray-500">
-                  No matches found for "
-                  <span className="font-semibold">{searchTerm}</span>". Try
-                  different keywords or filters.
-                </p>
-              )}
+              <p className="text-gray-500">
+                Try different filters to find what you're looking for.
+              </p>
             </motion.div>
           )}
         </div>

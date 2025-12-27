@@ -1,6 +1,5 @@
 /** @format */
 
-import React from "react";
 import {
   Cell,
   Pie,

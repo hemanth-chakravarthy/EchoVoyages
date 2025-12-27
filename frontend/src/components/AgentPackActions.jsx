@@ -30,7 +30,7 @@ const AgentPackActions = () => {
       setPrice(price);
       setDescription(description);
       setIsActive(isActive);
-    } catch (error) {
+    } catch {
       notifyError("Error fetching package details");
     }
   };
@@ -42,7 +42,7 @@ const AgentPackActions = () => {
       const response = await axios.put(`${apiUrl}/packages/${id}`, updatedData);
       notifySuccess(response.data.message);
       setShowModal(false);
-    } catch (error) {
+    } catch {
       notifyError("Error updating the package");
     }
   };
@@ -51,7 +51,7 @@ const AgentPackActions = () => {
     try {
       const response = await axios.delete(`${apiUrl}/packages/${id}`);
       notifySuccess(response.data.message);
-    } catch (error) {
+    } catch {
       notifyError("Error deleting the package");
     }
   };

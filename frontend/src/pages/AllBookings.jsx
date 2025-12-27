@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
@@ -19,7 +19,6 @@ import apiUrl from "../utils/api.js";
 
 const AllBookings = () => {
   const [bookings, setBookings] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [customer, setCustomer] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -33,10 +32,8 @@ const AllBookings = () => {
     try {
       const res = await axios.get(`${apiUrl}/bookings/guides/${guideId}`);
       setBookings(res.data);
-      setLoading(false);
     } catch (error) {
       console.error("Error fetching bookings:", error);
-      setLoading(false);
     }
   };
 
@@ -120,7 +117,7 @@ const AllBookings = () => {
       setTimeout(() => setSuccessMessage(""), 3000);
       fetchBookings(); // Refresh the bookings list
       fetchBookingDetails(selectedBooking._id); // Refresh modal data
-    } catch (error) {
+    } catch {
       setError("Failed to update status");
     }
   };

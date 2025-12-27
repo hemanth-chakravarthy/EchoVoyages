@@ -1,4 +1,3 @@
-import React from "react";
 // import './Footer.css';
 // import { Button } from "./Button";
 import { Link } from "react-router-dom";
@@ -51,7 +50,7 @@ function Footer() {
         <div className="social-media-wrap">
           <div className="footer-logo">
             <Link to="/home" className="social-logo" onClick={scrollToTop}>
-              Echo Voyage <i class="fa-regular fa-wave"></i>
+              Echo Voyage <i className="fa-regular fa-wave"></i>
             </Link>
           </div>
           <small className="website-rights">Echo Voyage 2024</small>

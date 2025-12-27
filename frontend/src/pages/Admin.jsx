@@ -8,6 +8,7 @@ import PackagesTable from "../components/PackagesTable";
 import ReviewsTable from "../components/ReviewsTable";
 import GuidesTable from "../components/GuideTable";
 import BookingsTable from "../components/BookingsTable";
+import AgenciesTable from '../components/AgenciesTable'
 import apiUrl from "../utils/api.js";
 import {
   UserDistributionChart,
@@ -203,7 +204,7 @@ const Admin = () => {
           ) : entity === "bookings" ? (
             <BookingsTable bookings={data.bookings} />
           ) : entity === "agency" ? (
-            <AgencyTable agencies={data.agencies} />
+            <AgenciesTable agencies={data.agencies} />
           ) : (
             <div>No Data Available</div>
           )}

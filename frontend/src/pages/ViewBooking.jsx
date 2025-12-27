@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import apiUrl from "../utils/api.js";
@@ -15,49 +15,49 @@ const ViewBooking = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const token = localStorage.getItem("token");
 
-  const fetchBooking = async () => {
-    try {
-      const response = await fetch(`${apiUrl}/bookings/${bookingId}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch booking.");
-      }
-
-      const data = await response.json();
-      setBooking(data);
-      setStatus(data.status);
-
-      const customerResponse = await fetch(
-        `${apiUrl}/customers/${data.customerId}`,
-        {
+  useEffect(() => {
+    const fetchBooking = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/bookings/${bookingId}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch booking.");
         }
-      );
 
-      if (!customerResponse.ok) {
-        throw new Error("Failed to fetch customer details.");
+        const data = await response.json();
+        setBooking(data);
+        setStatus(data.status);
+
+        const customerResponse = await fetch(
+          `${apiUrl}/customers/${data.customerId}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!customerResponse.ok) {
+          throw new Error("Failed to fetch customer details.");
+        }
+
+        const customerData = await customerResponse.json();
+        setCustomer(customerData);
+        setLoading(false);
+      } catch (error) {
+        setError(error.message);
+        setLoading(false);
       }
+    };
 
-      const customerData = await customerResponse.json();
-      setCustomer(customerData);
-      setLoading(false);
-    } catch (error) {
-      setError(error.message);
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
     fetchBooking();
   }, [bookingId, token]);
 
@@ -76,7 +76,21 @@ const ViewBooking = () => {
         throw new Error("Failed to update status.");
       }
 
-      await fetchBooking(); // Refetch the booking data
+      // Refetch the booking data
+      const fetchResponse = await fetch(`${apiUrl}/bookings/${bookingId}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (fetchResponse.ok) {
+        const data = await fetchResponse.json();
+        setBooking(data);
+        setStatus(data.status);
+      }
+
       setSuccessMessage(`Booking status updated to ${newStatus}`);
       setTimeout(() => setSuccessMessage(""), 3000); // Clear success message after 3 seconds
     } catch (error) {
