@@ -1,72 +1,106 @@
-# EchoVoyages
+# 🌍 EchoVoyages
 
-A travel website connecting tourists, guides and travel agencies
+**EchoVoyages** is a full-stack travel platform that connects **tourists**, **local guides**, and **travel agencies** into a single unified ecosystem.  
+The platform aims to simplify travel planning while promoting local expertise and curated travel experiences.
 
-<<<<<<< HEAD
-## Installation and Setup
+Built using modern web technologies, EchoVoyages emphasizes **clean architecture**, **scalability**, and **user-centric design**, making it suitable for real-world applications and future expansion.
 
-### 1. Install Dependencies
+---
+## ✨ Key Features
 
-To get started, first install the required dependencies by running the following command in your project root directory:
+- 🧭 **Tourist Dashboard** – Discover destinations, guides, and travel packages  
+- 🤝 **Local Guide Interface** – Showcase skills, manage availability, and connect with travelers  
+- 🏢 **Travel Agency Panel** – Manage tours, listings, and bookings  
+- ⚡ **Responsive UI** – Smooth and fast user experience across devices  
+- 🔐 **Backend APIs** – Structured and secure REST APIs  
 
-bash
-npm install
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+- React  
+- Tailwind CSS  
+- Redux  
+- Hooks & Event Handlers  
+
+### Backend
+- Node.js  
+- Express.js  
+
+---
 
 
-This will install all necessary packages for both the frontend and backend.
-
-### 2. Running the Frontend
-
-Once the dependencies are installed, navigate to the frontend directory:
-
-bash
-cd frontend
 
 
-Now, run the frontend application using the following command:
 
-bash
-npm run dev
+## 🚀 Installation & Run Steps
+
+### 1️⃣ Clone the Repository
+```bash
+git clone https://github.com/hemanth-chakravarthy/EchoVoyages.git
+cd EchoVoyages
+```
+
+### 2️⃣ Install Dependencies
+```npm install```
 
 
-This will start the frontend of the website, and you can view it at http://localhost:5173.
+This installs all required dependencies for both frontend and backend.
 
-### 3. Running the Backend
+### 3️⃣ Run the Frontend
+```cd frontend```
+```npm run dev```
 
-Next, go to the backend directory:
+Frontend will be available at:
 
-bash
+```http://localhost:5173```
+---
+
+### 4️⃣ Run the Backend
+
+Open a new terminal and run:
+
 cd backend
-
-
-Now, run the backend application:
-
-bash
 npm run dev
 
 
-This will start the backend, and it will be running on http://localhost:5000.
+Backend will be running at:
 
-### 4. Final Steps
+```http://localhost:5000```
 
-- The frontend and backend servers should now be running simultaneously.
-- Open the frontend at http://localhost:5173 to interact with the travel website.
-- Ensure the backend is running on http://localhost:5000 to handle requests from the frontend.
+### 5️⃣ Final Setup Check
 
-### Technologies Used
+Ensure both frontend and backend servers are running simultaneously
 
-- *Frontend*: React, TailwindCSS, Redux
-- *Backend*: Node.js, Express.js
-- *State Management*: Redux
-- *Others*: Hooks, Event Handlers
+Open the frontend URL in your browser
 
+Backend handles API requests in the background
 
-**Kusala Sameera**: S20220010121  
-**Mithilesh Iruvuri**: S20220010086  
-**Hemanth Chakravarthy**: S20220010095  
-**Sai Ananya**: S20220010101  
-**Sai Jagannadh**: S20220010045  
+---
 
-=======
- 
->>>>>>> a5c8bd8bd88fefdca01b3f6b77956cba0e52ac4c
+## 👨‍💻 Team Members
+
+Kusala Sameera – S20220010121
+
+Mithilesh Iruvuri – S20220010086
+
+Hemanth Chakravarthy – S20220010095
+
+Sai Ananya – S20220010101
+
+Sai Jagannadh – S20220010045
+
+---
+
+## 📌 Project Status
+
+EchoVoyages is actively developed and structured to support future enhancements such as:
+
+Authentication and authorization
+
+Booking and payment integrations
+
+Admin dashboards and analytics
+
+---
