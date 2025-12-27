@@ -1,19 +1,18 @@
 # 🌍 EchoVoyages
 
-**EchoVoyages** is a full-stack travel platform designed to connect **tourists**, **local guides**, and **travel agencies** through a single seamless ecosystem.  
-The platform simplifies travel planning by enabling users to explore destinations, discover local expertise, and coordinate trips efficiently.
+**EchoVoyages** is a full-stack travel platform that connects **tourists**, **local guides**, and **travel agencies** into a single unified ecosystem.  
+The platform aims to simplify travel planning while promoting local expertise and curated travel experiences.
 
-Built with a modern tech stack, EchoVoyages focuses on **user experience, scalability, and clean architecture**, making it suitable for real-world deployment and future expansion.
+Built using modern web technologies, EchoVoyages emphasizes **clean architecture**, **scalability**, and **user-centric design**, making it suitable for real-world applications and future expansion.
 
 ---
-
 ## ✨ Key Features
 
-- 🧭 **Tourist Dashboard** – Explore destinations, guides, and travel packages  
-- 🤝 **Local Guide Interface** – Showcase expertise and manage availability  
+- 🧭 **Tourist Dashboard** – Discover destinations, guides, and travel packages  
+- 🤝 **Local Guide Interface** – Showcase skills, manage availability, and connect with travelers  
 - 🏢 **Travel Agency Panel** – Manage tours, listings, and bookings  
-- ⚡ **Fast & Responsive UI** – Optimized frontend with smooth interactions  
-- 🔐 **Secure Backend APIs** – Structured REST APIs for data handling  
+- ⚡ **Responsive UI** – Smooth and fast user experience across devices  
+- 🔐 **Backend APIs** – Structured and secure REST APIs  
 
 ---
 
@@ -31,42 +30,57 @@ Built with a modern tech stack, EchoVoyages focuses on **user experience, scalab
 
 ---
 
-## 🚀 Installation & Setup
 
-### 1️⃣ Install Dependencies
-From the project root:
+
+
+
+## 🚀 Installation & Run Steps
+
+### 1️⃣ Clone the Repository
 ```bash
-npm install
-This installs dependencies for both frontend and backend.
+git clone https://github.com/hemanth-chakravarthy/EchoVoyages.git
+cd EchoVoyages
+```
 
-2️⃣ Run the Frontend
-bash
-Copy code
-cd frontend
-npm run dev
-Frontend runs at:
+### 2️⃣ Install Dependencies
+```npm install```
 
-arduino
-Copy code
-http://localhost:5173
-3️⃣ Run the Backend
-bash
-Copy code
+
+This installs all required dependencies for both frontend and backend.
+
+### 3️⃣ Run the Frontend
+```cd frontend```
+```npm run dev```
+
+Frontend will be available at:
+
+```http://localhost:5173```
+---
+
+### 4️⃣ Run the Backend
+
+Open a new terminal and run:
+
 cd backend
 npm run dev
-Backend runs at:
 
-arduino
-Copy code
-http://localhost:5000
-4️⃣ Final Check
-Ensure both servers are running
 
-Open the frontend in your browser
+Backend will be running at:
+
+```http://localhost:5000```
+
+### 5️⃣ Final Setup Check
+
+Ensure both frontend and backend servers are running simultaneously
+
+Open the frontend URL in your browser
 
 Backend handles API requests in the background
 
-👨‍💻 Team Members
+---
+
+## 👨‍💻 Team Members
+
 Kusala Sameera – S20220010121
 
 Mithilesh Iruvuri – S20220010086
@@ -77,11 +91,16 @@ Sai Ananya – S20220010101
 
 Sai Jagannadh – S20220010045
 
-📌 Project Status
-This project is actively developed and structured for future enhancements such as:
+---
 
-Authentication & authorization
+## 📌 Project Status
 
-Booking & payment integration
+EchoVoyages is actively developed and structured to support future enhancements such as:
 
-Admin analytics dashboard
+Authentication and authorization
+
+Booking and payment integrations
+
+Admin dashboards and analytics
+
+---
