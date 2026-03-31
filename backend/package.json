@@ -7,8 +7,8 @@
     "test:simple": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config=jest.simple.config.js tests/simple.test.js",
     "test:minimal": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config=jest.minimal.config.js tests/minimal.test.js",
     "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
-    "start": "node --env-file=.env.production index.js",
-    "dev": "nodemon --env-file=.env.production index.js"
+    "start": "node index.js",
+    "dev": "nodemon --env-file=.env index.js"
   },
   "keywords": [],
   "author": "",
