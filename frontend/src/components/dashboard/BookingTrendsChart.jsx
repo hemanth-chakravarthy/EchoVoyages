@@ -8,33 +8,24 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-  Legend,
 } from "recharts";
 
 export const BookingTrendsChart = ({ data }) => {
-  // Process booking data by month
   const processBookingsByMonth = () => {
     if (!data.bookings?.length) return [];
 
     const monthlyData = {};
-
-    // Initialize with last 6 months
     const today = new Date();
     for (let i = 5; i >= 0; i--) {
       const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
       const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
       const monthName = date.toLocaleString("default", { month: "short" });
-      monthlyData[monthKey] = {
-        month: monthName,
-        bookings: 0,
-      };
+      monthlyData[monthKey] = { month: monthName, bookings: 0 };
     }
 
-    // Aggregate booking data
     data.bookings.forEach((booking) => {
       const bookingDate = new Date(booking.bookingDate);
       const monthKey = `${bookingDate.getFullYear()}-${String(bookingDate.getMonth() + 1).padStart(2, "0")}`;
-
       if (monthlyData[monthKey]) {
         monthlyData[monthKey].bookings += 1;
       }
@@ -44,16 +35,15 @@ export const BookingTrendsChart = ({ data }) => {
   };
 
   const chartData = processBookingsByMonth();
+  const maxBookings = Math.max(...chartData.map((d) => d.bookings), 1);
 
-  // Custom tooltip
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-white p-3 border rounded shadow-sm">
-          <p className="font-medium mb-1">{label}</p>
-          <p className="text-sm">
-            <span className="inline-block w-3 h-3 bg-blue-500 rounded-full mr-2"></span>
-            Bookings: {payload[0].value}
+        <div className="bg-[#111111] text-[#f5f3f0] px-4 py-3 text-[10px] font-bold uppercase tracking-widest shadow-lg">
+          <p>{label}</p>
+          <p className="text-[#f5f3f0]/60 mt-1">
+            {payload[0].value} Bookings
           </p>
         </div>
       );
@@ -61,61 +51,56 @@ export const BookingTrendsChart = ({ data }) => {
     return null;
   };
 
-  // If no data, show placeholder
   if (!chartData.length) {
     return (
-      <div className="rounded-lg border bg-card p-6 h-[350px] flex items-center justify-center">
-        <p className="text-muted-foreground">No booking data available</p>
+      <div className="border border-[#111111]/10 bg-[#ffffff] p-6 md:p-8 h-[380px] flex items-center justify-center">
+        <p className="text-[10px] text-[#111111]/40 uppercase tracking-widest">
+          No booking data available
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="rounded-lg border bg-card p-6">
-      <h3 className="text-lg font-semibold mb-4">
-        Booking Trends (Last 6 Months)
-      </h3>
-      <div className="h-[300px]">
+    <div className="border border-[#111111]/10 bg-[#ffffff] p-6 md:p-8">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#111111]/50">
+          Booking Trends
+        </h3>
+        <span className="text-[10px] font-bold tracking-widest text-[#111111]/30 uppercase">
+          Last 6 Months
+        </span>
+      </div>
+
+      <div className="h-[280px]">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}
-            margin={{
-              top: 5,
-              right: 30,
-              left: 20,
-              bottom: 5,
-            }}
+            margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
           >
-            <CartesianGrid strokeDasharray="3 3" vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#11111110" />
             <XAxis
               dataKey="month"
               axisLine={false}
               tickLine={false}
-              tickMargin={10}
+              tickMargin={12}
+              tick={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.15em", fill: "#11111160" }}
             />
             <YAxis
-              yAxisId="left"
               axisLine={false}
               tickLine={false}
-              tickMargin={10}
-            />
-            <YAxis
-              yAxisId="right"
-              orientation="right"
-              axisLine={false}
-              tickLine={false}
-              tickMargin={10}
+              tickMargin={12}
+              domain={[0, Math.ceil(maxBookings * 1.2)]}
+              tick={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.15em", fill: "#11111160" }}
             />
             <Tooltip content={<CustomTooltip />} />
-            <Legend />
             <Line
-              yAxisId="left"
               type="monotone"
               dataKey="bookings"
-              stroke="#3b82f6"
+              stroke="#111111"
               strokeWidth={2}
-              activeDot={{ r: 6 }}
-              name="Bookings"
+              dot={{ fill: "#ffffff", stroke: "#111111", strokeWidth: 2, r: 4 }}
+              activeDot={{ fill: "#111111", stroke: "#ffffff", strokeWidth: 2, r: 6 }}
             />
           </LineChart>
         </ResponsiveContainer>

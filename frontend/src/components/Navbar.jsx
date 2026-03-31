@@ -50,6 +50,17 @@ const Navbar = () => {
     }
 
     switch (userRole) {
+      case "admin":
+        return {
+          group1: [
+            { to: "/admin", text: "Dashboard" },
+            { to: "/realhome", text: "Site View" }
+          ],
+          group2: [],
+          auth: [
+            { to: "#logout", text: "Logout", isLogout: true }
+          ]
+        };
       case "agency":
       case "agent":
         return {

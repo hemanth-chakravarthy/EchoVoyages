@@ -50,14 +50,27 @@ const App = () => {
       <Route element={<Layout />}>
         {/* Public routes with navbar */}
         <Route path="/realhome" element={<ActHomePage />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/admin/:entityType/:id" element={<ShowEntity />} />
-        <Route path="/admin/:entityType/edit/:id" element={<UpdateEntity />} />
+        <Route path="/admin" element={<PrivateRoute allowedRoles={["admin"]} />}>
+          <Route path="/admin" element={<Admin />} />
+        </Route>
+        <Route path="/admin/:entityType/:id" element={<PrivateRoute allowedRoles={["admin"]} />}>
+          <Route path="/admin/:entityType/:id" element={<ShowEntity />} />
+        </Route>
+        <Route path="/admin/:entityType/edit/:id" element={<PrivateRoute allowedRoles={["admin"]} />}>
+          <Route path="/admin/:entityType/edit/:id" element={<UpdateEntity />} />
+        </Route>
         <Route
           path="/admin/:entityType/delete/:id"
-          element={<DeleteEntity />}
-        />
-        <Route path="/admin/*/edit/:id" element={<UpdateEntity />} />
+          element={<PrivateRoute allowedRoles={["admin"]} />}
+        >
+          <Route
+            path="/admin/:entityType/delete/:id"
+            element={<DeleteEntity />}
+          />
+        </Route>
+        <Route path="/admin/*/edit/:id" element={<PrivateRoute allowedRoles={["admin"]} />}>
+          <Route path="/admin/*/edit/:id" element={<UpdateEntity />} />
+        </Route>
         <Route path="/payment" element={<PaymentGateway />} />
 
         {/* Protected routes with navbar */}
@@ -68,7 +81,8 @@ const App = () => {
         <Route path="/bookings/:bookingId" element={<PrivateRoute />}>
           <Route path="/bookings/:bookingId" element={<ViewBooking />} />
         </Route>
-        <Route path="/all-bookings" element={<PrivateRoute />}>
+
+        <Route path="/all-bookings" element={<PrivateRoute allowedRoles={["guide"]} />}>
           <Route path="/all-bookings" element={<AllBookings />} />
         </Route>
 
@@ -88,61 +102,55 @@ const App = () => {
           <Route path="/requests/:id" element={<ViewReq />} />
         </Route>
 
-        <Route path="/AgentHome" element={<PrivateRoute />}>
+        <Route path="/AgentHome" element={<PrivateRoute allowedRoles={["agency"]} />}>
           <Route path="/AgentHome" element={<AgentHomePage />} />
         </Route>
 
-        <Route path="/GuideHome" element={<PrivateRoute />}>
+        <Route path="/GuideHome" element={<PrivateRoute allowedRoles={["guide"]} />}>
           <Route path="/GuideHome" element={<GuideHome />} />
         </Route>
 
-        <Route path="/guide-requests" element={<PrivateRoute />}>
+        <Route path="/guide-requests" element={<PrivateRoute allowedRoles={["guide"]} />}>
           <Route path="/guide-requests" element={<GuideRequests />} />
         </Route>
 
-        <Route path="/agency-guide-requests" element={<PrivateRoute />}>
-          <Route
-            path="/agency-guide-requests"
-            element={<AgencyGuideRequests />}
-          />
+        <Route path="/agency-guide-requests" element={<PrivateRoute allowedRoles={["agency"]} />}>
+          <Route path="/agency-guide-requests" element={<AgencyGuideRequests />} />
         </Route>
 
-        <Route path="/agency-guide-directory" element={<PrivateRoute />}>
-          <Route
-            path="/agency-guide-directory"
-            element={<AgencyGuideDirectory />}
-          />
+        <Route path="/agency-guide-directory" element={<PrivateRoute allowedRoles={["agency"]} />}>
+          <Route path="/agency-guide-directory" element={<AgencyGuideDirectory />} />
         </Route>
 
-        <Route path="/agency-analytics" element={<PrivateRoute />}>
+        <Route path="/agency-analytics" element={<PrivateRoute allowedRoles={["agency"]} />}>
           <Route path="/agency-analytics" element={<AgencyAnalytics />} />
         </Route>
 
-        <Route path="/agency-payments" element={<PrivateRoute />}>
+        <Route path="/agency-payments" element={<PrivateRoute allowedRoles={["agency"]} />}>
           <Route path="/agency-payments" element={<AgencyPayments />} />
         </Route>
 
-        <Route path="/AgentProfilePage" element={<PrivateRoute />}>
+        <Route path="/AgentProfilePage" element={<PrivateRoute allowedRoles={["agency"]} />}>
           <Route path="/AgentProfilePage" element={<AgentProfilePage />} />
         </Route>
 
-        <Route path="/GuideProfile" element={<PrivateRoute />}>
+        <Route path="/GuideProfile" element={<PrivateRoute allowedRoles={["guide"]} />}>
           <Route path="/GuideProfile" element={<GuideProfile />} />
         </Route>
 
-        <Route path="/customerWishlist" element={<PrivateRoute />}>
+        <Route path="/customerWishlist" element={<PrivateRoute allowedRoles={["customer"]} />}>
           <Route path="/customerWishlist" element={<CustomerWishlist />} />
         </Route>
 
-        <Route path="/createPackage" element={<PrivateRoute />}>
+        <Route path="/createPackage" element={<PrivateRoute allowedRoles={["agency"]} />}>
           <Route path="/createPackage" element={<CreatePackagePage />} />
         </Route>
 
-        <Route path="/profile" element={<PrivateRoute />}>
+        <Route path="/profile" element={<PrivateRoute allowedRoles={["customer"]} />}>
           <Route path="/profile" element={<CustomerProfile />} />
         </Route>
 
-        <Route path="/mylistings" element={<PrivateRoute />}>
+        <Route path="/mylistings" element={<PrivateRoute allowedRoles={["agency"]} />}>
           <Route path="/mylistings" element={<AgentViewAll />} />
         </Route>
 

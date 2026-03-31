@@ -8,6 +8,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import apiUrl from "../utils/api.js";
 import { Link } from "react-router-dom";
+import { FaInbox, FaPaperPlane, FaClock, FaCheckCircle, FaTimesCircle, FaCalendarAlt, FaBox, FaHome } from "react-icons/fa";
 import GuideIncomingRequests from "../components/GuideIncomingRequests";
 import ConfirmationModal from "../components/ConfirmationModal";
 
@@ -18,7 +19,6 @@ const GuideRequests = () => {
   const [activeSection, setActiveSection] = useState("incoming");
   const [incomingCount, setIncomingCount] = useState(0);
 
-  // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalData, setModalData] = useState({
     title: "",
@@ -54,22 +54,18 @@ const GuideRequests = () => {
   }, [token, guideId]);
 
   const handleCancelRequest = (requestId) => {
-    // Open confirmation modal
     setModalData({
       title: "Cancel Request",
       message: "Are you sure you want to cancel this request?",
       onConfirm: async () => {
         try {
-          // Show loading toast
           const loadingToastId = toast.loading("Cancelling request...");
           await axios.delete(`${apiUrl}/guide-requests/${requestId}`, {
             headers: { Authorization: `Bearer ${token}` },
           });
-          // Remove the request from the list
           setRequests((prevRequests) =>
             prevRequests.filter((req) => req._id !== requestId)
           );
-          // Update loading toast to success
           toast.update(loadingToastId, {
             render: "Request cancelled successfully",
             type: "success",
@@ -89,10 +85,9 @@ const GuideRequests = () => {
   };
 
   return (
-    <div className="min-h-screen font-sans bg-[#f3f6f8]">
+    <div className="w-full bg-[#f5f3f0] text-[#111111] min-h-screen font-sans uppercase tracking-[0.15em] text-xs">
       <ToastContainer />
 
-      {/* Confirmation Modal */}
       <ConfirmationModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -101,194 +96,174 @@ const GuideRequests = () => {
         message={modalData.message}
       />
 
-      <main className="max-w-4xl mx-auto py-8 px-4">
-        <h1 className="text-2xl font-bold text-[#0a66c2] mb-6">
-          Guide Requests
-        </h1>
-
-        {/* Section Toggle Buttons */}
-        <div className="mb-8 flex space-x-4">
-          <button
-            onClick={() => setActiveSection("incoming")}
-            className={`px-4 py-2 rounded-md font-medium transition-colors ${
-              activeSection === "incoming"
-                ? "bg-[#0a66c2] text-white"
-                : "bg-white text-[#0a66c2] border border-[#0a66c2] hover:bg-[#f3f6f8]"
-            }`}
-          >
-            Incoming Requests
-            {incomingCount > 0 && (
-              <span className="ml-2 bg-white text-[#0a66c2] rounded-full px-2 py-0.5 text-xs font-bold">
-                {incomingCount}
-              </span>
-            )}
-          </button>
-          <button
-            onClick={() => setActiveSection("sent")}
-            className={`px-4 py-2 rounded-md font-medium transition-colors ${
-              activeSection === "sent"
-                ? "bg-[#0a66c2] text-white"
-                : "bg-white text-[#0a66c2] border border-[#0a66c2] hover:bg-[#f3f6f8]"
-            }`}
-          >
-            Sent Requests
-          </button>
+      <main className="max-w-[1400px] mx-auto px-6 md:px-10 py-12 md:py-24">
+        {/* Header */}
+        <div className="mb-12 md:mb-16">
+          <span className="block text-xs md:text-sm font-semibold tracking-widest text-[#111111]/70 uppercase mb-4">
+            006 / Request Hub
+          </span>
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-6 text-[#111111]">
+            Guide Requests
+          </h1>
+          <p className="text-[10px] sm:text-xs md:text-lg text-[#111111]/70 max-w-lg leading-relaxed tracking-wider">
+            Manage incoming and outgoing guide requests. Stay on top of your
+            assignments and collaborations.
+          </p>
         </div>
 
-        {activeSection === "incoming" && (
-          <div>
-            <GuideIncomingRequests
-              guideId={guideId}
-              token={token}
-              setIncomingCount={setIncomingCount}
-            />
+        {/* Section Tabs */}
+        <div className="border border-[#111111]/10 mb-8">
+          <div className="flex">
+            <button
+              onClick={() => setActiveSection("incoming")}
+              className={`flex items-center gap-3 px-6 md:px-8 py-5 font-bold text-[10px] uppercase tracking-widest transition-all duration-300 flex-1 justify-center ${
+                activeSection === "incoming"
+                  ? "bg-[#111111] text-[#f5f3f0]"
+                  : "text-[#111111]/50 hover:text-[#111111] hover:bg-[#ffffff]"
+              }`}
+            >
+              <FaInbox className="text-sm" />
+              Incoming
+              {incomingCount > 0 && (
+                <span className="ml-2 bg-[#f5f3f0] text-[#111111] text-[9px] px-2 py-0.5 font-bold">
+                  {incomingCount}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => setActiveSection("sent")}
+              className={`flex items-center gap-3 px-6 md:px-8 py-5 font-bold text-[10px] uppercase tracking-widest transition-all duration-300 flex-1 justify-center ${
+                activeSection === "sent"
+                  ? "bg-[#111111] text-[#f5f3f0]"
+                  : "text-[#111111]/50 hover:text-[#111111] hover:bg-[#ffffff]"
+              }`}
+            >
+              <FaPaperPlane className="text-sm" />
+              Sent
+            </button>
           </div>
+        </div>
+
+        {/* Incoming */}
+        {activeSection === "incoming" && (
+          <GuideIncomingRequests
+            guideId={guideId}
+            token={token}
+            setIncomingCount={setIncomingCount}
+          />
         )}
 
+        {/* Sent */}
         {activeSection === "sent" && (
           <>
             {loading ? (
-              <div className="flex flex-col items-center justify-center py-12 bg-white bg-opacity-90 rounded-lg shadow-md">
-                <svg
-                  className="animate-spin h-10 w-10 text-[#0a66c2] mb-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                <p className="text-[#38434f] text-lg">
-                  Loading your guide requests...
+              <div className="flex flex-col items-center justify-center py-32">
+                <div className="w-16 h-[2px] bg-[#111111]/20 overflow-hidden relative">
+                  <div className="absolute left-0 top-0 h-full bg-[#111111] animate-pulse" style={{ width: "50%" }} />
+                </div>
+                <p className="mt-4 text-[10px] text-[#111111]/50 uppercase font-bold tracking-widest">
+                  Loading Requests...
                 </p>
               </div>
             ) : error ? (
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
-                <p className="font-medium">{error}</p>
+              <div className="border border-red-500/30 p-6 md:p-8 text-red-600 text-[10px] uppercase tracking-widest">
+                {error}
               </div>
             ) : requests.length === 0 ? (
-              <div className="bg-white bg-opacity-95 rounded-lg shadow-md p-8 text-center">
-                <svg
-                  className="h-16 w-16 text-[#0a66c2] mx-auto mb-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                  />
-                </svg>
-                <p className="text-[#38434f] text-lg mb-4">
+              <div className="border border-[#111111]/10 p-8 md:p-16 text-center">
+                <FaBox className="w-16 h-16 text-[#111111]/20 mx-auto mb-6" />
+                <h2 className="text-xl md:text-2xl font-bold tracking-tight text-[#111111] mb-3">
+                  No Sent Requests
+                </h2>
+                <p className="text-[10px] text-[#111111]/40 uppercase tracking-widest mb-6">
                   You have not requested to guide any packages yet.
                 </p>
                 <Link
                   to="/home"
-                  className="inline-block bg-[#0a66c2] hover:bg-[#004182] text-white font-medium py-2 px-6 rounded-md transition-colors"
+                  className="inline-block bg-[#111111] text-[#f5f3f0] px-8 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-[#1a1a1a] transition-colors duration-300"
                 >
                   Browse Packages
                 </Link>
               </div>
             ) : (
-              <div className="space-y-4">
-                {requests.map((request) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                {requests.map((request, index) => (
                   <motion.div
                     key={request._id}
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="bg-white bg-opacity-95 rounded-lg shadow-md p-6 border border-[#dce6f1]"
+                    transition={{ duration: 0.4, delay: index * 0.05 }}
+                    whileHover={{ y: -8 }}
+                    className="group border border-[#111111]/10 bg-[#ffffff] hover:border-[#111111]/30 transition-all duration-500"
                   >
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                      <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-[#0a66c2] mb-2">
-                          {request.packageName || "Package Request"}
-                        </h3>
-                        <p className="text-[#38434f] mb-3">{request.message}</p>
-                        <div className="flex flex-wrap gap-4 text-sm text-[#38434f]">
-                          <span className="flex items-center">
-                            <svg
-                              className="h-4 w-4 mr-1 text-[#0a66c2]"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                              ></path>
-                            </svg>
-                            <span className="font-medium mr-1">
-                              Requested on:
-                            </span>
-                            {new Date(request.createdAt).toLocaleDateString()}
-                          </span>
-
-                          {request.status !== "pending" && (
-                            <span className="flex items-center">
-                              <svg
-                                className="h-4 w-4 mr-1 text-[#0a66c2]"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth="2"
-                                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                                ></path>
-                              </svg>
-                              <span className="font-medium mr-1">
-                                {request.status.charAt(0).toUpperCase() +
-                                  request.status.slice(1)}{" "}
-                                on:
-                              </span>{" "}
-                              {new Date(request.updatedAt).toLocaleDateString()}
-                            </span>
-                          )}
+                    <div className="p-6 md:p-8">
+                      {/* Header */}
+                      <div className="flex justify-between items-start mb-6">
+                        <div>
+                          <h3 className="text-base md:text-lg font-bold tracking-tight text-[#111111] mb-2">
+                            {request.packageName || "PACKAGE REQUEST"}
+                          </h3>
                         </div>
-                      </div>
-
-                      <div className="mt-4 md:mt-0 flex flex-col items-start md:items-end">
                         <span
-                          className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${
+                          className={`px-3 py-1 text-[9px] font-bold uppercase tracking-widest flex items-center gap-2 ${
                             request.status === "pending"
-                              ? "bg-yellow-100 text-yellow-800"
+                              ? "bg-yellow-500/10 text-yellow-600 border border-yellow-500/30"
                               : request.status === "approved"
-                                ? "bg-green-100 text-green-800"
-                                : request.status === "rejected"
-                                  ? "bg-red-100 text-red-800"
-                                  : "bg-gray-100 text-gray-800"
+                              ? "bg-green-500/10 text-green-600 border border-green-500/30"
+                              : "bg-red-500/10 text-red-600 border border-red-500/30"
                           }`}
                         >
+                          {request.status === "pending" && (
+                            <FaClock className="text-xs" />
+                          )}
+                          {request.status === "approved" && (
+                            <FaCheckCircle className="text-xs" />
+                          )}
+                          {request.status === "rejected" && (
+                            <FaTimesCircle className="text-xs" />
+                          )}
                           {request.status}
                         </span>
+                      </div>
 
-                        {request.status === "pending" && (
-                          <button
-                            onClick={() => handleCancelRequest(request._id)}
-                            className="mt-3 bg-[#0a66c2] hover:bg-[#004182] text-white py-2 px-4 rounded-md font-medium transition-colors"
-                          >
-                            Cancel Request
-                          </button>
+                      {/* Message */}
+                      {request.message && (
+                        <div className="bg-[#f0eeeb] p-4 mb-6 flex items-start gap-3 border border-[#111111]/5">
+                          <p className="text-[10px] text-[#111111]/70 uppercase tracking-widest leading-relaxed">
+                            {request.message}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Dates */}
+                      <div className="text-[10px] text-[#111111]/40 uppercase tracking-widest mb-6 space-y-2">
+                        <div className="flex items-center gap-2">
+                          <FaCalendarAlt className="text-[#111111]/30" />
+                          <span>
+                            Requested:{" "}
+                            {new Date(request.createdAt).toLocaleDateString()}
+                          </span>
+                        </div>
+                        {request.status !== "pending" && (
+                          <div className="flex items-center gap-2">
+                            <FaCheckCircle className="text-[#111111]/30" />
+                            <span>
+                              {request.status.charAt(0).toUpperCase() + request.status.slice(1)}:{" "}
+                              {new Date(request.updatedAt).toLocaleDateString()}
+                            </span>
+                          </div>
                         )}
                       </div>
+
+                      {/* Cancel Button */}
+                      {request.status === "pending" && (
+                        <button
+                          onClick={() => handleCancelRequest(request._id)}
+                          className="w-full bg-red-500/10 text-red-600 border border-red-500/30 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-red-500/20 transition-colors duration-300"
+                        >
+                          Cancel Request
+                        </button>
+                      )}
                     </div>
                   </motion.div>
                 ))}

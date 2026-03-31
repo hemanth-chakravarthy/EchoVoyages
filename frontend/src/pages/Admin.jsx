@@ -150,7 +150,7 @@ const Admin = () => {
   );
 
   return (
-    <div className="w-full bg-[#f5f3f0] text-[#1a1a1a] font-sans min-h-screen">
+    <div className="w-full bg-[#f5f3f0] text-[#1a1a1a] font-sans min-h-screen pt-16">
       {/* Hero Header */}
       <section 
         ref={heroRef}

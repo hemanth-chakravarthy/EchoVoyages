@@ -1,12 +1,25 @@
 import { Navigate, Outlet } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 
-const PrivateRoute = () => {
-  console.log('PrivateRoute: Checking token', localStorage.getItem('token'));
-  const isAuthenticated = localStorage.getItem('token');
+const PrivateRoute = ({ allowedRoles }) => {
+  const token = localStorage.getItem('token');
+  
+  if (!token) {
+    return <Navigate to="/" />;
+  }
 
-  // If authenticated, render the Outlet which will be the child route component
-  // If not authenticated, redirect to the landing page
-  return isAuthenticated ? <Outlet /> : <Navigate to="/" />;
+  if (allowedRoles && allowedRoles.length > 0) {
+    try {
+      const decoded = jwtDecode(token);
+      if (!allowedRoles.includes(decoded.role)) {
+        return <Navigate to="/" />;
+      }
+    } catch {
+      return <Navigate to="/" />;
+    }
+  }
+
+  return <Outlet />;
 };
 
 export default PrivateRoute;

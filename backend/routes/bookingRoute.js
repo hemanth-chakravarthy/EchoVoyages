@@ -338,9 +338,7 @@ router.get("/cust/:customerId", cacheMiddleware(120), async (req, res) => {
   try {
     const booking = await bookings.find({ customerId });
     if (booking.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No bookings found for this customer" });
+      return res.status(200).json([]);
     }
     return res.status(200).json(booking);
   } catch (error) {
@@ -390,11 +388,9 @@ router.get("/pack/:packageId", cacheMiddleware(300), async (req, res, next) => {
     // Find bookings associated with the specific customerId
     const booking = await bookings.find({ packageId });
 
-    // If no bookings are found
+    // If no bookings are found, return empty array
     if (booking.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No bookings found for this package" });
+      return res.status(200).json([]);
     }
 
     // Send the found bookings as a response
@@ -460,9 +456,7 @@ router.get("/guides/:guideId", cacheMiddleware(120), async (req, res, next) => {
       .lean();
 
     if (booking.length === 0) {
-      return res.status(404).json({
-        message: `No ${type || ""} assignments found for this guide!`,
-      });
+      return res.status(200).json([]);
     }
 
     res.status(200).json(booking);

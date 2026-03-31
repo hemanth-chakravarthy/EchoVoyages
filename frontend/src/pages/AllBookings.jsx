@@ -94,8 +94,8 @@ const AllBookings = () => {
   };
 
   const handleViewBooking = async (bookingId) => {
-    setError(""); // Clear any previous errors
-    setSuccessMessage(""); // Clear any previous success messages
+    setError("");
+    setSuccessMessage("");
     if (bookingId) {
       setIsModalOpen(true);
       await fetchBookingDetails(bookingId);
@@ -115,125 +115,137 @@ const AllBookings = () => {
 
       setSuccessMessage(`Booking status updated to ${newStatus}`);
       setTimeout(() => setSuccessMessage(""), 3000);
-      fetchBookings(); // Refresh the bookings list
-      fetchBookingDetails(selectedBooking._id); // Refresh modal data
+      fetchBookings();
+      fetchBookingDetails(selectedBooking._id);
     } catch {
       setError("Failed to update status");
     }
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="min-h-screen bg-[#f3f6f8] font-['Inter',sans-serif] text-[#000000E6]"
-    >
-      <main className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-semibold text-[#000000E6]">
-            Booking Management
-          </h1>
-          <span className="text-[#666666]">
-            Total Bookings: {bookings.length}
+    <div className="w-full bg-[#f5f3f0] text-[#111111] min-h-screen font-sans uppercase tracking-[0.15em] text-xs">
+      <main className="max-w-[1400px] mx-auto px-6 md:px-10 py-12 md:py-24">
+        {/* Header */}
+        <div className="mb-12 md:mb-16 flex items-end justify-between">
+          <div>
+            <span className="block text-xs md:text-sm font-semibold tracking-widest text-[#111111]/70 uppercase mb-4">
+              005 / Booking Ledger
+            </span>
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-6 text-[#111111]">
+              Bookings
+            </h1>
+          </div>
+          <span className="text-[10px] font-bold tracking-widest text-[#111111]/50 uppercase">
+            {bookings.length} Total
           </span>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-lg shadow-sm border border-[#00000014]"
-        >
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-[#EEF3F8]">
-                <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-[#000000E6]">
-                    Customer
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-[#000000E6]">
-                    Booking Date
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-[#000000E6]">
-                    Status
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-[#000000E6]">
-                    Action
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#00000014]">
-                {bookings.map((booking) => (
-                  <tr
-                    key={booking._id}
-                    className="hover:bg-[#EEF3F8] transition-colors"
-                  >
-                    <td className="px-6 py-4">
-                      <div className="flex items-center space-x-3">
-                        <div className="h-12 w-12 rounded-full bg-[#0a66c2] flex items-center justify-center text-white">
-                          {booking.customerImage ? (
-                            <img
-                              src={booking.customerImage}
-                              alt={booking.customerName}
-                              className="h-12 w-12 rounded-full object-cover"
-                            />
-                          ) : (
-                            <FaUser size={20} />
-                          )}
-                        </div>
-                        <div>
-                          <div className="font-medium text-[#000000E6]">
-                            {booking.customerName}
-                          </div>
-                          <div className="text-sm text-[#666666]">
-                            ID: {booking._id.slice(-6)}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center text-[#666666]">
-                        <FaCalendarAlt className="mr-2" />
-                        {new Date(booking.createdAt).toLocaleDateString()}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-sm
-                        ${
-                          booking.status === "confirmed"
-                            ? "bg-[#057642] text-white"
-                            : booking.status === "pending"
-                              ? "bg-[#0a66c2] text-white"
-                              : "bg-[#666666] text-white"
-                        }`}
-                      >
-                        {booking.status === "confirmed" && (
-                          <FaCheckCircle className="mr-1" />
-                        )}
-                        {booking.status === "pending" && (
-                          <FaHourglassHalf className="mr-1" />
-                        )}
-                        {booking.status === "cancelled" && (
-                          <FaBan className="mr-1" />
-                        )}
-                        {booking.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <button
-                        onClick={() => handleViewBooking(booking._id)}
-                        className="inline-flex items-center px-4 py-2 bg-[#0a66c2] text-white rounded hover:bg-[#004182] transition-colors"
-                      >
-                        <FaEye className="mr-2" />
-                        View Details
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        {/* Table */}
+        {bookings.length === 0 ? (
+          <div className="border border-[#111111]/10 p-8 md:p-16 text-center">
+            <FaCalendarAlt className="w-16 h-16 text-[#111111]/20 mx-auto mb-6" />
+            <h2 className="text-xl md:text-2xl font-bold tracking-tight text-[#111111] mb-3">
+              No Bookings Found
+            </h2>
+            <p className="text-[10px] text-[#111111]/40 uppercase tracking-widest">
+              There are no bookings assigned to you yet.
+            </p>
           </div>
-        </motion.div>
+        ) : (
+          <div className="border border-[#111111]/10 bg-[#ffffff]">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-[#111111]/10">
+                    <th className="px-6 md:px-8 py-5 text-left text-[10px] font-bold uppercase tracking-widest text-[#111111]/50">
+                      Customer
+                    </th>
+                    <th className="px-6 md:px-8 py-5 text-left text-[10px] font-bold uppercase tracking-widest text-[#111111]/50">
+                      Date
+                    </th>
+                    <th className="px-6 md:px-8 py-5 text-left text-[10px] font-bold uppercase tracking-widest text-[#111111]/50">
+                      Status
+                    </th>
+                    <th className="px-6 md:px-8 py-5 text-left text-[10px] font-bold uppercase tracking-widest text-[#111111]/50">
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {bookings.map((booking) => (
+                    <tr
+                      key={booking._id}
+                      className="border-b border-[#111111]/5 hover:bg-[#f0eeeb] transition-colors"
+                    >
+                      <td className="px-6 md:px-8 py-5">
+                        <div className="flex items-center gap-4">
+                          <div className="h-12 w-12 border border-[#111111]/20 flex items-center justify-center text-[#111111] overflow-hidden shrink-0">
+                            {booking.customerImage ? (
+                              <img
+                                src={booking.customerImage}
+                                alt={booking.customerName}
+                                className="h-full w-full object-cover"
+                              />
+                            ) : (
+                              <FaUser className="text-xl text-[#111111]/30" />
+                            )}
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold text-[#111111] uppercase tracking-wider">
+                              {booking.customerName}
+                            </p>
+                            <p className="text-[10px] text-[#111111]/40 uppercase tracking-widest mt-1">
+                              ID: {booking._id.slice(-6).toUpperCase()}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 md:px-8 py-5">
+                        <div className="flex items-center gap-2 text-[#111111]/70">
+                          <FaCalendarAlt className="text-[#111111]/30 text-xs" />
+                          <span className="text-[10px] font-bold uppercase tracking-widest">
+                            {new Date(booking.createdAt).toLocaleDateString()}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 md:px-8 py-5">
+                        <span
+                          className={`px-3 py-1 text-[9px] font-bold uppercase tracking-widest flex items-center gap-2 w-fit ${
+                            booking.status === "confirmed"
+                              ? "bg-green-500/10 text-green-600 border border-green-500/30"
+                              : booking.status === "pending"
+                              ? "bg-yellow-500/10 text-yellow-600 border border-yellow-500/30"
+                              : "bg-red-500/10 text-red-600 border border-red-500/30"
+                          }`}
+                        >
+                          {booking.status === "confirmed" && (
+                            <FaCheckCircle className="text-xs" />
+                          )}
+                          {booking.status === "pending" && (
+                            <FaHourglassHalf className="text-xs" />
+                          )}
+                          {booking.status === "cancelled" && (
+                            <FaBan className="text-xs" />
+                          )}
+                          {booking.status}
+                        </span>
+                      </td>
+                      <td className="px-6 md:px-8 py-5">
+                        <button
+                          onClick={() => handleViewBooking(booking._id)}
+                          className="bg-[#111111] text-[#f5f3f0] py-2 px-5 text-[10px] font-bold uppercase tracking-widest hover:bg-[#1a1a1a] transition-colors duration-300 flex items-center gap-2"
+                        >
+                          <FaEye className="text-xs" />
+                          View
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
 
         {/* Modal */}
         <AnimatePresence>
@@ -242,118 +254,112 @@ const AllBookings = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-[#00000080] flex items-center justify-center z-50 p-4"
+              className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
               onClick={() => setIsModalOpen(false)}
             >
               <motion.div
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.95, opacity: 0 }}
-                className="bg-white rounded-lg shadow-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+                className="bg-[#ffffff] border border-[#111111]/10 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="flex justify-between items-center pb-4 border-b border-[#00000014]">
-                  <h2 className="text-xl font-semibold text-[#000000E6]">
+                <div className="flex justify-between items-center p-6 md:p-8 border-b border-[#111111]/10">
+                  <h2 className="text-xl md:text-2xl font-bold tracking-tight text-[#111111]">
                     Booking Details
                   </h2>
                   <button
                     onClick={() => setIsModalOpen(false)}
-                    className="text-[#666666] hover:text-[#000000E6] transition-colors"
+                    className="text-[#111111]/50 hover:text-[#111111] transition-colors text-2xl"
                   >
-                    <FaTimes size={20} />
+                    ×
                   </button>
                 </div>
 
                 {successMessage && (
-                  <div className="bg-[#057642] bg-opacity-10 text-[#057642] p-4 rounded-lg my-4 flex items-center">
-                    <FaCheckCircle className="mr-2" />
+                  <div className="bg-green-500/10 text-green-600 p-4 m-6 md:m-8 mb-0 flex items-center gap-3 border border-green-500/30 text-[10px] font-bold uppercase tracking-widest">
+                    <FaCheckCircle />
                     {successMessage}
                   </div>
                 )}
 
-                <div className="mt-6">
-                  <div className="flex items-center space-x-4 mb-6">
-                    <div className="h-16 w-16 rounded-full bg-[#0a66c2] flex items-center justify-center text-white">
+                <div className="p-6 md:p-8">
+                  <div className="flex items-center gap-4 mb-8">
+                    <div className="h-16 w-16 border border-[#111111]/20 flex items-center justify-center text-[#111111] overflow-hidden shrink-0">
                       {customer?.profileImage ? (
                         <img
                           src={customer.profileImage}
                           alt={customer?.name}
-                          className="h-16 w-16 rounded-full object-cover"
+                          className="h-full w-full object-cover"
                         />
                       ) : (
-                        <FaUser size={32} />
+                        <FaUser className="text-2xl text-[#111111]/30" />
                       )}
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-[#000000E6]">
+                      <h3 className="text-lg font-bold tracking-tight text-[#111111]">
                         {selectedBooking.customerName}
                       </h3>
-                      <p className="text-[#666666]">Customer Profile</p>
+                      <p className="text-[10px] text-[#111111]/50 uppercase tracking-widest mt-1">
+                        Customer Profile
+                      </p>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <div className="bg-[#EEF3F8] p-4 rounded-lg">
-                      <p className="text-sm text-[#666666]">Booking ID</p>
-                      <p className="font-medium text-[#000000E6]">
-                        {selectedBooking._id}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                    <div className="bg-[#f0eeeb] p-4">
+                      <p className="text-[10px] font-semibold tracking-widest text-[#111111]/40 uppercase mb-2">
+                        Booking ID
+                      </p>
+                      <p className="text-[10px] font-bold text-[#111111] uppercase tracking-widest">
+                        {selectedBooking._id.slice(-8).toUpperCase()}
                       </p>
                     </div>
                     {customer && (
                       <>
-                        <div className="bg-[#EEF3F8] p-4 rounded-lg">
-                          <div className="flex items-center">
-                            <FaPhoneAlt className="text-[#0a66c2] mr-2" />
-                            <div>
-                              <p className="text-sm text-[#666666]">Phone</p>
-                              <p className="font-medium text-[#000000E6]">
-                                {customer.phno}
-                              </p>
-                            </div>
+                        <div className="bg-[#f0eeeb] p-4 flex items-center gap-3">
+                          <FaPhoneAlt className="text-[#111111]/30 text-xs" />
+                          <div>
+                            <p className="text-[10px] font-semibold tracking-widest text-[#111111]/40 uppercase mb-1">
+                              Phone
+                            </p>
+                            <p className="text-[10px] font-bold text-[#111111] uppercase tracking-widest">
+                              {customer.phno}
+                            </p>
                           </div>
                         </div>
-                        <div className="bg-[#EEF3F8] p-4 rounded-lg">
-                          <div className="flex items-center">
-                            <FaEnvelope className="text-[#0a66c2] mr-2" />
-                            <div>
-                              <p className="text-sm text-[#666666]">Email</p>
-                              <p className="font-medium text-[#000000E6]">
-                                {customer.gmail}
-                              </p>
-                            </div>
+                        <div className="bg-[#f0eeeb] p-4 flex items-center gap-3">
+                          <FaEnvelope className="text-[#111111]/30 text-xs" />
+                          <div>
+                            <p className="text-[10px] font-semibold tracking-widest text-[#111111]/40 uppercase mb-1">
+                              Email
+                            </p>
+                            <p className="text-[10px] font-bold text-[#111111] uppercase tracking-widest">
+                              {customer.gmail}
+                            </p>
                           </div>
                         </div>
                       </>
                     )}
                   </div>
 
-                  <div className="mt-6">
-                    <label className="text-sm font-medium text-[#666666] block mb-2">
+                  <div>
+                    <label className="block text-[10px] font-semibold tracking-widest text-[#111111]/50 uppercase mb-3">
                       Update Status
                     </label>
                     <select
                       value={status}
                       onChange={(e) => updateStatus(e.target.value)}
-                      className="w-full px-4 py-3 rounded-lg bg-white border border-[#00000014] text-[#000000E6] font-['system-ui'] text-sm
-                        hover:bg-[#EEF3F8] focus:ring-2 focus:ring-[#0a66c2] focus:border-transparent transition-colors"
+                      className="w-full bg-transparent border-b border-[#111111]/20 text-[#111111] py-3 focus:border-[#111111] focus:outline-none transition-colors duration-300 text-[10px] uppercase tracking-widest"
                     >
-                      <option
-                        value="pending"
-                        className="py-2 text-[#666666] hover:bg-[#EEF3F8]"
-                      >
-                        Pending
+                      <option value="pending" className="bg-[#ffffff]">
+                        PENDING
                       </option>
-                      <option
-                        value="confirmed"
-                        className="py-2 text-[#057642] hover:bg-[#EEF3F8]"
-                      >
-                        Confirmed
+                      <option value="confirmed" className="bg-[#ffffff]">
+                        CONFIRMED
                       </option>
-                      <option
-                        value="cancelled"
-                        className="py-2 text-[#666666] hover:bg-[#EEF3F8]"
-                      >
-                        Cancelled
+                      <option value="cancelled" className="bg-[#ffffff]">
+                        CANCELLED
                       </option>
                     </select>
                   </div>
@@ -363,7 +369,7 @@ const AllBookings = () => {
           )}
         </AnimatePresence>
       </main>
-    </motion.div>
+    </div>
   );
 };
 
