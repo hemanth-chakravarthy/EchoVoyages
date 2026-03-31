@@ -9,43 +9,45 @@ const PackagesTable = ({ packages }) => {
 
   return (
     <div>
-      <div className="m-4 text-xl">
-        Packages added in the last 24 hours: {packsLast24Hours.length}
+      <div className="mb-6 px-1">
+        <span className="text-xs font-bold tracking-[0.2em] text-black/40 uppercase">
+          Packages added in the last 24 hours: {packsLast24Hours.length}
+        </span>
       </div>
       <div className="overflow-x-auto">
-        <table className="table table-zebra">
+        <table className="w-full border-collapse min-w-[800px]">
           <thead>
-            <tr>
-              <th>No</th>
-              <th>Package Name</th>
-              <th>Description</th>
-              <th>Price</th>
-              <th>Actions</th>
+            <tr className="bg-[#1a1a1a] text-white">
+              <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">No</th>
+              <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Package Name</th>
+              <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Description</th>
+              <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Price</th>
+              <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="bg-white">
             {packages.map((pkg, index) => (
-              <tr key={pkg._id}>
-                <td>{index + 1}</td>
-                <td>{pkg.name}</td>
-                <td>{pkg.description}</td>
-                <td>{pkg.price}</td>
-                <td>
-                  <div className="flex flex-col sm:flex-row gap-2">
+              <tr key={pkg._id} className="border-b border-black/5 hover:bg-black/5 transition-colors">
+                <td className="px-4 py-4 text-sm font-semibold text-black/60">{index + 1}</td>
+                <td className="px-4 py-4 text-sm font-medium text-[#1a1a1a]">{pkg.name}</td>
+                <td className="px-4 py-4 text-sm text-black/70">{pkg.description}</td>
+                <td className="px-4 py-4 text-sm font-bold text-[#1a1a1a]">{pkg.price}</td>
+                <td className="px-4 py-4">
+                  <div className="flex flex-wrap gap-2">
                     <Link 
-                      className="btn btn-neutral btn-xs" 
+                      className="px-3 py-1 bg-[#1a1a1a] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#2d2d2d] transition-all" 
                       to={`/admin/packages/${pkg._id}`}
                     >
                       Show
                     </Link>
                     <Link 
-                      className="btn btn-dark btn-xs" 
+                      className="px-3 py-1 bg-[#4a4a4a] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#5a5a5a] transition-all" 
                       to={`/admin/packages/edit/${pkg._id}`}
                     >
                       Update
                     </Link>
                     <Link 
-                      className="btn btn-error btn-xs" 
+                      className="px-3 py-1 bg-[#dc2626] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#b91c1c] transition-all" 
                       to={`/admin/packages/delete/${pkg._id}`}
                     >
                       Delete

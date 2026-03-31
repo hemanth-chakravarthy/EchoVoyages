@@ -5,22 +5,8 @@ import { useParams } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import apiUrl from "../utils/api.js";
-import {
-  FaFlag,
-  FaStar,
-  FaUser,
-  FaBriefcase,
-  FaLanguage,
-  FaPhone,
-  FaEnvelope,
-  FaCalendarAlt,
-  FaHeart,
-  FaEdit,
-  FaArrowLeft,
-} from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { motion } from "framer-motion";
 
 const ViewGuide = () => {
   const { id } = useParams();
@@ -33,7 +19,7 @@ const ViewGuide = () => {
   const token = localStorage.getItem("token");
   const [bookingId, setBookingId] = useState("");
   const [customerBookings, setCustomerBookings] = useState([]);
-  const [userRole, setUserRole] = useState(""); // "customer", "agency", or "guide"
+  const [userRole, setUserRole] = useState("");
   const [hoveredRating, setHoveredRating] = useState(0);
   const userId = token ? jwtDecode(token).id : null;
 
@@ -58,47 +44,19 @@ const ViewGuide = () => {
     };
 
     const determineUserRole = async () => {
-      if (!token || !userId) {
-        setUserRole("guest");
-        return;
-      }
-
+      if (!token || !userId) { setUserRole("guest"); return; }
       try {
-        // Check if user is a customer
-        const customerResponse = await axios.get(
-          `${apiUrl}/customers/${userId}`
-        );
-        if (customerResponse.data) {
-          setUserRole("customer");
-          return;
-        }
-      } catch (error) {
-        // Not a customer, continue checking
-      }
-
+        const r = await axios.get(`${apiUrl}/customers/${userId}`);
+        if (r.data) { setUserRole("customer"); return; }
+      } catch (_) {}
       try {
-        // Check if user is an agency
-        const agencyResponse = await axios.get(`${apiUrl}/agency/${userId}`);
-        if (agencyResponse.data) {
-          setUserRole("agency");
-          return;
-        }
-      } catch (error) {
-        // Not an agency, continue checking
-      }
-
+        const r = await axios.get(`${apiUrl}/agency/${userId}`);
+        if (r.data) { setUserRole("agency"); return; }
+      } catch (_) {}
       try {
-        // Check if user is a guide
-        const guideResponse = await axios.get(`${apiUrl}/guides/${userId}`);
-        if (guideResponse.data) {
-          setUserRole("guide");
-          return;
-        }
-      } catch (error) {
-        // Not a guide either
-        console.error("Could not determine user role:", error);
-        setUserRole("guest");
-      }
+        const r = await axios.get(`${apiUrl}/guides/${userId}`);
+        if (r.data) { setUserRole("guide"); return; }
+      } catch (_) { setUserRole("guest"); }
     };
 
     fetchReviews();
@@ -106,396 +64,216 @@ const ViewGuide = () => {
     determineUserRole();
   }, [id, userId, token]);
 
-  // Fetch customer bookings when userRole is determined
   useEffect(() => {
-    const fetchCustomerBookings = async () => {
-      if (userId && token && userRole === "customer") {
-        try {
-          const response = await axios.get(
-            `${apiUrl}/bookings/cust/${userId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          // Filter bookings for this guide
-          const guideBookings = response.data.filter(
-            (booking) => booking.guideId === id
-          );
-          setCustomerBookings(guideBookings);
-        } catch (error) {
-          console.error("Error fetching customer bookings:", error);
-        }
-      }
-    };
-
-    if (userRole) {
-      fetchCustomerBookings();
+    if (userId && token && userRole === "customer") {
+      axios.get(`${apiUrl}/bookings/cust/${userId}`, { headers: { Authorization: `Bearer ${token}` } })
+        .then(res => setCustomerBookings(res.data.filter(b => b.guideId === id)))
+        .catch(console.error);
     }
   }, [id, userId, token, userRole]);
 
   const handleBooking = async () => {
+    if (!userId || userRole !== "customer") { setBookingStatus("You must be logged in as a customer to book a guide."); return; }
     try {
-      if (!userId || userRole !== "customer") {
-        setBookingStatus(
-          "You must be logged in as a customer to book a guide."
-        );
-        return;
-      }
-
-      const packageId = null;
-      const bookingData = {
-        customerId: userId,
-        guideId: guideDetails._id,
-        packageId: packageId || null,
-      };
-
-      const response = await axios.post(`${apiUrl}/bookings`, bookingData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.status === 201) {
-        toast.success("Booking confirmed successfully!");
-        setBookingStatus("Booking confirmed successfully!");
-      } else {
-        toast.error("Failed to book the guide.");
-        setBookingStatus("Failed to book the guide.");
-      }
-    } catch (error) {
-      console.error("Error during booking:", error);
-      toast.error("An error occurred while booking.");
-      setBookingStatus("An error occurred while booking.");
-    }
-  };
-
-  const handleOpenReviewModal = () => {
-    setShowReviewModal(true);
-  };
-
-  const handleCloseReviewModal = () => {
-    setShowReviewModal(false);
-    setRating(1);
-    setComment("");
+      const res = await axios.post(`${apiUrl}/bookings`, { customerId: userId, guideId: guideDetails._id, packageId: null }, { headers: { Authorization: `Bearer ${token}` } });
+      if (res.status === 201) { toast.success("Booking confirmed successfully!"); setBookingStatus("Booking confirmed successfully!"); }
+      else { toast.error("Failed to book the guide."); setBookingStatus("Failed to book the guide."); }
+    } catch (error) { toast.error("An error occurred while booking."); setBookingStatus("An error occurred while booking."); }
   };
 
   const handleSubmitReview = async () => {
+    if (!userId || userRole !== "customer") { toast.error("You must be logged in as a customer to submit a review."); return; }
     try {
-      if (!userId || userRole !== "customer") {
-        toast.error("You must be logged in as a customer to submit a review.");
-        return;
-      }
-
-      const response = await fetch(`${apiUrl}/reviews`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          customerId: userId,
-          guideId: id,
-          bookingId, // Include bookingId in the payload
-          rating,
-          comment,
-        }),
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        console.log("Review submitted:", result);
-        toast.success("Review submitted successfully!");
-        handleCloseReviewModal();
-      } else {
-        const errorData = await response.json();
-        console.error("Failed to submit review:", errorData.message);
-        toast.error(`Failed to submit review: ${errorData.message}`);
-      }
-    } catch (error) {
-      console.error("Error submitting review:", error);
-      toast.error("An error occurred while submitting the review.");
-    }
+      const res = await fetch(`${apiUrl}/reviews`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ customerId: userId, guideId: id, bookingId, rating, comment }) });
+      if (res.ok) { toast.success("Review submitted successfully!"); setShowReviewModal(false); setRating(1); setComment(""); }
+      else { const e = await res.json(); toast.error(`Failed to submit review: ${e.message}`); }
+    } catch (error) { toast.error("An error occurred while submitting the review."); }
   };
 
   const handleAddToWishlist = async () => {
+    if (!userId || userRole !== "customer") { toast.error("You must be logged in as a customer to add a guide to your wishlist."); return; }
     try {
-      if (!userId || userRole !== "customer") {
-        toast.error(
-          "You must be logged in as a customer to add a guide to your wishlist."
-        );
-        return;
-      }
-
-      const wishlistData = {
-        customerId: userId,
-        guideId: guideDetails._id,
-      };
-
-      const response = await axios.post(
-        `${apiUrl}/wishlistGuides`,
-        wishlistData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (response.status === 201) {
-        toast.success("Guide added to wishlist successfully!");
-      } else {
-        toast.error("Failed to add guide to wishlist.");
-      }
-    } catch (error) {
-      console.error("Error adding to wishlist:", error);
-      toast.error(`${error.message}`);
-    }
-  };
-
-  const handleReportReview = (reviewId) => {
-    // Implement report review functionality
-    toast.info("Review reported. Our team will review it shortly.");
+      const res = await axios.post(`${apiUrl}/wishlistGuides`, { customerId: userId, guideId: guideDetails._id }, { headers: { Authorization: `Bearer ${token}` } });
+      if (res.status === 201) toast.success("Guide added to wishlist successfully!");
+      else toast.error("Failed to add guide to wishlist.");
+    } catch (error) { toast.error(`${error.message}`); }
   };
 
   if (!guideDetails) {
     return (
-      <div className="min-h-screen bg-[#f3f6f8] font-['Source Sans', 'Segoe UI', Arial, sans-serif] flex items-center justify-center">
-        <div className="w-16 h-16 border-4 border-[#0a66c2] border-t-transparent rounded-full animate-spin"></div>
+      <div className="min-h-screen bg-[#f5f3f0] flex items-center justify-center">
+        <div className="w-10 h-10 border-2 border-black border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
+  const avgRating = guideDetails.ratings?.averageRating || 0;
+  const numReviews = guideDetails.ratings?.numberOfReviews || 0;
+
+  const infoItems = [
+    { label: "001/ Experience", value: `${guideDetails.experience} years` },
+    { label: "002/ Languages", value: guideDetails.languages?.join(", ") },
+    { label: "003/ Phone", value: guideDetails.phno },
+    { label: "004/ Email", value: guideDetails.gmail },
+  ];
+
   return (
-    <div className="min-h-screen bg-[#f3f6f8] font-['Source Sans', 'Segoe UI', Arial, sans-serif] py-8 px-4">
-      <div className="max-w-5xl mx-auto">
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-          {/* Guide Header */}
-          <div className="relative">
-            <div className="h-48 overflow-hidden">
-              <img
-                src="/images/guide-banner.png"
-                alt="Travel Agency Banner"
-                className="w-full h-full object-cover"
-              />
-              {/* Optional overlay for better text contrast */}
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0a66c2]/40 to-[#004182]/40"></div>
-            </div>
-            <div className="absolute -bottom-16 left-8">
-              <div className="w-32 h-32 rounded-full border-4 border-white bg-[#e9e5df] flex items-center justify-center overflow-hidden">
-                {guideDetails.profilePicture ? (
-                  <img
-                    src={`${apiUrl}/${guideDetails.profilePicture}`}
-                    alt={guideDetails.username}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <FaUser className="text-[#56687a] text-5xl" />
-                )}
-              </div>
-            </div>
-          </div>
+    <div className="min-h-screen bg-[#f5f3f0] font-sans text-[#1a1a1a]">
+      <ToastContainer position="bottom-right" />
 
-          {/* Guide Info */}
-          <div className="pt-20 px-8 pb-6">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
-              <div>
-                <h1 className="text-2xl font-bold text-[#38434f]">
-                  {guideDetails.username}
-                </h1>
-                <div className="flex items-center mt-1">
-                  <div className="flex items-center text-[#e7a33e]">
-                    {[...Array(5)].map((_, i) => (
-                      <FaStar
-                        key={i}
-                        className={
-                          i <
-                          Math.round(guideDetails.ratings?.averageRating || 0)
-                            ? "text-[#e7a33e]"
-                            : "text-[#e9e5df]"
-                        }
-                      />
-                    ))}
-                  </div>
-                  <span className="ml-2 text-[#56687a]">
-                    {guideDetails.ratings &&
-                    guideDetails.ratings.averageRating > 0
-                      ? guideDetails.ratings.averageRating.toFixed(1)
-                      : "0.0"}{" "}
-                    (
-                    {guideDetails.ratings
-                      ? guideDetails.ratings.numberOfReviews
-                      : 0}{" "}
-                    {guideDetails.ratings &&
-                    guideDetails.ratings.numberOfReviews === 1
-                      ? "rating"
-                      : "ratings"}
-                    )
-                  </span>
-                </div>
-              </div>
-
-              <div className="mt-4 md:mt-0 flex flex-wrap gap-3">
-                {userRole === "customer" && (
-                  <>
-                    <button
-                      onClick={handleBooking}
-                      className="bg-[#0a66c2] text-white px-4 py-2 rounded hover:bg-[#004182] transition-colors flex items-center"
-                    >
-                      <FaCalendarAlt className="mr-2" /> Book Guide
-                    </button>
-                    <button
-                      onClick={handleOpenReviewModal}
-                      className="bg-[#f3f6f8] text-[#0a66c2] px-4 py-2 rounded hover:bg-[#dce6f1] transition-colors flex items-center"
-                    >
-                      <FaEdit className="mr-2" /> Add Review
-                    </button>
-                    <button
-                      onClick={handleAddToWishlist}
-                      className="bg-[#f3f6f8] text-[#0a66c2] px-4 py-2 rounded hover:bg-[#dce6f1] transition-colors flex items-center"
-                    >
-                      <FaHeart className="mr-2" /> Add to Wishlist
-                    </button>
-                  </>
-                )}
-
-                {userRole === "agency" && (
-                  <button
-                    onClick={() =>
-                      (window.location.href = `/agency-guide-directory`)
-                    }
-                    className="bg-[#0a66c2] text-white px-4 py-2 rounded hover:bg-[#004182] transition-colors flex items-center"
-                  >
-                    <FaArrowLeft className="mr-2" /> Back to Guide Directory
-                  </button>
-                )}
-
-                {userRole === "guide" && (
-                  <button
-                    onClick={() => (window.location.href = `/GuideHome`)}
-                    className="bg-[#0a66c2] text-white px-4 py-2 rounded hover:bg-[#004182] transition-colors flex items-center"
-                  >
-                    <FaArrowLeft className="mr-2" /> Back to Dashboard
-                  </button>
-                )}
-
-                {(userRole === "guest" || !userRole) && (
-                  <button
-                    onClick={() => (window.location.href = `/login`)}
-                    className="bg-[#0a66c2] text-white px-4 py-2 rounded hover:bg-[#004182] transition-colors flex items-center"
-                  >
-                    <FaUser className="mr-2" /> Login to Book
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {bookingStatus && (
-              <div
-                className={`p-4 rounded-lg mb-4 ${
-                  bookingStatus.includes("successfully")
-                    ? "bg-[#eaf5ea] text-[#44712e]"
-                    : "bg-[#f5e9e5] text-[#b24020]"
-                }`}
-              >
-                {bookingStatus}
-              </div>
-            )}
-
-            <div className="bg-[#f3f6f8] p-4 rounded-lg mb-6">
-              <p className="text-[#38434f]">{guideDetails.description}</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              {[
-                {
-                  icon: <FaBriefcase className="text-[#0a66c2]" />,
-                  label: "Experience",
-                  value: `${guideDetails.experience} years`,
-                },
-                {
-                  icon: <FaLanguage className="text-[#0a66c2]" />,
-                  label: "Languages",
-                  value: guideDetails.languages.join(", "),
-                },
-                {
-                  icon: <FaPhone className="text-[#0a66c2]" />,
-                  label: "Phone Number",
-                  value: guideDetails.phno,
-                },
-                {
-                  icon: <FaEnvelope className="text-[#0a66c2]" />,
-                  label: "Email",
-                  value: guideDetails.gmail,
-                },
-              ].map((item, index) => (
-                <div
-                  key={index}
-                  className="bg-white border border-[#dce6f1] rounded-lg p-4"
-                >
-                  <div className="flex items-center mb-2">
-                    <div className="mr-3">{item.icon}</div>
-                    <h3 className="text-[#56687a] font-medium">{item.label}</h3>
-                  </div>
-                  <p className="text-[#38434f] pl-8">{item.value}</p>
-                </div>
+      {/* Hero Banner */}
+      <div className="relative w-full h-72 bg-[#1a1a1a] overflow-hidden">
+        <img src="/images/guide-banner.png" alt="Banner" className="absolute inset-0 w-full h-full object-cover opacity-40" />
+        <div className="absolute inset-0 flex flex-col justify-end px-10 pb-8">
+          <p className="text-white/50 text-[10px] font-bold uppercase tracking-[0.3em] mb-2">Guide Profile</p>
+          <h1 className="text-white text-4xl sm:text-5xl font-black uppercase tracking-tight leading-none">{guideDetails.username}</h1>
+          <div className="flex items-center gap-2 mt-3">
+            <div className="flex gap-0.5">
+              {[...Array(5)].map((_, i) => (
+                <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill={i < Math.round(avgRating) ? "#fff" : "none"} stroke="white" strokeWidth="2">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                </svg>
               ))}
             </div>
+            <span className="text-white/70 text-xs font-bold tracking-widest uppercase">{avgRating.toFixed(1)} · {numReviews} {numReviews === 1 ? "review" : "reviews"}</span>
+          </div>
+        </div>
+        {/* Profile Picture */}
+        <div className="absolute bottom-0 right-10 translate-y-1/2">
+          <div className="w-24 h-24 border-4 border-[#f5f3f0] bg-[#1a1a1a] overflow-hidden">
+            {guideDetails.profilePicture
+              ? <img src={`${apiUrl}/${guideDetails.profilePicture}`} alt={guideDetails.username} className="w-full h-full object-cover" />
+              : <div className="w-full h-full flex items-center justify-center">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                </div>}
+          </div>
+        </div>
+      </div>
 
-            {/* Reviews Section */}
-            <div className="border-t border-[#e9e5df] pt-6 mt-6">
-              <h2 className="text-xl font-bold text-[#38434f] mb-4">Reviews</h2>
+      <div className="max-w-5xl mx-auto px-6 sm:px-10 pt-20 pb-16">
+        
+        {/* Action Buttons */}
+        <div className="flex flex-wrap gap-3 mb-10">
+          {userRole === "customer" && (
+            <>
+              <button onClick={handleBooking} className="bg-[#1a1a1a] text-white text-[10px] font-bold uppercase tracking-[0.2em] px-6 py-3 hover:bg-black/80 transition-colors">
+                Book Guide
+              </button>
+              <button onClick={() => setShowReviewModal(true)} className="border border-black/20 text-[#1a1a1a] text-[10px] font-bold uppercase tracking-[0.2em] px-6 py-3 hover:bg-black hover:text-white transition-colors">
+                Add Review
+              </button>
+              <button onClick={handleAddToWishlist} className="border border-black/20 text-[#1a1a1a] text-[10px] font-bold uppercase tracking-[0.2em] px-6 py-3 hover:bg-black hover:text-white transition-colors">
+                + Wishlist
+              </button>
+            </>
+          )}
+          {userRole === "agency" && (
+            <button onClick={() => window.location.href = `/agency-guide-directory`} className="border border-black/20 text-[10px] font-bold uppercase tracking-[0.2em] px-6 py-3 hover:bg-black hover:text-white transition-colors">
+              ← Guide Directory
+            </button>
+          )}
+          {userRole === "guide" && (
+            <button onClick={() => window.location.href = `/GuideHome`} className="border border-black/20 text-[10px] font-bold uppercase tracking-[0.2em] px-6 py-3 hover:bg-black hover:text-white transition-colors">
+              ← Dashboard
+            </button>
+          )}
+          {(userRole === "guest" || !userRole) && (
+            <button onClick={() => window.location.href = `/login`} className="bg-[#1a1a1a] text-white text-[10px] font-bold uppercase tracking-[0.2em] px-6 py-3 hover:bg-black/80 transition-colors">
+              Login to Book
+            </button>
+          )}
+        </div>
 
+        {bookingStatus && (
+          <div className={`border-l-4 p-4 mb-8 text-sm font-medium ${bookingStatus.includes("successfully") ? "border-[#4CAF50] bg-[#4CAF50]/5 text-[#2e7d32]" : "border-[#F44336] bg-[#F44336]/5 text-[#c62828]"}`}>
+            {bookingStatus}
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left: About + Info */}
+          <div className="lg:col-span-2 space-y-8">
+
+            {/* About */}
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-black/40 mb-3">001/ About</p>
+              <p className="text-[#1a1a1a]/80 leading-relaxed text-sm">{guideDetails.description}</p>
+            </div>
+
+            <div className="h-px bg-black/10" />
+
+            {/* Info Grid */}
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-black/40 mb-5">002/ Details</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {infoItems.map((item, i) => (
+                  <div key={i} className="border-l-2 border-[#1a1a1a] pl-4 py-1">
+                    <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-black/40 mb-1">{item.label}</p>
+                    <p className="text-sm font-semibold text-[#1a1a1a]">{item.value || "—"}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="h-px bg-black/10" />
+
+            {/* Reviews */}
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-black/40 mb-5">003/ Reviews</p>
               {revvs && revvs.length > 0 ? (
                 <div className="space-y-4">
                   {revvs.map((review) => (
-                    <motion.div
-                      key={review._id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="bg-[#f3f6f8] rounded-lg p-4"
-                    >
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <div className="flex items-center text-[#e7a33e] mb-1">
-                            {[...Array(5)].map((_, i) => (
-                              <FaStar
-                                key={i}
-                                className={
-                                  i < review.rating
-                                    ? "text-[#e7a33e]"
-                                    : "text-[#e9e5df]"
-                                }
-                              />
-                            ))}
-                            <span className="ml-2 text-[#56687a]">
-                              {review.rating} / 5
-                            </span>
-                          </div>
-                          <p className="text-[#56687a] text-sm">
-                            By {review.customerName || "Anonymous"}
-                          </p>
+                    <div key={review._id} className="bg-white p-5 border-l-2 border-[#1a1a1a]">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex gap-0.5">
+                          {[...Array(5)].map((_, i) => (
+                            <svg key={i} width="12" height="12" viewBox="0 0 24 24" fill={i < review.rating ? "#1a1a1a" : "none"} stroke="#1a1a1a" strokeWidth="2">
+                              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                            </svg>
+                          ))}
                         </div>
-                        <button
-                          onClick={() => handleReportReview(review._id)}
-                          className="text-[#56687a] hover:text-[#b24020] transition-colors"
-                          aria-label="Report review"
-                        >
-                          <FaFlag />
-                        </button>
+                        <span className="text-[9px] font-bold uppercase tracking-widest text-black/40">By {review.customerName || "Anonymous"}</span>
                       </div>
-                      <p className="text-[#38434f] mt-2">{review.comment}</p>
-                    </motion.div>
+                      <p className="text-sm text-[#1a1a1a]/80 leading-relaxed">{review.comment}</p>
+                    </div>
                   ))}
                 </div>
               ) : (
-                <div className="bg-[#f3f6f8] rounded-lg p-6 text-center">
-                  <p className="text-[#56687a]">
-                    No reviews for this Guide yet.
-                  </p>
+                <div className="py-8 text-center border border-dashed border-black/20">
+                  <p className="text-sm text-black/40 font-medium uppercase tracking-widest">No reviews yet</p>
                 </div>
               )}
+            </div>
+          </div>
+
+          {/* Right: Rating Sidebar */}
+          <div className="space-y-6">
+            <div className="bg-[#1a1a1a] text-white p-6">
+              <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-white/50 mb-4">Rating</p>
+              <div className="text-5xl font-black mb-1">{avgRating.toFixed(1)}</div>
+              <div className="flex gap-1 mb-2">
+                {[...Array(5)].map((_, i) => (
+                  <svg key={i} width="16" height="16" viewBox="0 0 24 24" fill={i < Math.round(avgRating) ? "white" : "none"} stroke="white" strokeWidth="2">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                  </svg>
+                ))}
+              </div>
+              <p className="text-white/50 text-xs font-bold uppercase tracking-widest">{numReviews} {numReviews === 1 ? "review" : "reviews"}</p>
+            </div>
+
+            <div className="bg-white p-6 border-l-2 border-[#1a1a1a]">
+              <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-black/40 mb-4">Quick Facts</p>
+              <div className="space-y-3">
+                <div>
+                  <p className="text-[9px] uppercase tracking-widest text-black/40 font-bold">Experience</p>
+                  <p className="font-black text-xl">{guideDetails.experience}<span className="text-sm font-normal text-black/50"> yrs</span></p>
+                </div>
+                <div className="h-px bg-black/10" />
+                <div>
+                  <p className="text-[9px] uppercase tracking-widest text-black/40 font-bold">Languages</p>
+                  <p className="text-sm font-semibold">{guideDetails.languages?.length || 0} spoken</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -503,95 +281,62 @@ const ViewGuide = () => {
 
       {/* Review Modal */}
       {showReviewModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-lg shadow-lg max-w-md w-full p-6"
-          >
-            <h2 className="text-xl font-bold text-[#38434f] mb-4">
-              Rate and Review
-            </h2>
-
-            <div className="mb-4">
-              <label className="block text-[#56687a] text-sm font-medium mb-1">
-                Select Your Booking:
-              </label>
-              {customerBookings.length > 0 ? (
-                <select
-                  className="input w-full bg-[#f3f6f8] border-[#0a66c2]/20 focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2] transition-all duration-300"
-                  onChange={(e) => setBookingId(e.target.value)}
-                >
-                  <option value="">Select a booking</option>
-                  {customerBookings.map((booking) => (
-                    <option key={booking._id} value={booking._id}>
-                      {booking.bookingId || booking._id} -{" "}
-                      {new Date(booking.bookingDate).toLocaleDateString()}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <p className="text-[#b24020]">
-                  You haven't booked this guide yet. Please book the guide
-                  before leaving a review.
-                </p>
-              )}
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white w-full max-w-md p-8">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-black/40 mb-1">001/ Submit</p>
+                <h2 className="text-xl font-black uppercase tracking-tight">Rate & Review</h2>
+              </div>
+              <button onClick={() => { setShowReviewModal(false); setRating(1); setComment(""); }} className="text-black/40 hover:text-black transition-colors">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              </button>
             </div>
 
-            <div className="mb-4">
-              <label className="block text-[#56687a] text-sm font-medium mb-1">
-                Rating:
-              </label>
-              <div className="flex items-center">
-                {[1, 2, 3, 4, 5].map((value) => (
-                  <FaStar
-                    key={value}
-                    className={`text-2xl cursor-pointer ${
-                      value <= (hoveredRating || rating)
-                        ? "text-[#e7a33e]"
-                        : "text-[#e9e5df]"
-                    }`}
-                    onClick={() => setRating(value)}
-                    onMouseEnter={() => setHoveredRating(value)}
-                    onMouseLeave={() => setHoveredRating(0)}
-                  />
+            {customerBookings.length > 0 ? (
+              <div className="mb-5">
+                <label className="block text-[9px] font-bold uppercase tracking-[0.25em] text-black/50 mb-2">Select Booking</label>
+                <select className="w-full border border-black/20 bg-[#f5f3f0] px-3 py-2.5 text-sm focus:outline-none focus:border-black" onChange={e => setBookingId(e.target.value)}>
+                  <option value="">— Choose a booking —</option>
+                  {customerBookings.map(b => <option key={b._id} value={b._id}>{b.bookingId || b._id} — {new Date(b.bookingDate).toLocaleDateString()}</option>)}
+                </select>
+              </div>
+            ) : (
+              <div className="mb-5 border-l-2 border-[#F44336] pl-3 py-1">
+                <p className="text-sm text-[#c62828]">You haven't booked this guide yet.</p>
+              </div>
+            )}
+
+            <div className="mb-5">
+              <label className="block text-[9px] font-bold uppercase tracking-[0.25em] text-black/50 mb-3">Your Rating</label>
+              <div className="flex items-center gap-1">
+                {[1, 2, 3, 4, 5].map(v => (
+                  <button key={v} onClick={() => setRating(v)} onMouseEnter={() => setHoveredRating(v)} onMouseLeave={() => setHoveredRating(0)}>
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill={v <= (hoveredRating || rating) ? "#1a1a1a" : "none"} stroke="#1a1a1a" strokeWidth="2" className="transition-all">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                    </svg>
+                  </button>
                 ))}
-                <span className="ml-2 text-[#56687a]">{rating} of 5</span>
+                <span className="ml-2 text-sm font-bold text-black/50">{rating}/5</span>
               </div>
             </div>
 
-            <div className="mb-4">
-              <label className="block text-[#56687a] text-sm font-medium mb-1">
-                Comment:
-              </label>
-              <textarea
-                className="input w-full bg-[#f3f6f8] border-[#0a66c2]/20 focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2] transition-all duration-300"
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                rows="4"
-              />
+            <div className="mb-6">
+              <label className="block text-[9px] font-bold uppercase tracking-[0.25em] text-black/50 mb-2">Comment</label>
+              <textarea rows={4} value={comment} onChange={e => setComment(e.target.value)} className="w-full border border-black/20 bg-[#f5f3f0] px-3 py-2.5 text-sm focus:outline-none focus:border-black resize-none" placeholder="Share your experience..." />
             </div>
 
-            <div className="flex justify-end space-x-3">
-              <button
-                onClick={handleCloseReviewModal}
-                className="px-4 py-2 border border-[#dce6f1] rounded text-[#56687a] hover:bg-[#f3f6f8] transition-colors"
-              >
-                Close
+            <div className="flex gap-3">
+              <button onClick={() => { setShowReviewModal(false); setRating(1); setComment(""); }} className="flex-1 border border-black/20 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-black/5 transition-colors">
+                Cancel
               </button>
-              <button
-                onClick={handleSubmitReview}
-                className="px-4 py-2 bg-[#0a66c2] text-white rounded hover:bg-[#004182] transition-colors"
-                disabled={!bookingId && customerBookings.length > 0}
-              >
+              <button onClick={handleSubmitReview} disabled={!bookingId && customerBookings.length > 0} className="flex-1 bg-[#1a1a1a] text-white py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-black transition-colors disabled:opacity-40">
                 Submit Review
               </button>
             </div>
-          </motion.div>
+          </div>
         </div>
       )}
-
-      <ToastContainer position="bottom-right" />
     </div>
   );
 };

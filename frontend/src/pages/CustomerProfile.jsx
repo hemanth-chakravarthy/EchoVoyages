@@ -19,6 +19,9 @@ import {
   FaPhone,
   FaCamera,
   FaSignOutAlt,
+  FaCheckCircle,
+  FaHourglassHalf,
+  FaBan,
 } from "react-icons/fa";
 import apiUrl from "../utils/api.js";
 
@@ -28,7 +31,6 @@ export default function CustomerProfile() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [loading, setLoading] = useState(true);
 
-  // Profile editing states
   const [editing, setEditing] = useState(false);
   const [changePassword, setChangePassword] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
@@ -37,6 +39,7 @@ export default function CustomerProfile() {
   const [errors, setErrors] = useState({});
   const [profileImage, setProfileImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
+
   const getUserId = () => {
     if (typeof window === "undefined") return null;
     const token = localStorage.getItem("token");
@@ -63,8 +66,6 @@ export default function CustomerProfile() {
       try {
         const customerResponse = await axios.get(`${apiUrl}/customers/${id}`);
         setCustomer(customerResponse.data);
-
-        // Set preview URL if profile picture exists
         if (customerResponse.data.profilePicture) {
           setPreviewUrl(`${apiUrl}/${customerResponse.data.profilePicture}`);
         }
@@ -83,7 +84,6 @@ export default function CustomerProfile() {
     fetchData();
   }, [id]);
 
-  // Profile editing functions
   const validateForm = () => {
     const formErrors = {};
     if (customer.username && !/^[a-zA-Z0-9._]+$/.test(customer.username)) {
@@ -147,7 +147,6 @@ export default function CustomerProfile() {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setProfileImage(file);
-      // Create preview URL
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewUrl(reader.result);
@@ -160,14 +159,12 @@ export default function CustomerProfile() {
     if (!validateForm()) return;
     try {
       const formData = new FormData();
-      // Append customer data
       if (customer.Name) formData.append("Name", customer.Name);
       if (customer.username) formData.append("username", customer.username);
       if (customer.phno) formData.append("phno", customer.phno);
       if (customer.gmail) formData.append("gmail", customer.gmail);
       if (customer.specialization)
         formData.append("specialization", customer.specialization);
-      // Append profile picture if selected
       if (profileImage) {
         formData.append("profilePicture", profileImage);
       }
@@ -206,458 +203,437 @@ export default function CustomerProfile() {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-[#f3f6f8] font-['Source Sans', 'Segoe UI', Arial, sans-serif] py-6 px-4">
-      <div className="max-w-7xl mx-auto">
-        {loading ? (
-          <div className="bg-white rounded-lg shadow-sm p-8 flex justify-center items-center">
-            <div className="flex items-center space-x-4">
-              <div className="w-8 h-8 border-4 border-[#0a66c2] border-t-transparent rounded-full animate-spin"></div>
-              <p className="text-[#38434f] font-medium">
-                Loading profile data...
-              </p>
-            </div>
+  const filteredBookings = bookings.filter(
+    (booking) => statusFilter === "all" || booking.status === statusFilter
+  );
+
+  if (loading) {
+    return (
+      <div className="w-full bg-[#f5f3f0] text-[#111111] min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-[2px] bg-[#111111]/20 overflow-hidden relative">
+            <div className="absolute left-0 top-0 h-full bg-[#111111] animate-pulse" style={{ width: "50%" }} />
           </div>
-        ) : (
-          <div className="flex flex-col lg:flex-row gap-6">
-            {/* Left Sidebar with Profile Information */}
-            <div className="lg:w-1/3">
-              <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
-                <div className="relative">
-                  <div className="h-24 bg-gradient-to-r from-[#0a66c2] to-[#004182]"></div>
-                  <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
-                    <div className="relative">
-                      <div className="w-24 h-24 rounded-full border-4 border-white bg-[#e9e5df] flex items-center justify-center overflow-hidden">
-                        {previewUrl ? (
-                          <img
-                            src={previewUrl}
-                            alt={customer.Name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <FaUser className="text-[#56687a] text-4xl" />
-                        )}
+          <p className="mt-4 text-[10px] text-[#111111]/50 uppercase font-bold tracking-widest">
+            Loading Profile...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full bg-[#f5f3f0] text-[#111111] min-h-screen font-sans uppercase tracking-[0.15em] text-xs">
+      <ToastContainer position="top-right" autoClose={3000} />
+
+      <main className="max-w-[1400px] mx-auto px-6 md:px-10 py-12 md:py-24">
+        {/* Header */}
+        <div className="mb-12 md:mb-16">
+          <span className="block text-xs md:text-sm font-semibold tracking-widest text-[#111111]/70 uppercase mb-4">
+            009 / Customer Profile
+          </span>
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-6 text-[#111111]">
+            {customer?.Name || "CUSTOMER"}
+          </h1>
+          <p className="text-[10px] sm:text-xs md:text-lg text-[#111111]/70 max-w-lg leading-relaxed tracking-wider">
+            Manage your profile, view bookings, and update your account settings.
+          </p>
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Sidebar */}
+          <div className="lg:w-80 shrink-0">
+            {/* Profile Card */}
+            <div className="border border-[#111111]/10 bg-[#ffffff] mb-6">
+              <div className="p-6 md:p-8 flex flex-col items-center border-b border-[#111111]/10">
+                <div className="relative group">
+                  <div className="w-32 h-32 border border-[#111111]/20 overflow-hidden">
+                    {previewUrl ? (
+                      <img src={previewUrl} alt={customer.Name} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <FaUser className="text-[#111111]/20 text-4xl" />
                       </div>
-                      {editing && (
-                        <label
-                          htmlFor="profile-upload"
-                          className="absolute bottom-0 right-0 bg-[#0a66c2] text-white p-1.5 rounded-full cursor-pointer shadow-md hover:bg-[#004182] transition-colors"
-                        >
-                          <FaCamera className="text-sm" />
-                          <input
-                            id="profile-upload"
-                            type="file"
-                            accept="image/*"
-                            onChange={handleFileChange}
-                            className="hidden"
-                          />
-                        </label>
+                    )}
+                  </div>
+                  {editing && (
+                    <label className="absolute inset-0 bg-black/40 flex items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity">
+                      <FaCamera className="text-white text-xl" />
+                      <input type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+                    </label>
+                  )}
+                </div>
+
+                <p className="text-[10px] text-[#111111]/50 uppercase tracking-widest mt-4">
+                  {customer?.gmail || "No email available"}
+                </p>
+              </div>
+
+              {/* Profile Info / Edit Form */}
+              <div className="p-6 md:p-8">
+                {changePassword ? (
+                  <div className="space-y-4">
+                    <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#111111]/50 mb-4 flex items-center gap-2">
+                      <FaKey className="text-xs" /> Change Password
+                    </h3>
+
+                    <div>
+                      <label className="block text-[10px] font-semibold tracking-widest text-[#111111]/50 uppercase mb-2">
+                        Current Password
+                      </label>
+                      <input
+                        type="password"
+                        value={currentPassword}
+                        onChange={(e) => setCurrentPassword(e.target.value)}
+                        className="w-full bg-transparent border-b border-[#111111]/20 text-[#111111] py-2 focus:border-[#111111] focus:outline-none transition-colors duration-300 text-[10px] uppercase tracking-widest"
+                      />
+                      {errors.currentPassword && (
+                        <p className="text-red-500 text-[10px] mt-1 uppercase tracking-widest">
+                          {errors.currentPassword}
+                        </p>
                       )}
                     </div>
-                  </div>
-                </div>
 
-                <div className="pt-16 px-4 pb-4 text-center">
-                  <h1 className="text-xl font-bold text-[#38434f]">
-                    {customer?.Name || "Customer"}
-                  </h1>
-                  <p className="text-[#56687a] text-sm">
-                    {customer?.gmail || "No email available"}
-                  </p>
-
-                  {!editing && !changePassword && (
-                    <button
-                      onClick={handleEditToggle}
-                      className="mt-3 text-[#0a66c2] text-sm font-medium hover:underline flex items-center justify-center"
-                    >
-                      <FaEdit className="mr-1" /> Edit Profile
-                    </button>
-                  )}
-                </div>
-
-                {/* Profile Information Form */}
-                <div className="px-4 pb-4">
-                  {errors.profilePicture && (
-                    <p className="text-[#b24020] text-sm mt-1 text-center mb-3">
-                      {errors.profilePicture}
-                    </p>
-                  )}
-
-                  {changePassword ? (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="bg-[#f3f6f8] p-4 rounded-lg mb-4"
-                    >
-                      <h3 className="text-md font-semibold text-[#38434f] mb-3 flex items-center">
-                        <FaKey className="mr-2 text-[#0a66c2]" /> Change
-                        Password
-                      </h3>
-
-                      <div className="mb-3">
-                        <label className="block text-[#56687a] text-xs font-medium mb-1">
-                          Current Password
-                        </label>
-                        <input
-                          type="password"
-                          value={currentPassword}
-                          onChange={(e) => setCurrentPassword(e.target.value)}
-                          className="input w-full bg-[#f3f6f8] border-[#0a66c2]/20 focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2] transition-all duration-300"
-                        />
-                        {errors.currentPassword && (
-                          <p className="text-[#b24020] text-xs mt-1">
-                            {errors.currentPassword}
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="mb-3">
-                        <label className="block text-[#56687a] text-xs font-medium mb-1">
-                          New Password
-                        </label>
-                        <input
-                          type="password"
-                          value={newPassword}
-                          onChange={(e) => setNewPassword(e.target.value)}
-                          className="input w-full bg-[#f3f6f8] border-[#0a66c2]/20 focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2] transition-all duration-300"
-                        />
-                        {errors.newPassword && (
-                          <p className="text-[#b24020] text-xs mt-1">
-                            {errors.newPassword}
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="mb-3">
-                        <label className="block text-[#56687a] text-xs font-medium mb-1">
-                          Confirm New Password
-                        </label>
-                        <input
-                          type="password"
-                          value={confirmPassword}
-                          onChange={(e) => setConfirmPassword(e.target.value)}
-                          className="input w-full bg-[#f3f6f8] border-[#0a66c2]/20 focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2] transition-all duration-300"
-                        />
-                        {errors.confirmPassword && (
-                          <p className="text-[#b24020] text-xs mt-1">
-                            {errors.confirmPassword}
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="flex space-x-2 mt-4">
-                        <button
-                          type="button"
-                          onClick={handleUpdatePassword}
-                          className="flex items-center bg-[#0a66c2] text-white text-sm px-3 py-1.5 rounded hover:bg-[#004182] transition-colors"
-                        >
-                          <FaSave className="mr-1" /> Update
-                        </button>
-                        <button
-                          type="button"
-                          onClick={handlePasswordToggle}
-                          className="flex items-center bg-[#f3f6f8] text-[#56687a] text-sm border border-[#dce6f1] px-3 py-1.5 rounded hover:bg-[#dce6f1] transition-colors"
-                        >
-                          <FaTimes className="mr-1" /> Cancel
-                        </button>
-                      </div>
-                    </motion.div>
-                  ) : editing ? (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="mb-4"
-                    >
-                      <div className="mb-3">
-                        <label className="block text-[#56687a] text-xs font-medium mb-1">
-                          <FaUser className="inline mr-1 text-[#0a66c2]" /> Full
-                          Name
-                        </label>
-                        <input
-                          type="text"
-                          name="Name"
-                          value={customer.Name || ""}
-                          onChange={handleChange}
-                          className="input w-full bg-[#f3f6f8] border-[#0a66c2]/20 focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2] transition-all duration-300"
-                        />
-                        {errors.name && (
-                          <p className="text-[#b24020] text-xs mt-1">
-                            {errors.name}
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="mb-3">
-                        <label className="block text-[#56687a] text-xs font-medium mb-1">
-                          <FaIdCard className="inline mr-1 text-[#0a66c2]" />{" "}
-                          Username
-                        </label>
-                        <input
-                          type="text"
-                          name="username"
-                          value={customer.username || ""}
-                          onChange={handleChange}
-                          className="input w-full bg-[#f3f6f8] border-[#0a66c2]/20 focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2] transition-all duration-300"
-                        />
-                        {errors.username && (
-                          <p className="text-[#b24020] text-xs mt-1">
-                            {errors.username}
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="mb-3">
-                        <label className="block text-[#56687a] text-xs font-medium mb-1">
-                          <FaPhone className="inline mr-1 text-[#0a66c2]" />{" "}
-                          Phone Number
-                        </label>
-                        <input
-                          type="text"
-                          name="phno"
-                          value={customer.phno || ""}
-                          onChange={handleChange}
-                          className="input w-full bg-[#f3f6f8] border-[#0a66c2]/20 focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2] transition-all duration-300"
-                        />
-                        {errors.phoneNumber && (
-                          <p className="text-[#b24020] text-xs mt-1">
-                            {errors.phoneNumber}
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="mb-3">
-                        <label className="block text-[#56687a] text-xs font-medium mb-1">
-                          <FaEnvelope className="inline mr-1 text-[#0a66c2]" />{" "}
-                          Email Address
-                        </label>
-                        <input
-                          type="email"
-                          name="gmail"
-                          value={customer.gmail || ""}
-                          onChange={handleChange}
-                          className="input w-full bg-[#f3f6f8] border-[#0a66c2]/20 focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2] transition-all duration-300"
-                        />
-                        {errors.email && (
-                          <p className="text-[#b24020] text-xs mt-1">
-                            {errors.email}
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="flex space-x-2 mt-4">
-                        <button
-                          type="button"
-                          onClick={handleUpdateCustomer}
-                          className="flex items-center bg-[#0a66c2] text-white text-sm px-3 py-1.5 rounded hover:bg-[#004182] transition-colors"
-                        >
-                          <FaSave className="mr-1" /> Save
-                        </button>
-                        <button
-                          type="button"
-                          onClick={handleEditToggle}
-                          className="flex items-center bg-[#f3f6f8] text-[#56687a] text-sm border border-[#dce6f1] px-3 py-1.5 rounded hover:bg-[#dce6f1] transition-colors"
-                        >
-                          <FaTimes className="mr-1" /> Cancel
-                        </button>
-                      </div>
-                    </motion.div>
-                  ) : (
-                    <div className="border-t border-[#e9e5df] pt-4 mt-2">
-                      <div className="text-left space-y-3">
-                        <div className="flex items-center">
-                          <FaPhone className="text-[#56687a] mr-2 w-4" />
-                          <div>
-                            <p className="text-xs text-[#56687a]">Phone</p>
-                            <p className="text-sm text-[#38434f]">
-                              {customer?.phno || "Not provided"}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center">
-                          <FaEnvelope className="text-[#56687a] mr-2 w-4" />
-                          <div>
-                            <p className="text-xs text-[#56687a]">Email</p>
-                            <p className="text-sm text-[#38434f]">
-                              {customer?.gmail || "Not provided"}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center">
-                          <FaIdCard className="text-[#56687a] mr-2 w-4" />
-                          <div>
-                            <p className="text-xs text-[#56687a]">Username</p>
-                            <p className="text-sm text-[#38434f]">
-                              {customer?.username || "Not provided"}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
+                    <div>
+                      <label className="block text-[10px] font-semibold tracking-widest text-[#111111]/50 uppercase mb-2">
+                        New Password
+                      </label>
+                      <input
+                        type="password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        className="w-full bg-transparent border-b border-[#111111]/20 text-[#111111] py-2 focus:border-[#111111] focus:outline-none transition-colors duration-300 text-[10px] uppercase tracking-widest"
+                      />
+                      {errors.newPassword && (
+                        <p className="text-red-500 text-[10px] mt-1 uppercase tracking-widest">
+                          {errors.newPassword}
+                        </p>
+                      )}
                     </div>
-                  )}
-                </div>
 
-                <div className="border-t border-[#e9e5df] p-4">
-                  {!editing && !changePassword && (
-                    <button
-                      onClick={handlePasswordToggle}
-                      className="w-full flex items-center justify-center text-[#0a66c2] bg-[#f3f6f8] hover:bg-[#dce6f1] px-3 py-2 rounded transition-colors"
-                    >
-                      <FaKey className="mr-2" /> Change Password
-                    </button>
-                  )}
+                    <div>
+                      <label className="block text-[10px] font-semibold tracking-widest text-[#111111]/50 uppercase mb-2">
+                        Confirm Password
+                      </label>
+                      <input
+                        type="password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        className="w-full bg-transparent border-b border-[#111111]/20 text-[#111111] py-2 focus:border-[#111111] focus:outline-none transition-colors duration-300 text-[10px] uppercase tracking-widest"
+                      />
+                      {errors.confirmPassword && (
+                        <p className="text-red-500 text-[10px] mt-1 uppercase tracking-widest">
+                          {errors.confirmPassword}
+                        </p>
+                      )}
+                    </div>
 
-                  <button
-                    onClick={handleLogout}
-                    className="w-full flex items-center justify-center text-[#56687a] hover:text-[#0a66c2] mt-3 px-3 py-2 rounded transition-colors"
-                  >
-                    <FaSignOutAlt className="mr-2" /> Logout
-                  </button>
-                </div>
-              </div>
-
-              {/* Quick Stats Card */}
-              <div className="bg-white rounded-lg shadow-sm p-4">
-                <h2 className="text-lg font-semibold text-[#38434f] mb-3">
-                  Quick Stats
-                </h2>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-[#56687a]">Total Bookings</span>
-                    <span className="font-bold text-[#38434f]">
-                      {bookings.length}
-                    </span>
+                    <div className="flex gap-3 pt-2">
+                      <button
+                        onClick={handleUpdatePassword}
+                        className="flex-1 bg-[#111111] text-[#f5f3f0] py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-[#1a1a1a] transition-colors duration-300"
+                      >
+                        Update
+                      </button>
+                      <button
+                        onClick={handlePasswordToggle}
+                        className="flex-1 border border-[#111111]/30 text-[#111111] py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-[#111111] hover:text-[#f5f3f0] transition-all duration-300"
+                      >
+                        Cancel
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-[#56687a]">Confirmed</span>
-                    <span className="font-bold text-[#44712e]">
-                      {bookings.filter((b) => b.status === "confirmed").length}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-[#56687a]">Pending</span>
-                    <span className="font-bold text-[#e7a33e]">
-                      {bookings.filter((b) => b.status === "pending").length}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Main Content */}
-            <div className="lg:w-2/3">
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <div className="flex flex-col md:flex-row md:items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-[#38434f] flex items-center">
-                    <FaSuitcase className="mr-2 text-[#0a66c2]" /> Your Travel
-                    Bookings
-                  </h2>
-                  <div className="flex gap-2 mt-4 md:mt-0">
-                    <button
-                      onClick={() => setStatusFilter("all")}
-                      className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
-                        statusFilter === "all"
-                          ? "bg-[#0a66c2] text-white"
-                          : "bg-[#f3f6f8] text-[#56687a] hover:bg-[#dce6f1]"
-                      }`}
-                    >
-                      All
-                    </button>
-                    <button
-                      onClick={() => setStatusFilter("confirmed")}
-                      className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
-                        statusFilter === "confirmed"
-                          ? "bg-[#0a66c2] text-white"
-                          : "bg-[#f3f6f8] text-[#56687a] hover:bg-[#dce6f1]"
-                      }`}
-                    >
-                      Confirmed
-                    </button>
-                    <button
-                      onClick={() => setStatusFilter("pending")}
-                      className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
-                        statusFilter === "pending"
-                          ? "bg-[#0a66c2] text-white"
-                          : "bg-[#f3f6f8] text-[#56687a] hover:bg-[#dce6f1]"
-                      }`}
-                    >
-                      Pending
-                    </button>
-                  </div>
-                </div>
-
-                {bookings.length > 0 ? (
+                ) : editing ? (
                   <div className="space-y-4">
-                    {bookings
-                      .filter(
-                        (booking) =>
-                          statusFilter === "all" ||
-                          booking.status === statusFilter
-                      )
-                      .map((booking) => (
-                        <motion.div
-                          key={booking._id}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.3 }}
-                          className="bg-[#f3f6f8] rounded-lg p-5 hover:shadow-md transition-shadow"
-                        >
-                          <div className="flex flex-col md:flex-row md:items-center justify-between">
-                            <div className="mb-4 md:mb-0">
-                              <h3 className="text-lg font-semibold text-[#38434f] mb-2 flex items-center">
-                                <FaSuitcase className="text-[#0a66c2] mr-2" />
-                                {booking.packageName || "N/A"}
-                              </h3>
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-[#56687a]">
-                                <div className="flex items-center">
-                                  <FaUserTie className="mr-2" />
-                                  <span>
-                                    Guide: {booking.guideName || "N/A"}
-                                  </span>
-                                </div>
-                                <div className="flex items-center">
-                                  <FaCalendarAlt className="mr-2" />
-                                  <span>
-                                    Date:{" "}
-                                    {new Date(
-                                      booking.bookingDate
-                                    ).toLocaleDateString()}
-                                  </span>
-                                </div>
-                                <div className="flex items-center">
-                                  <FaIdCard className="mr-2" />
-                                  <span>
-                                    Booking ID:{" "}
-                                    {booking.bookingId || booking._id}
-                                  </span>
-                                </div>
-                                <div className="flex items-center">
-                                  <span className="font-medium text-[#44712e]">
-                                    ₹{booking.totalPrice}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </motion.div>
-                      ))}
+                    <div>
+                      <label className="block text-[10px] font-semibold tracking-widest text-[#111111]/50 uppercase mb-2">
+                        Full Name
+                      </label>
+                      <input
+                        type="text"
+                        name="Name"
+                        value={customer.Name || ""}
+                        onChange={handleChange}
+                        className="w-full bg-transparent border-b border-[#111111]/20 text-[#111111] py-2 focus:border-[#111111] focus:outline-none transition-colors duration-300 text-[10px] uppercase tracking-widest"
+                      />
+                      {errors.name && (
+                        <p className="text-red-500 text-[10px] mt-1 uppercase tracking-widest">
+                          {errors.name}
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] font-semibold tracking-widest text-[#111111]/50 uppercase mb-2">
+                        Username
+                      </label>
+                      <input
+                        type="text"
+                        name="username"
+                        value={customer.username || ""}
+                        onChange={handleChange}
+                        className="w-full bg-transparent border-b border-[#111111]/20 text-[#111111] py-2 focus:border-[#111111] focus:outline-none transition-colors duration-300 text-[10px] uppercase tracking-widest"
+                      />
+                      {errors.username && (
+                        <p className="text-red-500 text-[10px] mt-1 uppercase tracking-widest">
+                          {errors.username}
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] font-semibold tracking-widest text-[#111111]/50 uppercase mb-2">
+                        Phone
+                      </label>
+                      <input
+                        type="text"
+                        name="phno"
+                        value={customer.phno || ""}
+                        onChange={handleChange}
+                        className="w-full bg-transparent border-b border-[#111111]/20 text-[#111111] py-2 focus:border-[#111111] focus:outline-none transition-colors duration-300 text-[10px] uppercase tracking-widest"
+                      />
+                      {errors.phoneNumber && (
+                        <p className="text-red-500 text-[10px] mt-1 uppercase tracking-widest">
+                          {errors.phoneNumber}
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] font-semibold tracking-widest text-[#111111]/50 uppercase mb-2">
+                        Email
+                      </label>
+                      <input
+                        type="email"
+                        name="gmail"
+                        value={customer.gmail || ""}
+                        onChange={handleChange}
+                        className="w-full bg-transparent border-b border-[#111111]/20 text-[#111111] py-2 focus:border-[#111111] focus:outline-none transition-colors duration-300 text-[10px] uppercase tracking-widest"
+                      />
+                      {errors.email && (
+                        <p className="text-red-500 text-[10px] mt-1 uppercase tracking-widest">
+                          {errors.email}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="flex gap-3 pt-2">
+                      <button
+                        onClick={handleUpdateCustomer}
+                        className="flex-1 bg-[#111111] text-[#f5f3f0] py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-[#1a1a1a] transition-colors duration-300"
+                      >
+                        Save
+                      </button>
+                      <button
+                        onClick={handleEditToggle}
+                        className="flex-1 border border-[#111111]/30 text-[#111111] py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-[#111111] hover:text-[#f5f3f0] transition-all duration-300"
+                      >
+                        Cancel
+                      </button>
+                    </div>
                   </div>
                 ) : (
-                  <div className="bg-[#f3f6f8] rounded-lg p-8 text-center">
-                    <FaSuitcase className="text-[#56687a] text-5xl mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-[#38434f] mb-2">
-                      No Bookings Found
-                    </h3>
-                    <p className="text-[#56687a]">
-                      You have not made any travel bookings yet.
-                    </p>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <FaPhone className="text-[#111111]/30 text-xs" />
+                      <div>
+                        <p className="text-[10px] font-semibold tracking-widest text-[#111111]/40 uppercase">
+                          Phone
+                        </p>
+                        <p className="text-sm font-bold text-[#111111] uppercase tracking-wider">
+                          {customer?.phno || "Not provided"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <FaEnvelope className="text-[#111111]/30 text-xs" />
+                      <div>
+                        <p className="text-[10px] font-semibold tracking-widest text-[#111111]/40 uppercase">
+                          Email
+                        </p>
+                        <p className="text-sm font-bold text-[#111111] uppercase tracking-wider">
+                          {customer?.gmail || "Not provided"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <FaIdCard className="text-[#111111]/30 text-xs" />
+                      <div>
+                        <p className="text-[10px] font-semibold tracking-widest text-[#111111]/40 uppercase">
+                          Username
+                        </p>
+                        <p className="text-sm font-bold text-[#111111] uppercase tracking-wider">
+                          {customer?.username || "Not provided"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="pt-4 space-y-3">
+                      <button
+                        onClick={handleEditToggle}
+                        className="w-full bg-[#111111] text-[#f5f3f0] py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-[#1a1a1a] transition-colors duration-300 flex items-center justify-center gap-2"
+                      >
+                        <FaEdit className="text-xs" /> Edit Profile
+                      </button>
+                      <button
+                        onClick={handlePasswordToggle}
+                        className="w-full border border-[#111111]/30 text-[#111111] py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-[#111111] hover:text-[#f5f3f0] transition-all duration-300 flex items-center justify-center gap-2"
+                      >
+                        <FaKey className="text-xs" /> Change Password
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
+
+              {/* Logout */}
+              <div className="p-6 md:p-8 border-t border-[#111111]/10">
+                <button
+                  onClick={handleLogout}
+                  className="w-full border border-red-500/30 text-red-600 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-red-500/10 transition-colors duration-300 flex items-center justify-center gap-2"
+                >
+                  <FaSignOutAlt /> Logout
+                </button>
+              </div>
+            </div>
+
+            {/* Quick Stats */}
+            <div className="border border-[#111111]/10 bg-[#ffffff] p-6 md:p-8">
+              <h2 className="text-[10px] font-bold uppercase tracking-widest text-[#111111]/50 mb-6">
+                Quick Stats
+              </h2>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] font-semibold tracking-widest text-[#111111]/40 uppercase">
+                    Total Bookings
+                  </span>
+                  <span className="text-lg font-bold text-[#111111]">
+                    {bookings.length}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] font-semibold tracking-widest text-[#111111]/40 uppercase">
+                    Confirmed
+                  </span>
+                  <span className="text-lg font-bold text-green-600">
+                    {bookings.filter((b) => b.status === "confirmed").length}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] font-semibold tracking-widest text-[#111111]/40 uppercase">
+                    Pending
+                  </span>
+                  <span className="text-lg font-bold text-yellow-600">
+                    {bookings.filter((b) => b.status === "pending").length}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
-        )}
-      </div>
-      <ToastContainer position="bottom-right" />
+
+          {/* Main Content - Bookings */}
+          <div className="flex-1">
+            <div className="border border-[#111111]/10 bg-[#ffffff]">
+              <div className="flex flex-col md:flex-row md:items-center justify-between p-6 md:p-8 border-b border-[#111111]/10">
+                <h2 className="text-base md:text-lg font-bold tracking-tight text-[#111111] flex items-center gap-3">
+                  <FaSuitcase className="text-[#111111]/40 text-lg" />
+                  Travel Bookings
+                </h2>
+                <div className="flex gap-2 mt-4 md:mt-0">
+                  {["all", "confirmed", "pending"].map((status) => (
+                    <button
+                      key={status}
+                      onClick={() => setStatusFilter(status)}
+                      className={`px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition-all duration-300 ${
+                        statusFilter === status
+                          ? "bg-[#111111] text-[#f5f3f0]"
+                          : "border border-[#111111]/30 text-[#111111]/50 hover:text-[#111111] hover:bg-[#f0eeeb]"
+                      }`}
+                    >
+                      {status}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {filteredBookings.length > 0 ? (
+                <div className="divide-y divide-[#111111]/5">
+                  {filteredBookings.map((booking) => (
+                    <motion.div
+                      key={booking._id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="p-6 md:p-8 hover:bg-[#f0eeeb] transition-colors"
+                    >
+                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                          <h3 className="text-base md:text-lg font-bold tracking-tight text-[#111111] mb-3">
+                            {booking.packageName || "N/A"}
+                          </h3>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+                            <div className="flex items-center gap-3">
+                              <FaUserTie className="text-[#111111]/30 text-xs" />
+                              <p className="text-[10px] font-bold text-[#111111] uppercase tracking-widest">
+                                Guide: {booking.guideName || "N/A"}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <FaCalendarAlt className="text-[#111111]/30 text-xs" />
+                              <p className="text-[10px] font-bold text-[#111111] uppercase tracking-widest">
+                                {new Date(booking.bookingDate).toLocaleDateString()}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <FaIdCard className="text-[#111111]/30 text-xs" />
+                              <p className="text-[10px] font-bold text-[#111111] uppercase tracking-widest">
+                                {booking.bookingId || booking._id.slice(-8).toUpperCase()}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <p className="text-[10px] font-bold text-green-600 uppercase tracking-widest">
+                                ₹{booking.totalPrice}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <span
+                          className={`px-3 py-1 text-[9px] font-bold uppercase tracking-widest flex items-center gap-2 w-fit shrink-0 ${
+                            booking.status === "confirmed"
+                              ? "bg-green-500/10 text-green-600 border border-green-500/30"
+                              : booking.status === "pending"
+                              ? "bg-yellow-500/10 text-yellow-600 border border-yellow-500/30"
+                              : "bg-red-500/10 text-red-600 border border-red-500/30"
+                          }`}
+                        >
+                          {booking.status === "confirmed" && <FaCheckCircle className="text-xs" />}
+                          {booking.status === "pending" && <FaHourglassHalf className="text-xs" />}
+                          {booking.status === "cancelled" && <FaBan className="text-xs" />}
+                          {booking.status}
+                        </span>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-8 md:p-16 text-center">
+                  <FaSuitcase className="w-16 h-16 text-[#111111]/20 mx-auto mb-6" />
+                  <h3 className="text-xl md:text-2xl font-bold tracking-tight text-[#111111] mb-3">
+                    No Bookings Found
+                  </h3>
+                  <p className="text-[10px] text-[#111111]/40 uppercase tracking-widest">
+                    {statusFilter !== "all"
+                      ? `No ${statusFilter} bookings found.`
+                      : "You have not made any travel bookings yet."}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
   );
 }

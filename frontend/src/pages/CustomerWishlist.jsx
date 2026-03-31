@@ -1,6 +1,7 @@
 /** @format */
 
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { motion } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
@@ -14,8 +15,10 @@ import {
   FaTrashAlt,
   FaExclamationCircle,
   FaHeart,
-  FaSpinner,
   FaCompass,
+  FaLanguage,
+  FaMapMarkerAlt,
+  FaBriefcase,
 } from "react-icons/fa";
 import apiUrl from "../utils/api.js";
 
@@ -30,7 +33,6 @@ const CustomerWishlist = () => {
   useEffect(() => {
     const fetchWishlistData = async () => {
       try {
-        // Fetch package wishlist data
         let packages = [];
         try {
           const packageResponse = await fetch(
@@ -50,10 +52,8 @@ const CustomerWishlist = () => {
           }
         } catch (packageError) {
           console.error("Error fetching package wishlist:", packageError);
-          // Continue with empty packages array
         }
 
-        // Fetch guide wishlist data
         let guides = [];
         try {
           const guideResponse = await fetch(
@@ -73,7 +73,6 @@ const CustomerWishlist = () => {
           }
         } catch (guideError) {
           console.error("Error fetching guide wishlist:", guideError);
-          // Continue with empty guides array
         }
 
         setWishlist({
@@ -85,8 +84,6 @@ const CustomerWishlist = () => {
         console.error("General error in fetchWishlistData:", error);
         setError(error.message);
         setLoading(false);
-
-        // Set empty arrays for both to prevent UI issues
         setWishlist({
           packages: [],
           guides: [],
@@ -140,73 +137,57 @@ const CustomerWishlist = () => {
 
   if (loading) {
     return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="min-h-screen flex flex-col bg-[#f3f6f8] font-['Source Sans', 'Segoe UI', Arial, sans-serif]"
-      >
-        <div className="flex-grow flex items-center justify-center flex-col">
-          <div className="bg-white p-8 rounded-lg shadow-sm">
-            <div className="flex items-center space-x-4">
-              <FaSpinner className="w-8 h-8 text-[#0a66c2] animate-spin" />
-              <p className="text-[#38434f] font-medium">
-                Loading your wishlist...
-              </p>
-            </div>
+      <div className="w-full bg-[#f5f3f0] text-[#111111] min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-[2px] bg-[#111111]/20 overflow-hidden relative">
+            <div className="absolute left-0 top-0 h-full bg-[#111111] animate-pulse" style={{ width: "50%" }} />
           </div>
+          <p className="mt-4 text-[10px] text-[#111111]/50 uppercase font-bold tracking-widest">
+            Loading Wishlist...
+          </p>
         </div>
-      </motion.div>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="min-h-screen flex flex-col bg-[#f3f6f8] font-['Source Sans', 'Segoe UI', Arial, sans-serif]"
-      >
-        <div className="flex-grow flex items-center justify-center">
-          <div className="bg-white p-8 rounded-lg shadow-sm max-w-md text-center">
-            <FaExclamationCircle className="w-16 h-16 text-[#b24020] mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-[#38434f] mb-2">
-              Something went wrong
-            </h2>
-            <p className="text-[#56687a] mb-6">
-              We could not load your wishlist. Please try again later.
-            </p>
-            <button
-              onClick={() => window.location.reload()}
-              className="bg-[#0a66c2] text-white px-4 py-2 rounded hover:bg-[#004182] transition-colors"
-            >
-              Refresh Page
-            </button>
-          </div>
+      <div className="w-full bg-[#f5f3f0] text-[#111111] min-h-screen flex items-center justify-center p-6">
+        <div className="border border-red-500/30 p-8 md:p-16 text-center max-w-md">
+          <FaExclamationCircle className="w-16 h-16 text-red-500 mx-auto mb-6" />
+          <h2 className="text-xl md:text-2xl font-bold tracking-tight text-[#111111] mb-3">
+            Something Went Wrong
+          </h2>
+          <p className="text-[10px] text-[#111111]/40 uppercase tracking-widest mb-6">
+            We could not load your wishlist. Please try again later.
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-[#111111] text-[#f5f3f0] px-8 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-[#1a1a1a] transition-colors duration-300"
+          >
+            Refresh Page
+          </button>
         </div>
-      </motion.div>
+      </div>
     );
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="min-h-screen flex flex-col bg-[#f3f6f8] font-['Source Sans', 'Segoe UI', Arial, sans-serif]"
-    >
-      {/* Navbar removed - now using RoleBasedNavbar from Layout component */}
+    <div className="w-full bg-[#f5f3f0] text-[#111111] min-h-screen font-sans uppercase tracking-[0.15em] text-xs">
       <ToastContainer position="top-right" autoClose={3000} />
-      <motion.main
-        initial={{ y: 20 }}
-        animate={{ y: 0 }}
-        className="flex-grow container mx-auto px-4 py-6 relative z-10"
-      >
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-4">
-          <div className="flex items-center mb-2">
-            <FaBookmark className="text-[#0a66c2] mr-2 text-xl" />
-            <h1 className="text-2xl font-bold text-[#38434f]">My Wishlist</h1>
-          </div>
-          <p className="text-[#56687a]">
-            Items you have saved for future reference
+
+      <main className="max-w-[1400px] mx-auto px-6 md:px-10 py-12 md:py-24">
+        {/* Header */}
+        <div className="mb-12 md:mb-16">
+          <span className="block text-xs md:text-sm font-semibold tracking-widest text-[#111111]/70 uppercase mb-4">
+            010 / Wishlist
+          </span>
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-6 text-[#111111]">
+            My Wishlist
+          </h1>
+          <p className="text-[10px] sm:text-xs md:text-lg text-[#111111]/70 max-w-lg leading-relaxed tracking-wider">
+            Items you have saved for future reference. Browse your curated
+            collection of packages and guides.
           </p>
         </div>
 
@@ -215,122 +196,114 @@ const CustomerWishlist = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-6"
+            className="mb-12 md:mb-16"
           >
-            <div className="bg-white rounded-lg shadow-sm p-6 mb-4">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center">
-                  <FaMapMarkedAlt className="text-[#0a66c2] mr-2" />
-                  <h2 className="text-lg font-bold text-[#38434f]">
-                    Travel Packages
-                  </h2>
-                </div>
-                <span className="bg-[#dce6f1] text-[#0a66c2] px-2 py-1 rounded-full text-sm font-medium">
-                  {wishlist.packages.length} saved
-                </span>
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <FaMapMarkedAlt className="text-[#111111]/40 text-lg" />
+                <h2 className="text-base md:text-lg font-bold tracking-tight text-[#111111]">
+                  Travel Packages
+                </h2>
               </div>
+              <span className="text-[10px] font-bold tracking-widest text-[#111111]/50 uppercase">
+                {wishlist.packages.length} SAVED
+              </span>
+            </div>
 
-              <div className="space-y-4">
-                {wishlist.packages.map((item) => (
-                  <motion.div
-                    key={item._id}
-                    whileHover={{ backgroundColor: "#f3f6f8" }}
-                    className="border border-[#dce6f1] rounded-lg overflow-hidden hover:shadow-sm transition-all duration-300"
-                  >
-                    {item.packageId ? (
-                      <div className="p-4">
-                        <div className="flex flex-col md:flex-row">
-                          <div className="w-full md:w-1/4 h-32 md:h-auto rounded-lg overflow-hidden mb-3 md:mb-0 md:mr-4 flex-shrink-0 border border-[#dce6f1]">
-                            {item.packageId.image &&
-                            item.packageId.image.length > 0 ? (
-                              <img
-                                src={
-                                  item.packageId.image[0].startsWith("http")
-                                    ? item.packageId.image[0]
-                                    : `${apiUrl}${item.packageId.image[0]}`
-                                }
-                                alt={item.packageId.name}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <div className="w-full h-full bg-[#dce6f1] flex items-center justify-center">
-                                <FaMapMarkedAlt className="text-[#56687a] text-2xl" />
-                              </div>
-                            )}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              {wishlist.packages.map((item) => (
+                <motion.div
+                  key={item._id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  whileHover={{ y: -8 }}
+                  className="group border border-[#111111]/10 bg-[#ffffff] hover:border-[#111111]/30 transition-all duration-500"
+                >
+                  {item.packageId ? (
+                    <div className="p-6 md:p-8">
+                      {/* Image */}
+                      <div className="mb-6 overflow-hidden">
+                        {item.packageId.image && item.packageId.image.length > 0 ? (
+                          <motion.img
+                            whileHover={{ scale: 1.05 }}
+                            transition={{ duration: 0.6, ease: "easeOut" }}
+                            src={
+                              item.packageId.image[0].startsWith("http")
+                                ? item.packageId.image[0]
+                                : `${apiUrl}${item.packageId.image[0]}`
+                            }
+                            alt={item.packageId.name}
+                            className="w-full h-48 object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-48 bg-[#f0eeeb] flex items-center justify-center">
+                            <FaMapMarkedAlt className="text-[#111111]/10 text-4xl" />
                           </div>
-                          <div className="flex-1">
-                            <h3 className="text-lg font-bold text-[#38434f] mb-2">
-                              {item.packageId.name}
-                            </h3>
-                            <p className="text-[#56687a] mb-3 text-sm line-clamp-2">
-                              {item.packageId.description}
+                        )}
+                      </div>
+
+                      {/* Name */}
+                      <h3 className="text-base md:text-lg font-bold tracking-tight text-[#111111] mb-4">
+                        {item.packageId.name}
+                      </h3>
+
+                      {/* Details */}
+                      <div className="space-y-4 mb-6">
+                        <div className="flex items-center gap-3">
+                          <FaMoneyBillWave className="text-[#111111]/30 text-xs" />
+                          <p className="text-sm font-bold text-[#111111] uppercase tracking-wider">
+                            ₹{item.packageId.price.toLocaleString()}
+                          </p>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                          <FaCalendarAlt className="text-[#111111]/30 text-xs" />
+                          <p className="text-[10px] font-bold text-[#111111] uppercase tracking-widest">
+                            {item.packageId.duration} DAYS
+                          </p>
+                        </div>
+
+                        {item.packageId.location && (
+                          <div className="flex items-center gap-3">
+                            <FaMapMarkerAlt className="text-[#111111]/30 text-xs" />
+                            <p className="text-[10px] font-bold text-[#111111] uppercase tracking-widest">
+                              {item.packageId.location}
                             </p>
-                            <div className="flex flex-wrap gap-4 mb-3">
-                              <div className="flex items-center text-[#56687a]">
-                                <FaMoneyBillWave className="mr-1 text-[#0a66c2]" />
-                                <span className="font-medium">
-                                  ₹{item.packageId.price.toLocaleString()}
-                                </span>
-                              </div>
-                              <div className="flex items-center text-[#56687a]">
-                                <FaCalendarAlt className="mr-1 text-[#0a66c2]" />
-                                <span>{item.packageId.duration} days</span>
-                              </div>
-                              {item.packageId.location && (
-                                <div className="flex items-center text-[#56687a]">
-                                  <FaMapMarkedAlt className="mr-1 text-[#0a66c2]" />
-                                  <span>{item.packageId.location}</span>
-                                </div>
-                              )}
-                            </div>
-                            <div className="flex justify-end">
-                              <button
-                                onClick={() =>
-                                  handleRemoveItem(item._id, "package")
-                                }
-                                className="flex items-center text-[#b24020] hover:text-[#dc2626] transition-colors"
-                              >
-                                <FaTrashAlt className="mr-1" /> Remove
-                              </button>
-                            </div>
                           </div>
+                        )}
+                      </div>
+
+                      {/* Remove */}
+                      <button
+                        onClick={() => handleRemoveItem(item._id, "package")}
+                        className="w-full border border-red-500/30 text-red-600 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-red-500/10 transition-colors duration-300 flex items-center justify-center gap-2"
+                      >
+                        <FaTrashAlt className="text-xs" /> Remove
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="p-6 md:p-8">
+                      <div className="bg-red-500/5 p-6 mb-6 flex items-center gap-3 border border-red-500/10">
+                        <FaExclamationCircle className="text-red-500 text-xl" />
+                        <div>
+                          <h3 className="text-sm font-bold text-red-600 uppercase tracking-widest mb-1">
+                            Package Unavailable
+                          </h3>
+                          <p className="text-[10px] text-red-500/70 uppercase tracking-widest">
+                            This package has been removed or is no longer available.
+                          </p>
                         </div>
                       </div>
-                    ) : (
-                      <div className="p-4 bg-[#f9f5f2]">
-                        <div className="flex flex-col md:flex-row">
-                          <div className="w-full md:w-1/4 h-32 md:h-auto rounded-lg overflow-hidden mb-3 md:mb-0 md:mr-4 flex-shrink-0 bg-[#f3e9e5] flex items-center justify-center">
-                            <FaExclamationCircle className="text-[#b24020] text-2xl" />
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-center mb-2">
-                              <FaExclamationCircle className="text-[#b24020] mr-2" />
-                              <h3 className="text-lg font-medium text-[#b24020]">
-                                Package Unavailable
-                              </h3>
-                            </div>
-                            <p className="text-[#b24020] text-sm mb-3">
-                              This package has been removed or is no longer
-                              available.
-                            </p>
-                            <div className="flex justify-end">
-                              <button
-                                onClick={() =>
-                                  handleRemoveItem(item._id, "package")
-                                }
-                                className="flex items-center text-[#b24020] hover:text-[#dc2626] transition-colors"
-                              >
-                                <FaTrashAlt className="mr-1" /> Remove from
-                                Wishlist
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </motion.div>
-                ))}
-              </div>
+                      <button
+                        onClick={() => handleRemoveItem(item._id, "package")}
+                        className="w-full border border-red-500/30 text-red-600 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-red-500/10 transition-colors duration-300 flex items-center justify-center gap-2"
+                      >
+                        <FaTrashAlt className="text-xs" /> Remove from Wishlist
+                      </button>
+                    </div>
+                  )}
+                </motion.div>
+              ))}
             </div>
           </motion.div>
         )}
@@ -340,144 +313,145 @@ const CustomerWishlist = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-6"
+            className="mb-12 md:mb-16"
           >
-            <div className="bg-white rounded-lg shadow-sm p-6 mb-4">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center">
-                  <FaUserTie className="text-[#0a66c2] mr-2" />
-                  <h2 className="text-lg font-bold text-[#38434f]">
-                    Travel Guides
-                  </h2>
-                </div>
-                <span className="bg-[#dce6f1] text-[#0a66c2] px-2 py-1 rounded-full text-sm font-medium">
-                  {wishlist.guides.length} saved
-                </span>
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <FaUserTie className="text-[#111111]/40 text-lg" />
+                <h2 className="text-base md:text-lg font-bold tracking-tight text-[#111111]">
+                  Travel Guides
+                </h2>
               </div>
+              <span className="text-[10px] font-bold tracking-widest text-[#111111]/50 uppercase">
+                {wishlist.guides.length} SAVED
+              </span>
+            </div>
 
-              <div className="space-y-4">
-                {wishlist.guides.map((item) => (
-                  <motion.div
-                    key={item._id}
-                    whileHover={{ backgroundColor: "#f3f6f8" }}
-                    className="border border-[#dce6f1] rounded-lg overflow-hidden hover:shadow-sm transition-all duration-300"
-                  >
-                    {item.guideId ? (
-                      <div className="p-4">
-                        <div className="flex items-start">
-                          <div className="w-12 h-12 rounded-full overflow-hidden mr-3 flex-shrink-0 border border-[#dce6f1]">
-                            {item.guideId.profilePicture ? (
-                              <img
-                                src={`${apiUrl}/${item.guideId.profilePicture}`}
-                                alt={item.guideId.name}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <div className="w-full h-full bg-[#dce6f1] flex items-center justify-center">
-                                <FaUserTie className="text-[#56687a]" />
-                              </div>
-                            )}
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="text-lg font-bold text-[#38434f] mb-1">
-                              {item.guideId.name}
-                            </h3>
-                            <p className="text-[#56687a] mb-3 text-sm line-clamp-2">
-                              {item.guideId.description}
-                            </p>
-                            <div className="flex flex-wrap gap-2 mb-3">
-                              <span className="bg-[#dce6f1] text-[#0a66c2] px-2 py-1 rounded-full text-xs font-medium">
-                                {item.guideId.experience} years experience
-                              </span>
-                              {item.guideId.languages && (
-                                <span className="bg-[#dce6f1] text-[#0a66c2] px-2 py-1 rounded-full text-xs font-medium">
-                                  {Array.isArray(item.guideId.languages)
-                                    ? item.guideId.languages.join(", ")
-                                    : item.guideId.languages}
-                                </span>
-                              )}
-                              {item.guideId.location && (
-                                <span className="bg-[#dce6f1] text-[#0a66c2] px-2 py-1 rounded-full text-xs font-medium flex items-center">
-                                  <FaMapMarkedAlt className="mr-1 text-xs" />{" "}
-                                  {item.guideId.location}
-                                </span>
-                              )}
-                            </div>
-                          </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              {wishlist.guides.map((item) => (
+                <motion.div
+                  key={item._id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  whileHover={{ y: -8 }}
+                  className="group border border-[#111111]/10 bg-[#ffffff] hover:border-[#111111]/30 transition-all duration-500"
+                >
+                  {item.guideId ? (
+                    <div className="p-6 md:p-8">
+                      {/* Avatar & Name */}
+                      <div className="flex items-center mb-6">
+                        <div className="h-16 w-16 border border-[#111111]/20 flex items-center justify-center text-[#111111] text-xl font-bold mr-4 overflow-hidden shrink-0">
+                          {item.guideId.profilePicture ? (
+                            <img
+                              src={`${apiUrl}/${item.guideId.profilePicture}`}
+                              alt={item.guideId.name}
+                              className="h-full w-full object-cover"
+                            />
+                          ) : (
+                            <FaUserTie className="text-[#111111]/20 text-2xl" />
+                          )}
                         </div>
-                        <div className="flex justify-end mt-2">
-                          <button
-                            onClick={() => handleRemoveItem(item._id, "guide")}
-                            className="flex items-center text-[#b24020] hover:text-[#dc2626] transition-colors"
-                          >
-                            <FaTrashAlt className="mr-1" /> Remove
-                          </button>
+                        <div>
+                          <h3 className="text-base md:text-lg font-bold tracking-tight text-[#111111]">
+                            {item.guideId.name}
+                          </h3>
+                          {item.guideId.location && (
+                            <p className="text-[10px] text-[#111111]/50 uppercase tracking-widest mt-1">
+                              {item.guideId.location}
+                            </p>
+                          )}
                         </div>
                       </div>
-                    ) : (
-                      <div className="p-4 bg-[#f9f5f2]">
-                        <div className="flex items-start">
-                          <div className="w-12 h-12 rounded-full overflow-hidden mr-3 flex-shrink-0 bg-[#f3e9e5] flex items-center justify-center">
-                            <FaExclamationCircle className="text-[#b24020]" />
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-center mb-2">
-                              <FaExclamationCircle className="text-[#b24020] mr-2" />
-                              <h3 className="text-lg font-medium text-[#b24020]">
-                                Guide Unavailable
-                              </h3>
-                            </div>
-                            <p className="text-[#b24020] text-sm mb-3">
-                              This guide has been removed or is no longer
-                              available.
-                            </p>
-                            <div className="flex justify-end">
-                              <button
-                                onClick={() =>
-                                  handleRemoveItem(item._id, "guide")
-                                }
-                                className="flex items-center text-[#b24020] hover:text-[#dc2626] transition-colors"
-                              >
-                                <FaTrashAlt className="mr-1" /> Remove from
-                                Wishlist
-                              </button>
+
+                      {/* Details */}
+                      <div className="space-y-4 mb-6">
+                        <div className="flex items-center gap-3">
+                          <FaBriefcase className="text-[#111111]/30 text-xs" />
+                          <p className="text-[10px] font-bold text-[#111111] uppercase tracking-widest">
+                            {item.guideId.experience || 0} YEARS EXPERIENCE
+                          </p>
+                        </div>
+
+                        {item.guideId.languages && (
+                          <div className="flex items-start gap-3">
+                            <FaLanguage className="text-[#111111]/30 text-xs mt-1" />
+                            <div className="flex flex-wrap gap-2">
+                              {(Array.isArray(item.guideId.languages)
+                                ? item.guideId.languages
+                                : [item.guideId.languages]
+                              ).map((lang, i) => (
+                                <span
+                                  key={i}
+                                  className="px-3 py-1 border border-[#111111]/20 text-[10px] font-bold uppercase tracking-widest text-[#111111]/70"
+                                >
+                                  {lang}
+                                </span>
+                              ))}
                             </div>
                           </div>
+                        )}
+                      </div>
+
+                      {/* Remove */}
+                      <button
+                        onClick={() => handleRemoveItem(item._id, "guide")}
+                        className="w-full border border-red-500/30 text-red-600 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-red-500/10 transition-colors duration-300 flex items-center justify-center gap-2"
+                      >
+                        <FaTrashAlt className="text-xs" /> Remove
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="p-6 md:p-8">
+                      <div className="bg-red-500/5 p-6 mb-6 flex items-center gap-3 border border-red-500/10">
+                        <FaExclamationCircle className="text-red-500 text-xl" />
+                        <div>
+                          <h3 className="text-sm font-bold text-red-600 uppercase tracking-widest mb-1">
+                            Guide Unavailable
+                          </h3>
+                          <p className="text-[10px] text-red-500/70 uppercase tracking-widest">
+                            This guide has been removed or is no longer available.
+                          </p>
                         </div>
                       </div>
-                    )}
-                  </motion.div>
-                ))}
-              </div>
+                      <button
+                        onClick={() => handleRemoveItem(item._id, "guide")}
+                        className="w-full border border-red-500/30 text-red-600 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-red-500/10 transition-colors duration-300 flex items-center justify-center gap-2"
+                      >
+                        <FaTrashAlt className="text-xs" /> Remove from Wishlist
+                      </button>
+                    </div>
+                  )}
+                </motion.div>
+              ))}
             </div>
           </motion.div>
         )}
 
-        {/* No Items Message */}
+        {/* Empty State */}
         {wishlist.packages.length === 0 && wishlist.guides.length === 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-lg shadow-sm p-8 text-center"
+            className="border border-[#111111]/10 p-8 md:p-16 text-center"
           >
-            <FaHeart className="w-16 h-16 mx-auto mb-4 text-[#dce6f1]" />
-            <h3 className="text-xl font-bold text-[#38434f] mb-2">
-              Your wishlist is empty
+            <FaHeart className="w-16 h-16 text-[#111111]/10 mx-auto mb-6" />
+            <h3 className="text-xl md:text-2xl font-bold tracking-tight text-[#111111] mb-3">
+              Your Wishlist Is Empty
             </h3>
-            <p className="text-[#56687a] mb-6 max-w-md mx-auto">
+            <p className="text-[10px] text-[#111111]/40 uppercase tracking-widest mb-8 max-w-md mx-auto">
               Explore packages and guides to add items to your wishlist for
               future reference.
             </p>
-            <a
-              href="/home"
-              className="inline-flex items-center bg-[#0a66c2] text-white px-4 py-2 rounded hover:bg-[#004182] transition-colors"
+            <Link
+              to="/home"
+              className="inline-flex items-center bg-[#111111] text-[#f5f3f0] px-8 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-[#1a1a1a] transition-colors duration-300 gap-2"
             >
-              <FaCompass className="mr-2" /> Explore Packages
-            </a>
+              <FaCompass className="text-xs" /> Explore Packages
+            </Link>
           </motion.div>
         )}
-      </motion.main>
-    </motion.div>
+      </main>
+    </div>
   );
 };
 

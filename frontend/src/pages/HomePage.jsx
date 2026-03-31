@@ -1,38 +1,15 @@
 /** @format */
 
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FaStar, FaMapMarkerAlt, FaClock } from "react-icons/fa";
-import { MdExplore } from "react-icons/md";
 import apiUrl from "../utils/api.js";
 
 const HomePage = () => {
-  // Remove other filter states and options, keep only sortBy
+  const navigate = useNavigate();
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [sortBy, setSortBy] = useState("dateModified");
 
-  // Sorting function
-  const sortPackages = (packages, sortType) => {
-    const sortedPackages = [...packages];
-    switch (sortType) {
-      case "dateModified":
-        return sortedPackages.sort(
-          (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
-        );
-      case "priceLowToHigh":
-        return sortedPackages.sort((a, b) => a.price - b.price);
-      case "priceHighToLow":
-        return sortedPackages.sort((a, b) => b.price - a.price);
-      case "duration":
-        return sortedPackages.sort((a, b) => a.duration - b.duration);
-      default:
-        return sortedPackages;
-    }
-  };
-
-  // Fetch packages and sort them
   useEffect(() => {
     const fetchPackages = async () => {
       try {
@@ -40,8 +17,9 @@ const HomePage = () => {
         const data = await response.json();
 
         if (data && data.data) {
-          const sortedPackages = sortPackages(data.data, sortBy);
-          setPackages(sortedPackages);
+          // Sort by latest as default from previous logic
+          const sorted = data.data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+          setPackages(sorted);
         }
       } catch (error) {
         console.error("Failed to fetch packages:", error);
@@ -51,142 +29,101 @@ const HomePage = () => {
     };
 
     fetchPackages();
-  }, [sortBy]);
+  }, []);
+
+  // Filter logic based on active status
+  const filteredPackages = packages.filter((pack) => pack.isActive);
 
   return (
-    <div className="min-h-screen bg-[#f3f6f8] font-['Inter',sans-serif]">
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        {/* Hero Section remains the same */}
+    <div className="min-h-screen bg-[#f5f3f0] text-black font-sans pb-12">
 
-        {/* Modified Sort Section */}
-        <div className="rounded-xl shadow-sm p-6 mb-8">
-          <div className="max-w-xs mx-auto">
-            <label className="block text-lg font-medium text-gray-700 mb-1 text-center">
-              Sort by
-            </label>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="w-full bg-white border border-gray-300 rounded-lg py-2 px-3 text-gray-700
-                focus:outline-none focus:ring-2 focus:ring-[#0a66c2] focus:border-transparent"
-            >
-              <option value="dateModified">Latest Updates</option>
-              <option value="priceLowToHigh">Price: Low to High</option>
-              <option value="priceHighToLow">Price: High to Low</option>
-              <option value="duration">Duration</option>
-            </select>
-          </div>
-        </div>
 
-        {/* Packages Grid */}
+
+      {/* HEADER */}
+      <div className="pt-24 sm:pt-28 px-6 sm:px-12 pb-0">
+        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black leading-none tracking-tighter text-black uppercase">
+          Destinations
+        </h1>
+      </div>
+
+      {/* DYNAMIC SUBHEADER */}
+      <div className="px-6 sm:px-12 pt-6 pb-6 sm:pt-8 sm:pb-8 md:pt-10 md:pb-10 w-full max-w-3xl">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-normal leading-tight tracking-tight">
+          Discover the best travel destinations in <span className="font-semibold">the World</span>
+        </h2>
+      </div>
+
+      {/* PACKAGE GRID */}
+      <div className="px-6 sm:px-12 pb-12">
         {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0a66c2]"></div>
+          <div className="flex items-center justify-center py-24">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-black"></div>
           </div>
-        ) : packages.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {packages.map(
-              (pack, index) =>
-                pack.isActive && (
-                  <motion.div
-                    key={pack._id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }}
-                    whileHover={{ y: -5, transition: { duration: 0.2 } }}
-                    className="bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col h-full"
-                  >
-                    <div className="relative aspect-w-16 aspect-h-9 rounded-t-lg overflow-hidden">
-                      {pack.image && pack.image.length > 0 ? (
-                        <motion.img
-                          whileHover={{ scale: 1.05 }}
-                          transition={{ duration: 0.3 }}
-                          src={
-                            pack.image[0].startsWith("http")
-                              ? pack.image[0]
-                              : `${apiUrl}${pack.image[0]}`
-                          }
-                          alt={pack.name}
-                          className="w-full h-64 object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-64 bg-gradient-to-r from-[#0a66c2] to-[#0a66c2]/70 flex items-center justify-center">
-                          <MdExplore className="text-white text-5xl" />
-                        </div>
-                      )}
-                    </div>
+        ) : filteredPackages.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
+            {filteredPackages.map((pack) => (
+              <Link
+                key={pack._id}
+                to={`/packages/${pack._id}`}
+                className="relative aspect-[4/3] group overflow-hidden bg-gray-900 block rounded-md shadow-md hover:shadow-xl transition-shadow duration-500"
+              >
+                {/* Fallback pattern / Loading BG */}
+                <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-black z-0"></div>
 
-                    <div className="p-6 flex flex-col flex-grow">
-                      <div className="mb-4">
-                        <h3 className="text-xl font-semibold text-gray-900 mb-2 line-clamp-1">
-                          {pack.name}
-                        </h3>
+                {/* Image */}
+                {pack.image && pack.image.length > 0 && (
+                  <img
+                    src={pack.image[0].startsWith("http") ? pack.image[0] : `${apiUrl}${pack.image[0]}`}
+                    alt={pack.name}
+                    className="absolute inset-0 w-full h-full object-cover z-10 transition-transform duration-1000 group-hover:scale-110"
+                  />
+                )}
 
-                        <div className="flex items-center mb-2">
-                          <FaStar className="text-yellow-400 mr-1" />
-                          <span className="font-medium text-gray-700">
-                            {pack.reviews && pack.reviews.length > 0
-                              ? (
-                                  pack.reviews.reduce(
-                                    (sum, review) => sum + review.rating,
-                                    0
-                                  ) / pack.reviews.length
-                                ).toFixed(1)
-                              : "0.0"}
-                          </span>
-                          <span className="text-gray-500 text-sm ml-1">
-                            ({pack.reviews ? pack.reviews.length : 0} reviews)
-                          </span>
-                        </div>
+                {/* Gradient Overlays for Text Legibility */}
+                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/70 z-20 pointer-events-none transition-opacity duration-500 group-hover:opacity-80"></div>
 
-                        <p className="text-gray-600 text-sm line-clamp-2">
-                          {pack.description}
-                        </p>
-                      </div>
+                {/* Top Left: Destination Name */}
+                <div className="absolute top-6 left-6 z-30 max-w-[75%]">
+                  <h3 className="text-white font-bold text-lg sm:text-xl uppercase tracking-widest drop-shadow-md leading-tight line-clamp-2">
+                    {pack.name}
+                  </h3>
+                </div>
 
-                      {/* Location and Duration info */}
-                      <div className="flex flex-col gap-2 mb-4 text-sm">
-                        <div className="flex items-center text-gray-600">
-                          <FaMapMarkerAlt className="min-w-[16px] mr-2" />
-                          <span className="line-clamp-1">{pack.location}</span>
-                        </div>
-                        <div className="flex items-center text-gray-600">
-                          <FaClock className="min-w-[16px] mr-2" />
-                          <span>{pack.duration} days</span>
-                        </div>
-                      </div>
+                {/* Bottom Left: Location */}
+                <div className="absolute bottom-6 left-6 z-30 max-w-[85%]">
+                  <p className="text-white/90 font-bold text-sm sm:text-base tracking-wide drop-shadow-sm line-clamp-1">
+                    {pack.location || "Global"}
+                  </p>
+                </div>
 
-                      {/* Price and CTA */}
-                      <div className="mt-auto flex items-center justify-between">
-                        <div className="text-[#0a66c2] font-semibold text-xl">
-                          ₹{pack.price.toLocaleString()}
-                        </div>
-                        <motion.div
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          <Link
-                            to={`/packages/${pack._id}`}
-                            className="bg-[#0a66c2] text-white px-4 py-2 rounded-md hover:bg-[#084e96] transition-colors duration-300"
-                          >
-                            View Details
-                          </Link>
-                        </motion.div>
-                      </div>
-                    </div>
-                  </motion.div>
-                )
-            )}
+                {/* Top Right: Bookmark Icon */}
+                <div className="absolute top-6 right-6 z-30">
+                  <button className="text-white/70 hover:text-white transition-colors" onClick={(e) => {
+                    e.preventDefault(); // prevents link click if they just want to bookmark
+                    // Fake bookmark handler
+                  }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="drop-shadow-sm">
+                      <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
+                    </svg>
+                  </button>
+                </div>
+              </Link>
+            ))}
           </div>
         ) : (
-          <div className="text-center py-12">
-            <MdExplore className="text-[#0a66c2] text-6xl mx-auto mb-4" />
-            <p className="text-gray-600 text-lg">
-              No packages available at the moment
+          <div className="text-center py-24 select-none">
+            <h3 className="text-2xl font-black uppercase tracking-widest text-[#888]">
+              No Destinations Found
+            </h3>
+            <p className="mt-4 text-[#888] font-medium tracking-wide">
+              Try exploring a different category or return home.
             </p>
           </div>
         )}
-      </main>
+      </div>
+
+      {/* Spacer for bottom */}
+      <div className="h-24"></div>
     </div>
   );
 };

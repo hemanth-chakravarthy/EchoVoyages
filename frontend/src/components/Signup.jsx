@@ -5,6 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import apiUrl from "../utils/api.js";
+import backgroundVideo from "./assets/Girl_Enters_Cosmic_Dream_World.mp4";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -17,6 +18,8 @@ const Signup = () => {
     role: "customer",
     specialization: "luxury",
   });
+  
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const [errors, setErrors] = useState({});
   const [step, setStep] = useState(1);
@@ -208,260 +211,320 @@ const Signup = () => {
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center bg-cover bg-center py-12 px-4 sm:px-6 lg:px-8"
-      style={{
-        backgroundImage: "url('/images/travel-background.jpg')",
-      }}
-    >
-      <ToastContainer position="top-right" autoClose={3000} />
-      <div className="max-w-md w-full space-y-8 bg-gray-900 bg-opacity-80 p-10 rounded-xl shadow-2xl">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
-            Create your account
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-300">
-            Start your journey with us
-          </p>
-        </div>
-        <div className="mt-8 space-y-6">
-          <div className="relative">
-            <div className="flex mb-2 items-center justify-between">
-              <div>
-                <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-indigo-300 bg-indigo-900">
-                  Step {step} of 3
-                </span>
-              </div>
-              <div className="text-right">
-                <span className="text-xs font-semibold inline-block text-indigo-300">
-                  {Math.round((step / 3) * 100)}%
-                </span>
-              </div>
+    <div className="h-screen overflow-hidden flex bg-black text-white font-sans">
+      <ToastContainer position="top-right" autoClose={3000} theme="dark" />
+      
+      {/* ===== FIXED NAVBAR (same as landing page) ===== */}
+      <nav
+        style={{ zIndex: 9999 }}
+        className="fixed top-0 left-0 w-full flex items-start pt-6 px-4 sm:px-10 font-sans text-[10px] sm:text-[11px] font-bold tracking-[0.2em] leading-relaxed text-white"
+      >
+        {/* ── LEFT ZONE (flex-1): Logo + Nav Links ── */}
+        <div className="flex-1 flex items-start gap-8">
+          <button onClick={() => navigate('/')} className="uppercase flex flex-col text-xs sm:text-sm font-black text-left leading-tight shrink-0">
+            <span>Echo</span>
+            <span>Voyage</span>
+          </button>
+          <div className="hidden lg:flex gap-8">
+            <div className="flex flex-col gap-1 uppercase opacity-80">
+              <button onClick={() => navigate('/home')} className="hover:opacity-100 transition-opacity text-left">Homepage</button>
+              <button className="hover:opacity-100 transition-opacity text-left">Contact</button>
             </div>
-            <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-indigo-900">
+            <div className="flex flex-col gap-1 uppercase opacity-80">
+              <button onClick={() => navigate('/search')} className="hover:opacity-100 transition-opacity text-left">Destinations</button>
+            </div>
+          </div>
+        </div>
+
+        {/* ── CENTER (shrink-0): Icons Pill — always true center ── */}
+        <div className="hidden md:flex shrink-0 items-center gap-4 backdrop-blur-md px-6 py-3 rounded-2xl border transition-colors duration-500 bg-white/10 border-white/20">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21.5 4c0 0-2 .5-3.5 2L14.5 9.5 6.3 7.7 4.5 9.5l7 3.5-4 4-3.5-.5L2.5 18l4.5 1.5 1.5 4.5 1.5-1.5-.5-3.5 4-4 3.5 7 1.8-1.8z" />
+          </svg>
+          <div className="w-px h-6 bg-white/30 transition-colors duration-500"></div>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M3 21h18M5 21V7l8-4v18M13 21V3l8 4v14M7 10h2M7 14h2M15 10h2M15 14h2" />
+          </svg>
+        </div>
+
+        {/* ── RIGHT ZONE (flex-1): Language + Search + Auth ── */}
+        <div className="flex-1 hidden lg:flex justify-end items-start gap-8">
+          <div className="flex flex-col gap-1 uppercase opacity-80">
+            <span className="font-black">English</span>
+          </div>
+          <div className="flex items-center gap-1 uppercase opacity-80 cursor-pointer hover:opacity-100 transition-opacity">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+            </svg>
+            <span>Search</span>
+          </div>
+          <div className="flex flex-col gap-1 uppercase opacity-80">
+            <button onClick={() => navigate('/login')} className="hover:opacity-100 transition-opacity text-left">Login</button>
+            <button onClick={() => navigate('/signup')} className="hover:opacity-100 transition-opacity text-left">Register</button>
+          </div>
+        </div>
+
+        {/* Hamburger - Mobile only */}
+        <div className="flex-1 flex lg:hidden justify-end">
+          <button className="hover:opacity-80" onClick={() => setIsMobileMenuOpen(true)}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M3 12h18M3 6h18M3 18h18" />
+            </svg>
+          </button>
+        </div>
+      </nav>
+
+      {/* ===== MOBILE MENU OVERLAY ===== */}
+      <div
+        style={{ zIndex: 10000 }}
+        className={`fixed inset-0 bg-black/95 backdrop-blur-xl text-white flex flex-col items-center justify-center p-8 transition-opacity duration-300 ${isMobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+      >
+        <button className="absolute top-8 right-10 hover:opacity-70 transition-opacity" onClick={() => setIsMobileMenuOpen(false)}>
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
+        <div className="flex flex-col gap-8 text-2xl font-bold tracking-widest uppercase text-center mb-12">
+          <button onClick={() => { setIsMobileMenuOpen(false); navigate('/home'); }} className="hover:opacity-70 transition-opacity">Home</button>
+          <button onClick={() => { setIsMobileMenuOpen(false); navigate('/search'); }} className="hover:opacity-70 transition-opacity">Destinations</button>
+          <button onClick={() => { setIsMobileMenuOpen(false); navigate('/'); }} className="hover:opacity-70 transition-opacity">Contact</button>
+        </div>
+        <div className="flex gap-8 text-sm font-black tracking-widest uppercase text-[#888]">
+          <button onClick={() => { setIsMobileMenuOpen(false); navigate('/login'); }} className="hover:text-white transition-colors">Login</button>
+          <button onClick={() => { setIsMobileMenuOpen(false); navigate('/signup'); }} className="hover:text-white transition-colors">Register</button>
+        </div>
+      </div>
+
+      {/* LEFT PANE - Image/Video */}
+      <div className="hidden lg:block lg:w-[50%] xl:w-[55%] relative h-full bg-black">
+        <video 
+          autoPlay 
+          loop 
+          muted 
+          playsInline 
+          className="absolute inset-0 w-full h-full object-cover opacity-90"
+        >
+          <source src={backgroundVideo} type="video/mp4" />
+        </video>
+      </div>
+
+      {/* RIGHT PANE - Form */}
+      <div className="w-full lg:w-[50%] xl:w-[45%] h-full flex flex-col pt-32 px-8 sm:px-16 md:px-24 lg:px-16 xl:px-24 relative overflow-y-auto">
+        
+        <div className="w-full max-w-lg mx-auto flex-1 flex flex-col justify-center pb-24">
+          
+          {/* Main Title Row */}
+          <div className="flex items-center space-x-6 sm:space-x-10 mb-12">
+            <Link to="/login" className="text-4xl sm:text-5xl font-normal tracking-tight flex items-center text-[#444] hover:text-[#888] transition-colors">
+              <span className="w-3 h-3 rounded-full bg-[#444] mr-4"></span>
+              Log in
+            </Link>
+            <h1 className="text-4xl sm:text-5xl font-normal tracking-tight flex items-center">
+              <span className="w-3 h-3 rounded-full bg-white mr-4"></span>
+              Sign up
+            </h1>
+          </div>
+
+          <div className="mb-8">
+            <div className="flex mb-3 items-center justify-between text-xs font-semibold text-[#888]">
+              <span>Step {step} of 3</span>
+              <span>{Math.round((step / 3) * 100)}%</span>
+            </div>
+            <div className="h-1 w-full bg-[#222] rounded-full overflow-hidden">
               <div
                 style={{ width: `${(step / 3) * 100}%` }}
-                className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-indigo-500"
+                className="h-full bg-white transition-all duration-500 ease-out rounded-full"
               ></div>
             </div>
           </div>
 
-          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="flex flex-col w-full">
             <input type="hidden" name="remember" defaultValue="true" />
-            <div className="rounded-md shadow-sm -space-y-px">
+            
+            <div className="space-y-6 mb-8 min-h-[160px]">
+              
+              {/* STEP 1 */}
               {step === 1 && (
-                <>
-                  <div className="mb-4">
-                    <label htmlFor="username" className="sr-only">
-                      Username
-                    </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="flex flex-col">
+                    <label htmlFor="username" className="text-sm font-semibold mb-2 text-white/90">Username</label>
                     <input
                       id="username"
                       name="username"
                       type="text"
                       required
-                      className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
-                        errors.username ? "border-red-500" : "border-gray-700"
-                      } bg-gray-800 text-white placeholder-gray-400 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
-                      placeholder="Username"
+                      className={`w-full bg-transparent border ${errors.username ? 'border-red-500' : 'border-[#333]'} rounded-md px-4 py-3.5 text-white placeholder-[#666] focus:outline-none focus:border-white transition-colors`}
+                      placeholder="Choose username"
                       value={formData.username}
                       onChange={handleInputChange}
                     />
-                    {errors.username && (
-                      <p className="mt-2 text-sm text-red-400" id="email-error">
-                        {errors.username}
-                      </p>
-                    )}
+                    {errors.username && <p className="mt-1.5 text-xs text-red-400">{errors.username}</p>}
                   </div>
-                  <div>
-                    <label htmlFor="Name" className="sr-only">
-                      Name
-                    </label>
+                  
+                  <div className="flex flex-col">
+                    <label htmlFor="Name" className="text-sm font-semibold mb-2 text-white/90">Full Name</label>
                     <input
                       id="Name"
                       name="Name"
                       type="text"
                       required
-                      className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
-                        errors.Name ? "border-red-500" : "border-gray-700"
-                      } bg-gray-800 text-white placeholder-gray-400 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
-                      placeholder="Name"
+                      className={`w-full bg-transparent border ${errors.Name ? 'border-red-500' : 'border-[#333]'} rounded-md px-4 py-3.5 text-white placeholder-[#666] focus:outline-none focus:border-white transition-colors`}
+                      placeholder="Enter full name"
                       value={formData.Name}
                       onChange={handleInputChange}
                     />
-                    {errors.Name && (
-                      <p className="mt-2 text-sm text-red-400" id="email-error">
-                        {errors.Name}
-                      </p>
-                    )}
+                    {errors.Name && <p className="mt-1.5 text-xs text-red-400">{errors.Name}</p>}
                   </div>
-                </>
+                </div>
               )}
 
+              {/* STEP 2 */}
               {step === 2 && (
-                <>
-                  <div className="mb-4 flex">
-                    <select
-                      value={selectedCountryCode}
-                      onChange={(e) => setSelectedCountryCode(e.target.value)}
-                      className="appearance-none rounded-l-md relative w-24 px-3 py-2 border border-r-0 border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                    >
-                      <option value="+91">+91 IN</option>
-                      <option value="+1">+1 US</option>
-                      <option value="+44">+44 UK</option>
-                      <option value="+61">+61 AU</option>
-                      <option value="+86">+86 CN</option>
-                      <option value="+81">+81 JP</option>
-                    </select>
-                    <input
-                      id="phno"
-                      name="phno"
-                      type="text"
-                      required
-                      className={`appearance-none rounded-r-md relative block w-full px-3 py-2 border ${
-                        errors.phno ? "border-red-500" : "border-gray-700"
-                      } bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
-                      placeholder="Phone Number (e.g., 1234567890)"
-                      value={formData.phno}
-                      onChange={handleInputChange}
-                    />
-                    {errors.phno && (
-                      <p className="mt-2 text-sm text-red-400" id="phone-error">
-                        {errors.phno}
-                      </p>
-                    )}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="flex flex-col">
+                    <label htmlFor="phno" className="text-sm font-semibold mb-2 text-white/90">Phone Number</label>
+                    <div className="flex gap-2 relative">
+                       <select
+                        value={selectedCountryCode}
+                        onChange={(e) => setSelectedCountryCode(e.target.value)}
+                        className="w-[35%] bg-transparent border border-[#333] rounded-md px-2 py-3.5 text-white focus:outline-none focus:border-white transition-colors cursor-pointer appearance-none text-center"
+                      >
+                        <option className="bg-black text-white" value="+91">+91</option>
+                        <option className="bg-black text-white" value="+1">+1</option>
+                        <option className="bg-black text-white" value="+44">+44</option>
+                        <option className="bg-black text-white" value="+61">+61</option>
+                        <option className="bg-black text-white" value="+86">+86</option>
+                        <option className="bg-black text-white" value="+81">+81</option>
+                      </select>
+                      <input
+                        id="phno"
+                        name="phno"
+                        type="text"
+                        required
+                        className={`w-[65%] bg-transparent border ${errors.phno ? 'border-red-500' : 'border-[#333]'} rounded-md px-4 py-3.5 text-white placeholder-[#666] focus:outline-none focus:border-white transition-colors`}
+                        placeholder="12345678"
+                        value={formData.phno}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                    {errors.phno && <p className="mt-1.5 text-xs text-red-400">{errors.phno}</p>}
                   </div>
-                  <div>
-                    <label htmlFor="gmail" className="sr-only">
-                      Email address
-                    </label>
+
+                  <div className="flex flex-col">
+                    <label htmlFor="gmail" className="text-sm font-semibold mb-2 text-white/90">Email Address</label>
                     <input
                       id="gmail"
                       name="gmail"
                       type="email"
-                      autoComplete="email"
                       required
-                      className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
-                        errors.gmail ? "border-red-500" : "border-gray-700"
-                      } bg-gray-800 text-white placeholder-gray-400 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
-                      placeholder="Email address"
+                      className={`w-full bg-transparent border ${errors.gmail ? 'border-red-500' : 'border-[#333]'} rounded-md px-4 py-3.5 text-white placeholder-[#666] focus:outline-none focus:border-white transition-colors`}
+                      placeholder="Enter email"
                       value={formData.gmail}
                       onChange={handleInputChange}
                     />
-                    {errors.gmail && (
-                      <p className="mt-2 text-sm text-red-400" id="email-error">
-                        {errors.gmail}
-                      </p>
-                    )}
+                    {errors.gmail && <p className="mt-1.5 text-xs text-red-400">{errors.gmail}</p>}
                   </div>
-                </>
+                </div>
               )}
 
+              {/* STEP 3 */}
               {step === 3 && (
-                <>
-                  <div className="mb-4">
-                    <label htmlFor="password" className="sr-only">
-                      Password
-                    </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="flex flex-col sm:col-span-2">
+                    <label htmlFor="password" className="text-sm font-semibold mb-2 text-white/90">Password</label>
                     <input
                       id="password"
                       name="password"
                       type="password"
-                      autoComplete="current-password"
                       required
-                      className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
-                        errors.password ? "border-red-500" : "border-gray-700"
-                      } bg-gray-800 text-white placeholder-gray-400 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
-                      placeholder="Password"
+                      className={`w-full bg-transparent border ${errors.password ? 'border-red-500' : 'border-[#333]'} rounded-md px-4 py-3.5 text-white placeholder-[#666] focus:outline-none focus:border-white transition-colors`}
+                      placeholder="Create a strong password"
                       value={formData.password}
                       onChange={handleInputChange}
                     />
-                    {errors.password && (
-                      <p
-                        className="mt-2 text-sm text-red-400"
-                        id="password-error"
+                    {errors.password && <p className="mt-1.5 text-xs text-red-400">{errors.password}</p>}
+                  </div>
+                  
+                  <div className="flex flex-col">
+                    <label htmlFor="role" className="text-sm font-semibold mb-2 text-white/90">Role Profile</label>
+                    <div className="relative">
+                      <select
+                        id="role"
+                        name="role"
+                        className="w-full bg-transparent border border-[#333] rounded-md px-4 py-3.5 text-white focus:outline-none focus:border-white transition-colors appearance-none cursor-pointer"
+                        value={formData.role}
+                        onChange={handleInputChange}
                       >
-                        {errors.password}
-                      </p>
-                    )}
+                        <option className="bg-black text-white" value="customer">Customer</option>
+                        <option className="bg-black text-white" value="guide">Local Guide</option>
+                        <option className="bg-black text-white" value="agency">Travel Agency</option>
+                      </select>
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#666]">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m6 9 6 6 6-6"/></svg>
+                      </div>
+                    </div>
                   </div>
-                  <div className="mb-4">
-                    <label htmlFor="role" className="sr-only">
-                      Role
-                    </label>
-                    <select
-                      id="role"
-                      name="role"
-                      className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                      value={formData.role}
-                      onChange={handleInputChange}
-                    >
-                      <option value="customer">Customer</option>
-                      <option value="guide">Local Guide</option>
-                      <option value="agency">Travel Agency</option>
-                    </select>
+
+                  <div className="flex flex-col">
+                    <label htmlFor="specialization" className="text-sm font-semibold mb-2 text-white/90">Specialization</label>
+                    <div className="relative">
+                      <select
+                        id="specialization"
+                        name="specialization"
+                        className="w-full bg-transparent border border-[#333] rounded-md px-4 py-3.5 text-white focus:outline-none focus:border-white transition-colors appearance-none cursor-pointer"
+                        value={formData.specialization}
+                        onChange={handleInputChange}
+                      >
+                        <option className="bg-black text-white" value="luxury">Luxury</option>
+                        <option className="bg-black text-white" value="adventure">Adventure</option>
+                        <option className="bg-black text-white" value="budget-friendly">Budget</option>
+                        <option className="bg-black text-white" value="family">Family</option>
+                        <option className="bg-black text-white" value="business">Business</option>
+                        <option className="bg-black text-white" value="other">Other</option>
+                      </select>
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#666]">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m6 9 6 6 6-6"/></svg>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <label htmlFor="specialization" className="sr-only">
-                      Specialization
-                    </label>
-                    <select
-                      id="specialization"
-                      name="specialization"
-                      className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white placeholder-gray-400 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                      value={formData.specialization}
-                      onChange={handleInputChange}
-                    >
-                      <option value="luxury">Luxury</option>
-                      <option value="adventure">Adventure</option>
-                      <option value="budget-friendly">Budget-Friendly</option>
-                      <option value="family">Family</option>
-                      <option value="business">Business</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
-                </>
+                </div>
               )}
+              
             </div>
 
-            <div className="flex items-center justify-between">
+            <div className="flex gap-4">
               {step > 1 && (
                 <button
                   type="button"
                   onClick={handlePrevious}
-                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-indigo-300 bg-indigo-900 hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className="w-1/3 bg-transparent border border-[#333] text-white font-bold py-4 rounded-md hover:border-white hover:bg-white/5 transition-colors"
                 >
-                  Previous
+                  Back
                 </button>
               )}
               {step < 3 ? (
                 <button
                   type="button"
                   onClick={handleNext}
-                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className={`${step > 1 ? 'w-2/3' : 'w-full'} bg-white text-black font-bold py-4 rounded-md hover:bg-gray-200 transition-colors`}
                 >
-                  Next
+                  Continue
                 </button>
               ) : (
                 <button
                   type="submit"
-                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className={`${step > 1 ? 'w-2/3' : 'w-full'} bg-white text-black font-bold py-4 rounded-md hover:bg-gray-200 transition-colors`}
                 >
-                  Sign up
+                  Create Account
                 </button>
               )}
             </div>
-
-            <div className="text-center mt-4">
-              <span className="text-gray-400">Already have an account? </span>
-              <Link
-                to="/login"
-                className="text-sm text-indigo-300 hover:text-indigo-200"
-              >
-                Sign in here
-              </Link>
-            </div>
           </form>
+
+          {/* Footer Links */}
+          <div className="mt-16 text-xs text-[#888]">
+            <p>Already registered? <Link to="/login" className="text-white hover:underline ml-1 font-semibold">Sign In Instead</Link></p>
+          </div>
         </div>
       </div>
     </div>

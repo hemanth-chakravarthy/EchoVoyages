@@ -413,7 +413,13 @@ router.post("/adminlogin", async (req, res, next) => {
       return res.status(400).json({ error: "Invalid credentials" });
     }
 
-    res.json({ message: "Admin login successful", token: "someAuthToken" });
+    const token = jwt.sign(
+      { id: admin._id, role: "admin" },
+      process.env.JWT_SECRET || "default_secret",
+      { expiresIn: "1h" }
+    );
+
+    res.json({ message: "Admin login successful", token, role: "admin" });
   } catch (error) {
     console.error("Admin login error:", error);
     next(error);
