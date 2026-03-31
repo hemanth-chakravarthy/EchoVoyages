@@ -338,7 +338,7 @@ router.get("/cust/:customerId", cacheMiddleware(120), async (req, res) => {
   try {
     const booking = await bookings.find({ customerId });
     if (booking.length === 0) {
-      return res.status(200).json([]);
+      return res.status(404).json({ message: "No bookings found for this customer" });
     }
     return res.status(200).json(booking);
   } catch (error) {
