@@ -1,6 +1,4 @@
 /** @format */
-import dotenv from "dotenv";
-dotenv.config();
 import express, { response } from "express";
 import bcrypt from "bcrypt";
 import connectDB from "./config/database.js";
@@ -19,7 +17,6 @@ import { Agency } from "./models/agencyModel.js";
 import { Guide } from "./models/guideModel.js";
 import cors from "cors";
 import multer from "multer";
-import path from "path";
 import jwt from "jsonwebtoken";
 import searchRoutes from "./routes/searchRoutes.js";
 import requests from "./routes/requestRoutes.js";
@@ -96,15 +93,15 @@ app.post("/forgot-password", async (req, res) => {
       return res.send({ status: "User not found" });
     }
 
-    const token = jwt.sign({ id: user._id }, "Voyage_secret1", {
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || "Voyage_secret", {
       expiresIn: "1h",
     });
 
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      service: process.env.EMAIL_SERVICE || "gmail",
       auth: {
-        user: "<Email>",
-        pass: "<Password>",
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
       },
     });
 
@@ -138,7 +135,7 @@ app.post("/reset-password/:id/:token", (req, res) => {
     return res.status(400).json({ status: "Password is required" });
   }
 
-  jwt.verify(token, "Voyage_secret1", (err, decoded) => {
+  jwt.verify(token, process.env.JWT_SECRET || "Voyage_secret", (err, decoded) => {
     if (err) {
       return res.json({ status: "Token is invalid or expired" });
     } else {

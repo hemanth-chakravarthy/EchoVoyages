@@ -1,8 +1,12 @@
 import mongoose from 'mongoose';
 
-// Get MongoDB URI from environment variables or use default
-const mongoURI = process.env.MONGO_URI || 
-  "mongodb+srv://saiananyakatakam:NLnqR9ifdN8qbVft@cluster0.lbvmb.mongodb.net/EchoVoyages2";
+// Get MongoDB URI from environment variables
+const mongoURI = process.env.MONGO_URI;
+
+if (!mongoURI) {
+  console.error("ERROR: MONGO_URI is not defined in environment variables.");
+  process.exit(1);
+}
 
 // Connect to MongoDB
 const connectDB = async () => {
