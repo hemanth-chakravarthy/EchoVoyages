@@ -1,240 +1,228 @@
 /** @format */
 
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { motion } from "framer-motion";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import {
-  FaHome,
-  FaClipboardList,
-  FaBox,
-  FaUserPlus,
-  FaUsers,
-  FaCreditCard,
-  FaUser,
-  FaTachometerAlt,
-  FaPaperPlane,
-  FaCompass,
-  FaHeart,
-  FaSignInAlt,
-  FaUserCircle,
-  FaInfoCircle,
-  FaSignOutAlt,
-  FaCalendarCheck,
-} from "react-icons/fa";
 
 const RoleBasedNavbar = () => {
+  const navigate = useNavigate();
   const location = useLocation();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState("guest");
   const [userName, setUserName] = useState("");
 
   useEffect(() => {
-    // Get token and determine user role
     const token = localStorage.getItem("token");
-    let role = "guest";
-    let name = "";
-
-    try {
-      if (token) {
+    if (token) {
+      setIsLoggedIn(true);
+      try {
         const decoded = jwtDecode(token);
-        // Check for both 'userType' and 'role' fields in the token
-        let extractedRole = decoded.userType || decoded.role || "guest";
-
-        // Make sure the role is one of our expected roles
-        if (!["agency", "guide", "customer", "guest"].includes(extractedRole)) {
-          console.warn(
-            "Navbar: Unexpected role in token:",
-            extractedRole,
-            "Defaulting to guest"
-          );
-          extractedRole = "guest";
-        }
-
-        role = extractedRole;
-        name = decoded.name || "";
-        console.log(
-          "Navbar: User role from token:",
-          role,
-          "User name:",
-          name,
-          "Full decoded token:",
-          decoded
-        );
-      } else {
-        console.log("Navbar: No token found, setting role to guest");
+        const role = decoded.userType || decoded.role || "guest";
+        setUserRole(role);
+        setUserName(decoded.name || "");
+      } catch (error) {
+        console.error("Error decoding token in RoleBasedNavbar:", error);
+        setUserRole("guest");
       }
-    } catch (error) {
-      console.error("Error decoding token in navbar:", error);
+    } else {
+      setIsLoggedIn(false);
+      setUserRole("guest");
     }
-
-    setUserRole(role);
-    setUserName(name);
-    console.log("Navbar: Final role set to:", role);
-  }, [location.pathname]); // Re-check when route changes
-
-  // Close mobile menu when route changes
-  useEffect(() => {
-    setIsOpen(false);
   }, [location.pathname]);
-
-  // Define navigation links for each role
-  const navLinks = {
-    agency: [
-      { to: "/AgentHome", text: "Booking Requests", icon: <FaClipboardList /> },
-      { to: "/mylistings", text: "My Packages", icon: <FaBox /> },
-      {
-        to: "/agency-guide-requests",
-        text: "Guide Requests",
-        icon: <FaPaperPlane />,
-      },
-      {
-        to: "/agency-guide-directory",
-        text: "Guide Directory",
-        icon: <FaUsers />,
-      },
-      // {
-      //   to: "/agency-payments",
-      //   text: "Guide Payments",
-      //   icon: <FaCreditCard />,
-      // },
-      { to: "/AgentProfilePage", text: "Profile", icon: <FaUser /> },
-    ],
-    guide: [
-      { to: "/GuideHome", text: "Dashboard", icon: <FaTachometerAlt /> },
-      { to: "/guide-requests", text: "My Requests", icon: <FaClipboardList /> },
-      { to: "/home", text: "Browse Packages", icon: <FaCompass /> },
-      { to: "/GuideProfile", text: "Profile", icon: <FaUserCircle /> },
-      { to: "/all-bookings", text: "All Bookings", icon: <FaCalendarCheck /> },
-    ],
-    customer: [
-      { to: "/home", text: "Home", icon: <FaHome /> },
-      { to: "/search", text: "Search", icon: <FaCompass /> },
-      { to: "/wishlist", text: "Wishlist", icon: <FaHeart /> },
-      { to: "/customerGuide", text: "Guides", icon: <FaUsers /> },
-      { to: "/profile", text: "Profile", icon: <FaUserCircle /> },
-    ],
-    guest: [
-      { to: "/", text: "Home", icon: <FaHome /> },
-      { to: "/about", text: "About", icon: <FaInfoCircle /> },
-      { to: "/login", text: "Login", icon: <FaSignInAlt /> },
-      { to: "/signup", text: "Sign Up", icon: <FaUserPlus /> },
-    ],
-  };
-
-  // Get the appropriate links based on user role
-  console.log("Navbar: Getting links for role:", userRole);
-  const links = navLinks[userRole] || navLinks.guest;
-  console.log("Navbar: Selected links:", links);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     window.location.href = "/";
   };
 
-  // Check if the current path matches the link
-  const isActive = (path) => {
-    return location.pathname === path;
+  const getNavLinks = () => {
+    if (!isLoggedIn) {
+      return {
+        group1: [{ to: "/", text: "Homepage" }],
+        group2: [{ to: "/about", text: "About" }],
+        auth: [
+          { to: "/login", text: "Login" },
+          { to: "/signup", text: "Register" }
+        ]
+      };
+    }
+
+    switch (userRole) {
+      case "agency":
+      case "agent":
+        return {
+          group1: [
+            { to: "/AgentHome", text: "Booking Requests" },
+            { to: "/mylistings", text: "My Packages" }
+          ],
+          group2: [
+            { to: "/agency-guide-requests", text: "Guide Requests" },
+            { to: "/agency-guide-directory", text: "Guide Directory" }
+          ],
+          auth: [
+            { to: "/AgentProfilePage", text: "Profile" },
+            { to: "#logout", text: "Logout", isLogout: true }
+          ]
+        };
+      case "guide":
+        return {
+          group1: [
+            { to: "/GuideHome", text: "Dashboard" },
+            { to: "/guide-requests", text: "My Requests" }
+          ],
+          group2: [
+            { to: "/home", text: "Browse Packages" },
+            { to: "/all-bookings", text: "All Bookings" }
+          ],
+          auth: [
+            { to: "/GuideProfile", text: "Profile" },
+            { to: "#logout", text: "Logout", isLogout: true }
+          ]
+        };
+      case "customer":
+      default:
+        return {
+          group1: [
+            { to: "/home", text: "Home" },
+            { to: "/search", text: "Search" }
+          ],
+          group2: [
+            { to: "/CustomerGuide", text: "Guides" },
+            { to: "/profile", text: "Profile" }
+          ],
+          auth: [
+            { to: "/wishlist", text: "Wishlist" },
+            { to: "#logout", text: "Logout", isLogout: true }
+          ]
+        };
+    }
+  };
+
+  const links = getNavLinks();
+
+  const handleNav = (to, isLogout) => {
+    setIsMobileMenuOpen(false);
+    if (isLogout) {
+      handleLogout();
+    } else if (to.startsWith("/")) {
+      navigate(to);
+    }
   };
 
   return (
-    <nav className="bg-white shadow-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <Link
-              to={
-                userRole === "guest"
-                  ? "/"
-                  : `/${userRole === "agency" ? "AgentHome" : userRole === "guide" ? "GuideHome" : "realhome"}`
-              }
-              className="flex-shrink-0 flex items-center"
-            >
-              <span className="text-2xl font-bold text-[#1a365d]">Echo</span>
-              <span className="text-2xl font-bold text-[#4299e1]">Voyages</span>
-            </Link>
-          </div>
+    <>
+      <nav
+        style={{ zIndex: 9999 }}
+        className="fixed top-0 left-0 w-full flex items-start pt-6 px-10 font-sans text-[10px] sm:text-[11px] font-bold tracking-[0.2em] leading-relaxed text-black transition-all duration-300"
+      >
+        {/* ── LEFT ZONE: Logo + Nav Links ── */}
+        <div className="flex-1 flex items-start gap-8">
+          <Link 
+            to={isLoggedIn ? (userRole === 'agency' || userRole === 'agent' ? '/AgentHome' : userRole === 'guide' ? '/GuideHome' : '/realhome') : '/'} 
+            className="uppercase flex flex-col text-xs sm:text-sm font-black text-left leading-tight shrink-0 text-black hover:opacity-70 transition-opacity"
+          >
+            <span>Echo</span>
+            <span>Voyage</span>
+          </Link>
 
-          {/* Desktop menu */}
-          <div className="hidden md:flex md:items-center md:space-x-4">
-            {links.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 flex items-center space-x-2 ${
-                  isActive(link.to)
-                    ? "bg-[#0a66c2] text-white"
-                    : "text-gray-700 hover:bg-[#0a66c2]/10 hover:text-[#0a66c2]"
-                }`}
-              >
-                <span className="text-lg">{link.icon}</span>
-                <span>{link.text}</span>
-              </Link>
-            ))}
-            {userRole !== "guest" && (
-              <>
-                {userName && (
-                  <div className="px-4 py-2 text-sm font-medium text-[#0a66c2] flex items-center">
-                    <FaUserCircle className="mr-2 text-lg" />
-                    Welcome, {userName}
-                  </div>
-                )}
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium text-red-600 hover:bg-red-50 transition-colors duration-200"
-                >
-                  <FaSignOutAlt className="text-lg" />
-                  <span>Logout</span>
-                </button>
-              </>
+          <div className="hidden lg:flex gap-8">
+            <div className="flex flex-col gap-1 uppercase opacity-80">
+              {links.group1.map((link, i) => (
+                <button key={i} onClick={() => handleNav(link.to)} className="hover:opacity-100 transition-opacity text-left">{link.text}</button>
+              ))}
+            </div>
+            {links.group2.length > 0 && (
+              <div className="flex flex-col gap-1 uppercase opacity-80">
+                {links.group2.map((link, i) => (
+                  <button key={i} onClick={() => handleNav(link.to)} className="hover:opacity-100 transition-opacity text-left">{link.text}</button>
+                ))}
+              </div>
             )}
           </div>
+        </div>
 
-          {/* Mobile menu items */}
-          {isOpen && (
-            <motion.div
-              className="md:hidden"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              <div className="px-2 pt-2 pb-3 space-y-1">
-                {links.map((link) => (
-                  <Link
-                    key={link.to}
-                    to={link.to}
-                    className={`flex items-center space-x-3 px-4 py-3 rounded-md text-base font-medium ${
-                      isActive(link.to)
-                        ? "bg-[#0a66c2] text-white"
-                        : "text-gray-700 hover:bg-[#0a66c2]/10 hover:text-[#0a66c2]"
-                    }`}
-                  >
-                    <span className="text-lg">{link.icon}</span>
-                    <span>{link.text}</span>
-                  </Link>
-                ))}
-                {userRole !== "guest" && (
-                  <>
-                    {userName && (
-                      <div className="px-3 py-2 text-base font-medium text-[#1a365d] border-t border-gray-200 mt-2 pt-2">
-                        Welcome, {userName}
-                      </div>
-                    )}
-                    <button
-                      onClick={handleLogout}
-                      className="w-full text-left block px-3 py-2 mt-2 rounded-md text-base font-medium bg-red-600 text-white hover:bg-red-700 transition-all duration-300 shadow-sm"
-                    >
-                      Logout
-                    </button>
-                  </>
-                )}
-              </div>
-            </motion.div>
+        {/* ── CENTER: Icons Pill ── */}
+        <div className="hidden md:flex shrink-0 items-center gap-4 backdrop-blur-md px-6 py-3 rounded-2xl border transition-colors duration-500 bg-black/10 border-black/20">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21.5 4c0 0-2 .5-3.5 2L14.5 9.5 6.3 7.7 4.5 9.5l7 3.5-4 4-3.5-.5L2.5 18l4.5 1.5 1.5 4.5 1.5-1.5-.5-3.5 4-4 3.5 7 1.8-1.8z" />
+          </svg>
+          <div className="w-px h-6 bg-black/20 transition-colors duration-500"></div>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M3 21h18M5 21V7l8-4v18M13 21V3l8 4v14M7 10h2M7 14h2M15 10h2M15 14h2" />
+          </svg>
+        </div>
+
+        {/* ── RIGHT ZONE: Welcome + Search + Auth ── */}
+        <div className="flex-1 hidden lg:flex justify-end items-start gap-8">
+          {userName && (
+            <div className="flex flex-col gap-1 uppercase opacity-50">
+              <span className="font-black">Hello, {userName}</span>
+            </div>
           )}
+          <div onClick={() => handleNav('/search')} className="flex items-center gap-1 uppercase opacity-80 cursor-pointer hover:opacity-100 transition-opacity mt-0.5">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
+            </svg>
+            <span>Search</span>
+          </div>
+
+          <div className="flex flex-col gap-1 uppercase opacity-80">
+            {links.auth.map((link, i) => (
+              <button 
+                key={i} 
+                onClick={() => handleNav(link.to, link.isLogout)} 
+                className={`hover:opacity-100 transition-opacity text-left ${link.isLogout ? 'text-[#a00000] font-bold' : ''}`}
+              >
+                {link.text}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Hamburger - Mobile only */}
+        <div className="flex-1 flex lg:hidden justify-end">
+          <button className="hover:opacity-80 p-2 -mr-2 text-black" onClick={() => setIsMobileMenuOpen(true)}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M3 12h18M3 6h18M3 18h18" />
+            </svg>
+          </button>
+        </div>
+      </nav>
+
+      {/* HEADER MOBILE MENU OVERLAY */}
+      <div
+        style={{ zIndex: 10000 }}
+        className={`fixed inset-0 bg-black/95 backdrop-blur-xl text-white flex flex-col items-center justify-center p-8 transition-opacity duration-300 ${isMobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+      >
+        <button className="absolute top-8 right-10 hover:opacity-70 transition-opacity text-white" onClick={() => setIsMobileMenuOpen(false)}>
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div className="flex flex-col gap-8 text-2xl font-bold tracking-widest uppercase text-center mb-12">
+          {links.group1.map((link, i) => (
+            <button key={i} onClick={() => handleNav(link.to)} className="hover:opacity-70 transition-opacity">{link.text}</button>
+          ))}
+          {links.group2.map((link, i) => (
+            <button key={i} onClick={() => handleNav(link.to)} className="hover:opacity-70 transition-opacity text-white/50">{link.text}</button>
+          ))}
+        </div>
+        
+        <div className="flex gap-4 uppercase tracking-widest text-[10px] font-bold flex-wrap justify-center">
+          {links.auth.map((link, i) => (
+            <button 
+              key={i} 
+              onClick={() => handleNav(link.to, link.isLogout)} 
+              className={`${link.isLogout ? 'bg-red-600/90 text-white' : 'bg-white/10'} px-6 py-3 rounded-full`}
+            >
+              {link.text}
+            </button>
+          ))}
         </div>
       </div>
-    </nav>
+    </>
   );
 };
 

@@ -1,11 +1,15 @@
-const StatCard = ({ title, value, icon }) => (
-  <div className="bg-card p-6 rounded-lg shadow-md">
-    <div className="flex items-center justify-between">
-      <div>
-        <p className="text-sm text-muted-foreground">{title}</p>
-        <h3 className="text-2xl font-bold mt-1">{value}</h3>
+import { FaUsers, FaCalendarAlt, FaBox } from 'react-icons/fa';
+
+const StatCard = ({ title, value, icon: Icon }) => (
+  <div className="bg-white p-6 md:p-8 border border-black/5 hover:shadow-xl transition-all duration-300">
+    <div className="flex items-start justify-between">
+      <div className="flex-1">
+        <p className="text-xs font-bold tracking-[0.2em] text-black/40 uppercase mb-3">{title}</p>
+        <h3 className="text-3xl md:text-4xl font-black tracking-tighter text-[#1a1a1a]">{value}</h3>
       </div>
-      <div className="text-muted-foreground">{icon}</div>
+      <div className="w-12 h-12 flex items-center justify-center bg-black/5 text-[#1a1a1a]">
+        <Icon className="text-xl" />
+      </div>
     </div>
   </div>
 );
@@ -19,21 +23,21 @@ const DashboardStats = ({ data }) => {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
       <StatCard
         title="Total Users"
         value={stats.totalUsers}
-        icon="👥"
+        icon={FaUsers}
       />
       <StatCard
         title="Total Bookings"
         value={stats.totalBookings}
-        icon="📅"
+        icon={FaCalendarAlt}
       />
       <StatCard
         title="Active Packages"
         value={stats.activePackages}
-        icon="🎯"
+        icon={FaBox}
       />
     </div>
   );
